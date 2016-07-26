@@ -1,0 +1,50 @@
+{
+  "sao.confirm": {
+    "category": "master",
+    "sounds": [
+      {
+        "name": "saoui:confirm"
+      }
+    ]
+  },
+  "sao.dialog.close": {
+    "category": "master",
+    "sounds": [
+      {
+        "name": "saoui:dialog_close"
+      }
+    ]
+  },
+  "sao.menu.popup": {
+    "category": "master",
+    "sounds": [
+      {
+        "name": "saoui:menu_popup"
+      }
+    ]
+  },
+  "sao.message": {
+    "category": "master",
+    "sounds": [
+      {
+        "name": "saoui:message"
+      }
+    ]
+  },
+  "sao.orb.dropdown": {
+    "category": "master",
+    "sounds": [
+      {
+        "name": "saoui:orb_dropdown"
+      }
+    ]
+  },
+  "sao.particles.death": {
+    "category": "master",
+    "sounds": [
+      {
+        "name": "saoui:particles_death"
+      }
+    ]
+  }
+}

@@ -1,0 +1,140 @@
+
+# Social
+guiFriendRequestTitle=Friend Request
+guiFriendRequestText=%s wants to add you as a friend.
+guiPartyInviteTitle=Invite
+guiPartyInviteText=%s invites you to join a party.
+guiPartyDissolvingTitle=Dissolve
+guiPartyDissolvingText=Do you want to disband your party?
+guiPartyLeaveTitle=Leave
+guiPartyLeaveText=Do you want to leave your party?
+guiMessageTitle=Message
+guiMessageFrom=from %s
+guiDeadAlert=You are Dead
+guiInvite=Invite
+guiDissolve=Dissolve
+guiMessageBox=Message Box
+guiGuild=Guild
+guiParty=Party
+guiFriends=Friends
+
+
+# Inventory
+guiWeapons=Weapons
+guiEquipped=Armor
+guiAccessory=Accessory
+guiProfile=Profile
+guiEquipment=Equipment
+guiTools=Tools
+guiBows=Bows
+guiPickaxes=Pickaxes
+guiAxes=Axes
+guiShovels=Shovels
+guiConsumable=Consumables
+guiEquipment=Equipment
+guiEquipment=Equipment
+guiEquipment=Equipment
+guiEquipment=Equipment
+guiItems=Items
+gui.empty=empty
+
+
+#Skills
+skillSprinting=Sprinting
+skillCrafting=Crafting
+skillSneaking=Sneaking
+
+
+# Info
+guiPositionCheck=Position Check
+guiFieldMap=Field Map
+guiDungMap=Dungeon Map
+guiQuest=Quest
+guiSkills=Skills
+guiQuestList=Quest List
+guiDistance=Distance
+guiFloor=Floor
+guiCrafting=Crafting
+guiSprinting=Sprinting
+guiSneaking=Sneaking
+guiProfile=Profile
+
+
+# Misc
+guiOptions=Options..
+guiOption=Option
+guiMenu=Menu
+guiLogout=Logout
+guiBack=Back
+
+
+# Option Categories
+optCatUI=UI Options
+optTheme=Themes
+optCatHealth=Health Bar Options
+optCatHotBar=Hotbar Options
+optCatEffects=Effects
+optCatMisc=Misc
+
+# Options - UI
+optionUIOnly=UI Only
+optionDefaultInv=Default Inventory
+optionDefaultDeath=Default Death
+optionDefaultDebuge=Default Debug
+optionForceHud=Force HUD (gm 1)
+optionLogout=Enable Logout
+optionGuiPause=GUIs pause the game
+
+# Options - Themes
+optionDefaultUI=Vanilla UI
+optionALOUI=ALO UI
+optionSAOUI=SAO UI
+
+# Options - Health
+optionSmoothHealth=Smooth Health
+optionHealthBars=Health Bars
+optionLightHud=Lighter HUD
+optionAltAbsorbPos=Alt Absorb Value Pos
+
+# Options - Hotbar
+optionDefaultHotbar=Default Hotbar
+optionHorHotbar=Horizontal Hotbar
+optionVerHotbar=Vertical Hotbar
+
+# Options - Effects
+optionColorCursor=Color Cursor
+optionCursorToggle=Toggle Cursor Movement
+optionSpinning=Spinning Crystals
+optionParticles=Particles
+optionLessVis=Less Visual Noise
+optionSounds=Sound Effects
+
+# Options - Misc
+optionCrossHair=Cross Hair
+optionAggro=Aggro System
+optionCliChatPacks=Client Chat Packets
+optionMountStatView=Show Mount Stats
+optionCustomFont=Use SAO Font
+optionDebugMode=Debug Mode
+optionCompatInv=Compact Inventory
+
+# Display
+displayLvShort=LV
+displayLvLong=Level
+displayXpShort=XP
+displayXpLong=Experience
+displayHpLong=Health
+displayStrLong=Strength
+displayDexLong=Agility
+displayResLong=Resistance
+displaySpdLong=Speed
+displayJmpLong=Jump Strength
+displayName=Name
+
+# PT
+ptLeave=You left your party.
+ptDissolve=You dissolved your party.
+ptJoin=%s joined your party.
+ptDecline=%s declined the party invite.
+ptLeft=%s left your party.
+ptNew=You joined a new party.
