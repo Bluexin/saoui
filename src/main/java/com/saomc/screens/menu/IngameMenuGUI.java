@@ -194,7 +194,7 @@ public class IngameMenuGUI extends ScreenGUI {
         } else if (id == Categories.DISSOLVE) {
             element.enabled = false;
 
-            final boolean isLeader = PartyHelper.instance().isLeader(StaticPlayerHelper.getName(mc));
+            final boolean isLeader = PartyHelper.instance().isLeader(mc.thePlayer);
 
             final String title = isLeader ? ConfigHandler._PARTY_DISSOLVING_TITLE : ConfigHandler._PARTY_LEAVING_TITLE;
             final String text = isLeader ? ConfigHandler._PARTY_DISSOLVING_TEXT : ConfigHandler._PARTY_LEAVING_TEXT;

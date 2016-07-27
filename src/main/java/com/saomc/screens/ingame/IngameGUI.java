@@ -374,12 +374,8 @@ public class IngameGUI extends GuiIngameForge {
 
             mc.mcProfiler.endSection();
 
-            if (PartyHelper.instance().isEffective()) {
+            if (PartyHelper.instance().hasParty()) {
                 mc.mcProfiler.startSection("party");
-
-                final List<EntityPlayer> players = StaticPlayerHelper.listOnlinePlayers(mc);
-
-                if (players.contains(mc.thePlayer)) players.remove(mc.thePlayer);
 
                 GLCore.glAlphaTest(true);
                 GLCore.glBlend(true);
@@ -387,16 +383,15 @@ public class IngameGUI extends GuiIngameForge {
                 int index = 0;
                 final int baseY = 35;
                 final int h = 15;
-                for (final EntityPlayer player : players) {
-                    String playerName = player.getDisplayNameString();
-
-                    if (!PartyHelper.instance().isMember(playerName)) continue;
+                for (final EntityPlayer player : PartyHelper.instance().listMembers()) {
+                    if (player == mc.thePlayer) continue;
 
                     GLCore.glBindTexture(OptionCore.SAO_UI.getValue() ? StringNames.gui : StringNames.guiCustom);
 
                     GLCore.glTexturedRect(2, baseY + index * h, zLevel, 85, 15, 10, 13);
                     GLCore.glTexturedRect(13, baseY + index * h, zLevel, 80, 15, 5, 13);
 
+                    String playerName = player.getDisplayNameString();
                     if (playerName.length() > 5) playerName = playerName.substring(0, 5);
 
                     final int nameBoxes = 29 / 5 + 1;

@@ -41,9 +41,8 @@ public final class SubWindow {
 
     public static MenuGUI createSocialSub(Minecraft mc, Elements element, int x, int y) {
         final MenuGUI sub = createSub(mc, element, x, y);
-        final String[] party = PartyHelper.instance().listMembers();
 
-        return party != null ? setPartySub(mc, sub) : setFriendsSub(mc, sub);
+        return PartyHelper.instance().hasParty() ? setPartySub(mc, sub) : setFriendsSub(mc, sub);
     }
 
     public static MenuGUI createNavigationSub(Minecraft mc, Elements element, int x, int y) {
@@ -125,13 +124,9 @@ public final class SubWindow {
     }
 
     private static MenuGUI setPartySub(Minecraft mc, MenuGUI sub) {
-        final String[] party = PartyHelper.instance().listMembers();
-
-        if (party != null) {
-            final boolean[] online = StaticPlayerHelper.isOnline(mc, party);
+        if (PartyHelper.instance().hasParty()) {
             final StringBuilder builder = new StringBuilder();
-
-            for (int i = 0; i < party.length; i++) if (online[i]) builder.append(" - ").append(party[i]).append('\n');
+            PartyHelper.instance().listMembers().forEach(player -> builder.append(" - ").append(player).append('\n'));
 
             sub.elements.add(new LabelGUI(sub, 0, 0, '-' + I18n.translateToLocal("guiParty") + '-', WindowAlign.CENTER));
             sub.elements.add(new TextGUI(sub, 0, 0, builder.toString()));

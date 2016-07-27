@@ -2,6 +2,7 @@ package com.saomc.events;
 
 import com.saomc.colorstates.ColorStateHandler;
 import com.saomc.effects.RenderDispatcher;
+import com.saomc.social.party.PartyHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.event.entity.EntityEvent;
@@ -37,6 +38,7 @@ public class EventCore {
     @SubscribeEvent
     public void onDisconnect(FMLNetworkEvent.ClientDisconnectionFromServerEvent e) {
         ColorStateHandler.getInstance().clean();
+        PartyHelper.instance().clean();
     }
 
     @SubscribeEvent
