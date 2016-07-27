@@ -8,6 +8,7 @@ import com.saomc.screens.menu.IngameMenuGUI;
 import com.saomc.social.StaticPlayerHelper;
 import com.saomc.social.party.PartyHelper;
 import com.saomc.util.OptionCore;
+import com.saomc.util.PlayerStats;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -486,7 +487,7 @@ public class IngameGUI extends GuiIngameForge {
             final int offsetR = OptionCore.SAO_UI.getValue() ? HPXP_OFFSET_ORIG_R : HPXP_OFFSET_ALO_R;
             final int offsetD = OptionCore.SAO_UI.getValue() ? HPXP_OFFSET_ORIG_D : HPXP_OFFSET_ALO_D;
             final int offsetHealth = offsetUsername + 113 + (healthBoxes + 2) * 5 + offsetR;
-            final String levelStr = net.minecraft.util.text.translation.I18n.translateToLocal("displayLvShort") + ": " + String.valueOf(mc.thePlayer.experienceLevel);
+            final String levelStr = net.minecraft.util.text.translation.I18n.translateToLocal("displayLvShort") + ": " + String.valueOf(PlayerStats.instance().getStats().getLevel(mc.thePlayer));
             final int levelStrWidth = fontRenderer.getStringWidth(levelStr);
             final int levelBoxes = (levelStrWidth + 4) / 5;
 

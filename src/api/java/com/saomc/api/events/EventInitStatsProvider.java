@@ -1,11 +1,11 @@
 package com.saomc.api.events;
 
-import com.saomc.api.social.party.IParty;
+import com.saomc.api.info.IPlayerStatsProvider;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
 /**
  * Part of saoui
- * Fired when the SAO UI initialises it's party storage.
+ * Fired when the SAO UI initialises it's player stats retrieval fallback.
  * <p>
  * Temporary, future versions will (attempt to) fix inter-mod compatibilities.
  * Shouldn't be fired by other mods!! (unless you're really sure you know what you're doing)
@@ -14,10 +14,10 @@ import net.minecraftforge.fml.common.eventhandler.Event;
  *
  * @author Bluexin
  */
-public class EventInitParty extends Event {
-    private IParty implementation;
+public class EventInitStatsProvider extends Event {
+    private IPlayerStatsProvider implementation;
 
-    public EventInitParty(IParty implementation) {
+    public EventInitStatsProvider(IPlayerStatsProvider implementation) {
         this.implementation = implementation;
     }
 
@@ -26,16 +26,16 @@ public class EventInitParty extends Event {
      *
      * @return current implementation
      */
-    public IParty getImplementation() {
+    public IPlayerStatsProvider getImplementation() {
         return this.implementation;
     }
 
     /**
-     * Sets the implementation to be used by the SAO UI to retrieve information.
+     * Sets the implementation to be used by the SAO UI to retrieve information from.
      *
-     * @param party an instance to be used to store information about the party
+     * @param provider an instance to be used to retrieve information from
      */
-    public void setImplementation(IParty party) {
-        this.implementation = party;
+    public void setImplementation(IPlayerStatsProvider provider) {
+        this.implementation = provider;
     }
 }

@@ -1,6 +1,7 @@
 package com.saomc;
 
 import com.saomc.api.events.EventInitParty;
+import com.saomc.api.events.EventInitStatsProvider;
 import com.saomc.events.ConfigHandler;
 import com.saomc.events.EventCore;
 import com.saomc.events.FriendsHandler;
@@ -8,7 +9,9 @@ import com.saomc.screens.window.Window;
 import com.saomc.screens.window.WindowView;
 import com.saomc.social.party.DefaultParty;
 import com.saomc.social.party.PartyHelper;
+import com.saomc.util.DefaultStatsProvider;
 import com.saomc.util.OptionCore;
+import com.saomc.util.PlayerStats;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
@@ -47,6 +50,9 @@ public class SAOCore {
         final EventInitParty e = new EventInitParty(new DefaultParty());
         MinecraftForge.EVENT_BUS.post(e);
         PartyHelper.init(e.getImplementation());
+        final EventInitStatsProvider s = new EventInitStatsProvider(new DefaultStatsProvider());
+        MinecraftForge.EVENT_BUS.post(s);
+        PlayerStats.init(s.getImplementation());
     }
 
     @SuppressWarnings("unchecked")
