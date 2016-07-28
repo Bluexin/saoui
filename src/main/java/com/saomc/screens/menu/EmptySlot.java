@@ -1,5 +1,6 @@
 package com.saomc.screens.menu;
 
+import com.saomc.api.screens.IIcon;
 import com.saomc.screens.ParentElement;
 import com.saomc.util.ColorUtil;
 import com.saomc.util.IconCore;
@@ -23,7 +24,7 @@ public final class EmptySlot extends Slots {
     }
 
     @Override
-    protected IconCore getIcon() {
+    protected IIcon getIcon() {
         return IconCore.NONE;
     }
 

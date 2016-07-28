@@ -1,4 +1,4 @@
-package com.saomc.screens.buttons;
+package com.saomc.api.screens;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;

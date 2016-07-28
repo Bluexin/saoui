@@ -1,6 +1,6 @@
 package com.saomc.screens;
 
-import com.saomc.screens.buttons.Actions;
+import com.saomc.api.screens.Actions;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -61,7 +61,7 @@ public class ContainerGUI extends Elements {
 
             if (elements.get(i).mouseOver(cursorX, cursorY))
                 if (elements.get(i).mousePressed(mc, cursorX, cursorY, button))
-                    actionPerformed(elements.get(i), Actions.getAction(button, true), button);
+                    if (i < elements.size()) actionPerformed(elements.get(i), Actions.getAction(button, true), button);
         }
 
         return super.mousePressed(mc, cursorX, cursorY, button);

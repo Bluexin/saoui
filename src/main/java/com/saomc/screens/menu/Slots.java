@@ -1,6 +1,7 @@
 package com.saomc.screens.menu;
 
 import com.saomc.GLCore;
+import com.saomc.api.screens.IIcon;
 import com.saomc.screens.ParentElement;
 import com.saomc.screens.buttons.ButtonSlotGUI;
 import com.saomc.screens.inventory.InventoryCore;
@@ -40,7 +41,7 @@ public class Slots extends ButtonSlotGUI {
         super.icon = this.getIcon();
     }
 
-    public static IconCore getIcon(ItemStack stack) {
+    public static IIcon getIcon(ItemStack stack) {
         if (stack != null) {
             if (InventoryCore.WEAPONS.isFine(stack, false)) return IconCore.EQUIPMENT;
             else if (InventoryCore.EQUIPMENT.isFine(stack, false)) return IconCore.ARMOR;
@@ -49,7 +50,7 @@ public class Slots extends ButtonSlotGUI {
         } else return IconCore.HELP;
     }
 
-    protected IconCore getIcon() {
+    protected IIcon getIcon() {
         return getIcon(buttonSlot.getStack());
     }
 

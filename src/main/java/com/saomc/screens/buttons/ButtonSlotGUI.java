@@ -1,6 +1,7 @@
 package com.saomc.screens.buttons;
 
 import com.saomc.GLCore;
+import com.saomc.api.screens.IIcon;
 import com.saomc.resources.StringNames;
 import com.saomc.screens.Elements;
 import com.saomc.screens.ParentElement;
@@ -15,14 +16,14 @@ public class ButtonSlotGUI extends Elements {
     private final Categories id;
 
     public String caption;
-    public IconCore icon;
+    public IIcon icon;
     public boolean highlight;
 
-    public ButtonSlotGUI(ParentElement gui, Categories saoID, int xPos, int yPos, String string, IconCore iconCore) {
+    public ButtonSlotGUI(ParentElement gui, Categories saoID, int xPos, int yPos, String string, IIcon icon) {
         super(gui, xPos, yPos, 100, 20);
         id = saoID;
         caption = string;
-        icon = iconCore;
+        this.icon = icon;
         highlight = false;
     }
 

@@ -1,11 +1,11 @@
 package com.saomc.screens.window;
 
 import com.saomc.GLCore;
+import com.saomc.api.screens.Actions;
 import com.saomc.colorstates.CursorStatus;
 import com.saomc.resources.StringNames;
 import com.saomc.screens.Elements;
 import com.saomc.screens.ParentElement;
-import com.saomc.screens.buttons.Actions;
 import com.saomc.util.ColorUtil;
 import com.saomc.util.OptionCore;
 import net.minecraft.client.gui.GuiScreen;

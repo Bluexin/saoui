@@ -5,7 +5,7 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 
 /**
  * Part of saoui
- * Fired when the SAO UI initialises it's player stats retrieval fallback.
+ * Fired when the SAO UI initialises its player stats retrieval fallback.
  * <p>
  * Temporary, future versions will (attempt to) fix inter-mod compatibilities.
  * Shouldn't be fired by other mods!! (unless you're really sure you know what you're doing)

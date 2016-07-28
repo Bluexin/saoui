@@ -1,6 +1,7 @@
 package com.saomc.screens.buttons;
 
 import com.saomc.GLCore;
+import com.saomc.api.screens.IIcon;
 import com.saomc.resources.StringNames;
 import com.saomc.screens.Elements;
 import com.saomc.screens.ParentElement;
@@ -18,27 +19,27 @@ public class ButtonGUI extends Elements {
     private final Categories id;
 
     public String caption;
-    public IconCore icon;
+    public IIcon icon;
     public boolean highlight;
 
-    protected ButtonGUI(ParentElement gui, Categories saoID, int xPos, int yPos, int w, int h, String string, IconCore iconCore) {
+    protected ButtonGUI(ParentElement gui, Categories saoID, int xPos, int yPos, int w, int h, String string, IIcon icon) {
         super(gui, xPos, yPos, w, h);
         id = saoID;
         caption = string;
-        icon = iconCore;
+        this.icon = icon;
         highlight = false;
     }
 
-    private ButtonGUI(ParentElement gui, Categories saoID, int xPos, int yPos, int w, String string, IconCore iconCore) {
-        this(gui, saoID, xPos, yPos, w, 20, string, iconCore);
+    private ButtonGUI(ParentElement gui, Categories saoID, int xPos, int yPos, int w, String string, IIcon icon) {
+        this(gui, saoID, xPos, yPos, w, 20, string, icon);
     }
 
-    public ButtonGUI(ParentElement gui, Categories saoID, int xPos, int yPos, String string, IconCore iconCore) {
-        this(gui, saoID, xPos, yPos, 100, string, iconCore);
+    public ButtonGUI(ParentElement gui, Categories saoID, int xPos, int yPos, String string, IIcon icon) {
+        this(gui, saoID, xPos, yPos, 100, string, icon);
     }
 
-    public ButtonGUI(ParentElement gui, Categories saoID, int xPos, int yPos, String string, IconCore iconCore, boolean highlighted) {
-        this(gui, saoID, xPos, yPos, 100, string, iconCore);
+    public ButtonGUI(ParentElement gui, Categories saoID, int xPos, int yPos, String string, IIcon icon, boolean highlighted) {
+        this(gui, saoID, xPos, yPos, 100, string, icon);
         highlight = highlighted;
     }
 

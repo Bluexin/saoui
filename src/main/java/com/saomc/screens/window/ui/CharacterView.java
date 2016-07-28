@@ -1,12 +1,15 @@
 package com.saomc.screens.window.ui;
 
 import com.saomc.GLCore;
+import com.saomc.api.entity.ISkill;
+import com.saomc.api.screens.Actions;
 import com.saomc.resources.StringNames;
 import com.saomc.screens.Elements;
 import com.saomc.screens.ParentElement;
 import com.saomc.screens.menu.Slots;
 import com.saomc.util.ColorUtil;
 import com.saomc.util.OptionCore;
+import com.saomc.util.SkillList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.entity.EntityLivingBase;
@@ -76,26 +79,36 @@ public class CharacterView extends Elements {
             final int width2 = (width / 2) - 14;
             final int height2 = (height / 2) - 14;
 
+            ISkill[] skills = SkillList.instance().stream().filter(ISkill::shouldShowInRing).toArray(ISkill[]::new);
+
             for (int angle = 0; angle < 12; angle++) {
                 final int x = (int) (left + Math.sin(Math.toRadians(angle * 30)) * width2);
                 final int y = (int) (top + Math.cos(Math.toRadians(angle * 30)) * height2);
 
-                final boolean hovered = ((cursorX >= x - 10) && (cursorY >= y - 10) && (cursorX <= x + 10) && (cursorY <= y + 10));
+                final boolean hovered = ((cursorX >= x - 10) && (cursorY >= y - 10) && (cursorX <= x + 10) && (cursorY <= y + 10)) || (SkillList.instance().isRingShown() && angle < skills.length && skills[angle].shouldHighlight());
 
                 GLCore.glBindTexture(OptionCore.SAO_UI.getValue() ? StringNames.gui : StringNames.guiCustom);
                 GLCore.glColorRGBA((hovered ? ColorUtil.HOVER_COLOR : ColorUtil.DEFAULT_FONT_COLOR).multiplyAlpha(visibility));
-                GLCore.glTexturedRect(x - 10, y - 10, 0, 25, 20, 20);
 
-                if ((angle + 4 < 9) || (angle + 4 >= 12)) {
-                    final int index = (angle + 4 >= 12 ? (angle - 8) % 9 : (angle + 4) % 9);
-                    final Slot slot = character.inventoryContainer.getSlotFromInventory(character.inventory, index);
+                if (SkillList.instance().isRingShown()) {
+                    if (angle < skills.length) {
+                        GLCore.glTexturedRect(x - 10, y - 10, 169, 25, 20, 20);
+                        skills[angle].getIcon().glDraw(x - 8, y - 8);
+                        if (hovered) clickIndex = angle;
+                    } else GLCore.glTexturedRect(x - 10, y - 10, 0, 25, 20, 20);
+                } else {
+                    if ((angle + 4 < 9) || (angle + 4 >= 12)) {
+                        final int index = (angle + 4 >= 12 ? (angle - 8) % 9 : (angle + 4) % 9);
+                        final Slot slot = character.inventoryContainer.getSlotFromInventory(character.inventory, index);
 
-                    if ((slot.getHasStack()) && (slot.getStack().getItem() != null)) {
-                        GLCore.glColorRGBA((hovered ? ColorUtil.HOVER_FONT_COLOR : ColorUtil.DEFAULT_COLOR).multiplyAlpha(visibility));
-                        Slots.getIcon(slot.getStack()).glDraw(x - 8, y - 8);
-                    }
+                        if (slot != null && slot.getHasStack() && slot.getStack().getItem() != null) {
+                            GLCore.glTexturedRect(x - 10, y - 10, 169, 25, 20, 20);
+                            GLCore.glColorRGBA((hovered ? ColorUtil.HOVER_FONT_COLOR : ColorUtil.DEFAULT_COLOR).multiplyAlpha(visibility));
+                            Slots.getIcon(slot.getStack()).glDraw(x - 8, y - 8);
+                        } else GLCore.glTexturedRect(x - 10, y - 10, 0, 25, 20, 20);
 
-                    if (hovered) clickIndex = index;
+                        if (hovered) clickIndex = index;
+                    } else GLCore.glTexturedRect(x - 10, y - 10, 0, 25, 20, 20);
                 }
             }
         }
@@ -114,8 +127,10 @@ public class CharacterView extends Elements {
 
     @Override
     public boolean mousePressed(Minecraft mc, int cursorX, int cursorY, int button) {
-        if (clickIndex >= 0 && button == 0 && Objects.equals(character, mc.thePlayer)) {
-            character.inventory.currentItem = clickIndex;
+        if (clickIndex >= 0 && mc.thePlayer.equals(character)) {
+            if (SkillList.instance().isRingShown())
+                SkillList.instance().hitInSkillRing(clickIndex, mc, null, Actions.getAction(button, true));
+            else if (button == 0) character.inventory.currentItem = clickIndex;
             return true;
         }
 

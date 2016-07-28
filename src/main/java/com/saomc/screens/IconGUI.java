@@ -2,6 +2,7 @@ package com.saomc.screens;
 
 import com.saomc.GLCore;
 import com.saomc.SoundCore;
+import com.saomc.api.screens.IIcon;
 import com.saomc.resources.StringNames;
 import com.saomc.screens.menu.Categories;
 import com.saomc.util.ColorUtil;
@@ -18,12 +19,12 @@ public class IconGUI extends Elements {
     private final Categories id;
     public boolean highlight;
     public ColorUtil bgColor, disabledMask;
-    private IconCore icon;
+    private IIcon icon;
 
-    public IconGUI(ParentElement gui, Categories saoID, int xPos, int yPos, IconCore iconCore) {
+    public IconGUI(ParentElement gui, Categories saoID, int xPos, int yPos, IIcon icon) {
         super(gui, xPos, yPos, 20, 20);
         id = saoID;
-        icon = iconCore;
+        this.icon = icon;
         highlight = false;
         bgColor = ColorUtil.DEFAULT_COLOR;
         disabledMask = ColorUtil.DISABLED_MASK;

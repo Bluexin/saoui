@@ -1,7 +1,7 @@
 package com.saomc.screens;
 
 import com.saomc.SoundCore;
-import com.saomc.screens.buttons.Actions;
+import com.saomc.api.screens.Actions;
 import com.saomc.screens.menu.Categories;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundHandler;

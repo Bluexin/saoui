@@ -1,10 +1,13 @@
 package com.saomc.util;
 
+import com.saomc.api.entity.ISkill;
+import com.saomc.api.screens.Actions;
+import com.saomc.api.screens.IIcon;
 import com.saomc.events.EventHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiInventory;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.client.settings.KeyBinding;
-import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -12,7 +15,7 @@ import java.util.function.BiConsumer;
 import java.util.function.BooleanSupplier;
 
 @SideOnly(Side.CLIENT)
-public enum Skills {
+public enum DefaultSkills implements ISkill {
     SPRINTING(IconCore.SPRINTING, () -> EventHandler.IS_SPRINTING, (mc, parent) -> EventHandler.IS_SPRINTING = !EventHandler.IS_SPRINTING),
     SNEAKING(IconCore.SNEAKING, () -> EventHandler.IS_SNEAKING, (mc, parent) -> EventHandler.IS_SNEAKING = !EventHandler.IS_SNEAKING),
     CRAFTING(IconCore.CRAFTING, () -> false, (mc, parent) -> {
@@ -27,39 +30,47 @@ public enum Skills {
         }
     });
 
-    public final IconCore icon;
+    private final IIcon icon;
     private final BooleanSupplier shouldHighlight;
     private final BiConsumer<Minecraft, GuiInventory> action;
+    private boolean showOnRing = true;
 
-    Skills(IconCore iconCore, BooleanSupplier shouldHighlight, BiConsumer<Minecraft, GuiInventory> action) {
-        this.icon = iconCore;
+    DefaultSkills(IIcon icon, BooleanSupplier shouldHighlight, BiConsumer<Minecraft, GuiInventory> action) {
+        this.icon = icon;
         this.shouldHighlight = shouldHighlight;
         this.action = action;
     }
 
+    @Override
     public final String toString() {
         final String name = name();
 
-        return I18n.translateToLocal("skill" + name.charAt(0) + name.substring(1, name.length()).toLowerCase());
+        return I18n.format("skill" + name.charAt(0) + name.substring(1, name.length()).toLowerCase());
     }
 
-    /**
-     * Whether this skill's button should highlight or not.
-     *
-     * @return whether it should be highlighted
-     */
+    @Override
     public boolean shouldHighlight() {
         return shouldHighlight.getAsBoolean();
-    } // Doing it this way might come in handy when building an API
+    }
 
-    /**
-     * Activate this skill.
-     *
-     * @param mc     The Minecraft instance
-     * @param parent The parent gui
-     */
-    public void activate(Minecraft mc, GuiInventory parent) {
+    @Override
+    public boolean shouldShowInRing() {
+        return showOnRing;
+    }
+
+    @Override
+    public void activate(Minecraft mc, GuiInventory parent, Actions action) {
         this.action.accept(mc, parent);
+    }
+
+    @Override
+    public IIcon getIcon() {
+        return icon;
+    }
+
+    @Override
+    public void setShowOnRing(boolean showOnRing) {
+        this.showOnRing = showOnRing;
     }
 
 }

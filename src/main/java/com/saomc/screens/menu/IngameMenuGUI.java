@@ -2,10 +2,14 @@ package com.saomc.screens.menu;
 
 import baubles.api.BaublesApi;
 import com.saomc.SoundCore;
+import com.saomc.api.screens.Actions;
 import com.saomc.events.ConfigHandler;
 import com.saomc.events.FriendsHandler;
 import com.saomc.screens.*;
-import com.saomc.screens.buttons.*;
+import com.saomc.screens.buttons.ButtonGUI;
+import com.saomc.screens.buttons.ButtonState;
+import com.saomc.screens.buttons.OptionButton;
+import com.saomc.screens.buttons.SkillButton;
 import com.saomc.screens.ingame.IngameGUI;
 import com.saomc.screens.inventory.InventoryCore;
 import com.saomc.screens.inventory.InventoryGUI;
@@ -186,7 +190,7 @@ public class IngameMenuGUI extends ScreenGUI {
                     inventory.handleMouseClick(mc, slot.getSlot(), slot.getSlotNumber(), 0, ClickType.THROW);
             }
         } else if (id == Categories.SKILL && element instanceof SkillButton) {
-            ((SkillButton) element).action(mc, parentInv);
+            ((SkillButton) element).action(mc, parentInv, action);
         } else if (id == Categories.INVITE_PLAYER && element instanceof ButtonGUI) {
             final String name = ((ButtonGUI) element).caption;
 
@@ -410,7 +414,7 @@ public class IngameMenuGUI extends ScreenGUI {
             menu = new ListGUI(element, menuOffsetX, menuOffsetY, 100, 60);
 
             final MenuGUI mnu = menu;
-            Stream.of(Skills.values()).forEach(skill -> mnu.elements.add(new SkillButton(mnu, 0, 0, skill)));
+            SkillList.instance().forEach(skill -> mnu.elements.add(new SkillButton(mnu, 0, 0, skill)));
         }
         //Profile -> Equipment
         else if (id == Categories.TOOLS) { // TODO: Some optimization could be done here. Laterz.

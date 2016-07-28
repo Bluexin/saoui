@@ -1,11 +1,11 @@
 package com.saomc.screens.death;
 
 import com.saomc.GLCore;
+import com.saomc.api.screens.Actions;
 import com.saomc.colorstates.CursorStatus;
 import com.saomc.events.ConfigHandler;
 import com.saomc.screens.Alert;
 import com.saomc.screens.Elements;
-import com.saomc.screens.buttons.Actions;
 import com.saomc.screens.window.ScreenGUI;
 import com.saomc.util.ColorUtil;
 import net.minecraft.client.gui.GuiButton;
