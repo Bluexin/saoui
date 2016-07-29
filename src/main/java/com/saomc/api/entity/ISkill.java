@@ -56,7 +56,7 @@ public interface ISkill {
 
     /**
      * Gets an end-user-friendly name for this skill.
-     * Should be already localized.
+     * Will get localized if a key exists for it.
      *
      * @return a name for this skill to display to the end-user
      */
