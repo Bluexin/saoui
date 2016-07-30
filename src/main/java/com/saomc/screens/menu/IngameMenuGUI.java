@@ -194,7 +194,7 @@ public class IngameMenuGUI extends ScreenGUI {
         } else if (id == Categories.INVITE_PLAYER && element instanceof ButtonGUI) {
             final String name = ((ButtonGUI) element).caption;
 
-            PartyHelper.instance().invite(mc, name);
+            PartyHelper.instance().invite(mc, StaticPlayerHelper.findOnlinePlayer(mc, name));
         } else if (id == Categories.DISSOLVE) {
             element.enabled = false;
 
@@ -479,7 +479,7 @@ public class IngameMenuGUI extends ScreenGUI {
 
             final MenuGUI mnu = menu;
             if (StaticPlayerHelper.listOnlinePlayers(mc) != null)
-                StaticPlayerHelper.listOnlinePlayers(mc, true, 5).stream().map(StaticPlayerHelper::getName).forEach(name -> {
+                StaticPlayerHelper.listOnlinePlayers(mc, 5).stream().map(StaticPlayerHelper::getName).forEach(name -> {
                     final ButtonGUI button = new ButtonState(mnu, Categories.INVITE_PLAYER, 0, 0, name, IconCore.INVITE, (mc1, button1) -> !PartyHelper.instance().isMember(button1.caption));
                     button.enabled = !PartyHelper.instance().isMember(name);
                     mnu.elements.add(button);

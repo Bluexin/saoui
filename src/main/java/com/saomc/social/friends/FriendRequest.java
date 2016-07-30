@@ -22,6 +22,7 @@ public final class FriendRequest {
         return friendName.equals(name);
     }
 
+    @Override
     public final boolean equals(Object object) {
         return object instanceof FriendRequest ? equals((FriendRequest) object) : equals(String.valueOf(object));
     }

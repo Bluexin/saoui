@@ -8,8 +8,8 @@ import com.saomc.social.StaticPlayerHelper;
 import com.saomc.social.friends.FriendRequest;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.text.translation.I18n;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
 import java.io.File;
@@ -26,7 +26,6 @@ import java.util.stream.Stream;
  * @author Bluexin
  */
 public class FriendsHandler {
-
 
     private static FriendsHandler instance;
     private final File friendsFile;
@@ -86,21 +85,21 @@ public class FriendsHandler {
             for (final String name : names)
                 if (!friendRequests.contains(new FriendRequest(name, 10000)) && !isFriend(name)) {
                     friendRequests.add(new FriendRequest(name, 10000));
-                    new Command(CommandType.ADD_FRIEND_REQUEST, name).send(mc);
+                    new Command(CommandType.ADD_FRIEND_REQUEST, StaticPlayerHelper.findOnlinePlayer(mc, name)).send(mc);
                 }
         }
     }
 
-    public boolean addFriends(String... names) {
+    public boolean addFriends(EntityPlayer... players) {
         friends = listFriends();
         final ArrayList<String> newNames = new ArrayList<>();
 
-        Stream.of(names).forEach(name -> {
-            if (Stream.of(friends).noneMatch(friend -> friend.equals(name))) newNames.add(name);
+        Stream.of(players).map(EntityPlayer::getDisplayNameString).forEach(player -> {
+            if (Stream.of(friends).noneMatch(friend -> friend.equals(player))) newNames.add(player);
         });
 
         String[] bb = new String[newNames.size()];
-        System.arraycopy(newNames.toArray(), 0, bb, 0, bb.length);
+        System.arraycopy(newNames.toArray(new String[0]), 0, bb, 0, bb.length);
         return newNames.size() <= 0 || addRawFriends(bb);
     }
 
@@ -154,26 +153,26 @@ public class FriendsHandler {
         }
     }
 
-    public void acceptAddFriend(String username) {
+    public void acceptAddFriend(EntityPlayer player) {
         synchronized (friendRequests) {
             int index = -1;
 
             for (int i = 0; i < friendRequests.size(); i++)
-                if (friendRequests.get(i).equals(username)) {
+                if (friendRequests.get(i).equals(player.getDisplayNameString())) {
                     index = i;
                     break;
                 }
 
-            if (index >= 0 && (isFriend(username) || addFriends(username))) friendRequests.remove(index);
+            if (index >= 0 && (isFriend(player) || addFriends(player))) friendRequests.remove(index);
         }
     }
 
-    public void cancelAddFriend(String username) {
+    public void cancelAddFriend(EntityPlayer player) {
         synchronized (friendRequests) {
             int index = -1;
 
             for (int i = 0; i < friendRequests.size(); i++)
-                if (friendRequests.get(i).equals(username)) {
+                if (friendRequests.get(i).equals(player.getDisplayNameString())) {
                     index = i;
                     break;
                 }
@@ -182,19 +181,19 @@ public class FriendsHandler {
         }
     }
 
-    public void addFriendRequest(Minecraft mc, String username) {
-        if (!FriendsHandler.instance().isFriend(username)) {
+    public void addFriendRequest(Minecraft mc, EntityPlayer player) {
+        if (!FriendsHandler.instance().isFriend(player)) {
             final GuiScreen keepScreen = mc.currentScreen;
             final boolean ingameFocus = mc.inGameHasFocus;
 
-            final String text = I18n.translateToLocalFormatted(ConfigHandler._FRIEND_REQUEST_TEXT, username);
+            final String text = I18n.format(ConfigHandler._FRIEND_REQUEST_TEXT, player.getDisplayNameString());
 
             mc.displayGuiScreen(WindowView.viewConfirm(ConfigHandler._FRIEND_REQUEST_TITLE, text, (element, action, data) -> {
                 final Categories id = element.ID();
 
-                if (id == Categories.CONFIRM && (FriendsHandler.instance().isFriend(username) || FriendsHandler.instance().addFriends(username)))
-                    new Command(CommandType.ACCEPT_ADD_FRIEND, username).send(mc);
-                else new Command(CommandType.CANCEL_ADD_FRIEND, username).send(mc);
+                if (id == Categories.CONFIRM && (FriendsHandler.instance().isFriend(player) || FriendsHandler.instance().addFriends(player)))
+                    new Command(CommandType.ACCEPT_ADD_FRIEND, player).send(mc);
+                else new Command(CommandType.CANCEL_ADD_FRIEND, player).send(mc);
 
                 mc.displayGuiScreen(keepScreen);
 
@@ -203,6 +202,6 @@ public class FriendsHandler {
             }));
 
             if (ingameFocus) mc.setIngameNotInFocus();
-        } else new Command(CommandType.ACCEPT_ADD_FRIEND, username).send(mc);
+        } else new Command(CommandType.ACCEPT_ADD_FRIEND, player).send(mc);
     }
 }

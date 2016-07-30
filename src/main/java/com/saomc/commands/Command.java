@@ -4,6 +4,7 @@ import com.saomc.social.StaticPlayerHelper;
 import com.saomc.util.OptionCore;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.entity.player.EntityPlayer;
 
 import java.util.Arrays;
 import java.util.MissingFormatArgumentException;
@@ -15,24 +16,24 @@ import java.util.MissingFormatArgumentException;
  */
 public class Command {
     private final CommandType type;
-    private final String from;
-    private final String to;
+    private final EntityPlayer from;
+    private final EntityPlayer to;
     private final String[] args;
 
     private Command(String raw) {
         if (!raw.contains("$")) throw new MissingFormatArgumentException("<username> not found in \"" + raw + '"');
         if (!raw.contains(CommandType.PREFIX) || !raw.contains(CommandType.SUFFIX))
             throw new MissingFormatArgumentException("invalid command: \"" + raw + '"');
-        this.from = raw.substring(raw.indexOf('$') + 1, raw.lastIndexOf('$'));
+        this.from = Minecraft.getMinecraft().theWorld.getPlayerEntityByName(raw.substring(raw.indexOf('$') + 1, raw.lastIndexOf('$')));
         this.type = CommandType.getCommand(raw);
-        this.to = StaticPlayerHelper.getName(Minecraft.getMinecraft());
+        this.to = Minecraft.getMinecraft().thePlayer;
         this.args = getContent(raw);
     }
 
-    public Command(CommandType type, String to, String... args) {
+    public Command(CommandType type, EntityPlayer to, String... args) {
         this.type = type;
         this.to = to;
-        this.from = StaticPlayerHelper.getName(Minecraft.getMinecraft());
+        this.from = Minecraft.getMinecraft().thePlayer;
         this.args = args;
     }
 
@@ -61,11 +62,11 @@ public class Command {
         return type;
     }
 
-    public String getFrom() {
+    public EntityPlayer getFrom() {
         return from;
     }
 
-    public String getTo() {
+    public EntityPlayer getTo() {
         return to;
     }
 

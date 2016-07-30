@@ -1,12 +1,10 @@
 package com.saomc.social;
 
-import com.saomc.GLCore;
 import com.saomc.util.OptionCore;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.math.AxisAlignedBB;
 
 import java.util.HashMap;
 import java.util.List;
@@ -21,31 +19,20 @@ import java.util.UUID;
 public class StaticPlayerHelper {
     public static final float HEALTH_ANIMATION_FACTOR = 0.075F;
     public static final float HEALTH_FRAME_FACTOR = HEALTH_ANIMATION_FACTOR * HEALTH_ANIMATION_FACTOR * 0x40 * 0x64;
-    public static final double MAX_RANGE = 512.0D;
     public static Map<UUID, Float> healthSmooth = new HashMap<>();
     public static Map<UUID, Float> hungerSmooth = new HashMap<>();
 
-    public static List<EntityPlayer> listOnlinePlayers(Minecraft mc, boolean search, double range) {
-        if (!search) range = MAX_RANGE;
-
-        final AxisAlignedBB box = GLCore.fromBounds(
-                mc.thePlayer.posX - range, mc.thePlayer.posY - range, mc.thePlayer.posZ - range,
-                mc.thePlayer.posX + range, mc.thePlayer.posY + range, mc.thePlayer.posZ + range
-        );
-
-        @SuppressWarnings("unchecked")
-        final List<EntityPlayer> entities = mc.theWorld.getEntitiesWithinAABB(EntityPlayer.class, box);
-
-        return entities;
+    public static List<EntityPlayer> listOnlinePlayers(Minecraft mc, double range) {
+        //noinspection ConstantConditions -> how could 'p' be null?
+        return mc.theWorld.getPlayers(EntityPlayer.class, p -> mc.thePlayer.getDistanceToEntity(p) <= range);
     }
 
-    @SuppressWarnings("unchecked")
     public static List<EntityPlayer> listOnlinePlayers(Minecraft mc) {
-        return mc.theWorld.getEntities(EntityPlayer.class, (o) -> true);
+        return mc.theWorld.playerEntities;
     }
 
     public static EntityPlayer findOnlinePlayer(Minecraft mc, String username) {
-        return listOnlinePlayers(mc).stream().filter(player -> getName(player).equals(username)).findAny().orElse(null);
+        return mc.theWorld.getPlayerEntityByName(username);
     }
 
     public static boolean[] isOnline(Minecraft mc, String[] names) { // TODO: update a boolean[] upon player join server? (/!\ client-side)
@@ -95,6 +82,10 @@ public class StaticPlayerHelper {
 
             if (healthSmooth.containsKey(uuid)) {
                 float healthValue = healthSmooth.get(uuid);
+                if (healthValue > healthReal) {
+                    healthValue = healthReal;
+                    healthSmooth.put(uuid, healthReal);
+                }
 
                 if ((healthReal <= 0) && (entity instanceof EntityLivingBase)) {
                     final float value = (float) (18 - ((EntityLivingBase) entity).deathTime) / 18;
@@ -123,30 +114,34 @@ public class StaticPlayerHelper {
     public static float getHungerFract(final Minecraft mc, final Entity entity, final float time) {
         if (!(entity instanceof EntityPlayer)) return 1.0F;
         EntityPlayer player = (EntityPlayer) entity;
-        final float hunger;
+        final float hungerReal;
         if (OptionCore.SMOOTH_HEALTH.getValue()) {
             final UUID uuid = entity.getUniqueID();
 
-            hunger = player.getFoodStats().getFoodLevel();
+            hungerReal = player.getFoodStats().getFoodLevel();
 
             if (hungerSmooth.containsKey(uuid)) {
                 float hungerValue = hungerSmooth.get(uuid);
+                if (hungerValue > hungerReal) {
+                    hungerValue = hungerReal;
+                    hungerSmooth.put(uuid, hungerReal);
+                }
 
-                if (hunger <= 0) {
+                if (hungerReal <= 0) {
                     final float value = (float) (18 - player.deathTime) / 18;
 
                     if (value <= 0) hungerSmooth.remove(uuid);
 
                     return hungerValue * value;
-                } else if (Math.round(hungerValue * 10) != Math.round(hunger * 10))
-                    hungerValue = hungerValue + (hunger - hungerValue) * (gameTimeDelay(mc, time) * HEALTH_ANIMATION_FACTOR);
-                else hungerValue = hunger;
+                } else if (Math.round(hungerValue * 10) != Math.round(hungerReal * 10))
+                    hungerValue = hungerValue + (hungerReal - hungerValue) * (gameTimeDelay(mc, time) * HEALTH_ANIMATION_FACTOR);
+                else hungerValue = hungerReal;
 
                 hungerSmooth.put(uuid, hungerValue);
                 return hungerValue / 20.0F;
             } else {
-                hungerSmooth.put(uuid, hunger);
-                return hunger / 20.0F;
+                hungerSmooth.put(uuid, hungerReal);
+                return hungerReal / 20.0F;
             }
         } else return player.getFoodStats().getFoodLevel() / 20.0F;
     }

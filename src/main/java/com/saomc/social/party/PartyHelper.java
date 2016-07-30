@@ -14,7 +14,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 
 import java.util.ArrayList;
@@ -29,7 +28,7 @@ import java.util.stream.Stream;
 public class PartyHelper {
     private static PartyHelper instance;
     private final IParty party;
-    private List<String> invited = new ArrayList<>();
+    private List<EntityPlayer> invited = new ArrayList<>();
 
     private PartyHelper(IParty party) {
         this.party = party;
@@ -44,12 +43,12 @@ public class PartyHelper {
         else throw new IllegalStateException("PartyHelper isn't initialized!");
     }
 
-    public void receiveInvite(Minecraft mc, String username, String... args) {
+    public void receiveInvite(Minecraft mc, EntityPlayer target, String... args) {
         if (party.isParty()) {
             final GuiScreen keepScreen = mc.currentScreen;
             final boolean ingameFocus = mc.inGameHasFocus;
 
-            final String text = I18n.format(ConfigHandler._PARTY_INVITATION_TEXT, username);
+            final String text = I18n.format(ConfigHandler._PARTY_INVITATION_TEXT, target.getDisplayNameString());
 
             mc.displayGuiScreen(WindowView.viewConfirm(ConfigHandler._PARTY_INVITATION_TITLE, text, (element, action, data) -> {
                 final Categories id = element.ID();
@@ -61,10 +60,10 @@ public class PartyHelper {
                             party.addMember(mc.thePlayer);
                         }
                     } else party.dissolve(); // TODO: check when this happens... This shouldn't ever happen!
-                    mc.thePlayer.addChatMessage(new TextComponentString(I18n.format("ptJoin", username))); // Might change that later
+                    mc.thePlayer.addChatMessage(new TextComponentTranslation("ptJoin", target.getDisplayName())); // Might change that later
 
-                    new Command(CommandType.CONFIRM_INVITE_PARTY, username).send(mc);
-                } else new Command(CommandType.CANCEL_INVITE_PARTY, username).send(mc);
+                    new Command(CommandType.CONFIRM_INVITE_PARTY, target).send(mc);
+                } else new Command(CommandType.CANCEL_INVITE_PARTY, target).send(mc);
 
                 mc.displayGuiScreen(keepScreen);
 
@@ -92,55 +91,55 @@ public class PartyHelper {
         return player.equals(party.getLeader());
     }
 
-    private void addPlayer(Minecraft mc, String username) {
-        if (this.party.addMember(StaticPlayerHelper.findOnlinePlayer(mc, username))) {
-            mc.thePlayer.addChatMessage(new TextComponentTranslation("ptJoin", username));
+    private void addPlayer(Minecraft mc, EntityPlayer player) {
+        if (this.party.addMember(player)) {
+            mc.thePlayer.addChatMessage(new TextComponentTranslation("ptJoin", player.getDisplayName()));
             if (this.party.getLeader().equals(mc.thePlayer)) {
-                party.getMembers().stream().filter(pl -> !pl.equals(mc.thePlayer)).forEach(member -> new Command(CommandType.UPDATE_PARTY, member.getDisplayNameString(), '+' + username).send(mc));
-                party.getMembers().stream().filter(pl -> !pl.equals(mc.thePlayer)).forEach(member -> new Command(CommandType.UPDATE_PARTY, username, '+' + member.getDisplayNameString()).send(mc));
+                party.getMembers().stream().filter(pl -> !pl.equals(mc.thePlayer)).forEach(member -> new Command(CommandType.UPDATE_PARTY, member, '+' + player.getDisplayNameString()).send(mc));
+                party.getMembers().stream().filter(pl -> !pl.equals(mc.thePlayer)).forEach(member -> new Command(CommandType.UPDATE_PARTY, player, '+' + member.getDisplayNameString()).send(mc));
             }
         }
     }
 
-    private void removePlayer(Minecraft mc, String username) { // TODO: kick member
-        if (this.party.removeMember(StaticPlayerHelper.findOnlinePlayer(mc, username))) {
-            mc.thePlayer.addChatMessage(new TextComponentTranslation("ptLeft", username));
+    private void removePlayer(Minecraft mc, EntityPlayer player) { // TODO: kick member
+        if (this.party.removeMember(player)) {
+            mc.thePlayer.addChatMessage(new TextComponentTranslation("ptLeft", player.getDisplayName()));
             if (this.party.getLeader().equals(mc.thePlayer))
-                party.getMembers().stream().filter(pl -> pl.equals(mc.thePlayer)).forEach(member -> new Command(CommandType.UPDATE_PARTY, member.getDisplayNameString(), '-' + username).send(mc));
+                party.getMembers().stream().filter(pl -> pl.equals(mc.thePlayer)).forEach(member -> new Command(CommandType.UPDATE_PARTY, member, '-' + player.getDisplayNameString()).send(mc));
         }
     }
 
-    public void receiveUpdate(Minecraft mc, String username, String[] args) {
-        if (isLeader(username)) {
+    public void receiveUpdate(Minecraft mc, EntityPlayer player, String[] args) {
+        if (isLeader(player)) {
             for (String a : args) {
-                if (a.charAt(0) == '+') addPlayer(mc, a.substring(1));
-                else if (a.charAt(0) == '-') removePlayer(mc, a.substring(1));
+                if (a.charAt(0) == '+') addPlayer(mc, StaticPlayerHelper.findOnlinePlayer(mc, a.substring(1)));
+                else if (a.charAt(0) == '-') removePlayer(mc, StaticPlayerHelper.findOnlinePlayer(mc, a.substring(1)));
             }
         }
     }
 
-    public void invite(Minecraft mc, String username) {
-        if (!isMember(username)) {
-            invited.add(username);
-            new Command(CommandType.INVITE_TO_PARTY, username, hasParty() ? party.getLeader().getDisplayNameString() : StaticPlayerHelper.getName(mc)).send(mc);
+    public void invite(Minecraft mc, EntityPlayer player) {
+        if (!party.isInParty(player)) {
+            invited.add(player);
+            new Command(CommandType.INVITE_TO_PARTY, player, hasParty() ? party.getLeader().getDisplayNameString() : StaticPlayerHelper.getName(mc)).send(mc);
         }
     }
 
     public void sendDissolve(Minecraft mc) {
         if (hasParty()) {
             if (party.getLeader().equals(mc.thePlayer)) {
-                party.getMembers().stream().filter(pl -> pl.equals(mc.thePlayer)).forEach(member -> new Command(CommandType.DISSOLVE_PARTY, member.getDisplayNameString()).send(mc));
+                party.getMembers().stream().filter(pl -> pl.equals(mc.thePlayer)).forEach(member -> new Command(CommandType.DISSOLVE_PARTY, member).send(mc));
                 mc.thePlayer.addChatMessage(new TextComponentTranslation("ptDissolve"));
             } else {
-                new Command(CommandType.DISSOLVE_PARTY, party.getLeader().getDisplayNameString()).send(mc); // aka leave PT
+                new Command(CommandType.DISSOLVE_PARTY, party.getLeader()).send(mc); // aka leave PT
                 mc.thePlayer.addChatMessage(new TextComponentTranslation("ptLeave"));
             }
         }
     }
 
-    public void receiveDissolve(Minecraft mc, String username) {
-        if (party.getLeader().equals(mc.thePlayer)) removePlayer(mc, username);
-        else if (isLeader(username)) {
+    public void receiveDissolve(Minecraft mc, EntityPlayer player) {
+        if (party.getLeader().equals(mc.thePlayer)) removePlayer(mc, player);
+        else if (isLeader(player)) {
             final Window window = SAOCore.getWindow(mc);
 
             if (window != null && window.getTitle().equals(ConfigHandler._PARTY_INVITATION_TITLE) && window instanceof ConfirmGUI)
@@ -150,11 +149,11 @@ public class PartyHelper {
         }
     }
 
-    public void receiveConfirmation(Minecraft mc, String username, String... args) { // Keeping args for later (will be needed for auth/PT UUID system)
-        if (party.getLeader().equals(mc.thePlayer) && !isMember(username) && invited.contains(username)) {
-            addPlayer(mc, username);
-            invited.remove(username);
-        } else new Command(CommandType.DISSOLVE_PARTY, username).send(mc);
+    public void receiveConfirmation(Minecraft mc, EntityPlayer player, String... args) { // Keeping args for later (will be needed for auth/PT UUID system)
+        if (party.getLeader().equals(mc.thePlayer) && !party.isInParty(player) && invited.contains(player)) {
+            addPlayer(mc, player);
+            invited.remove(player);
+        } else new Command(CommandType.DISSOLVE_PARTY, player).send(mc);
     }
 
     public boolean hasParty() {
