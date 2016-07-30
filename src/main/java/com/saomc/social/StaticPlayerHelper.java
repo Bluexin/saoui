@@ -157,4 +157,8 @@ public class StaticPlayerHelper {
     private static int gameFPS(Minecraft mc) {
         return mc.getLimitFramerate();
     }
+
+    public static EntityPlayer thePlayer() {
+        return Minecraft.getMinecraft().thePlayer;
+    }
 }

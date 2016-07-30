@@ -1,7 +1,7 @@
 package com.saomc.events;
 
 import com.saomc.SoundCore;
-import com.saomc.commands.Command;
+import com.saomc.communication.Command;
 import net.minecraft.client.multiplayer.GuiConnecting;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;

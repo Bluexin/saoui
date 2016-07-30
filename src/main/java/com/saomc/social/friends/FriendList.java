@@ -22,9 +22,7 @@ public class FriendList extends ListGUI {
     private void init(Minecraft mc) {
         final List<EntityPlayer> list = StaticPlayerHelper.listOnlinePlayers(mc);
 
-        if (list.contains(mc.thePlayer)) {
-            list.remove(mc.thePlayer);
-        }
+        if (list.contains(mc.thePlayer)) list.remove(mc.thePlayer);
 
         elements.addAll(list.stream().map(player -> new FriendCore(this, 0, 0, StaticPlayerHelper.getName(player))).collect(Collectors.toList()));
     }

@@ -1,6 +1,5 @@
-package com.saomc.commands;
+package com.saomc.communication;
 
-import com.saomc.social.StaticPlayerHelper;
 import com.saomc.util.OptionCore;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
@@ -30,7 +29,7 @@ public class Command {
         this.args = getContent(raw);
     }
 
-    public Command(CommandType type, EntityPlayer to, String... args) {
+    Command(CommandType type, EntityPlayer to, String... args) {
         this.type = type;
         this.to = to;
         this.from = Minecraft.getMinecraft().thePlayer;
@@ -47,31 +46,19 @@ public class Command {
                 return false;
             }
             if (command.type != null) {
-                if (!command.from.equals(StaticPlayerHelper.getName(Minecraft.getMinecraft()))) command.activate();
+                if (!command.from.equals(Minecraft.getMinecraft().thePlayer)) command.activate();
                 return true;
             }
         }
         return false;
     }
 
-    public static String[] getContent(String data) {
+    private static String[] getContent(String data) {
         return !data.contains("{[") || !data.contains("]}") ? null : data.substring(data.indexOf("{[") + 2, data.indexOf("]}")).split(", ");
     }
 
-    public CommandType getType() {
-        return type;
-    }
-
-    public EntityPlayer getFrom() {
-        return from;
-    }
-
-    public EntityPlayer getTo() {
-        return to;
-    }
-
-    public String toChat() {
-        final String format = I18n.format("commands.message.usage");
+    private String toChat() {
+        final String format = I18n.format("communication.message.usage");
         final String cmd = format.substring(0, format.indexOf(' '));
 
         final String args = this.args != null ? Arrays.toString(this.args) : "[]";
@@ -79,12 +66,12 @@ public class Command {
         return cmd + ' ' + this.to + ' ' + this.type.toString() + " $" + this.from + "$ {" + args + '}';
     }
 
-    public void send(Minecraft mc) {
+    void send(Minecraft mc) {
         if (mc.thePlayer == null || !OptionCore.CLIENT_CHAT_PACKETS.getValue()) return;
         mc.thePlayer.sendChatMessage(this.toChat());
     }
 
     private void activate() {
-        type.action(Minecraft.getMinecraft(), from, args);
+        type.action(from, args);
     }
 }

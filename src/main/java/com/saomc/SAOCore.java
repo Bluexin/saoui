@@ -5,9 +5,9 @@ import com.saomc.api.events.EventInitSkills;
 import com.saomc.api.events.EventInitStatsProvider;
 import com.saomc.events.ConfigHandler;
 import com.saomc.events.EventCore;
-import com.saomc.events.FriendsHandler;
 import com.saomc.screens.window.Window;
 import com.saomc.screens.window.WindowView;
+import com.saomc.social.friends.FriendsHandler;
 import com.saomc.social.party.DefaultParty;
 import com.saomc.social.party.PartyHelper;
 import com.saomc.util.*;
@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 @Mod(modid = SAOCore.MODID, name = SAOCore.NAME, version = SAOCore.VERSION, clientSideOnly = true)
-//@SideOnly(Side.CLIENT)
 public class SAOCore {
     public static final String MODID = "saoui";
     public static final String NAME = "Sword Art Online UI";

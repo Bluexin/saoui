@@ -1,6 +1,5 @@
 package com.saomc.screens.window;
 
-import com.saomc.events.FriendsHandler;
 import com.saomc.screens.*;
 import com.saomc.screens.menu.Categories;
 import com.saomc.screens.menu.Panel;
@@ -8,6 +7,7 @@ import com.saomc.screens.window.ui.AchievementList;
 import com.saomc.screens.window.ui.CharacterView;
 import com.saomc.screens.window.ui.MapView;
 import com.saomc.social.StaticPlayerHelper;
+import com.saomc.social.friends.FriendsHandler;
 import com.saomc.social.party.PartyHelper;
 import com.saomc.util.*;
 import net.minecraft.client.Minecraft;

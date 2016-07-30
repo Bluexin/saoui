@@ -1,6 +1,5 @@
 package com.saomc.social.friends;
 
-import com.saomc.events.FriendsHandler;
 import com.saomc.screens.ParentElement;
 import com.saomc.screens.buttons.ButtonGUI;
 import com.saomc.screens.menu.Categories;

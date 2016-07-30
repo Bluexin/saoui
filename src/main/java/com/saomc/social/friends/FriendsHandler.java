@@ -1,11 +1,11 @@
-package com.saomc.events;
+package com.saomc.social.friends;
 
-import com.saomc.commands.Command;
-import com.saomc.commands.CommandType;
+import com.saomc.communication.CommandType;
+import com.saomc.communication.Communicator;
+import com.saomc.events.ConfigHandler;
 import com.saomc.screens.menu.Categories;
 import com.saomc.screens.window.WindowView;
 import com.saomc.social.StaticPlayerHelper;
-import com.saomc.social.friends.FriendRequest;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
@@ -80,12 +80,13 @@ public class FriendsHandler {
         return friends;
     }
 
-    public void addFriendRequests(Minecraft mc, String... names) {
+    public void addFriendRequests(String... names) {
         synchronized (friendRequests) {
+            final Minecraft mc = Minecraft.getMinecraft();
             for (final String name : names)
                 if (!friendRequests.contains(new FriendRequest(name, 10000)) && !isFriend(name)) {
                     friendRequests.add(new FriendRequest(name, 10000));
-                    new Command(CommandType.ADD_FRIEND_REQUEST, StaticPlayerHelper.findOnlinePlayer(mc, name)).send(mc);
+                    Communicator.send(CommandType.ADD_FRIEND_REQUEST, StaticPlayerHelper.findOnlinePlayer(mc, name));
                 }
         }
     }
@@ -181,8 +182,9 @@ public class FriendsHandler {
         }
     }
 
-    public void addFriendRequest(Minecraft mc, EntityPlayer player) {
+    public void addFriendRequest(EntityPlayer player) {
         if (!FriendsHandler.instance().isFriend(player)) {
+            final Minecraft mc = Minecraft.getMinecraft();
             final GuiScreen keepScreen = mc.currentScreen;
             final boolean ingameFocus = mc.inGameHasFocus;
 
@@ -192,8 +194,8 @@ public class FriendsHandler {
                 final Categories id = element.ID();
 
                 if (id == Categories.CONFIRM && (FriendsHandler.instance().isFriend(player) || FriendsHandler.instance().addFriends(player)))
-                    new Command(CommandType.ACCEPT_ADD_FRIEND, player).send(mc);
-                else new Command(CommandType.CANCEL_ADD_FRIEND, player).send(mc);
+                    Communicator.send(CommandType.ACCEPT_ADD_FRIEND, player);
+                else Communicator.send(CommandType.CANCEL_ADD_FRIEND, player);
 
                 mc.displayGuiScreen(keepScreen);
 
@@ -202,6 +204,6 @@ public class FriendsHandler {
             }));
 
             if (ingameFocus) mc.setIngameNotInFocus();
-        } else new Command(CommandType.ACCEPT_ADD_FRIEND, player).send(mc);
+        } else Communicator.send(CommandType.ACCEPT_ADD_FRIEND, player);
     }
 }

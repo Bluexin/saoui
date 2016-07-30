@@ -4,7 +4,6 @@ import baubles.api.BaublesApi;
 import com.saomc.SoundCore;
 import com.saomc.api.screens.Actions;
 import com.saomc.events.ConfigHandler;
-import com.saomc.events.FriendsHandler;
 import com.saomc.screens.*;
 import com.saomc.screens.buttons.ButtonGUI;
 import com.saomc.screens.buttons.ButtonState;
@@ -21,6 +20,7 @@ import com.saomc.screens.window.ui.AchievementList;
 import com.saomc.social.StaticPlayerHelper;
 import com.saomc.social.friends.FriendCore;
 import com.saomc.social.friends.FriendList;
+import com.saomc.social.friends.FriendsHandler;
 import com.saomc.social.party.PartyHandler;
 import com.saomc.social.party.PartyHelper;
 import com.saomc.util.*;
@@ -194,7 +194,7 @@ public class IngameMenuGUI extends ScreenGUI {
         } else if (id == Categories.INVITE_PLAYER && element instanceof ButtonGUI) {
             final String name = ((ButtonGUI) element).caption;
 
-            PartyHelper.instance().invite(mc, StaticPlayerHelper.findOnlinePlayer(mc, name));
+            PartyHelper.instance().invite(StaticPlayerHelper.findOnlinePlayer(mc, name));
         } else if (id == Categories.DISSOLVE) {
             element.enabled = false;
 
@@ -216,7 +216,7 @@ public class IngameMenuGUI extends ScreenGUI {
         } else if (id == Categories.MESSAGE_BOX && element.parent instanceof MenuGUI && ((MenuGUI) element.parent).parent instanceof FriendCore) {
             final String username = ((FriendCore) ((MenuGUI) element.parent).parent).caption;
 
-            final String format = I18n.format("commands.message.usage");
+            final String format = I18n.format("communication.message.usage");
             final String cmd = format.substring(0, format.indexOf(' '));
 
             final String message = J8String.join(" ", cmd, username, "");
@@ -497,7 +497,7 @@ public class IngameMenuGUI extends ScreenGUI {
             } else {
                 menu = null;
                 System.out.println("Add friend request");
-                FriendsHandler.instance().addFriendRequests(mc, ((FriendCore) element).caption);
+                FriendsHandler.instance().addFriendRequests(((FriendCore) element).caption);
             }
         } else if (id == Categories.OTHER_PROFILE && element.parent instanceof MenuGUI && ((MenuGUI) element.parent).parent instanceof FriendCore) {
             menu = null;
