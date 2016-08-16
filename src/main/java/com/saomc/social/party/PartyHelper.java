@@ -1,14 +1,10 @@
 package com.saomc.social.party;
 
-import com.saomc.SAOCore;
 import com.saomc.api.social.party.IParty;
 import com.saomc.communication.CommandType;
 import com.saomc.communication.Communicator;
 import com.saomc.events.ConfigHandler;
-import com.saomc.screens.buttons.ConfirmGUI;
 import com.saomc.screens.menu.Categories;
-import com.saomc.screens.window.Window;
-import com.saomc.screens.window.WindowView;
 import com.saomc.social.StaticPlayerHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
@@ -50,7 +46,7 @@ public class PartyHelper {
             final boolean ingameFocus = mc.inGameHasFocus;
 
             final String text = I18n.format(ConfigHandler._PARTY_INVITATION_TEXT, target.getDisplayNameString());
-
+/*
             mc.displayGuiScreen(WindowView.viewConfirm(ConfigHandler._PARTY_INVITATION_TITLE, text, (element, action, data) -> {
                 final Categories id = element.ID();
 
@@ -72,7 +68,7 @@ public class PartyHelper {
                 else mc.setIngameNotInFocus();
             }));
 
-            if (ingameFocus) mc.setIngameNotInFocus();
+            if (ingameFocus) mc.setIngameNotInFocus();*/
         }
     }
 
@@ -145,13 +141,13 @@ public class PartyHelper {
     public void receiveDissolve(EntityPlayer player) {
         final Minecraft mc = Minecraft.getMinecraft();
         if (party.getLeader().equals(mc.thePlayer)) removePlayer(player);
-        else if (isLeader(player)) {
+        else if (isLeader(player)) {/*
             final Window window = SAOCore.getWindow(mc);
 
             if (window != null && window.getTitle().equals(ConfigHandler._PARTY_INVITATION_TITLE) && window instanceof ConfirmGUI)
                 ((ConfirmGUI) window).cancel();
 
-            mc.thePlayer.addChatMessage(new TextComponentTranslation("ptLeave"));
+            mc.thePlayer.addChatMessage(new TextComponentTranslation("ptLeave"));*/
         }
     }
 

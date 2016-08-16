@@ -3,11 +3,12 @@ package com.saomc;
 import com.saomc.api.events.EventInitParty;
 import com.saomc.api.events.EventInitSkills;
 import com.saomc.api.events.EventInitStatsProvider;
+import com.saomc.api.events.EventinitElements;
+import com.saomc.elements.ElementBuilder;
+import com.saomc.elements.ElementProvider;
+import com.saomc.elements.defaultelements.DefaultElements;
 import com.saomc.events.ConfigHandler;
 import com.saomc.events.EventCore;
-import com.saomc.screens.window.Window;
-import com.saomc.screens.window.WindowView;
-import com.saomc.social.friends.FriendsHandler;
 import com.saomc.social.party.DefaultParty;
 import com.saomc.social.party.PartyHelper;
 import com.saomc.util.*;
@@ -22,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 @Mod(modid = SAOCore.MODID, name = SAOCore.NAME, version = SAOCore.VERSION, clientSideOnly = true)
+//@SideOnly(Side.CLIENT)
 public class SAOCore {
     public static final String MODID = "saoui";
     public static final String NAME = "Sword Art Online UI";
@@ -32,16 +34,15 @@ public class SAOCore {
     @Mod.Instance(MODID)
     public static SAOCore instance;
 
-    public static Window getWindow(Minecraft mc) {
+    /*public static Window getWindow(Minecraft mc) {
         return mc.currentScreen != null && mc.currentScreen instanceof WindowView ? ((WindowView) mc.currentScreen).getWindow() : null;
-    }
+    }*/
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         MinecraftForge.EVENT_BUS.register(new EventCore());
-
         ConfigHandler.preInit(event);
-        FriendsHandler.preInit(event);
+        //FriendsHandler.preInit(event);
 
 //        if (!UpdateChecker.hasChecked()) new UpdateChecker().start(); // Not used for now
     }
@@ -54,9 +55,14 @@ public class SAOCore {
         final EventInitStatsProvider s = new EventInitStatsProvider(new DefaultStatsProvider());
         MinecraftForge.EVENT_BUS.post(s);
         PlayerStats.init(s.getImplementation());
+        final EventinitElements el = new EventinitElements(ElementBuilder.getInstance());
+        MinecraftForge.EVENT_BUS.post(el);
+        ElementProvider.init(el.getImplementation());
         final EventInitSkills sk = new EventInitSkills(new ArrayList<>(Arrays.asList(DefaultSkills.values())));
         MinecraftForge.EVENT_BUS.post(sk);
+
         SkillList.init(sk.getSkills(), sk.isRingShown());
+        new DefaultElements().dispatch();
     }
 
     @SuppressWarnings("unchecked")
@@ -65,7 +71,6 @@ public class SAOCore {
         final Minecraft mc = Minecraft.getMinecraft();
 
         GLCore.setFont(mc, OptionCore.CUSTOM_FONT.getValue());
-//        FMLInterModComms.sendRuntimeMessage(SAOCore.MODID, "VersionChecker", "addVersionCheck", "https://gitlab.com/saomc/PublicVersions/raw/master/saoui1.8ver.json"); // Not used for now, should be switched to forge's
     }
 
 }

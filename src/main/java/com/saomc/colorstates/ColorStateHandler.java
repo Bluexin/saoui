@@ -8,18 +8,17 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+import java.util.WeakHashMap;
 
 @SideOnly(Side.CLIENT)
 public class ColorStateHandler {
 
     private static ColorStateHandler ref;
-    ConcurrentMap<Class, ColorState> defaultStates = new ConcurrentHashMap<>();
-    ConcurrentMap<Integer, ColorState> colorStates = new ConcurrentHashMap<>();
-    ConcurrentMap<UUID, ColorState> playerStates = new ConcurrentHashMap<>();
-    ConcurrentMap<Integer, Integer> stateKeeper = new ConcurrentHashMap<>();
-    ConcurrentMap<UUID, Integer> playerKeeper = new ConcurrentHashMap<>();
+    WeakHashMap<Class, ColorState> defaultStates = new WeakHashMap<>();
+    WeakHashMap<Integer, ColorState> colorStates = new WeakHashMap<>();
+    WeakHashMap<UUID, ColorState> playerStates = new WeakHashMap<>();
+    WeakHashMap<Integer, Integer> stateKeeper = new WeakHashMap<>();
+    WeakHashMap<UUID, Integer> playerKeeper = new WeakHashMap<>();
 
     private ColorStateHandler() {
         // nill

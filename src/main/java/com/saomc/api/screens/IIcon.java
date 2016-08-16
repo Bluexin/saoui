@@ -17,4 +17,5 @@ public interface IIcon {
      * @param y y-coordinate to start drawing from
      */
     void glDraw(int x, int y);
+
 }

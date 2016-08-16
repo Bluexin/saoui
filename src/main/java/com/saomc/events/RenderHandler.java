@@ -5,7 +5,6 @@ import com.saomc.renders.StaticRenderer;
 import com.saomc.screens.death.DeathScreen;
 import com.saomc.screens.ingame.IngameGUI;
 import com.saomc.screens.menu.IngameMenuGUI;
-import com.saomc.screens.menu.MainMenuGUI;
 import com.saomc.screens.menu.StartupGUI;
 import com.saomc.util.OptionCore;
 import net.minecraft.client.gui.GuiGameOver;
@@ -114,8 +113,8 @@ public class RenderHandler {
                 if (StartupGUI.shouldShow()) {
                     e.setGui(new StartupGUI());
                     menuGUI = false;
-                } else if (e.getGui() instanceof GuiMainMenu)
-                    e.setGui(new MainMenuGUI());
+                } //else if (e.getGui() instanceof GuiMainMenu)
+        //e.setGui(new MainMenuGUI());
     }
 
 }

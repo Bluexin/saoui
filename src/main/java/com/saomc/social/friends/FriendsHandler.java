@@ -3,8 +3,6 @@ package com.saomc.social.friends;
 import com.saomc.communication.CommandType;
 import com.saomc.communication.Communicator;
 import com.saomc.events.ConfigHandler;
-import com.saomc.screens.menu.Categories;
-import com.saomc.screens.window.WindowView;
 import com.saomc.social.StaticPlayerHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
@@ -189,7 +187,7 @@ public class FriendsHandler {
             final boolean ingameFocus = mc.inGameHasFocus;
 
             final String text = I18n.format(ConfigHandler._FRIEND_REQUEST_TEXT, player.getDisplayNameString());
-
+/*
             mc.displayGuiScreen(WindowView.viewConfirm(ConfigHandler._FRIEND_REQUEST_TITLE, text, (element, action, data) -> {
                 final Categories id = element.ID();
 
@@ -201,7 +199,7 @@ public class FriendsHandler {
 
                 if (ingameFocus) mc.setIngameFocus();
                 else mc.setIngameNotInFocus();
-            }));
+            }));*/
 
             if (ingameFocus) mc.setIngameNotInFocus();
         } else Communicator.send(CommandType.ACCEPT_ADD_FRIEND, player);

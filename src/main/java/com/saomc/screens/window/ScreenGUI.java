@@ -1,11 +1,16 @@
 package com.saomc.screens.window;
 
 import com.saomc.GLCore;
+import com.saomc.SoundCore;
+import com.saomc.api.events.ElementAction;
 import com.saomc.api.screens.Actions;
+import com.saomc.api.screens.GuiSelection;
 import com.saomc.colorstates.CursorStatus;
+import com.saomc.elements.ElementBuilder;
+import com.saomc.elements.ElementDispatcher;
+import com.saomc.elements.Elements;
+import com.saomc.elements.ParentElement;
 import com.saomc.resources.StringNames;
-import com.saomc.screens.Elements;
-import com.saomc.screens.ParentElement;
 import com.saomc.util.ColorUtil;
 import com.saomc.util.OptionCore;
 import net.minecraft.client.gui.GuiScreen;
@@ -17,7 +22,6 @@ import org.lwjgl.input.Cursor;
 import org.lwjgl.input.Mouse;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 @SideOnly(Side.CLIENT)
@@ -27,6 +31,7 @@ public abstract class ScreenGUI extends GuiScreen implements ParentElement {
     protected static CursorStatus CURSOR_STATUS = CursorStatus.SHOW;
     protected final List<Elements> elements;
     private final Cursor emptyCursor;
+    private GuiSelection gui;
     private int mouseX, mouseY;
     private int mouseDown;
     private float mouseDownValue;
@@ -34,9 +39,10 @@ public abstract class ScreenGUI extends GuiScreen implements ParentElement {
     private boolean cursorHidden = false;
     private boolean lockCursor = false;
 
-    protected ScreenGUI() {
+    protected ScreenGUI(GuiSelection guiSelection) {
         super();
-        elements = new ArrayList<>();
+        gui = guiSelection;
+        elements = ElementBuilder.getInstance().getforGui(guiSelection);
         Cursor cursor = null;
         try {
             cursor = new Cursor(1, 1, 0, 0, 1, BufferUtils.createIntBuffer(1), null);
@@ -87,13 +93,12 @@ public abstract class ScreenGUI extends GuiScreen implements ParentElement {
     public void updateScreen() {
         if (this.elements == null) return;
         for (int i = elements.size() - 1; i >= 0; i--) {
-            if (elements.get(i).removed()) {
-                elements.get(i).close(mc);
+            if (!elements.get(i).isEnabled()) {
                 elements.remove(i);
                 continue;
             }
 
-            elements.get(i).update(mc);
+            //elements.get(i).update(mc);
         }
     }
 
@@ -112,8 +117,6 @@ public abstract class ScreenGUI extends GuiScreen implements ParentElement {
         super.drawScreen(cursorX, cursorY, f);
 
         GLCore.glStartUI(mc);
-
-        for (int i = elements.size() - 1; i >= 0; i--) elements.get(i).draw(mc, cursorX, cursorY);
 
         if (CURSOR_STATUS == CursorStatus.SHOW) {
 
@@ -149,7 +152,7 @@ public abstract class ScreenGUI extends GuiScreen implements ParentElement {
         if (OptionCore.CURSOR_TOGGLE.getValue() && super.isCtrlKeyDown()) lockCursor = !lockCursor;
         super.keyTyped(ch, key);
 
-        elements.stream().filter(element -> element.focus && element.keyTyped(mc, ch, key)).forEach(element -> actionPerformed(element, Actions.KEY_TYPED, key));
+        elements.stream().filter(element -> element.isFocus()).forEach(element -> actionPerformed(element, Actions.KEY_TYPED, key));
     }
 
     // TODO: check the way elements is built... Breakpoint gives some weird result (at least for base menu)
@@ -166,8 +169,8 @@ public abstract class ScreenGUI extends GuiScreen implements ParentElement {
                 else break;
             }
 
-            if (elements.get(i).mouseOver(cursorX, cursorY)) {
-                if (elements.get(i).mousePressed(mc, cursorX, cursorY, button))
+            if (ElementDispatcher.menuElements.get(elements.get(i)).mouseOver(cursorX, cursorY)) {
+                if (ElementDispatcher.menuElements.get(elements.get(i)).mousePressed(mc, cursorX, cursorY, button))
                     actionPerformed(elements.get(i), Actions.getAction(button, true), button);
 
                 clickedElement = true;
@@ -187,7 +190,7 @@ public abstract class ScreenGUI extends GuiScreen implements ParentElement {
                 if (elements.size() > 0) i = elements.size() - 1;
                 else break;
             }
-            if (elements.get(i).mouseOver(cursorX, cursorY, button) && elements.get(i).mouseReleased(mc, cursorX, cursorY, button))
+            if (ElementDispatcher.menuElements.get(elements.get(i)).mouseOver(cursorX, cursorY, button) && ElementDispatcher.menuElements.get(elements.get(i)).mouseReleased(mc, cursorX, cursorY, button))
                 actionPerformed(elements.get(i), Actions.getAction(button, false), button);
         }
     }
@@ -196,12 +199,12 @@ public abstract class ScreenGUI extends GuiScreen implements ParentElement {
     }
 
     private void mouseWheel(int cursorX, int cursorY, int delta) {
-        elements.stream().filter(element -> element.mouseOver(cursorX, cursorY) && element.mouseWheel(mc, cursorX, cursorY, delta)).forEach(element -> actionPerformed(element, Actions.MOUSE_WHEEL, delta));
+        elements.stream().filter(element -> ElementDispatcher.menuElements.get(element).mouseOver(cursorX, cursorY) && ElementDispatcher.menuElements.get(element).mouseWheel(mc, cursorX, cursorY, delta)).forEach(element -> actionPerformed(element, Actions.MOUSE_WHEEL, delta));
     }
 
-    @Override
     public void actionPerformed(Elements element, Actions action, int data) {
-        element.click(mc.getSoundHandler(), false);
+        new ElementAction(element.getCaption(), element.getCategory(), action, data);
+        SoundCore.play(mc.getSoundHandler(), SoundCore.DIALOG_CLOSE);
     }
 
     @Override
@@ -230,8 +233,8 @@ public abstract class ScreenGUI extends GuiScreen implements ParentElement {
     }
 
     protected void close() {
-        elements.stream().forEach(el -> el.close(mc));
         elements.clear();
+        ElementDispatcher.menuElements.clear();
     }
 
     protected void hideCursor() {

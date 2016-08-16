@@ -1,17 +1,17 @@
 package com.saomc.screens.window;
 
-import com.saomc.screens.Elements;
+import com.saomc.elements.Elements;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public enum WindowAlign {
 
-    CENTER((element, relative, width) -> element.getX(relative) + (element.width - width) / 2),
+    CENTER((element, relative, width) -> element.getX() + (element.getWidth() - width) / 2),
 
-    LEFT((element, relative, width) -> element.getX(relative)),
+    LEFT((element, relative, width) -> element.getX()),
 
-    RIGHT((element, relative, width) -> element.getX(relative) + (element.width - width));
+    RIGHT((element, relative, width) -> element.getX() + (element.getWidth() - width));
 
     private final SAOPositioner positioner;
 

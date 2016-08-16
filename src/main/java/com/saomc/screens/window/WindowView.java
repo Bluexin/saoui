@@ -1,7 +1,6 @@
 package com.saomc.screens.window;
 
-import com.saomc.screens.buttons.ActionHandler;
-import com.saomc.screens.buttons.ConfirmGUI;
+import com.saomc.api.screens.GuiSelection;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -10,11 +9,11 @@ public abstract class WindowView extends ScreenGUI {
 
     private final int windowWidth, windowHeight;
 
-    private WindowView(int width, int height) {
-        super();
+    private WindowView(GuiSelection gui, int width, int height) {
+        super(gui);
         windowWidth = width;
         windowHeight = height;
-    }
+    }/*
 
     public static WindowView viewMessage(final String username, final String message) {
         return new WindowView(200, 40) {
@@ -67,6 +66,6 @@ public abstract class WindowView extends ScreenGUI {
 
     @Override
     protected void backgroundClicked(int cursorX, int cursorY, int button) {
-    }
+    }*/
 
 }

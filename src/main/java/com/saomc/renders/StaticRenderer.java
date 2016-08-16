@@ -7,7 +7,6 @@ import com.saomc.effects.DeathParticles;
 import com.saomc.events.StateEventHandler;
 import com.saomc.resources.StringNames;
 import com.saomc.screens.ingame.HealthStep;
-import com.saomc.screens.window.ui.CharacterView;
 import com.saomc.social.StaticPlayerHelper;
 import com.saomc.util.OptionCore;
 import net.minecraft.client.Minecraft;
@@ -38,7 +37,7 @@ public class StaticRenderer {
 
         if (living.deathTime == 1) living.deathTime++;
 
-        if (!CharacterView.IS_VIEWING && !dead && !living.isInvisibleToPlayer(mc.thePlayer)) {
+        if (!dead && !living.isInvisibleToPlayer(mc.thePlayer)) {
             if (OptionCore.COLOR_CURSOR.getValue())
                 if (!(OptionCore.DEBUG_MODE.getValue() && ColorState.checkValidState(living))) {
                     doRenderColorCursor(renderManager, mc, living, x, y, z, 64);

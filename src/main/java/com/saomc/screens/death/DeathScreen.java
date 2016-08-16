@@ -1,13 +1,9 @@
 package com.saomc.screens.death;
 
 import com.saomc.GLCore;
-import com.saomc.api.screens.Actions;
+import com.saomc.api.screens.GuiSelection;
 import com.saomc.colorstates.CursorStatus;
-import com.saomc.events.ConfigHandler;
-import com.saomc.screens.Alert;
-import com.saomc.screens.Elements;
 import com.saomc.screens.window.ScreenGUI;
-import com.saomc.util.ColorUtil;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.GuiScreen;
@@ -23,7 +19,7 @@ public class DeathScreen extends ScreenGUI {
     private final CursorStatus oldCursorStatus;
 
     public DeathScreen() {
-        super();
+        super(GuiSelection.DeathScreen);
         oldCursorStatus = CURSOR_STATUS;
 
         CURSOR_STATUS = CursorStatus.HIDDEN;
@@ -33,7 +29,7 @@ public class DeathScreen extends ScreenGUI {
     protected void init() {
         super.init();
 
-        elements.add(new Alert(this, 0, 0, ConfigHandler._DEAD_ALERT, this.mc.theWorld.getWorldInfo().isHardcoreModeEnabled() ? ColorUtil.HARDCORE_DEAD_COLOR : ColorUtil.DEAD_COLOR));
+        //elements.add(new Alert(this, 0, 0, ConfigHandler._DEAD_ALERT, this.mc.theWorld.getWorldInfo().isHardcoreModeEnabled() ? ColorUtil.HARDCORE_DEAD_COLOR : ColorUtil.DEAD_COLOR));
     }
 
     @Override
@@ -57,10 +53,10 @@ public class DeathScreen extends ScreenGUI {
 
     }
 
-    @Override
-    public void actionPerformed(Elements element, Actions action, int data) {
+    /*@Override
+    public void actionPerformed(ElementCore element, Actions action, int data) {
         confirmClicked(this.mc.theWorld.getWorldInfo().isHardcoreModeEnabled(), -1);
-    }
+    }*/
 
     @Override
     protected void backgroundClicked(int cursorX, int cursorY, int button) {
