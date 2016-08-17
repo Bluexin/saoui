@@ -12,11 +12,9 @@ import java.util.Map;
  */
 public class ElementDispatcher {
 
-    public static Map<Elements, MenuCore> menuElements = new HashMap<>();
+    public final Map<Element, MenuCore> menuElements = new HashMap<>();
 
-    public void dispatch(ParentElement parent, GuiSelection gui) {
-        ElementBuilder.getInstance().getforGui(gui).stream().forEach(elements ->
-                menuElements.put(elements, new MenuCore(parent, elements))
-        );
+    public ElementDispatcher(ParentElement parent, GuiSelection gui) {
+        ElementProvider.instance().getBuilder().getforGui(gui).forEach(el -> menuElements.put(el, new MenuCore(parent, el)));
     }
 }

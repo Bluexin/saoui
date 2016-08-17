@@ -16,12 +16,12 @@ public class MenuCore implements ParentElement {
 
     public final ParentElement parent;
     public ColorUtil bgColor, disabledMask;
-    private Elements element;
+    private Element element;
     private boolean removed;
 
-    public MenuCore(ParentElement gui, Elements elements) {
+    public MenuCore(ParentElement gui, Element element) {
         parent = gui;
-        element = elements;
+        this.element = element;
 
         removed = false;
         bgColor = ColorUtil.DEFAULT_COLOR;
@@ -32,14 +32,12 @@ public class MenuCore implements ParentElement {
     }
 
     public void draw(Minecraft mc, int cursorX, int cursorY) {
-        if (mouseOver(cursorX, cursorY)) {
-            mouseMoved(mc, cursorX, cursorY);
-        }
+        if (mouseOver(cursorX, cursorY)) mouseMoved(mc, cursorX, cursorY);
         if (element.isMenu()) drawMenu(cursorX, cursorY);
         else drawSlot(cursorX, cursorY);
     }
 
-    public void drawMenu(int cursorX, int cursorY) {
+    private void drawMenu(int cursorX, int cursorY) {
         if (element.getVisibility() > 0) {
             GLCore.glBindTexture(OptionCore.SAO_UI.getValue() ? StringNames.gui : StringNames.guiCustom);
 
@@ -59,35 +57,20 @@ public class MenuCore implements ParentElement {
         }
     }
 
-    public void drawSlot(int cursorX, int cursorY) {
+    private void drawSlot(int cursorX, int cursorY) {
         if (element.getVisibility() > 0 && parent != null && element.getHeight() > 0) {
-            if (element.getX() > 0) {
-                GLCore.glBindTexture(StringNames.slot);
-                GLCore.glColorRGBA(ColorUtil.DEFAULT_COLOR.multiplyAlpha(element.getVisibility()));
+            GLCore.glBindTexture(StringNames.slot);
+            GLCore.glColorRGBA(ColorUtil.DEFAULT_COLOR.multiplyAlpha(element.getVisibility()));
 
-                final int left = getX(false);
-                final int top = getY(false) + 1;
+            final int left = getX(false);
+            final int top = getY(false) + 1;
 
-                final int arrowTop = getY(false) - element.getHeight() / 2;
+            final int arrowTop = getY(false) - element.getHeight() / 2;
 
-                GLCore.glTexturedRect(left - 2, top, 2, element.getHeight() - 1, 0, 0, 20, 4);
+            GLCore.glTexturedRect(left - 2, top, 2, element.getHeight() - 1, 0, 0, 20, 4);
 
-                //GLCore.glBindTexture(OptionCore.SAO_UI.getValue() ? StringNames.gui : StringNames.guiCustom);
-                //GLCore.glTexturedRect(left - 10, arrowTop + (height - 10) / 2, 20, 25 + (fullArrow ? 10 : 0), 10, 10);
-            } else if (element.getX() < 0) {
-                GLCore.glBindTexture(StringNames.slot);
-                GLCore.glColorRGBA(ColorUtil.DEFAULT_COLOR.multiplyAlpha(element.getVisibility()));
-
-                final int left = getX(false);
-                final int top = getY(false) + 1;
-
-                final int arrowTop = getY(false) - element.getHeight() / 2;
-
-                GLCore.glTexturedRect(left + element.getWidth(), top, 2, element.getHeight() - 1, 0, 0, 20, 4);
-
-                //GLCore.glBindTexture(OptionCore.SAO_UI.getValue() ? StringNames.gui : StringNames.guiCustom);
-                //GLCore.glTexturedRect(left + width, arrowTop + (height - 10) / 2, 30, 25 + (fullArrow ? 10 : 0), 10, 10);
-            }
+            //GLCore.glBindTexture(OptionCore.SAO_UI.getValue() ? StringNames.gui : StringNames.guiCustom);
+            //GLCore.glTexturedRect(left - 10, arrowTop + (height - 10) / 2, 20, 25 + (fullArrow ? 10 : 0), 10, 10);
         }
 
         if (element.getVisibility() > 0) {
@@ -162,21 +145,21 @@ public class MenuCore implements ParentElement {
 
     @Override
     public int getX(boolean relative) {
-        return relative ? element.getX() : element.getX() + (parent != null ? parent.getX(relative) : 0);
+        return relative ? element.getX() : element.getX() + (parent != null ? parent.getX(false) : 0);
     }
 
     @Override
     public int getY(boolean relative) {
-        return relative ? element.getY() : element.getY() + (parent != null ? parent.getY(relative) : 0);
+        return relative ? element.getY() : element.getY() + (parent != null ? parent.getY(false) : 0);
     }
 
     private int getColor(boolean hoverState, boolean bg) {
         if (element.getIcon() == IconCore.CONFIRM)
-            return bg ? !hoverState ? ColorUtil.CONFIRM_COLOR.rgba : hoverState ? ColorUtil.CONFIRM_COLOR_LIGHT.rgba : ColorUtil.CONFIRM_COLOR.rgba & disabledMask.rgba : element.isEnabled() ? ColorUtil.HOVER_FONT_COLOR.rgba : disabledMask.rgba;
+            return bg ? !hoverState ? ColorUtil.CONFIRM_COLOR.rgba : ColorUtil.CONFIRM_COLOR_LIGHT.rgba : element.isEnabled() ? ColorUtil.HOVER_FONT_COLOR.rgba : disabledMask.rgba;
         else if (element.getIcon() == IconCore.CANCEL)
-            return bg ? !hoverState ? ColorUtil.CANCEL_COLOR.rgba : hoverState ? ColorUtil.CANCEL_COLOR_LIGHT.rgba : ColorUtil.CANCEL_COLOR.rgba & disabledMask.rgba : element.isEnabled() ? ColorUtil.HOVER_FONT_COLOR.rgba : disabledMask.rgba;
+            return bg ? !hoverState ? ColorUtil.CANCEL_COLOR.rgba : ColorUtil.CANCEL_COLOR_LIGHT.rgba : element.isEnabled() ? ColorUtil.HOVER_FONT_COLOR.rgba : disabledMask.rgba;
         else
-            return bg ? !hoverState ? bgColor.rgba : hoverState ? ColorUtil.HOVER_COLOR.rgba : bgColor.rgba & disabledMask.rgba : !hoverState ? ColorUtil.DEFAULT_FONT_COLOR.rgba : hoverState ? ColorUtil.HOVER_FONT_COLOR.rgba : ColorUtil.DEFAULT_FONT_COLOR.rgba & disabledMask.rgba;
+            return bg ? !hoverState ? bgColor.rgba : ColorUtil.HOVER_COLOR.rgba : !hoverState ? ColorUtil.DEFAULT_FONT_COLOR.rgba : ColorUtil.HOVER_FONT_COLOR.rgba;
 
     }
 
@@ -217,5 +200,9 @@ public class MenuCore implements ParentElement {
 
     public String toString() {
         return "[ ( " + getClass().getName() + " " + element.getX() + " " + element.getY() + " " + element.getWidth() + " " + element.getHeight() + " ) => " + parent + " ]";
+    }
+
+    public Element getElement() {
+        return element;
     }
 }

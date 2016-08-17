@@ -43,13 +43,13 @@ public class DeathScreen extends ScreenGUI {
     }
 
     @Override
-    public void drawScreen(int cursorX, int cursorY, float f) {
+    public void drawScreen(int cursorX, int cursorY, float partialTicks) {
         drawDefaultBackground();
 
         GLCore.glTranslatef(-width / 2, -height / 2, 0.0F);
         GLCore.glScalef(2.0F, 2.0F, 2.0F);
 
-        super.drawScreen(cursorX, cursorY, f);
+        super.drawScreen(cursorX, cursorY, partialTicks);
 
     }
 

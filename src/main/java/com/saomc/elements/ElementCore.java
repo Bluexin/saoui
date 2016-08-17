@@ -12,13 +12,13 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public abstract class ElementCore implements ParentElement, IIcon {
 
     public final ParentElement parent;
-    public final Elements element;
+    public final Element element;
 
     private boolean removed;
 
-    protected ElementCore(ParentElement gui, Elements elements) {
+    protected ElementCore(ParentElement gui, Element element) {
         parent = gui;
-        this.element = elements;
+        this.element = element;
 
         removed = false;
     }
@@ -73,12 +73,12 @@ public abstract class ElementCore implements ParentElement, IIcon {
 
     @Override
     public int getX(boolean relative) {
-        return relative ? element.getX() : element.getX() + (parent != null ? parent.getX(relative) : 0);
+        return relative ? element.getX() : element.getX() + (parent != null ? parent.getX(false) : 0);
     }
 
     @Override
     public int getY(boolean relative) {
-        return relative ? element.getY() : element.getY() + (parent != null ? parent.getY(relative) : 0);
+        return relative ? element.getY() : element.getY() + (parent != null ? parent.getY(false) : 0);
     }
 
     public void click(SoundHandler handler, boolean flag) {

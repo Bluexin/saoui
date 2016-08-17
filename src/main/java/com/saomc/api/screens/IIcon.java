@@ -7,6 +7,7 @@ package com.saomc.api.screens;
  *
  * @author Bluexin
  */
+@FunctionalInterface
 public interface IIcon {
 
     /**

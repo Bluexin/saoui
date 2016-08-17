@@ -1,6 +1,6 @@
 package com.saomc.screens.window;
 
-import com.saomc.elements.Elements;
+import com.saomc.elements.Element;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -19,12 +19,12 @@ public enum WindowAlign {
         positioner = pos;
     }
 
-    public int getX(Elements element, boolean relative, int size) {
+    public int getX(Element element, boolean relative, int size) {
         return positioner.getX(element, relative, size);
     }
 
     private interface SAOPositioner {
-        int getX(Elements element, boolean relative, int width);
+        int getX(Element element, boolean relative, int width);
     }
 
 }

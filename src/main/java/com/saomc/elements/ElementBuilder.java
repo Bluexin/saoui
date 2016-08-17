@@ -1,7 +1,7 @@
 package com.saomc.elements;
 
 import com.saomc.api.screens.GuiSelection;
-import com.saomc.api.screens.IElement;
+import com.saomc.api.screens.IElementBuilder;
 import com.saomc.api.screens.IIcon;
 import com.saomc.util.LogCore;
 import net.minecraft.client.Minecraft;
@@ -14,20 +14,26 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * This is the main constructor for elements
+ * This is used to add and remove elements within the SAO UI
  * <p>
  * Created by Tencao on 29/07/2016.
  */
-public class ElementBuilder extends IElement {
+public class ElementBuilder implements IElementBuilder {
 
     private static ElementBuilder ref;
-    private Map<String, Elements> elementlist = new HashMap<>();
+    private Map<String, Element> elementlist = new HashMap<>();
     private boolean alreadyRun;
 
     private ElementBuilder() {
         // nill
     }
 
+    /**
+     * Should only be called by SAOCore, once.
+     * Please use {@link ElementProvider#getBuilder()} instead.
+     *
+     * @return default element builder
+     */
     @SideOnly(Side.CLIENT)
     public static synchronized ElementBuilder getInstance() {
         if (ref == null)
@@ -36,19 +42,14 @@ public class ElementBuilder extends IElement {
         return ref;
     }
 
-    public Object clone()
-            throws CloneNotSupportedException {
-        throw new CloneNotSupportedException();
-        // Cloning not supported
-    }
-
     /**
      * Gets the element from the list
      *
      * @param name The name of the element
      * @return Returns the element
      */
-    public Elements getElement(String name) {
+    @Override
+    public Element getElement(String name) {
         return elementlist.get(name);
     }
 
@@ -58,7 +59,8 @@ public class ElementBuilder extends IElement {
      * @param gui The name of the gui
      * @return Returns the list of elements belonging to the category
      */
-    public List<Elements> getforGui(GuiSelection gui) {
+    @Override
+    public List<Element> getforGui(GuiSelection gui) {
         return elementlist.values().stream().filter(e -> e.getGui() == gui).collect(Collectors.toList());
     }
 
@@ -68,7 +70,8 @@ public class ElementBuilder extends IElement {
      * @param category The name of the category
      * @return Returns the list of elements belonging to the category
      */
-    public List<Elements> getforCategory(String category) {
+    @Override
+    public List<Element> getCategoryContent(String category) {
         return elementlist.values().stream().filter(e -> e.getCategory().equals(category)).collect(Collectors.toList());
     }
 
@@ -78,7 +81,8 @@ public class ElementBuilder extends IElement {
      * @param gui The gui the menus belong to
      * @return Returns all the menus that belong to the gui
      */
-    public List<Elements> getMenus(GuiSelection gui) {
+    @Override
+    public List<Element> getMenus(GuiSelection gui) {
         return elementlist.values().stream().filter(e -> e.getGui() == gui && e.getParent() == null).collect(Collectors.toList());
     }
 
@@ -88,23 +92,23 @@ public class ElementBuilder extends IElement {
      * @param gui The gui the slots belong to
      * @return Returns all slots that belong to that gui
      */
-    public List<Elements> getSlots(GuiSelection gui) {
+    @Override
+    public List<Element> getSlots(GuiSelection gui) {
         return elementlist.values().stream().filter(e -> e.getGui() == gui && e.getParent() != null).collect(Collectors.toList());
     }
 
     /**
-     * Adds a new Menu via the API
+     * This adds a new Menu onscreen. Menus are main categories, appearing as the first choices onscreen
      *
      * @param category The category name for the menu (Used by other categories and slots)
      * @param icon     The display icon for the category
-     * @param gui      The class of the GUI this belongs to
+     * @param gui      The class of the GUI this belongs to. Two examples are the GuiMainMenu, and IngameMenuGUI
      */
     @Override
     public void addMenu(String category, IIcon icon, GuiSelection gui) {
-        LogCore.logInfo("initiated addMenu");
         if (elementlist.entrySet().stream().filter(e -> e.getKey().equals(category.toLowerCase())).noneMatch(e -> e.getValue().getCategory().equals(category.toLowerCase()))) {
-            elementlist.put(category.toLowerCase(), new Elements(category.toLowerCase(), category, icon, gui, 0, 24, 20, 20, true));
-            LogCore.logInfo("Element added, name - " + category + "   category - " + category + "   type - Menu");
+            elementlist.put(category.toLowerCase(), new Element(category.toLowerCase(), category, icon, gui, 0, 24, 20, 20, true));
+            LogCore.logDebug("Element added, name - " + category + "   category - " + category + "   type - Menu");
         } else LogCore.logWarn("Warning, attempted to add the same element twice \n " +
                 "Element name - " + category + "\n" +
                 "Element Category - " + category + "\n" +
@@ -113,18 +117,19 @@ public class ElementBuilder extends IElement {
     }
 
     /**
-     * Adds a new Slot via the API
+     * This adds a Slot. Slots are effectively buttons onscreen, which when pressed, fires an ActionPressed event
+     * This should be your main method of adding new functions to the menu
      *
-     * @param name   The display name/category name of the Slot
+     * @param name   The display name of the Slot
      * @param parent The parent category
      * @param icon   The display icon for the category
-     * @param gui    The class of the GUI this belongs to
+     * @param gui    The class of the GUI this belongs to. Two examples are the GuiMainMenu, and IngameMenuGUI
      */
     @Override
     public void addSlot(String name, String parent, IIcon icon, GuiSelection gui) {
         if (elementlist.entrySet().stream().filter(e -> e.getKey().equals(name.toLowerCase())).noneMatch(e -> e.getValue().getParent().equals(parent.toLowerCase()))) {
-            elementlist.put(name.toLowerCase(), new Elements(name.toLowerCase(), parent, name, icon, gui, 0, 0, 100, 60));
-            LogCore.logInfo("Element added, name - " + name + "   parent - " + parent + "   type - Slot");
+            elementlist.put(name.toLowerCase(), new Element(name.toLowerCase(), parent, name, icon, gui, 0, 0, 100, 60));
+            LogCore.logDebug("Element added, name - " + name + "   parent - " + parent + "   type - Slot");
         } else LogCore.logWarn("Warning, attempted to add the same element twice \n " +
                 "Element name - " + name + "\n" +
                 "Element Parent - " + parent + "\n" +
@@ -133,26 +138,28 @@ public class ElementBuilder extends IElement {
     }
 
     /**
-     * Disables a Menu gracefully
+     * This is to gracefully remove a Menu. You should rarely, if ever have a need to remove this, and advise most people not to
      *
      * @param name The name of the menu to remove
-     * @param gui  The class of the GUI this belongs to. Two examples are the GuiMainMenu, and IngameMenuGUI
+     * @param gui  The class of the GUI this belongs to
      */
     @Override
-    public void disableMenu(String name, GuiSelection gui) {
+    public void disableMenu(String name, GuiSelection gui) { // FIXME: looks suspicious ah
+        //noinspection ConstantConditions
         if (Minecraft.getMinecraft().currentScreen != null && Minecraft.getMinecraft().currentScreen.getClass().equals(gui))
             elementlist.get(name).setEnabled(false);
     }
 
     /**
-     * Disables a Slot gracefully
+     * This is to gracefully remove a Slot. This can be useful if like the Category, you intend on replacing an already defined slot with your own version
      *
      * @param name   The name of the slot to remove
      * @param parent The parent category
-     * @param gui    The class of the GUI this belongs to. Two examples are the GuiMainMenu, and IngameMenuGUI
+     * @param gui    The class of the GUI this belongs to
      */
     @Override
-    public void disableSlot(String name, String parent, GuiSelection gui) {
+    public void disableSlot(String name, String parent, GuiSelection gui) { // FIXME: looks suspicious ah
+        //noinspection ConstantConditions
         if (Minecraft.getMinecraft().currentScreen != null && Minecraft.getMinecraft().currentScreen.getClass().equals(gui)) {
             if (elementlist.get(name).getParent().equals(parent))
                 elementlist.get(name).setEnabled(false);
@@ -160,9 +167,10 @@ public class ElementBuilder extends IElement {
     }
 
     /**
-     * Removes a Menu forcefully
+     * This is to force remove a Menu. You should rarely, if ever have a need to remove this, and advise most people not to
      *
      * @param name The name of the menu to remove
+     * @param gui  The class of the GUI this belongs to
      */
     @Override
     public void removeMenu(String name, GuiSelection gui) {
@@ -171,10 +179,11 @@ public class ElementBuilder extends IElement {
     }
 
     /**
-     * Removes a Slot forcefully
+     * This is to force remove a Slot. You should rarely, if ever have a need to remove this, and advise most people not to
      *
      * @param name   The name of the slot to remove
      * @param parent The parent category
+     * @param gui    The class of the GUI this belongs to
      */
     @Override
     public void removeSlot(String name, String parent, GuiSelection gui) {
@@ -187,6 +196,7 @@ public class ElementBuilder extends IElement {
      *
      * @param category The category to enable elements for
      */
+    @Override
     public void enableSubElements(String category) {
         elementlist.values().stream().filter(e -> e.getParent().equals(category)).forEach(e -> e.setEnabled(true));
     }
@@ -196,6 +206,7 @@ public class ElementBuilder extends IElement {
      *
      * @param category The category to disable elements for
      */
+    @Override
     public void disableSubElements(String category) {
         elementlist.values().stream().filter(e -> e.getParent().equals(category)).forEach(e -> e.setEnabled(false));
     }

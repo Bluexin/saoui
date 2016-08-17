@@ -6,14 +6,14 @@ import com.saomc.api.events.ElementAction;
 import com.saomc.api.screens.Actions;
 import com.saomc.api.screens.GuiSelection;
 import com.saomc.colorstates.CursorStatus;
-import com.saomc.elements.ElementBuilder;
+import com.saomc.elements.Element;
 import com.saomc.elements.ElementDispatcher;
-import com.saomc.elements.Elements;
 import com.saomc.elements.ParentElement;
 import com.saomc.resources.StringNames;
 import com.saomc.util.ColorUtil;
 import com.saomc.util.OptionCore;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.BufferUtils;
@@ -22,16 +22,15 @@ import org.lwjgl.input.Cursor;
 import org.lwjgl.input.Mouse;
 
 import java.io.IOException;
-import java.util.List;
 
 @SideOnly(Side.CLIENT)
 public abstract class ScreenGUI extends GuiScreen implements ParentElement {
 
     private static final float ROTATION_FACTOR = 0.25F;
     protected static CursorStatus CURSOR_STATUS = CursorStatus.SHOW;
-    protected final List<Elements> elements;
+    protected final ElementDispatcher elements;
     private final Cursor emptyCursor;
-    private GuiSelection gui;
+    private GuiSelection type;
     private int mouseX, mouseY;
     private int mouseDown;
     private float mouseDownValue;
@@ -41,8 +40,8 @@ public abstract class ScreenGUI extends GuiScreen implements ParentElement {
 
     protected ScreenGUI(GuiSelection guiSelection) {
         super();
-        gui = guiSelection;
-        elements = ElementBuilder.getInstance().getforGui(guiSelection);
+        type = guiSelection;
+        elements = new ElementDispatcher(this, guiSelection);
         Cursor cursor = null;
         try {
             cursor = new Cursor(1, 1, 0, 0, 1, BufferUtils.createIntBuffer(1), null);
@@ -58,7 +57,6 @@ public abstract class ScreenGUI extends GuiScreen implements ParentElement {
         if (CURSOR_STATUS != CursorStatus.DEFAULT) hideCursor();
 
         super.initGui();
-        elements.clear();
         init();
     }
 
@@ -71,12 +69,12 @@ public abstract class ScreenGUI extends GuiScreen implements ParentElement {
 
     private int getCursorX() {
         if (OptionCore.CURSOR_TOGGLE.getValue()) return lockCursor ? 0 : (width / 2 - mouseX) / 2;
-        else return !super.isCtrlKeyDown() ? (width / 2 - mouseX) / 2 : 0;
+        else return !isCtrlKeyDown() ? (width / 2 - mouseX) / 2 : 0;
     }
 
     private int getCursorY() {
         if (OptionCore.CURSOR_TOGGLE.getValue()) return lockCursor ? 0 : (height / 2 - mouseY) / 2;
-        else return !super.isCtrlKeyDown() ? (height / 2 - mouseY) / 2 : 0;
+        else return !isCtrlKeyDown() ? (height / 2 - mouseY) / 2 : 0;
     }
 
     @Override
@@ -92,20 +90,14 @@ public abstract class ScreenGUI extends GuiScreen implements ParentElement {
     @Override
     public void updateScreen() {
         if (this.elements == null) return;
-        for (int i = elements.size() - 1; i >= 0; i--) {
-            if (!elements.get(i).isEnabled()) {
-                elements.remove(i);
-                continue;
-            }
 
-            //elements.get(i).update(mc);
-        }
+        this.elements.menuElements.entrySet().removeIf(e -> !e.getKey().isEnabled());
+        this.elements.menuElements.values().forEach(e -> e.update(mc));
     }
 
     @Override
-    public void drawScreen(int cursorX, int cursorY, float f) {
+    public void drawScreen(int cursorX, int cursorY, float partialTicks) {
         if (this.elements == null) return;
-        for (Elements el : this.elements) if (el == null) return;
         mouseX = cursorX;
         mouseY = cursorY;
 
@@ -114,7 +106,7 @@ public abstract class ScreenGUI extends GuiScreen implements ParentElement {
             mc.thePlayer.rotationPitch = rotationPitch[0] - getCursorY() * ROTATION_FACTOR;
         }
 
-        super.drawScreen(cursorX, cursorY, f);
+//        super.drawScreen(cursorX, cursorY, partialTicks); -> we might not want this to be called. Shouldn't have any effect ("empty" call)
 
         GLCore.glStartUI(mc);
 
@@ -124,9 +116,8 @@ public abstract class ScreenGUI extends GuiScreen implements ParentElement {
             GLCore.tryBlendFuncSeparate(770, 771, 1, 0);
             GLCore.glBindTexture(OptionCore.SAO_UI.getValue() ? StringNames.gui : StringNames.guiCustom);
 
-
             if (mouseDown != 0) {
-                final float fval = f * 0.1F;
+                final float fval = partialTicks * 0.1F;
 
                 if (mouseDownValue + fval < 1.0F) mouseDownValue += fval;
                 else mouseDownValue = 1.0F;
@@ -144,15 +135,18 @@ public abstract class ScreenGUI extends GuiScreen implements ParentElement {
             GLCore.glTexturedRect(cursorX - 7, cursorY - 7, 20, 115, 15, 15);
             GLCore.glBlend(false);
         }
+
+        this.elements.menuElements.values().forEach(e -> e.draw(mc, cursorX, cursorY));
+
         GLCore.glEndUI(mc);
     }
 
     @Override
     protected void keyTyped(char ch, int key) throws IOException {
-        if (OptionCore.CURSOR_TOGGLE.getValue() && super.isCtrlKeyDown()) lockCursor = !lockCursor;
+        if (OptionCore.CURSOR_TOGGLE.getValue() && isCtrlKeyDown()) lockCursor = !lockCursor;
         super.keyTyped(ch, key);
 
-        elements.stream().filter(element -> element.isFocus()).forEach(element -> actionPerformed(element, Actions.KEY_TYPED, key));
+        elements.menuElements.keySet().stream().filter(Element::isFocus).forEach(element -> actionPerformed(element, Actions.KEY_TYPED, key));
     }
 
     // TODO: check the way elements is built... Breakpoint gives some weird result (at least for base menu)
@@ -161,23 +155,8 @@ public abstract class ScreenGUI extends GuiScreen implements ParentElement {
         super.mouseClicked(cursorX, cursorY, button);
         mouseDown |= (0x1 << button);
 
-        boolean clickedElement = false;
-
-        for (int i = elements.size() - 1; i >= 0; i--) {
-            if (i >= elements.size()) {
-                if (elements.size() > 0) i = elements.size() - 1;
-                else break;
-            }
-
-            if (ElementDispatcher.menuElements.get(elements.get(i)).mouseOver(cursorX, cursorY)) {
-                if (ElementDispatcher.menuElements.get(elements.get(i)).mousePressed(mc, cursorX, cursorY, button))
-                    actionPerformed(elements.get(i), Actions.getAction(button, true), button);
-
-                clickedElement = true;
-            }
-        }
-
-        if (!clickedElement) backgroundClicked(cursorX, cursorY, button);
+        if (elements.menuElements.values().stream().filter(e -> e.mouseOver(cursorX, cursorY) && e.mousePressed(mc, cursorX, cursorY, button)).peek(e -> actionPerformed(e.getElement(), Actions.getAction(button, true), button)).count() == 0)
+            backgroundClicked(cursorX, cursorY, button);
     }
 
     @Override
@@ -185,25 +164,18 @@ public abstract class ScreenGUI extends GuiScreen implements ParentElement {
         super.mouseReleased(cursorX, cursorY, button);
         mouseDown &= ~(0x1 << button);
 
-        for (int i = elements.size() - 1; i >= 0; i--) {
-            if (i >= elements.size()) {
-                if (elements.size() > 0) i = elements.size() - 1;
-                else break;
-            }
-            if (ElementDispatcher.menuElements.get(elements.get(i)).mouseOver(cursorX, cursorY, button) && ElementDispatcher.menuElements.get(elements.get(i)).mouseReleased(mc, cursorX, cursorY, button))
-                actionPerformed(elements.get(i), Actions.getAction(button, false), button);
-        }
+        elements.menuElements.values().stream().filter(e -> e.mouseOver(cursorX, cursorY) && e.mouseReleased(mc, cursorX, cursorY, button)).forEach(e -> actionPerformed(e.getElement(), Actions.getAction(button, false), button));
     }
 
     protected void backgroundClicked(int cursorX, int cursorY, int button) {
     }
 
     private void mouseWheel(int cursorX, int cursorY, int delta) {
-        elements.stream().filter(element -> ElementDispatcher.menuElements.get(element).mouseOver(cursorX, cursorY) && ElementDispatcher.menuElements.get(element).mouseWheel(mc, cursorX, cursorY, delta)).forEach(element -> actionPerformed(element, Actions.MOUSE_WHEEL, delta));
+        elements.menuElements.values().stream().filter(element -> element.mouseOver(cursorX, cursorY) && element.mouseWheel(mc, cursorX, cursorY, delta)).forEach(element -> actionPerformed(element.getElement(), Actions.MOUSE_WHEEL, delta));
     }
 
-    public void actionPerformed(Elements element, Actions action, int data) {
-        new ElementAction(element.getCaption(), element.getCategory(), action, data);
+    public void actionPerformed(Element element, Actions action, int data) {
+        MinecraftForge.EVENT_BUS.post(new ElementAction(element.getCaption(), element.getCategory(), action, data));
         SoundCore.play(mc.getSoundHandler(), SoundCore.DIALOG_CLOSE);
     }
 
@@ -233,8 +205,7 @@ public abstract class ScreenGUI extends GuiScreen implements ParentElement {
     }
 
     protected void close() {
-        elements.clear();
-        ElementDispatcher.menuElements.clear();
+        elements.menuElements.clear(); // jic
     }
 
     protected void hideCursor() {

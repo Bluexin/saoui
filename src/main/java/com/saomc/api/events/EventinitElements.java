@@ -1,15 +1,15 @@
 package com.saomc.api.events;
 
-import com.saomc.api.screens.IElement;
+import com.saomc.api.screens.IElementBuilder;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
 /**
  * Created by Tencao on 04/08/2016.
  */
-public class EventinitElements extends Event {
-    private IElement implementation;
+public class EventinitElements extends Event { // TODO: is this really needed?
+    private IElementBuilder implementation;
 
-    public EventinitElements(IElement implementation) {
+    public EventinitElements(IElementBuilder implementation) {
         this.implementation = implementation;
     }
 
@@ -18,7 +18,7 @@ public class EventinitElements extends Event {
      *
      * @return current implementation
      */
-    public IElement getImplementation() {
+    public IElementBuilder getImplementation() {
         return this.implementation;
     }
 
@@ -27,7 +27,7 @@ public class EventinitElements extends Event {
      *
      * @param provider an instance to be used to retrieve information from
      */
-    public void setImplementation(IElement provider) {
+    public void setImplementation(IElementBuilder provider) {
         this.implementation = provider;
     }
 }

@@ -26,8 +26,8 @@ public class IngameMenuGUI extends ScreenGUI {
     }
 
     @Override
-    public void drawScreen(int cursorX, int cursorY, float f) {
-        super.drawScreen(cursorX, cursorY, f);
+    public void drawScreen(int cursorX, int cursorY, float partialTicks) {
+        super.drawScreen(cursorX, cursorY, partialTicks);
 
         if (!playedSound) {
             SoundCore.play(mc, SoundCore.ORB_DROPDOWN);
@@ -49,6 +49,9 @@ public class IngameMenuGUI extends ScreenGUI {
     public void updateScreen() {
         super.updateScreen();
 
+        if (flowY < height / 2) flowY = (flowY + height / 2 - 32) / 2;
+
+        flowX /= 2;
     }
 
     @Override

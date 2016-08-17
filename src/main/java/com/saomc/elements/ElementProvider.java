@@ -1,6 +1,6 @@
 package com.saomc.elements;
 
-import com.saomc.api.screens.IElement;
+import com.saomc.api.screens.IElementBuilder;
 
 /**
  * Created by Tencao on 04/08/2016.
@@ -8,13 +8,13 @@ import com.saomc.api.screens.IElement;
 public class ElementProvider {
 
     private static ElementProvider instance;
-    private final IElement elements;
+    private final IElementBuilder builder;
 
-    private ElementProvider(IElement elements) {
-        this.elements = elements;
+    private ElementProvider(IElementBuilder builder) {
+        this.builder = builder;
     }
 
-    public static void init(IElement provider) {
+    public static void init(IElementBuilder provider) {
         if (instance != null) throw new IllegalStateException("ElementProvider already initialized!");
         instance = new ElementProvider(provider);
     }
@@ -24,7 +24,7 @@ public class ElementProvider {
         return instance;
     }
 
-    public IElement getElements() {
-        return this.elements;
+    public IElementBuilder getBuilder() {
+        return this.builder;
     }
 }

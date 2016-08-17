@@ -62,7 +62,7 @@ public class SAOCore {
         MinecraftForge.EVENT_BUS.post(sk);
 
         SkillList.init(sk.getSkills(), sk.isRingShown());
-        new DefaultElements().dispatch();
+        DefaultElements.dispatch();
     }
 
     @SuppressWarnings("unchecked")

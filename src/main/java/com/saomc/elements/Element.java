@@ -5,12 +5,12 @@ import com.saomc.api.screens.IIcon;
 
 /**
  * This is the element class used to store the element object.
- * To add an element, use the provided IElement, otherwise it will not be correctly added to the UI
+ * To add an element, use the ElementBuilder, otherwise it will not be correctly added to the UI
  * <p>
  * Created by Tencao on 30/07/2016.
  */
 
-public class Elements {
+public class Element {
     private String category;
     private String caption;
     private String parent;
@@ -25,24 +25,15 @@ public class Elements {
     private boolean highlight;
     private boolean isMenu;
 
-    Elements() {
+    private Element() {
     }
 
-    Elements(String category, String parent, String caption, IIcon icon, GuiSelection gui, int x, int y, int width, int height) {
-        this.category = category;
+    Element(String category, String parent, String caption, IIcon icon, GuiSelection gui, int x, int y, int width, int height) {
+        this(category, caption, icon, gui, x, y, width, height, false);
         this.parent = parent;
-        this.caption = caption;
-        this.icon = icon;
-        this.gui = gui;
-        this.enabled = true;
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
-        this.visibility = 1.0F;
     }
 
-    Elements(String category, String caption, IIcon icon, GuiSelection gui, int x, int y, int width, int height, boolean isMenu) {
+    Element(String category, String caption, IIcon icon, GuiSelection gui, int x, int y, int width, int height, boolean isMenu) {
         this.caption = category;
         this.category = caption;
         this.icon = icon;
@@ -56,8 +47,8 @@ public class Elements {
         this.isMenu = isMenu;
     }
 
-    public Elements main() {
-        return new Elements();
+    public Element main() {
+        return new Element();
     }
 
     /**
