@@ -24,21 +24,33 @@ public class Element {
     private boolean focus;
     private boolean highlight;
     private boolean isMenu;
+    private boolean isRemoved;
 
     private Element() {
     }
 
     Element(String category, String parent, String caption, IIcon icon, GuiSelection gui, int x, int y, int width, int height) {
-        this(category, caption, icon, gui, x, y, width, height, false);
         this.parent = parent;
+        this.caption = category;
+        this.category = caption;
+        this.icon = icon;
+        this.gui = gui;
+        this.enabled = isMenu;
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+        this.visibility = 1.0F;
+        this.isMenu = false;
     }
 
     Element(String category, String caption, IIcon icon, GuiSelection gui, int x, int y, int width, int height, boolean isMenu) {
         this.caption = category;
         this.category = caption;
+        this.parent = "none";
         this.icon = icon;
         this.gui = gui;
-        this.enabled = true;
+        this.enabled = isMenu;
         this.x = x;
         this.y = y;
         this.width = width;
@@ -229,5 +241,23 @@ public class Element {
      */
     public String getCaption() {
         return this.caption;
+    }
+
+    /**
+     * Checks if the Element has been disabled
+     *
+     * @return Returns true if disabled
+     */
+    public boolean isRemoved() {
+        return isRemoved;
+    }
+
+    /**
+     * Flags the Element as disabled
+     *
+     * @param removed The state you wish to set
+     */
+    public void setRemoved(boolean removed) {
+        isRemoved = removed;
     }
 }

@@ -10,12 +10,14 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundHandler;
 
 /**
+ * The main render class for slots and menus
+ *
  * Created by Tencao on 30/07/2016.
  */
 public class MenuCore implements ParentElement {
 
     public final ParentElement parent;
-    public ColorUtil bgColor, disabledMask;
+    private ColorUtil bgColor, disabledMask;
     private Element element;
     private boolean removed;
 
@@ -32,9 +34,11 @@ public class MenuCore implements ParentElement {
     }
 
     public void draw(Minecraft mc, int cursorX, int cursorY) {
-        if (mouseOver(cursorX, cursorY)) mouseMoved(mc, cursorX, cursorY);
-        if (element.isMenu()) drawMenu(cursorX, cursorY);
-        else drawSlot(cursorX, cursorY);
+        if (element.isEnabled()) {
+            if (mouseOver(cursorX, cursorY)) mouseMoved(mc, cursorX, cursorY);
+            if (element.isMenu()) drawMenu(cursorX, cursorY);
+            else drawSlot(cursorX, cursorY);
+        }
     }
 
     private void drawMenu(int cursorX, int cursorY) {
@@ -112,7 +116,7 @@ public class MenuCore implements ParentElement {
     }
 
 
-    public boolean mouseOver(int cursorX, int cursorY, int flag) {
+    private boolean mouseOver(int cursorX, int cursorY, int flag) {
         if ((element.getVisibility() >= 1) && (element.isEnabled())) {
             final int left = getX(false);
             final int top = getY(false);
@@ -136,7 +140,7 @@ public class MenuCore implements ParentElement {
         return false;
     }
 
-    void mouseMoved(Minecraft mc, int cursorX, int cursorY) {
+    private void mouseMoved(Minecraft mc, int cursorX, int cursorY) {
     }
 
     public boolean mouseWheel(Minecraft mc, int cursorX, int cursorY, int delta) {
@@ -168,13 +172,10 @@ public class MenuCore implements ParentElement {
     }
 
     public void click(SoundHandler handler, boolean flag) {
-        if (element.getIcon() == IconCore.CONFIRM) SoundCore.play(handler, SoundCore.CONFIRM);
-        else {
-            if (flag) {
-                SoundCore.play(handler, SoundCore.MENU_POPUP);
-            } else {
-                SoundCore.play(handler, SoundCore.DIALOG_CLOSE);
-            }
+        if (flag) {
+            SoundCore.play(handler, SoundCore.MENU_POPUP);
+        } else {
+            SoundCore.play(handler, SoundCore.DIALOG_CLOSE);
         }
     }
 

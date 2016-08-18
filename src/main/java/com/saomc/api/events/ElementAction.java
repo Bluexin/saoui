@@ -1,6 +1,7 @@
 package com.saomc.api.events;
 
 import com.saomc.api.screens.Actions;
+import com.saomc.api.screens.GuiSelection;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
 /**
@@ -15,12 +16,16 @@ public class ElementAction extends Event {
     private String category;
     private Actions action;
     private int data;
+    private GuiSelection gui;
+    private boolean isOpen;
 
-    public ElementAction(String name, String category, Actions action, int data) {
+    public ElementAction(String name, String category, Actions action, int data, GuiSelection gui, boolean open) {
         this.name = name;
         this.category = category;
         this.action = action;
         this.data = data;
+        this.gui = gui;
+        this.isOpen = open;
     }
 
     /**
@@ -50,5 +55,22 @@ public class ElementAction extends Event {
      */
     public int getData() {
         return this.data;
+    }
+
+    /**
+     * @return Returns the gui this was sent from
+     */
+    public GuiSelection getGui() {
+        return gui;
+    }
+
+    /**
+     * Checks to see if the element is open or not
+     * Useful for deciding whether to fire an event onClose, or onOpen
+     *
+     * @return Returns whether the element is already open
+     */
+    public boolean isOpen() {
+        return isOpen;
     }
 }

@@ -1,11 +1,13 @@
 package com.saomc.events;
 
+import com.saomc.api.events.ElementAction;
 import com.saomc.colorstates.ColorStateHandler;
 import com.saomc.effects.RenderDispatcher;
 import com.saomc.social.party.PartyHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.event.entity.EntityEvent;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
@@ -70,5 +72,10 @@ public class EventCore {
     @SubscribeEvent
     public void guiListener(GuiScreenEvent e) {
         RenderHandler.checkingameGUI();
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public void elementActionListener(ElementAction e){
+        ElementHandler.defaultActions(e);
     }
 }

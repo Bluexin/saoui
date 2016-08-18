@@ -91,7 +91,6 @@ public abstract class ScreenGUI extends GuiScreen implements ParentElement {
     public void updateScreen() {
         if (this.elements == null) return;
 
-        this.elements.menuElements.entrySet().removeIf(e -> !e.getKey().isEnabled());
         this.elements.menuElements.values().forEach(e -> e.update(mc));
     }
 
@@ -175,7 +174,8 @@ public abstract class ScreenGUI extends GuiScreen implements ParentElement {
     }
 
     public void actionPerformed(Element element, Actions action, int data) {
-        MinecraftForge.EVENT_BUS.post(new ElementAction(element.getCaption(), element.getCategory(), action, data));
+        MinecraftForge.EVENT_BUS.post(new ElementAction(element.getCaption(), element.getCategory(), action, data, element.getGui(), element.isFocus()));
+        element.setFocus(!element.isFocus());
         SoundCore.play(mc.getSoundHandler(), SoundCore.DIALOG_CLOSE);
     }
 
