@@ -81,7 +81,7 @@ public class ElementBuilder implements IElementBuilder {
      */
     @Override
     public List<Element> getforGui(GuiSelection gui) {
-        return elementlist.values().stream().filter(e -> e.getGui() == gui).collect(Collectors.toList());
+        return elementlist.values().stream().filter(e -> e.getGui() == gui && !e.isRemoved()).collect(Collectors.toList());
     }
 
     /**
@@ -117,7 +117,7 @@ public class ElementBuilder implements IElementBuilder {
         return elementlist.values().stream().filter(e -> e.getGui() == gui && e.getParent() != null).collect(Collectors.toList());
     }
 
-    public boolean isParentMenu(String parent, GuiSelection gui){
+    private boolean isParentMenu(String parent, GuiSelection gui){
         return elementlist.values().stream().filter(e -> e.getGui() == gui && e.getCategory().equals(parent)).anyMatch(Element::isMenu);
     }
 
