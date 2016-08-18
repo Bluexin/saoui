@@ -2,6 +2,7 @@ package com.saomc.screens.menu;
 
 import com.saomc.SoundCore;
 import com.saomc.api.screens.GuiSelection;
+import com.saomc.elements.ElementBuilder;
 import com.saomc.screens.window.ScreenGUI;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraftforge.fml.relauncher.Side;
@@ -58,6 +59,7 @@ public class IngameMenuGUI extends ScreenGUI {
     public void onGuiClosed() {
         super.onGuiClosed();
         SoundCore.play(mc, SoundCore.DIALOG_CLOSE);
+        ElementBuilder.getInstance().resetElements(GuiSelection.IngameMenuGUI);
     }
 
 /*

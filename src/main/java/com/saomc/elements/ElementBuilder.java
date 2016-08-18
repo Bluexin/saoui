@@ -63,6 +63,15 @@ public class ElementBuilder implements IElementBuilder {
     }
 
     /**
+     * This is called on GUI Close to make sure elements reset properly
+     *
+     * @param gui The GUI that's closing
+     */
+    public void resetElements(GuiSelection gui){
+        elementlist.values().stream().filter(e -> e.getGui() == gui && !e.isMenu()).forEach(e -> e.setEnabled(false));
+    }
+
+    /**
      * Gets the element from the list
      *
      * @param name The name of the element
