@@ -88,3 +88,13 @@ uploadArchives {
 //        } else println("No password set up!")
     }
 }
+
+task deobfSourceJar(type: Jar, dependsOn: 'sourceMainJava') {
+    from "build/sources/main/java"
+    from "build/resources/main"
+    classifier "sources-deobf"
+}
+
+artifacts {
+    archives sourceJar
+}
