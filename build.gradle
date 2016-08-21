@@ -15,6 +15,7 @@ buildscript {
     }
 }
 
+apply plugin: "maven"
 apply plugin: 'net.minecraftforge.gradle.forge'
 
 version = "1.10.2-1.6.0-SNAPSHOT"
@@ -75,13 +76,15 @@ processResources
 idea { module { inheritOutputDirs = true } }
 
 uploadArchives {
-    repositories {
-        mavenDeployer {
-            credentials {
-                username System.env.REPO_UNAME
-                password System.env.REPO_PWD
+    repositories.mavenDeployer {
+
+        dependsOn 'build'
+
+        if (project.hasProperty('REPO_PWD')) {
+            repository(url: "http://bluexin.be:8080/repository/snapshots/") {
+                authentication(userName: "CI", password: project.getProperty('REPO_PWD'))
+                // the elvis operator. look it up.
             }
-            url "http://bluexin.be:8080/repository/snapshots/"
         }
     }
 }
