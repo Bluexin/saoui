@@ -80,11 +80,11 @@ uploadArchives {
 
         dependsOn 'build'
 
-        if (project.hasProperty('REPO_PWD')) {
+        if (System.hasProperty('REPO_PWD')) {
             repository(url: "http://bluexin.be:8080/repository/snapshots/") {
-                authentication(userName: "CI", password: project.getProperty('REPO_PWD'))
+                authentication(userName: "CI", password: System.getenv('REPO_PWD'))
                 // the elvis operator. look it up.
             }
-        }
+        } else println("No password set up!")
     }
 }
