@@ -2,7 +2,7 @@ package be.bluexin.saouintw.packets;
 
 import be.bluexin.saouintw.packets.client.ReceiveCommand;
 import be.bluexin.saouintw.packets.server.SendCommand;
-import com.saomc.SAOCore;
+import com.saomc.saoui.SAOCore;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.fml.common.network.NetworkRegistry;

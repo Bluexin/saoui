@@ -17,7 +17,7 @@ buildscript {
 
 apply plugin: 'net.minecraftforge.gradle.forge'
 
-version = "1.10.2-1.6.0-Dev1"
+version = "1.10.2-1.6.0-SNAPSHOT"
 group = "com.saomc" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "saoui"
 
@@ -73,3 +73,15 @@ processResources
         }
 
 idea { module { inheritOutputDirs = true } }
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            credentials {
+                username System.env.REPO_UNAME
+                password System.env.REPO_PWD
+            }
+            url "http://bluexin.be:8080/repository/snapshots/"
+        }
+    }
+}

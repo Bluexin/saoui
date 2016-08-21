@@ -2,8 +2,8 @@ package be.bluexin.saouintw;
 
 import be.bluexin.saouintw.packets.PacketPipeline;
 import be.bluexin.saouintw.proxy.CommonProxy;
-import com.saomc.SAOCore;
-import com.saomc.communication.Communicator;
+import com.saomc.saoui.SAOCore;
+import com.saomc.saoui.communication.Communicator;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;

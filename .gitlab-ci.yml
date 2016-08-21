@@ -1,0 +1,19 @@
+image: java:8
+
+before_script:
+  # Enable the usage of sources over https
+  - apt-get update -yqq
+  - apt-get install apt-transport-https -yqq
+  # Log the java version
+  - java -version
+
+build:
+  script:
+    - chmod +x gradlew
+    - ./gradlew setupCIWorkspace
+    - ./gradlew build
+    - mkdir artifacts
+    - cp build/libs/* artifacts/
+  artifacts:
+    paths:
+    - artifacts/
