@@ -28,12 +28,12 @@ public class IngameMenuGUI extends ScreenGUI {
 
     @Override
     public void drawScreen(int cursorX, int cursorY, float partialTicks) {
-        super.drawScreen(cursorX, cursorY, partialTicks);
-
         if (!playedSound) {
             SoundCore.play(mc, SoundCore.ORB_DROPDOWN);
             playedSound = true;
         }
+
+        super.drawScreen(cursorX, cursorY, partialTicks);
     }
 
     @Override

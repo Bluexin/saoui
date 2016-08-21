@@ -109,7 +109,7 @@ public abstract class ScreenGUI extends GuiScreen implements ParentElement {
 
         GLCore.glStartUI(mc);
 
-        if (CURSOR_STATUS == CursorStatus.SHOW) {
+        if (CURSOR_STATUS == CursorStatus.SHOW) { // TODO: maybe there's a way to move all of this to the actual org.lwjgl.input.Cursor
 
             GLCore.glBlend(true);
             GLCore.tryBlendFuncSeparate(770, 771, 1, 0);
