@@ -109,6 +109,8 @@ public abstract class ScreenGUI extends GuiScreen implements ParentElement {
 
         GLCore.glStartUI(mc);
 
+        this.elements.menuElements.values().forEach(e -> e.draw(mc, cursorX, cursorY));
+
         if (CURSOR_STATUS == CursorStatus.SHOW) { // TODO: maybe there's a way to move all of this to the actual org.lwjgl.input.Cursor
 
             GLCore.glBlend(true);
@@ -134,8 +136,6 @@ public abstract class ScreenGUI extends GuiScreen implements ParentElement {
             GLCore.glTexturedRect(cursorX - 7, cursorY - 7, 20, 115, 15, 15);
             GLCore.glBlend(false);
         }
-
-        this.elements.menuElements.values().forEach(e -> e.draw(mc, cursorX, cursorY));
 
         GLCore.glEndUI(mc);
     }
