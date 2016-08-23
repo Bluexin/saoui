@@ -129,6 +129,10 @@ public class ElementBuilder implements IElementBuilder {
         return elementlist.values().stream().filter(e -> e.getGui() == gui && e.getCategory().equals(parent)).anyMatch(Element::isMenu);
     }
 
+    public Element getParentElement(String parent){
+        return elementlist.get(parent);
+    }
+
     /**
      * Gets the Y coord to render
      *
@@ -136,7 +140,7 @@ public class ElementBuilder implements IElementBuilder {
      * @return The Y coord to render
      */
     private int getYForMenu(GuiSelection gui){
-        int value = elementlist.values().stream().filter(e -> e.isMenu() && e.getGui() == gui).mapToInt(Element::getY).max().orElse(-24);
+        int value = elementlist.values().stream().filter(e -> e.isMenu() && e.getGui() == gui).mapToInt(e -> e.getY(true)).max().orElse(-24);
         return value + 24;
     }
 
@@ -148,14 +152,14 @@ public class ElementBuilder implements IElementBuilder {
      * @return The Y coord to render
      */
     private int getYForSlot(String parent, GuiSelection gui){
-        int value = elementlist.values().stream().filter(e -> e.getParent().equals(parent) && e.getGui() == gui).mapToInt(Element::getY).max().orElse(-20);
+        int value = elementlist.values().stream().filter(e -> e.getParent().equals(parent) && e.getGui() == gui).mapToInt(e -> e.getY(true)).max().orElse(-20);
         return value + 20;
     }
 
     private int getXForSlot(String parent, GuiSelection gui){
         if (isParentMenu(parent, gui)) return 25;
         else {
-            int value = elementlist.values().stream().filter(e -> e.getCategory().equals(parent) && e.getGui() == gui).mapToInt(Element::getX).sum();
+            int value = elementlist.values().stream().filter(e -> e.getCategory().equals(parent) && e.getGui() == gui).mapToInt(e -> e.getX(true)).sum();
             return value + 100;
         }
     }

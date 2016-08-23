@@ -57,11 +57,11 @@ public class DeathScreen extends ScreenGUI {
     public void actionPerformed(ElementCore element, Actions action, int data) {
         confirmClicked(this.mc.theWorld.getWorldInfo().isHardcoreModeEnabled(), -1);
     }*/
-
+/*
     @Override
     protected void backgroundClicked(int cursorX, int cursorY, int button) {
         confirmClicked(this.mc.theWorld.getWorldInfo().isHardcoreModeEnabled(), -1);
-    }
+    }*/
 
     @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {

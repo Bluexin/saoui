@@ -73,12 +73,12 @@ public abstract class ElementCore implements ParentElement, IIcon {
 
     @Override
     public int getX(boolean relative) {
-        return relative ? element.getX() : element.getX() + (parent != null ? parent.getX(false) : 0);
+        return relative ? element.getX(relative) : element.getX(relative) + (parent != null ? parent.getX(false) : 0);
     }
 
     @Override
     public int getY(boolean relative) {
-        return relative ? element.getY() : element.getY() + (parent != null ? parent.getY(false) : 0);
+        return relative ? element.getY(relative) : element.getY(relative) + (parent != null ? parent.getY(false) : 0);
     }
 
     public void click(SoundHandler handler, boolean flag) {
@@ -105,10 +105,6 @@ public abstract class ElementCore implements ParentElement, IIcon {
 
     public boolean removed() {
         return removed;
-    }
-
-    public String toString() {
-        return "[ ( " + getClass().getName() + " " + element.getX() + " " + element.getY() + " " + element.getWidth() + " " + element.getHeight() + " ) => " + parent + " ]";
     }
 
 }

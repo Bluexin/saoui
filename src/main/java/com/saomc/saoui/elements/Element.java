@@ -2,6 +2,8 @@ package com.saomc.saoui.elements;
 
 import com.saomc.saoui.api.screens.GuiSelection;
 import com.saomc.saoui.api.screens.IIcon;
+import com.saomc.saoui.util.ColorUtil;
+import net.minecraft.client.Minecraft;
 
 /**
  * This is the element class used to store the element object.
@@ -10,7 +12,8 @@ import com.saomc.saoui.api.screens.IIcon;
  * Created by Tencao on 30/07/2016.
  */
 
-public class Element {
+public class Element implements ParentElement{
+    private ParentElement parentElement;
     private String category;
     private String caption;
     private String parent;
@@ -158,8 +161,8 @@ public class Element {
      *
      * @return Returns the elements x position
      */
-    public int getX() {
-        return this.x;
+    public int getX(boolean relative) {
+        return relative ? x : x + (parentElement != null ? parentElement.getX(relative) : 0);
     }
 
     /**
@@ -176,8 +179,8 @@ public class Element {
      *
      * @return Returns the elements y position
      */
-    public int getY() {
-        return this.y;
+    public int getY(boolean relative) {
+        return relative ? y : y + (parentElement != null ? parentElement.getY(relative) : 0);
     }
 
     /**
@@ -259,5 +262,58 @@ public class Element {
      */
     public void setRemoved(boolean removed) {
         isRemoved = removed;
+    }
+
+    /**
+     * Sets the parent element
+     *
+     * @param parentElement The parent element
+     */
+    public void setParentElement(ParentElement parentElement){
+        this.parentElement = parentElement;
+    }
+
+    public int getColor(int hoverState, boolean bg) {
+        return bg ? hoverState == 1 ? ColorUtil.DEFAULT_COLOR.rgba : hoverState >= 2 ? ColorUtil.HOVER_COLOR.rgba : ColorUtil.DISABLED_MASK.rgba : hoverState == 1 ? ColorUtil.DEFAULT_FONT_COLOR.rgba : hoverState >= 2 ? ColorUtil.HOVER_FONT_COLOR.rgba : ColorUtil.DEFAULT_FONT_COLOR.rgba & ColorUtil.DISABLED_MASK.rgba;
+    }
+
+    public final boolean mouseOver(int cursorX, int cursorY) {
+        return mouseOver(cursorX, cursorY, -1);
+    }
+
+    public boolean mouseOver(int cursorX, int cursorY, int flag) {
+        if ((visibility >= 1) && (enabled)) {
+            final int left = getX(false);
+            final int top = getY(false);
+
+            return (
+                    (cursorX >= left) &&
+                            (cursorY >= top) &&
+                            (cursorX <= left + width) &&
+                            (cursorY <= top + height)
+            );
+        } else {
+            return false;
+        }
+    }
+
+
+    public void mouseMoved(Minecraft mc, int cursorX, int cursorY) {
+    }
+
+    public boolean mousePressed(Minecraft mc, int cursorX, int cursorY, int button) {
+        return false;
+    }
+
+    public boolean mouseReleased(Minecraft mc, int cursorX, int cursorY, int button) {
+        return false;
+    }
+
+    public boolean mouseWheel(Minecraft mc, int cursorX, int cursorY, int delta) {
+        return false;
+    }
+
+    public int hoverState(int cursorX, int cursorY) {
+        return mouseOver(cursorX, cursorY) ? 2 : highlight ? 3 : !focus ? 1 : 0;
     }
 }
