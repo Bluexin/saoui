@@ -2,9 +2,8 @@ package com.saomc.saoui.renders;
 
 import com.saomc.saoui.GLCore;
 import com.saomc.saoui.SAOCore;
-import com.saomc.saoui.colorstates.ColorState;
+import com.saomc.saoui.api.entity.rendering.RenderCapability;
 import com.saomc.saoui.effects.DeathParticles;
-import com.saomc.saoui.events.StateEventHandler;
 import com.saomc.saoui.resources.StringNames;
 import com.saomc.saoui.screens.ingame.HealthStep;
 import com.saomc.saoui.social.StaticPlayerHelper;
@@ -22,7 +21,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
 @SideOnly(Side.CLIENT)
-public class StaticRenderer {
+public class StaticRenderer { // TODO: add usage of scale, offset etc from capability
 
     private static final int HEALTH_COUNT = 32;
     private static final double HEALTH_ANGLE = 0.35F;
@@ -30,6 +29,7 @@ public class StaticRenderer {
     private static final float HEALTH_OFFSET = 0.75F;
     private static final double HEALTH_HEIGHT = 0.21F;
 
+    @SuppressWarnings("ConstantConditions")
     public static void render(RenderManager renderManager, EntityLivingBase living, double x, double y, double z) {
         final Minecraft mc = Minecraft.getMinecraft();
 
@@ -38,37 +38,30 @@ public class StaticRenderer {
         if (living.deathTime == 1) living.deathTime++;
 
         if (!dead && !living.isInvisibleToPlayer(mc.thePlayer)) {
-            if (OptionCore.COLOR_CURSOR.getValue())
-                if (!(OptionCore.DEBUG_MODE.getValue() && ColorState.checkValidState(living))) {
-                    doRenderColorCursor(renderManager, mc, living, x, y, z, 64);
-                } else if (OptionCore.DEBUG_MODE.getValue())
-                    doRenderColorCursor(renderManager, mc, living, x, y, z, 64);
+            if (OptionCore.COLOR_CURSOR.getValue() && living.hasCapability(RenderCapability.RENDER_CAPABILITY, null))
+                doRenderColorCursor(renderManager, mc, living, x, y, z, 64);
 
-            if (OptionCore.HEALTH_BARS.getValue() && !living.equals(mc.thePlayer)) {
-                if (!(OptionCore.DEBUG_MODE.getValue() && ColorState.checkValidState(living)))
-                    doRenderHealthBar(renderManager, mc, living, x, y, z);
-                else if (OptionCore.DEBUG_MODE.getValue())
-                    doRenderHealthBar(renderManager, mc, living, x, y, z);
-            }
+            if (OptionCore.HEALTH_BARS.getValue() && !living.equals(mc.thePlayer) && living.hasCapability(RenderCapability.RENDER_CAPABILITY, null))
+                doRenderHealthBar(renderManager, mc, living, x, y, z);
         }
     }
 
-    public static void doRenderColorCursor(RenderManager renderManager, Minecraft mc, EntityLivingBase living, double x, double y, double z, int distance) {
-        if (living.getRidingEntity() != null) return;
-        if (OptionCore.LESS_VISUALS.getValue() && !(living instanceof IMob || StaticPlayerHelper.getHealth(mc, living, SAOCore.UNKNOWN_TIME_DELAY) != StaticPlayerHelper.getMaxHealth(living)))
+    public static void doRenderColorCursor(RenderManager renderManager, Minecraft mc, EntityLivingBase entity, double x, double y, double z, int distance) {
+        if (entity.getRidingEntity() != null) return;
+        if (OptionCore.LESS_VISUALS.getValue() && !(entity instanceof IMob || StaticPlayerHelper.getHealth(mc, entity, SAOCore.UNKNOWN_TIME_DELAY) != StaticPlayerHelper.getMaxHealth(entity)))
             return;
 
-        if (living.worldObj.isRemote) {
-            double d3 = living.getDistanceSqToEntity(renderManager.renderViewEntity);
+        if (entity.worldObj.isRemote) {
+            double d3 = entity.getDistanceSqToEntity(renderManager.renderViewEntity);
 
             if (d3 <= (double) (distance * distance)) {
-                final float sizeMult = living.isChild() && living instanceof EntityMob ? 0.5F : 1.0F;
+                final float sizeMult = entity.isChild() && entity instanceof EntityMob ? 0.5F : 1.0F;
 
                 float f = 1.6F;
                 float f1 = 0.016666668F * f;
 
                 GLCore.start();
-                GLCore.glTranslatef((float) x + 0.0F, (float) y + sizeMult * living.height + sizeMult * 1.1F, (float) z);
+                GLCore.glTranslatef((float) x + 0.0F, (float) y + sizeMult * entity.height + sizeMult * 1.1F, (float) z);
                 GLCore.glNormal3f(0.0F, 1.0F, 0.0F);
                 GLCore.glRotatef(-renderManager.playerViewY, 0.0F, 1.0F, 0.0F);
                 GLCore.glScalef(-(f1 * sizeMult), -(f1 * sizeMult), (f1 * sizeMult));
@@ -81,13 +74,11 @@ public class StaticRenderer {
                 GLCore.tryBlendFuncSeparate(770, 771, 1, 0);
 
                 GLCore.glBindTexture(OptionCore.SAO_UI.getValue() ? StringNames.entities : StringNames.entitiesCustom);
-                StateEventHandler.getColor(living);
+                GLCore.glColorRGBA(RenderCapability.get(entity).colorStateHandler.getColorState().rgba());
                 GLCore.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 
-                //System.out.print(state.name() + " assigned to " + living.getCommandSenderName() + " " + living.getUniqueID() + "\n");
-
                 if (OptionCore.SPINNING_CRYSTALS.getValue()) {
-                    double a = (living.worldObj.getTotalWorldTime() % 40) / 20.0D * Math.PI;
+                    double a = (entity.worldObj.getTotalWorldTime() % 40) / 20.0D * Math.PI;
                     double cos = Math.cos(a);//Math.PI / 3 * 2);
                     double sin = Math.sin(a);//Math.PI / 3 * 2);
 

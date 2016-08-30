@@ -8,6 +8,7 @@ import net.minecraft.client.gui.inventory.GuiInventory;
 
 /**
  * Part of saoui
+ * <p>
  * Skill to be shown in the "Skills" menu and/or in the skills ring if set so.
  *
  * @author Bluexin

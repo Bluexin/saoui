@@ -11,9 +11,7 @@ build:
   script:
     - chmod +x gradlew
     - ./gradlew setupCIWorkspace
-    - ./gradlew build deobfSourceJar
-    - rm build/libs/*-sources.jar
-    - ./gradlew uploadArchives
+    - ./gradlew build deobfSourceJar uploadArchives
     - mkdir artifacts
     - cp build/libs/* artifacts/
   artifacts:

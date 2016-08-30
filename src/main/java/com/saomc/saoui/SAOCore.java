@@ -41,9 +41,6 @@ public class SAOCore {
     public void preInit(FMLPreInitializationEvent event) {
         MinecraftForge.EVENT_BUS.register(new EventCore());
         ConfigHandler.preInit(event);
-        //FriendsHandler.preInit(event);
-
-//        if (!UpdateChecker.hasChecked()) new UpdateChecker().start(); // Not used for now
     }
 
     @Mod.EventHandler

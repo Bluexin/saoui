@@ -36,13 +36,13 @@ public class SoundCore {
     public static void playAtEntity(Entity entity, String name) {
         final Minecraft mc = Minecraft.getMinecraft();
 
-        if (mc != null && mc.theWorld.isRemote) {
+        if (mc.theWorld != null && mc.theWorld.isRemote) {
             play(mc.getSoundHandler(), name, (float) entity.posX, (float) entity.posY, (float) entity.posZ);
         }
     }
 
     public static void play(Minecraft mc, String name) {
-        if (mc != null && mc.theWorld.isRemote) {
+        if (mc != null && mc.theWorld != null && mc.theWorld.isRemote) {
             play(mc.getSoundHandler(), name);
         }
     }

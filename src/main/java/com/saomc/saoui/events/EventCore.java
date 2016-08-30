@@ -1,12 +1,10 @@
 package com.saomc.saoui.events;
 
 import com.saomc.saoui.api.events.ElementAction;
-import com.saomc.saoui.colorstates.ColorStateHandler;
 import com.saomc.saoui.effects.RenderDispatcher;
 import com.saomc.saoui.social.party.PartyHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.client.event.*;
-import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -33,19 +31,12 @@ public class EventCore {
     @SubscribeEvent
     public void renderTickListener(TickEvent.RenderTickEvent e) {
         RenderHandler.deathHandlers();
-        StateEventHandler.checkTicks(e);
         RenderHandler.deathCheck();
     }
 
     @SubscribeEvent
     public void onDisconnect(FMLNetworkEvent.ClientDisconnectionFromServerEvent e) {
-        ColorStateHandler.getInstance().clean();
         PartyHelper.instance().clean();
-    }
-
-    @SubscribeEvent
-    public void constructingListener(EntityEvent.EntityConstructing e) {
-        StateEventHandler.genStateMaps(e);
     }
 
     @SubscribeEvent
