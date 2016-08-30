@@ -7,11 +7,11 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public enum WindowAlign {
 
-    CENTER((element, relative, width) -> element.getX() + (element.getWidth() - width) / 2),
+    CENTER((element, relative, width) -> element.getX(relative) + (element.getWidth() - width) / 2),
 
-    LEFT((element, relative, width) -> element.getX()),
+    LEFT((element, relative, width) -> element.getX(relative)),
 
-    RIGHT((element, relative, width) -> element.getX() + (element.getWidth() - width));
+    RIGHT((element, relative, width) -> element.getX(relative) + (element.getWidth() - width));
 
     private final SAOPositioner positioner;
 

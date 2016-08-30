@@ -11,6 +11,7 @@ import com.saomc.saoui.elements.ElementDispatcher;
 import com.saomc.saoui.elements.ParentElement;
 import com.saomc.saoui.resources.StringNames;
 import com.saomc.saoui.util.ColorUtil;
+import com.saomc.saoui.util.LogCore;
 import com.saomc.saoui.util.OptionCore;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraftforge.common.MinecraftForge;
@@ -140,8 +141,9 @@ public abstract class ScreenGUI extends GuiScreen implements ParentElement {
         GLCore.glEndUI(mc);
     }
 
+
     @Override
-    protected void keyTyped(char ch, int key) throws IOException {
+        protected void keyTyped(char ch, int key) throws IOException {
         if (OptionCore.CURSOR_TOGGLE.getValue() && isCtrlKeyDown()) lockCursor = !lockCursor;
         super.keyTyped(ch, key);
 
@@ -150,11 +152,11 @@ public abstract class ScreenGUI extends GuiScreen implements ParentElement {
 
     // TODO: check the way elements is built... Breakpoint gives some weird result (at least for base menu)
     @Override
-    protected void mouseClicked(int cursorX, int cursorY, int button) throws IOException {
+        protected void mouseClicked(int cursorX, int cursorY, int button) throws IOException {
         super.mouseClicked(cursorX, cursorY, button);
         mouseDown |= (0x1 << button);
 
-        if (elements.menuElements.values().stream().filter(e -> e.mouseOver(cursorX, cursorY) && e.mousePressed(mc, cursorX, cursorY, button)).peek(e -> actionPerformed(e.getElement(), Actions.getAction(button, true), button)).count() == 0)
+        if (elements.menuElements.keySet().stream().filter(e -> e.mouseOver(cursorX, cursorY) && e.mousePressed(mc, cursorX, cursorY, button)).peek(e -> actionPerformed(e, Actions.getAction(button, true), button)).count() == 0)
             backgroundClicked(cursorX, cursorY, button);
     }
 
@@ -163,17 +165,19 @@ public abstract class ScreenGUI extends GuiScreen implements ParentElement {
         super.mouseReleased(cursorX, cursorY, button);
         mouseDown &= ~(0x1 << button);
 
-        elements.menuElements.values().stream().filter(e -> e.mouseOver(cursorX, cursorY) && e.mouseReleased(mc, cursorX, cursorY, button)).forEach(e -> actionPerformed(e.getElement(), Actions.getAction(button, false), button));
+        elements.menuElements.keySet().stream().filter(e -> e.mouseOver(cursorX, cursorY) && e.mouseReleased(mc, cursorX, cursorY, button)).forEach(e -> actionPerformed(e, Actions.getAction(button, false), button));
     }
 
     protected void backgroundClicked(int cursorX, int cursorY, int button) {
+        LogCore.logInfo("Background Clicked");
     }
 
     private void mouseWheel(int cursorX, int cursorY, int delta) {
-        elements.menuElements.values().stream().filter(element -> element.mouseOver(cursorX, cursorY) && element.mouseWheel(mc, cursorX, cursorY, delta)).forEach(element -> actionPerformed(element.getElement(), Actions.MOUSE_WHEEL, delta));
+        elements.menuElements.keySet().stream().filter(element -> element.mouseOver(cursorX, cursorY) && element.mouseWheel(mc, cursorX, cursorY, delta)).forEach(element -> actionPerformed(element, Actions.MOUSE_WHEEL, delta));
     }
 
     public void actionPerformed(Element element, Actions action, int data) {
+        LogCore.logInfo("Action Performed");
         MinecraftForge.EVENT_BUS.post(new ElementAction(element.getCaption(), element.getCategory(), action, data, element.getGui(), element.isFocus()));
         element.setFocus(!element.isFocus());
         SoundCore.play(mc.getSoundHandler(), SoundCore.DIALOG_CLOSE);
@@ -188,7 +192,7 @@ public abstract class ScreenGUI extends GuiScreen implements ParentElement {
             final int y = height - Mouse.getEventY() * height / mc.displayHeight - 1;
             final int delta = Mouse.getEventDWheel();
 
-            if (delta != 0) mouseWheel(x, y, delta);
+            //if (delta != 0) mouseWheel(x, y, delta);
         }
     }
 
