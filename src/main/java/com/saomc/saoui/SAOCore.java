@@ -66,7 +66,7 @@ public class SAOCore {
     public void postInit(FMLPostInitializationEvent evt) {
         final Minecraft mc = Minecraft.getMinecraft();
 
-        GLCore.setFont(mc, OptionCore.CUSTOM_FONT.getValue());
+        GLCore.setFont(mc, OptionCore.CUSTOM_FONT.isEnabled());
     }
 
 }

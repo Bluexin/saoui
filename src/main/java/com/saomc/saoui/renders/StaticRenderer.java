@@ -38,17 +38,17 @@ public class StaticRenderer { // TODO: add usage of scale, offset etc from capab
         if (living.deathTime == 1) living.deathTime++;
 
         if (!dead && !living.isInvisibleToPlayer(mc.thePlayer)) {
-            if (OptionCore.COLOR_CURSOR.getValue() && living.hasCapability(RenderCapability.RENDER_CAPABILITY, null))
+            if (OptionCore.COLOR_CURSOR.isEnabled() && living.hasCapability(RenderCapability.RENDER_CAPABILITY, null))
                 doRenderColorCursor(renderManager, mc, living, x, y, z, 64);
 
-            if (OptionCore.HEALTH_BARS.getValue() && !living.equals(mc.thePlayer) && living.hasCapability(RenderCapability.RENDER_CAPABILITY, null))
+            if (OptionCore.HEALTH_BARS.isEnabled() && !living.equals(mc.thePlayer) && living.hasCapability(RenderCapability.RENDER_CAPABILITY, null))
                 doRenderHealthBar(renderManager, mc, living, x, y, z);
         }
     }
 
     public static void doRenderColorCursor(RenderManager renderManager, Minecraft mc, EntityLivingBase entity, double x, double y, double z, int distance) {
         if (entity.getRidingEntity() != null) return;
-        if (OptionCore.LESS_VISUALS.getValue() && !(entity instanceof IMob || StaticPlayerHelper.getHealth(mc, entity, SAOCore.UNKNOWN_TIME_DELAY) != StaticPlayerHelper.getMaxHealth(entity)))
+        if (OptionCore.LESS_VISUALS.isEnabled() && !(entity instanceof IMob || StaticPlayerHelper.getHealth(mc, entity, SAOCore.UNKNOWN_TIME_DELAY) != StaticPlayerHelper.getMaxHealth(entity)))
             return;
 
         if (entity.worldObj.isRemote) {
@@ -73,11 +73,11 @@ public class StaticRenderer { // TODO: add usage of scale, offset etc from capab
                 GLCore.glBlend(true);
                 GLCore.tryBlendFuncSeparate(770, 771, 1, 0);
 
-                GLCore.glBindTexture(OptionCore.SAO_UI.getValue() ? StringNames.entities : StringNames.entitiesCustom);
+                GLCore.glBindTexture(OptionCore.SAO_UI.isEnabled() ? StringNames.entities : StringNames.entitiesCustom);
                 GLCore.glColorRGBA(RenderCapability.get(entity).colorStateHandler.getColorState().rgba());
                 GLCore.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 
-                if (OptionCore.SPINNING_CRYSTALS.getValue()) {
+                if (OptionCore.SPINNING_CRYSTALS.isEnabled()) {
                     double a = (entity.worldObj.getTotalWorldTime() % 40) / 20.0D * Math.PI;
                     double cos = Math.cos(a);//Math.PI / 3 * 2);
                     double sin = Math.sin(a);//Math.PI / 3 * 2);
@@ -122,10 +122,10 @@ public class StaticRenderer { // TODO: add usage of scale, offset etc from capab
 
     private static void doRenderHealthBar(RenderManager renderManager, Minecraft mc, EntityLivingBase living, double x, double y, double z) {
         if (living.getRidingEntity() != null && living.getRidingEntity() == mc.thePlayer) return;
-        if (OptionCore.LESS_VISUALS.getValue() && !(living instanceof IMob || StaticPlayerHelper.getHealth(mc, living, SAOCore.UNKNOWN_TIME_DELAY) != StaticPlayerHelper.getMaxHealth(living)))
+        if (OptionCore.LESS_VISUALS.isEnabled() && !(living instanceof IMob || StaticPlayerHelper.getHealth(mc, living, SAOCore.UNKNOWN_TIME_DELAY) != StaticPlayerHelper.getMaxHealth(living)))
             return;
 
-        GLCore.glBindTexture(OptionCore.SAO_UI.getValue() ? StringNames.entities : StringNames.entitiesCustom);
+        GLCore.glBindTexture(OptionCore.SAO_UI.isEnabled() ? StringNames.entities : StringNames.entitiesCustom);
         GLCore.start();
         GLCore.glDepthTest(true);
         GLCore.glCullFace(false);

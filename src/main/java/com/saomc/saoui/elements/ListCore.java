@@ -6,26 +6,24 @@ import com.saomc.saoui.api.events.ElementAction;
 import com.saomc.saoui.api.screens.Actions;
 import com.saomc.saoui.resources.StringNames;
 import com.saomc.saoui.util.ColorUtil;
-import com.saomc.saoui.util.LogCore;
 import com.saomc.saoui.util.OptionCore;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  *
  * Created by Tencao on 23/08/2016.
  */
 public class ListCore{
+    public final List<Element> elements;
     private boolean focused;
     private int scrollValue;
     private ParentElement parent;
     private int lastDragY, dragY;
     private boolean dragging;
-    public final List<Element> elements;
 
     public ListCore(ParentElement gui){
         parent = gui;
@@ -69,7 +67,7 @@ public class ListCore{
         if (element.mouseOver(cursorX, cursorY)) element.mouseMoved(mc, cursorX, cursorY);
 
         if (element.getVisibility() > 0) {
-            GLCore.glBindTexture(OptionCore.SAO_UI.getValue() ? StringNames.gui : StringNames.guiCustom);
+            GLCore.glBindTexture(OptionCore.SAO_UI.isEnabled() ? StringNames.gui : StringNames.guiCustom);
 
             final int hoverState = element.hoverState(cursorX, cursorY);
             final int color0 = element.getColor(hoverState, true);
@@ -109,7 +107,7 @@ public class ListCore{
             else
                 GLCore.glTexturedRect(left, top, element.getWidth(), element.getHeight(), 0, 0, element.getWidth() - 15, element.getHeight());
 
-            GLCore.glBindTexture(OptionCore.SAO_UI.getValue() ? StringNames.gui : StringNames.guiCustom);
+            GLCore.glBindTexture(OptionCore.SAO_UI.isEnabled() ? StringNames.gui : StringNames.guiCustom);
 
             GLCore.glColorRGBA(ColorUtil.multiplyAlpha(color1, element.getVisibility()));
             GLCore.glTexturedRect(left + iconOffset, top + iconOffset, 140, 25, 16, 16);

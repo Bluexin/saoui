@@ -186,7 +186,7 @@ public class FriendsHandler {
             final GuiScreen keepScreen = mc.currentScreen;
             final boolean ingameFocus = mc.inGameHasFocus;
 
-            final String text = I18n.format(ConfigHandler._FRIEND_REQUEST_TEXT, player.getDisplayNameString());
+            final String text = I18n.format("friend.request.text", player.getDisplayNameString());
 /*
             mc.displayGuiScreen(WindowView.viewConfirm(ConfigHandler._FRIEND_REQUEST_TITLE, text, (element, action, data) -> {
                 final Categories id = element.ID();

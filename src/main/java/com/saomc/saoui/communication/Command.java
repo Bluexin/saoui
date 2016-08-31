@@ -37,7 +37,7 @@ public class Command {
     }
 
     public static boolean processCommand(String raw) {
-        if (Minecraft.getMinecraft().thePlayer == null || !OptionCore.CLIENT_CHAT_PACKETS.getValue()) return false;
+        if (Minecraft.getMinecraft().thePlayer == null || !OptionCore.CLIENT_CHAT_PACKETS.isEnabled()) return false;
         if (raw.contains(CommandType.PREFIX) && raw.contains(CommandType.SUFFIX)) {
             final Command command;
             try {
@@ -67,7 +67,7 @@ public class Command {
     }
 
     void send(Minecraft mc) {
-        if (mc.thePlayer == null || !OptionCore.CLIENT_CHAT_PACKETS.getValue()) return;
+        if (mc.thePlayer == null || !OptionCore.CLIENT_CHAT_PACKETS.isEnabled()) return;
         mc.thePlayer.sendChatMessage(this.toChat());
     }
 

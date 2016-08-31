@@ -73,7 +73,7 @@ public class StaticPlayerHelper {
     }
 
     public static float getHealth(final Minecraft mc, final Entity entity, final float time) {
-        if (OptionCore.SMOOTH_HEALTH.getValue()) {
+        if (OptionCore.SMOOTH_HEALTH.isEnabled()) {
             final float healthReal;
             final UUID uuid = entity.getUniqueID();
 
@@ -115,7 +115,7 @@ public class StaticPlayerHelper {
         if (!(entity instanceof EntityPlayer)) return 1.0F;
         EntityPlayer player = (EntityPlayer) entity;
         final float hungerReal;
-        if (OptionCore.SMOOTH_HEALTH.getValue()) {
+        if (OptionCore.SMOOTH_HEALTH.isEnabled()) {
             final UUID uuid = entity.getUniqueID();
 
             hungerReal = player.getFoodStats().getFoodLevel();

@@ -54,21 +54,21 @@ public class RenderHandler {
     }
 
     static void guiInstance(GuiOpenEvent e) {
-        if (OptionCore.DEBUG_MODE.getValue()) System.out.print(e.getGui() + " called GuiOpenEvent \n");
+        if (OptionCore.DEBUG_MODE.isEnabled()) System.out.print(e.getGui() + " called GuiOpenEvent \n");
 
         if (e.getGui() instanceof GuiIngameMenu) {
             if (!(EventCore.mc.currentScreen instanceof IngameMenuGUI)) {
                 e.setGui(new IngameMenuGUI(null));
             }
         }
-        if (e.getGui() instanceof GuiInventory && !OptionCore.DEFAULT_INVENTORY.getValue()) {
+        if (e.getGui() instanceof GuiInventory && !OptionCore.DEFAULT_INVENTORY.isEnabled()) {
             if (EventCore.mc.playerController.isInCreativeMode())
                 e.setGui(new GuiContainerCreative(EventCore.mc.thePlayer));
             else if (!(EventCore.mc.currentScreen instanceof IngameMenuGUI))
                 e.setGui(new IngameMenuGUI((GuiInventory) EventCore.mc.currentScreen));
             else e.setCanceled(true);
         }
-        if (e.getGui() instanceof GuiGameOver && (!OptionCore.DEFAULT_DEATH_SCREEN.getValue())) {
+        if (e.getGui() instanceof GuiGameOver && (!OptionCore.DEFAULT_DEATH_SCREEN.isEnabled())) {
             if (!(e.getGui() instanceof DeathScreen)) {
                 e.setGui(new DeathScreen());
             }
@@ -90,7 +90,7 @@ public class RenderHandler {
     }
 
     static void renderPlayer(RenderPlayerEvent.Post e) {
-        if (!OptionCore.UI_ONLY.getValue()) {
+        if (!OptionCore.UI_ONLY.isEnabled()) {
             if (e.getEntityPlayer() != null) {
                 StaticRenderer.render(e.getRenderer().getRenderManager(), e.getEntityPlayer(), e.getEntityPlayer().posX, e.getEntityPlayer().posY, e.getEntityPlayer().posZ);
             }
@@ -98,7 +98,7 @@ public class RenderHandler {
     }
 
     static void renderEntity(RenderLivingEvent.Post e) {
-        if (!OptionCore.UI_ONLY.getValue()) {
+        if (!OptionCore.UI_ONLY.isEnabled()) {
             if (e.getEntity() != EventCore.mc.thePlayer) {
                 StaticRenderer.render(e.getRenderer().getRenderManager(), e.getEntity(), e.getX(), e.getY(), e.getZ());
             }

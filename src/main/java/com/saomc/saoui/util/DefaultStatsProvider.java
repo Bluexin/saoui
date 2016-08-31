@@ -28,7 +28,7 @@ public class DefaultStatsProvider implements IPlayerStatsProvider {
         final StringBuilder builder = new StringBuilder();
         EntityLivingBase mount = (EntityLivingBase) player.getRidingEntity();
 
-        if (player.isRiding() && OptionCore.MOUNT_STAT_VIEW.getValue()) {
+        if (player.isRiding() && OptionCore.MOUNT_STAT_VIEW.isEnabled()) {
             final String name = mount.getCustomNameTag();
             final double maxHealth = attr(mount.getMaxHealth());
             double health = attr(mount.getHealth());

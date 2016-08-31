@@ -48,13 +48,13 @@ public class SoundCore {
     }
 
     public static void play(SoundHandler handler, String name) {
-        if ((OptionCore.SOUND_EFFECTS.getValue()) && (handler != null)) {
+        if ((OptionCore.SOUND_EFFECTS.isEnabled()) && (handler != null)) {
             handler.playSound(create(getResource(name)));
         }
     }
 
     private static void play(SoundHandler handler, String name, float x, float y, float z) {
-        if ((OptionCore.SOUND_EFFECTS.getValue()) && (handler != null)) {
+        if ((OptionCore.SOUND_EFFECTS.isEnabled()) && (handler != null)) {
             handler.playSound(create(getResource(name), x, y, z));
         }
     }

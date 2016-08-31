@@ -3,7 +3,6 @@ package com.saomc.saoui.social.party;
 import com.saomc.saoui.api.social.party.IParty;
 import com.saomc.saoui.communication.CommandType;
 import com.saomc.saoui.communication.Communicator;
-import com.saomc.saoui.events.ConfigHandler;
 import com.saomc.saoui.screens.menu.Categories;
 import com.saomc.saoui.social.StaticPlayerHelper;
 import net.minecraft.client.Minecraft;
@@ -45,7 +44,7 @@ public class PartyHelper {
             final GuiScreen keepScreen = mc.currentScreen;
             final boolean ingameFocus = mc.inGameHasFocus;
 
-            final String text = I18n.format(ConfigHandler._PARTY_INVITATION_TEXT, target.getDisplayNameString());
+            final String text = I18n.format("party.invitation.text", target.getDisplayNameString());
 /*
             mc.displayGuiScreen(WindowView.viewConfirm(ConfigHandler._PARTY_INVITATION_TITLE, text, (element, action, data) -> {
                 final Categories id = element.ID();

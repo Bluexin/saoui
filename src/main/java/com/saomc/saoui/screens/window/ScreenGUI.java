@@ -69,12 +69,12 @@ public abstract class ScreenGUI extends GuiScreen implements ParentElement {
     }
 
     private int getCursorX() {
-        if (OptionCore.CURSOR_TOGGLE.getValue()) return lockCursor ? 0 : (width / 2 - mouseX) / 2;
+        if (OptionCore.CURSOR_TOGGLE.isEnabled()) return lockCursor ? 0 : (width / 2 - mouseX) / 2;
         else return !isCtrlKeyDown() ? (width / 2 - mouseX) / 2 : 0;
     }
 
     private int getCursorY() {
-        if (OptionCore.CURSOR_TOGGLE.getValue()) return lockCursor ? 0 : (height / 2 - mouseY) / 2;
+        if (OptionCore.CURSOR_TOGGLE.isEnabled()) return lockCursor ? 0 : (height / 2 - mouseY) / 2;
         else return !isCtrlKeyDown() ? (height / 2 - mouseY) / 2 : 0;
     }
 
@@ -116,7 +116,7 @@ public abstract class ScreenGUI extends GuiScreen implements ParentElement {
 
             GLCore.glBlend(true);
             GLCore.tryBlendFuncSeparate(770, 771, 1, 0);
-            GLCore.glBindTexture(OptionCore.SAO_UI.getValue() ? StringNames.gui : StringNames.guiCustom);
+            GLCore.glBindTexture(OptionCore.SAO_UI.isEnabled() ? StringNames.gui : StringNames.guiCustom);
 
             if (mouseDown != 0) {
                 final float fval = partialTicks * 0.1F;
@@ -144,7 +144,7 @@ public abstract class ScreenGUI extends GuiScreen implements ParentElement {
 
     @Override
         protected void keyTyped(char ch, int key) throws IOException {
-        if (OptionCore.CURSOR_TOGGLE.getValue() && isCtrlKeyDown()) lockCursor = !lockCursor;
+        if (OptionCore.CURSOR_TOGGLE.isEnabled() && isCtrlKeyDown()) lockCursor = !lockCursor;
         super.keyTyped(ch, key);
 
         elements.menuElements.keySet().stream().filter(Element::isFocus).forEach(element -> actionPerformed(element, Actions.KEY_TYPED, key));
@@ -198,7 +198,7 @@ public abstract class ScreenGUI extends GuiScreen implements ParentElement {
 
     @Override
     public boolean doesGuiPauseGame() {
-        return OptionCore.GUI_PAUSE.getValue();
+        return OptionCore.GUI_PAUSE.isEnabled();
     }
 
     @Override

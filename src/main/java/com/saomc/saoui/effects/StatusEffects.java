@@ -103,12 +103,12 @@ public enum StatusEffects {
     }
 
     public final void glDraw(int x, int y, float z) {
-        GLCore.glBindTexture(OptionCore.SAO_UI.getValue() ? StringNames.effects : StringNames.effectsCustom);
+        GLCore.glBindTexture(OptionCore.SAO_UI.isEnabled() ? StringNames.effects : StringNames.effectsCustom);
         GLCore.glTexturedRect(x, y, z, getSrcX(), getSrcY(), SRC_WIDTH, SRC_HEIGHT);
     }
 
     public final void glDraw(int x, int y) {
-        GLCore.glBindTexture(OptionCore.SAO_UI.getValue() ? StringNames.effects : StringNames.effectsCustom);
+        GLCore.glBindTexture(OptionCore.SAO_UI.isEnabled() ? StringNames.effects : StringNames.effectsCustom);
         GLCore.glTexturedRect(x, y, getSrcX(), getSrcY(), SRC_WIDTH, SRC_HEIGHT);
     }
 
