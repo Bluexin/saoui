@@ -3,6 +3,7 @@ package com.saomc.saoui.screens.menu;
 import com.saomc.saoui.SoundCore;
 import com.saomc.saoui.api.screens.GuiSelection;
 import com.saomc.saoui.elements.ElementBuilder;
+import com.saomc.saoui.elements.defaultelements.DefaultElements;
 import com.saomc.saoui.screens.window.ScreenGUI;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraftforge.fml.relauncher.Side;
@@ -21,6 +22,7 @@ public class IngameMenuGUI extends ScreenGUI {
 
     @Override
     protected void init() {
+        DefaultElements.dispatchItemFilter();
         super.init();
 
         flowY = -height;
@@ -60,6 +62,7 @@ public class IngameMenuGUI extends ScreenGUI {
         super.onGuiClosed();
         SoundCore.play(mc, SoundCore.DIALOG_CLOSE);
         ElementBuilder.getInstance().resetElements(GuiSelection.IngameMenuGUI);
+        ElementBuilder.getInstance().cleanItemFilters();
     }
 
 /*

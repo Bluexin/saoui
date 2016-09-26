@@ -117,6 +117,7 @@ optionMountStatView=Show Mount Stats
 optionCustomFont=Use SAO Font
 optionDebugMode=Debug Mode
 optionCompatInv=Compact Inventory
+optionTextShadow = Text Shadow
 
 # Display
 displayLvShort=LV

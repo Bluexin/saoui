@@ -2,6 +2,8 @@ package com.saomc.saoui.util;
 
 import com.saomc.saoui.GLCore;
 import com.saomc.saoui.events.ConfigHandler;
+import jdk.nashorn.internal.objects.annotations.Getter;
+import jdk.nashorn.internal.objects.annotations.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraftforge.fml.relauncher.Side;
@@ -41,7 +43,7 @@ public enum OptionCore {
     //Hotbar
     DEFAULT_HOTBAR(I18n.format("optionDefaultHotbar"), false, false, HOTBAR_OPTIONS, true),
     HOR_HOTBAR(I18n.format("optionHorHotbar"), false, false, HOTBAR_OPTIONS, true),
-    VER_HOTBAR(I18n.format("optionVerHotbar"), false, false, HOTBAR_OPTIONS, true),
+    VER_HOTBAR(I18n.format("optionVerHotbar"), true, false, HOTBAR_OPTIONS, true),
     //Effects
     CURSOR_TOGGLE(I18n.format("optionCursorToggle"), true, false, EFFECTS, false),
     COLOR_CURSOR(I18n.format("optionColorCursor"), true, false, EFFECTS, false),
@@ -57,6 +59,7 @@ public enum OptionCore {
     CUSTOM_FONT(I18n.format("optionCustomFont"), false, false, MISC, false),
     DEBUG_MODE(I18n.format("optionDebugMode"), false, false, MISC, false),
     COMPACT_INVENTORY(I18n.format("optionCompatInv"), false, false, MISC, false),
+    TEXT_SHADOW(I18n.format("optionTextShadow"), true, false, MISC, false),
     //Debug
     DISABLE_TICKS(I18n.format("optionDisableTicks"), false, false, MISC, false);
 
@@ -83,6 +86,11 @@ public enum OptionCore {
         return name;
     }
 
+    /**
+     * This will flip the enabled state of the option and return the new value
+     * @return Returns the newly set value
+     */
+    @Setter
     public boolean flip() {
         this.value = !this.isEnabled();
         ConfigHandler.setOption(this);
@@ -90,30 +98,70 @@ public enum OptionCore {
         return this.value;
     }
 
+    /**
+     * @return Returns true if the Option is selected/enabled
+     */
+    @Getter
     public boolean isEnabled() {
         return this.value;
     }
 
+    /**
+     * This checks if the Option is restricted or not.
+     * Restricted Options can only have one option enabled
+     * in their Category.
+     *
+     * @return Returns true if restricted
+     */
+    @Getter
     public boolean isRestricted() {
         return this.restricted;
     }
 
+    /**
+     * @return Returns the Category
+     */
+    @Getter
     public OptionCore getCategory() {
         return this.category;
     }
 
+    /**
+     * @return Returns the Category name in String format
+     */
+    @Getter
+    public String getCategoryName() {
+        return this.category.toString();
+    }
+
+    /**
+     * This will disable the Option when called
+     */
+    @Setter
     public void disable() {
         if (this.value) this.flip();
     }
 
+    /**
+     * This will enable the Option when called
+     */
+    @Setter
     public void enable() {
         if (!this.value) this.flip();
     }
 
+    /**
+     * @return Returns the Option name in String format
+     */
+    @Getter
     public String getName() {
         return name;
     }
 
+    /**
+     * @return Returns true if this is a Category or not
+     */
+    @Getter
     public boolean isCategory() {
         return isCategory;
     }

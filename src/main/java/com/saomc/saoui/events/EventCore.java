@@ -5,6 +5,7 @@ import com.saomc.saoui.effects.RenderDispatcher;
 import com.saomc.saoui.social.party.PartyHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.client.event.*;
+import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -36,6 +37,7 @@ public class EventCore {
 
     @SubscribeEvent
     public void onDisconnect(FMLNetworkEvent.ClientDisconnectionFromServerEvent e) {
+        EventHandler.cleanTempElements();
         PartyHelper.instance().clean();
     }
 

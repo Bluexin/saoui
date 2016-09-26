@@ -2,6 +2,7 @@ package com.saomc.saoui.screens.inventory;
 
 import baubles.api.BaublesApi;
 import baubles.api.IBauble;
+import com.saomc.saoui.api.screens.ItemFilter;
 import net.minecraft.block.BlockPumpkin;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -11,7 +12,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public enum InventoryCore { // Todo: support for TConstruct
+public enum InventoryCore implements ItemFilter{ // Todo: support for TConstruct
 
     EQUIPMENT((stack, state) -> {
         final Item item = stack.getItem();
@@ -67,8 +68,9 @@ public enum InventoryCore { // Todo: support for TConstruct
         return Loader.isModLoaded("Baubles");
     }
 
-    public final boolean isFine(ItemStack stack, boolean state) {
-        return itemFilter.filter(stack, state);
+    @Override
+    public final boolean isFine(ItemStack stack, boolean isEquipped) {
+        return itemFilter.filter(stack, isEquipped);
     }
 
     @FunctionalInterface

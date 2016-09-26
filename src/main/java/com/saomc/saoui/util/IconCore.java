@@ -5,6 +5,7 @@ import com.saomc.saoui.api.screens.IIcon;
 import com.saomc.saoui.resources.StringNames;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.lwjgl.opengl.GL11;
 
 @SideOnly(Side.CLIENT)
 public enum IconCore implements IIcon {
@@ -44,9 +45,7 @@ public enum IconCore implements IIcon {
         return (index() % 16) * SRC_SIZE;
     }
 
-    private int getSrcY() {
-        return (index() / 16) * SRC_SIZE;
-    }
+    private int getSrcY() { return (index() / 16) * SRC_SIZE; }
 
     private int index() {
         return (ordinal() - 1);
@@ -55,8 +54,10 @@ public enum IconCore implements IIcon {
     @Override
     public final void glDraw(int x, int y) {
         if (index() >= 0) {
+            GLCore.glBlend(true);
             GLCore.glBindTexture(OptionCore.SAO_UI.isEnabled() ? StringNames.icons : StringNames.iconsCustom);
             GLCore.glTexturedRect(x, y, getSrcX(), getSrcY(), SRC_SIZE, SRC_SIZE);
+            GLCore.glBlend(false);
         }
     }
 

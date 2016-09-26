@@ -8,6 +8,7 @@ import com.saomc.saoui.api.screens.GuiSelection;
 import com.saomc.saoui.colorstates.CursorStatus;
 import com.saomc.saoui.elements.Element;
 import com.saomc.saoui.elements.ElementDispatcher;
+import com.saomc.saoui.elements.ListCore;
 import com.saomc.saoui.elements.ParentElement;
 import com.saomc.saoui.resources.StringNames;
 import com.saomc.saoui.util.ColorUtil;
@@ -23,6 +24,7 @@ import org.lwjgl.input.Cursor;
 import org.lwjgl.input.Mouse;
 
 import java.io.IOException;
+import java.util.ConcurrentModificationException;
 
 @SideOnly(Side.CLIENT)
 public abstract class ScreenGUI extends GuiScreen implements ParentElement {
@@ -92,7 +94,7 @@ public abstract class ScreenGUI extends GuiScreen implements ParentElement {
     public void updateScreen() {
         if (this.elements == null) return;
 
-        this.elements.menuElements.values().forEach(e -> e.update(mc));
+        this.elements.menuElements.forEach(e -> e.update(mc));
     }
 
     @Override
@@ -110,7 +112,7 @@ public abstract class ScreenGUI extends GuiScreen implements ParentElement {
 
         GLCore.glStartUI(mc);
 
-        this.elements.menuElements.values().forEach(e -> e.draw(mc, cursorX, cursorY));
+        this.elements.menuElements.forEach(e -> e.draw(mc, cursorX, cursorY));
 
         if (CURSOR_STATUS == CursorStatus.SHOW) { // TODO: maybe there's a way to move all of this to the actual org.lwjgl.input.Cursor
 
@@ -147,7 +149,10 @@ public abstract class ScreenGUI extends GuiScreen implements ParentElement {
         if (OptionCore.CURSOR_TOGGLE.isEnabled() && isCtrlKeyDown()) lockCursor = !lockCursor;
         super.keyTyped(ch, key);
 
-        elements.menuElements.keySet().stream().filter(Element::isFocus).forEach(element -> actionPerformed(element, Actions.KEY_TYPED, key));
+        elements.menuElements.stream().anyMatch(e -> e.keyTyped(mc, ch, key));
+        LogCore.logDebug("ch - " + ch + " key - " + key);
+
+        //elements.menuElements.keySet().stream().filter(Element::isFocus).forEach(element -> actionPerformed(element, Actions.KEY_TYPED, key));
     }
 
     // TODO: check the way elements is built... Breakpoint gives some weird result (at least for base menu)
@@ -156,8 +161,13 @@ public abstract class ScreenGUI extends GuiScreen implements ParentElement {
         super.mouseClicked(cursorX, cursorY, button);
         mouseDown |= (0x1 << button);
 
-        if (elements.menuElements.keySet().stream().filter(e -> e.mouseOver(cursorX, cursorY) && e.mousePressed(mc, cursorX, cursorY, button)).peek(e -> actionPerformed(e, Actions.getAction(button, true), button)).count() == 0)
-            backgroundClicked(cursorX, cursorY, button);
+        try {
+            if (elements.menuElements.stream().noneMatch(list -> list.mousePressed(mc, cursorX, cursorY, button)))
+                backgroundClicked(cursorX, cursorY, button);
+        } catch (ConcurrentModificationException e){
+            //Do Nothing
+            LogCore.logDebug("mouseClicked ended unexpectedly");
+        }
     }
 
     @Override
@@ -165,22 +175,26 @@ public abstract class ScreenGUI extends GuiScreen implements ParentElement {
         super.mouseReleased(cursorX, cursorY, button);
         mouseDown &= ~(0x1 << button);
 
-        elements.menuElements.keySet().stream().filter(e -> e.mouseOver(cursorX, cursorY) && e.mouseReleased(mc, cursorX, cursorY, button)).forEach(e -> actionPerformed(e, Actions.getAction(button, false), button));
+        try {
+            for (ListCore listCore : elements.menuElements)
+                for (Element element : listCore.elements)
+                    if (element.isFocus() && element.mouseReleased(mc, cursorX, cursorY, button)) {
+                        ListCore.actionPerformed(element, Actions.LEFT_RELEASED, button);
+                        break;
+                    }
+
+        } catch (ConcurrentModificationException e){
+            //Do Nothing
+            LogCore.logWarn("mouseClicked ended unexpectedly");
+        }
     }
 
     protected void backgroundClicked(int cursorX, int cursorY, int button) {
-        LogCore.logInfo("Background Clicked");
+        LogCore.logDebug("Background Clicked");
     }
 
     private void mouseWheel(int cursorX, int cursorY, int delta) {
-        elements.menuElements.keySet().stream().filter(element -> element.mouseOver(cursorX, cursorY) && element.mouseWheel(mc, cursorX, cursorY, delta)).forEach(element -> actionPerformed(element, Actions.MOUSE_WHEEL, delta));
-    }
-
-    public void actionPerformed(Element element, Actions action, int data) {
-        LogCore.logInfo("Action Performed");
-        MinecraftForge.EVENT_BUS.post(new ElementAction(element.getCaption(), element.getCategory(), action, data, element.getGui(), element.isFocus()));
-        element.setFocus(!element.isFocus());
-        SoundCore.play(mc.getSoundHandler(), SoundCore.DIALOG_CLOSE);
+        elements.menuElements.stream().anyMatch(e -> e.mouseWheel(mc, cursorX, cursorY, delta));
     }
 
     @Override
@@ -192,7 +206,7 @@ public abstract class ScreenGUI extends GuiScreen implements ParentElement {
             final int y = height - Mouse.getEventY() * height / mc.displayHeight - 1;
             final int delta = Mouse.getEventDWheel();
 
-            //if (delta != 0) mouseWheel(x, y, delta);
+            if (delta != 0) mouseWheel(x, y, delta);
         }
     }
 
@@ -209,7 +223,7 @@ public abstract class ScreenGUI extends GuiScreen implements ParentElement {
     }
 
     protected void close() {
-        elements.menuElements.clear(); // jic
+        //elements.menuElements.clear(); // jic
     }
 
     protected void hideCursor() {

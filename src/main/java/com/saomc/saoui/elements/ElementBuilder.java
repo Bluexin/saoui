@@ -1,15 +1,15 @@
 package com.saomc.saoui.elements;
 
-import com.saomc.saoui.api.screens.GuiSelection;
-import com.saomc.saoui.api.screens.IElementBuilder;
-import com.saomc.saoui.api.screens.IIcon;
+import com.google.common.collect.LinkedHashMultimap;
+import com.saomc.saoui.api.screens.*;
 import com.saomc.saoui.util.LogCore;
+import com.saomc.saoui.util.OptionCore;
+import net.minecraft.client.Minecraft;
+import net.minecraft.inventory.IInventory;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 public class ElementBuilder implements IElementBuilder {
 
     private static ElementBuilder ref;
-    private Map<String, Element> elementlist = new HashMap<>();
+    private LinkedHashMultimap<String, Element> elementList = LinkedHashMultimap.create();
     private boolean alreadyRun;
 
     private ElementBuilder() {
@@ -42,23 +42,72 @@ public class ElementBuilder implements IElementBuilder {
     }
 
     /**
-     * Enables all sub-elements that belong to a parent
+     * Gets the enabled state of the element from the list
      *
-     * @param parent The parent category these belong too
+     * @param name The name of the element
+     * @return Returns true if enabled
+     */
+    public boolean isParentEnabled(String name) {
+        return elementList.values().stream().filter(e -> e.getCategory().equals(name.toLowerCase())).anyMatch(Element::isEnabled);
+    }
+
+    /**
+     * Enables all sub-elements that belong to a parent
+     * and disables the parent elements
+     *
+     * @param category The category these belong too
+     * @param parent The categories parent
      * @param gui The name of the gui these belong too
      */
-    public void enableChildElements(String parent, GuiSelection gui){
-        elementlist.values().stream().filter(e -> e.getGui() == gui && e.getParent().equals(parent) && !e.isEnabled()).forEach(e -> e.setEnabled(true));
+    public void enableChildElements(String category, String parent, GuiSelection gui){
+        LogCore.logDebug("enableChildElements fired");
+        if (elementList.containsKey(category.toLowerCase())) {
+            elementList.get(category.toLowerCase()).stream().filter(e -> e.getGui() == gui).forEachOrdered(e -> e.setEnabled(true));
+            setCategoryFocus(gui, parent, false);
+            setOpen(gui, category, true);
+            LogCore.logDebug("enableChildElements success");
+        }
+    }
+
+    public void setCategoryFocus(GuiSelection gui, String category, boolean state){
+        elementList.get(category.toLowerCase()).stream().filter(e -> e.getGui() == gui).forEach(e -> e.setFocus(state));
+        LogCore.logDebug("Setting category focus for " + category + " to " + state);
     }
 
     /**
      * Disables all sub-elements that belong to a parent
+     * and enables the parent elements
      *
-     * @param parent The parent category these belong too
+     * @param category The category these belong too
+     * @param parent The categories parent
      * @param gui The name of the gui these belong too
      */
-    public void disableChildElements(String parent, GuiSelection gui){
-        elementlist.values().stream().filter(e -> e.getGui() == gui && e.getParent().equals(parent) && e.isEnabled()).forEach(e -> e.setEnabled(false));
+    public void disableChildElements(String category, String parent, GuiSelection gui){
+        LogCore.logDebug("disableChildElements fired");
+
+        if (elementList.containsKey(category.toLowerCase())) {
+            elementList.get(category.toLowerCase()).stream().filter(e -> e.getGui() == gui).forEachOrdered(e -> e.setEnabled(false));
+            setCategoryFocus(gui, parent, true);
+            setOpen(gui, category, false);
+            LogCore.logDebug("disableChildElements success");
+        }
+    }
+
+    /**
+     * Sets the open state of the element
+     * Important to making sure the same
+     * event isn't fired twice
+     *
+     * @param gui The GUI it belongs to
+     * @param category The category of the Element
+     * @param state The open state you wish to set
+     */
+    public void setOpen(GuiSelection gui, String category, boolean state){
+        LogCore.logDebug("Setting category open state for " + category + " to " + state);
+        elementList.values().stream().filter(e -> e.getGui() == gui && e.getCategory().equals(category)).findFirst().ifPresent(e -> {
+            e.setOpen(state);
+            e.setHighlight(state);
+        });
     }
 
     /**
@@ -67,18 +116,50 @@ public class ElementBuilder implements IElementBuilder {
      * @param gui The GUI that's closing
      */
     public void resetElements(GuiSelection gui){
-        elementlist.values().stream().filter(e -> e.getGui() == gui && !e.isMenu()).forEach(e -> e.setEnabled(false));
+        elementList.values().stream().filter(e -> e.getGui() == gui).forEach(e -> {
+            if (e.getElementType() != ElementType.MENU) e.setEnabled(false);
+            else e.setFocus(true);
+            e.setOpen(false);
+            e.setHighlight(false);
+            e.setVisibility(1.0F);
+        });
     }
 
     /**
-     * Gets the element from the list
+     * Gets the element menu from the list
      *
      * @param name The name of the element
+     * @param gui The name of the gui
      * @return Returns the element
      */
     @Override
-    public Element getElement(String name) {
-        return elementlist.get(name);
+    public Element getElementMenu(String name, GuiSelection gui) {
+        return elementList.get("none").stream().filter(e -> e.getCategory().equals(name.toLowerCase()) && e.getGui() == gui).findFirst().orElse(null);
+    }
+
+    /**
+     * Gets the element slot from the list
+     *
+     * @param parent The parent category of the element
+     * @param name The name of the element
+     * @param gui The name of the gui
+     * @return Returns the element
+     */
+    @Override
+    public Element getElementSlot(String parent, String name, GuiSelection gui) {
+        return elementList.get(parent.toLowerCase()).stream().filter(e -> e.getCategory().equals(name.toLowerCase()) && e.getGui() == gui).findFirst().orElse(null);
+    }
+
+    /**
+     * Gets the element parent from the list
+     *
+     * @param name The name of the element
+     * @param gui The name of the gui
+     * @return Returns the element
+     */
+    @Override
+    public Element getElementParent(String name, GuiSelection gui) {
+        return elementList.values().stream().filter(e -> e.getCategory().equals(name.toLowerCase()) && e.getGui() == gui).findFirst().orElse(null);
     }
 
     /**
@@ -89,18 +170,18 @@ public class ElementBuilder implements IElementBuilder {
      */
     @Override
     public List<Element> getforGui(GuiSelection gui) {
-        return elementlist.values().stream().filter(e -> e.getGui() == gui && !e.isRemoved()).collect(Collectors.toList());
+        return elementList.values().stream().filter(e -> e.getGui() == gui).collect(Collectors.toList());
     }
 
     /**
      * Gets all elements for a category
      *
-     * @param category The name of the category
+     * @param parent The name of the category
      * @return Returns the list of elements belonging to the category
      */
     @Override
-    public List<Element> getCategoryContent(String category) {
-        return elementlist.values().stream().filter(e -> e.getCategory().equals(category)).collect(Collectors.toList());
+    public List<Element> getCategorySlots(GuiSelection gui, String parent) {
+        return elementList.get(parent.toLowerCase()).stream().filter(e -> e.getGui() == gui).collect(Collectors.toList());
     }
 
     /**
@@ -111,7 +192,7 @@ public class ElementBuilder implements IElementBuilder {
      */
     @Override
     public List<Element> getMenus(GuiSelection gui) {
-        return elementlist.values().stream().filter(e -> e.getGui() == gui && e.getParent() == null).collect(Collectors.toList());
+        return elementList.values().stream().filter(e -> e.getElementType() == ElementType.MENU && e.getGui() == gui).collect(Collectors.toList());
     }
 
     /**
@@ -122,46 +203,7 @@ public class ElementBuilder implements IElementBuilder {
      */
     @Override
     public List<Element> getSlots(GuiSelection gui) {
-        return elementlist.values().stream().filter(e -> e.getGui() == gui && e.getParent() != null).collect(Collectors.toList());
-    }
-
-    private boolean isParentMenu(String parent, GuiSelection gui){
-        return elementlist.values().stream().filter(e -> e.getGui() == gui && e.getCategory().equals(parent)).anyMatch(Element::isMenu);
-    }
-
-    public Element getParentElement(String parent){
-        return elementlist.get(parent);
-    }
-
-    /**
-     * Gets the Y coord to render
-     *
-     * @param gui The gui to search for
-     * @return The Y coord to render
-     */
-    private int getYForMenu(GuiSelection gui){
-        int value = elementlist.values().stream().filter(e -> e.isMenu() && e.getGui() == gui).mapToInt(e -> e.getY(true)).max().orElse(-24);
-        return value + 24;
-    }
-
-    /**
-     * Gets the Y coord to render
-     *
-     * @param parent The parent to search for
-     * @param gui The gui to search for
-     * @return The Y coord to render
-     */
-    private int getYForSlot(String parent, GuiSelection gui){
-        int value = elementlist.values().stream().filter(e -> e.getParent().equals(parent) && e.getGui() == gui).mapToInt(e -> e.getY(true)).max().orElse(-20);
-        return value + 20;
-    }
-
-    private int getXForSlot(String parent, GuiSelection gui){
-        if (isParentMenu(parent, gui)) return 25;
-        else {
-            int value = elementlist.values().stream().filter(e -> e.getCategory().equals(parent) && e.getGui() == gui).mapToInt(e -> e.getX(true)).sum();
-            return value + 100;
-        }
+        return elementList.values().stream().filter(e -> e.getElementType() == ElementType.SLOT && e.getGui() == gui).collect(Collectors.toList());
     }
 
     /**
@@ -173,8 +215,8 @@ public class ElementBuilder implements IElementBuilder {
      */
     @Override
     public void addMenu(String category, IIcon icon, GuiSelection gui) {
-        if (elementlist.entrySet().stream().filter(e -> e.getKey().equals(category.toLowerCase())).noneMatch(e -> e.getValue().getCategory().equals(category.toLowerCase()))) {
-            elementlist.put(category.toLowerCase(), new Element(category.toLowerCase(), category, icon, gui, 0, getYForMenu(gui), 20, 20, true));
+        if (elementList.values().stream().filter(e -> e.getElementType() == ElementType.MENU).noneMatch(e -> e.getCategory().equals(category.toLowerCase()) && e.getGui() == gui)){
+            elementList.put("none", new Element(category.toLowerCase(), category, icon, gui, 0, 0, 20, 20));
             LogCore.logDebug("Element added, name - " + category + "   category - " + category + "   type - Menu");
         } else LogCore.logWarn("Warning, attempted to add the same element twice \n " +
                 "Element name - " + category + "\n" +
@@ -194,13 +236,84 @@ public class ElementBuilder implements IElementBuilder {
      */
     @Override
     public void addSlot(String name, String parent, IIcon icon, GuiSelection gui) {
-        if (elementlist.entrySet().stream().filter(e -> e.getKey().equals(name.toLowerCase())).noneMatch(e -> e.getValue().getParent().equals(parent.toLowerCase()))) {
-            elementlist.put(name.toLowerCase(), new Element(name.toLowerCase(), parent, name, icon, gui, getXForSlot(parent, gui), getYForSlot(parent, gui), 100, 60));
+        if (elementList.get(parent.toLowerCase()).stream().noneMatch(element -> element.getCategory().equals(name.toLowerCase()) && element.getGui() == gui)){
+            elementList.put(parent.toLowerCase(), new Element(name.toLowerCase(), parent.toLowerCase(), name, icon, gui, 0, 0, 100, 20));
             LogCore.logDebug("Element added, name - " + name + "   parent - " + parent + "   type - Slot");
         } else LogCore.logWarn("Warning, attempted to add the same element twice \n " +
                 "Element name - " + name + "\n" +
                 "Element Parent - " + parent + "\n" +
                 "Element Type - Slot"
+        );
+    }
+
+    /**
+     * This adds a Slot. Slots are effectively buttons onscreen, which when pressed, fires an ActionPressed event
+     * This should be your main method of adding new functions to the menu
+     *
+     * @param name   The display name of the Slot
+     * @param parent The parent category
+     * @param icon   The display icon for the category
+     * @param gui    The class of the GUI this belongs to. Two examples are the GuiMainMenu, and IngameMenuGUI
+     */
+    public void addOption(String name, String parent, IIcon icon, GuiSelection gui, OptionCore option) {
+        if (elementList.get(parent.toLowerCase()).stream().noneMatch(element -> element.getCategory().equals(name.toLowerCase()) && element.getGui() == gui)){
+            elementList.put(parent.toLowerCase(), new Element(name.toLowerCase(), parent.toLowerCase(), name, icon, gui, option, 0, 0, 100, 20));
+            LogCore.logDebug("Element added, name - " + name + "   parent - " + parent + "   type - Slot");
+        } else LogCore.logWarn("Warning, attempted to add the same element twice \n " +
+                "Element name - " + name + "\n" +
+                "Element Parent - " + parent + "\n" +
+                "Element Type - Slot"
+        );
+    }
+
+    /**
+     * This adds an Inventory list. Like slots, they will be rendered the same way, and will fire an ActionPressed event
+     * This should be your main method of adding an inventory list, and you should not be adding each item individually
+     *
+     * @param parent The parent category
+     * @param gui    The class of the GUI this belongs to. Two examples are the GuiMainMenu, and IngameMenuGUI
+     * @param itemFilter  This is the group of items to be rendered
+     */
+    @Override
+    public void addInventory(String parent, GuiSelection gui, ItemFilter itemFilter) {
+        if (Minecraft.getMinecraft().thePlayer == null)
+            LogCore.logFatal("WARNING - Attempted to addInventory before world load \n" +
+                    "Parent - " + parent + "\n" +
+                    "Gui - " + gui + "\n" +
+                    "Inventory - Players Inventory");
+        else if (elementList.get(parent.toLowerCase()).stream().noneMatch(element -> element.getElementType() == ElementType.INVENTORY && element.getItemFilter() == itemFilter && element.getGui() == gui)){
+            elementList.put(parent.toLowerCase(), new Element(parent.toLowerCase(), gui, itemFilter, Minecraft.getMinecraft().thePlayer.inventory));
+            LogCore.logDebug("Element added, name - ItemList   parent - " + parent + "   type - Items");
+        } else LogCore.logWarn("Warning, attempted to add the same element twice \n " +
+                "Element name - ItemList\n" +
+                "Element Parent - " + parent + "\n" +
+                "Element Type - Items"
+        );
+    }
+
+    /**
+     * This is the same as the regular addInventory, but allows you to specify a custom inventory.
+     * If you plan to use the vanilla inventory, use the normal one, otherwise use this one.
+     *
+     * @param parent    The parent category
+     * @param gui       The class of the GUI this belongs to. Two examples are the GuiMainMenu, and IngameMenuGUI
+     * @param itemFilter     This is the group of items to be rendered
+     * @param inventory The inventory you want to send
+     */
+    @Override
+    public void addInventory(String parent, GuiSelection gui, ItemFilter itemFilter, IInventory inventory) {
+        if (Minecraft.getMinecraft().thePlayer == null)
+            LogCore.logFatal("WARNING - Attempted to addInventory before world load \n" +
+                    "Parent - " + parent + "\n" +
+                    "Gui - " + gui + "\n" +
+                    "Inventory - " + inventory.getName());
+        else if (elementList.get(parent.toLowerCase()).stream().noneMatch(element -> element.getElementType() == ElementType.INVENTORY && element.getItemFilter() == itemFilter && element.getInventory() == inventory && element.getGui() == gui)){
+            elementList.put(parent.toLowerCase(), new Element(parent.toLowerCase(), gui, itemFilter, inventory));
+            LogCore.logDebug("Element added, name - ItemList   parent - " + parent + "   type - Items");
+        } else LogCore.logWarn("Warning, attempted to add the same element twice \n " +
+                "Element name - ItemList\n" +
+                "Element Parent - " + parent + "\n" +
+                "Element Type - Items"
         );
     }
 
@@ -212,7 +325,7 @@ public class ElementBuilder implements IElementBuilder {
      */
     @Override
     public void disableMenu(String name, GuiSelection gui) {
-        elementlist.values().stream().filter(e -> e.getGui() == gui && e.getCategory().equals(name)).forEach(e -> e.setRemoved(true));
+        elementList.values().stream().filter(e -> e.getGui() == gui && e.getCategory().equals(name.toLowerCase())).forEach(e -> e.setRemoved(true));
     }
 
     /**
@@ -224,7 +337,7 @@ public class ElementBuilder implements IElementBuilder {
      */
     @Override
     public void disableSlot(String name, String parent, GuiSelection gui) {
-        elementlist.values().stream().filter(e -> e.getGui() == gui && e.getCategory().equals(name) && e.getParent().equals(parent)).forEach(e -> e.setRemoved(true));
+        elementList.get(parent.toLowerCase()).stream().filter(e -> e.getGui() == gui && e.getCategory().equals(name.toLowerCase())).forEach(e -> e.setRemoved(true));
     }
 
     /**
@@ -235,8 +348,7 @@ public class ElementBuilder implements IElementBuilder {
      */
     @Override
     public void removeMenu(String name, GuiSelection gui) {
-        if (elementlist.get(name).getParent() == null)
-            elementlist.remove(name);
+        elementList.values().stream().filter(e -> e.getGui() == gui && e.getCategory().equals(name.toLowerCase())).forEach(e -> elementList.remove("none", e));
     }
 
     /**
@@ -248,8 +360,7 @@ public class ElementBuilder implements IElementBuilder {
      */
     @Override
     public void removeSlot(String name, String parent, GuiSelection gui) {
-        if (elementlist.get(name).getParent().equals(parent))
-            elementlist.remove(name);
+        elementList.get(parent.toLowerCase()).stream().filter(e -> e.getGui() == gui && e.getCategory().equals(name.toLowerCase())).forEach(e -> elementList.remove(parent.toLowerCase(), e));
     }
 
     /**
@@ -259,7 +370,7 @@ public class ElementBuilder implements IElementBuilder {
      */
     @Override
     public void enableSubElements(String category) {
-        elementlist.values().stream().filter(e -> e.getParent().equals(category)).forEach(e -> e.setEnabled(true));
+        elementList.get(category.toLowerCase()).forEach(e -> e.setEnabled(true));
     }
 
     /**
@@ -269,7 +380,15 @@ public class ElementBuilder implements IElementBuilder {
      */
     @Override
     public void disableSubElements(String category) {
-        elementlist.values().stream().filter(e -> e.getParent().equals(category)).forEach(e -> e.setEnabled(false));
+        elementList.get(category.toLowerCase()).forEach(e -> e.setEnabled(false));
+    }
+
+    public void cleanItemFilters() {
+        elementList.values().removeIf(e -> e.getElementType() == ElementType.INVENTORY || e.getElementType() == ElementType.ITEM);
+    }
+
+    public void cleanTempElements() {
+        elementList.values().removeIf(e -> e.getElementType() == ElementType.INVENTORY || e.getElementType() == ElementType.ITEM || e.getElementType() == ElementType.PLAYER);
     }
 
 }

@@ -259,9 +259,7 @@ public final class GLCore {
         mc.mcProfiler.endSection();
     }
 
-    public static void start() {
-        GlStateManager.pushMatrix();
-    }
+    public static void start() { GlStateManager.pushMatrix(); }
 
     public static void end() {
         GlStateManager.popMatrix();
