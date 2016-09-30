@@ -134,15 +134,15 @@ public final class GLCore {
         tessellator.draw();
     }
 
-    public static void glTexturedRect(int x, int y, float z, int srcX, int srcY, int width, int height) {
+    public static void glTexturedRect(double x, double y, double z, double srcX, double srcY, double width, double height) {
         glTexturedRect(x, y, z, width, height, srcX, srcY, width, height);
     }
 
-    public static void glTexturedRect(int x, int y, int width, int height, int srcX, int srcY, int srcWidth, int srcHeight) {
+    public static void glTexturedRect(double x, double y, double width, double height, double srcX, double srcY, double srcWidth, double srcHeight) {
         glTexturedRect(x, y, 0, width, height, srcX, srcY, srcWidth, srcHeight);
     }
 
-    public static void glTexturedRect(int x, int y, int srcX, int srcY, int width, int height) {
+    public static void glTexturedRect(double x, double y, double srcX, double srcY, double width, double height) {
         glTexturedRect(x, y, 0, srcX, srcY, width, height);
     }
 

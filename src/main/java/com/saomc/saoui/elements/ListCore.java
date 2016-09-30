@@ -207,12 +207,13 @@ public class ListCore{
                 GLCore.glColorRGBA(ColorUtil.DEFAULT_COLOR.multiplyAlpha(1.0F));
 
                 final int left = getX(false);
-                top = getListY(false);
+                final int top = getListY(false) + 1;
 
                 final int arrowTop = getY(false) - height / 2;
-                final int yOffset = elements.size() > 5 ? 5 : elements.size();
+                //final int yOffset = elements.size() > 5 ? 5 : elements.size();
+                boolean fullArrow = false;
 
-                GLCore.glTexturedRect(left - 2, top, 2, height + yOffset - 1, 40, 41, 2, 4);
+                GLCore.glTexturedRect(left - 2, top, 2, height - 1, 40, 41, 2, 4);
                 GLCore.glTexturedRect(left - 10, arrowTop + (height - 10) / 2, 20, 25, 10, 10);
                 GLCore.glBlend(false);
             } else if (x < 0) {
@@ -452,11 +453,16 @@ public class ListCore{
     }
 
     protected int getElementOffset(int index){
-        return elements.stream().limit(index).mapToInt(Element::getHeight).sum();
+        return elements.stream().limit(index).mapToInt(e -> ElementOffset(e, true)).sum();
+    }
+
+    int ElementOffset(Element element, boolean normal){
+        int height = element.getHeight();
+        return normal ? height + 1 : height - 1;
     }
 
     private int getReverseElementOffset(int index) {
-        return elements.stream().skip(index).mapToInt(Element::getHeight).sum();
+        return elements.stream().skip(index).mapToInt(e -> ElementOffset(e, false)).sum();
     }
 
     protected int getListSize() {
@@ -476,7 +482,7 @@ public class ListCore{
                 a = Math.round(getElementOffset(elements.size()) + getElementOffset(index) - scrolledValue);
             }
         }
-        return a;
+        return a - 20;
     }
 
     public boolean keyTyped(Minecraft mc, char ch, int key) {
