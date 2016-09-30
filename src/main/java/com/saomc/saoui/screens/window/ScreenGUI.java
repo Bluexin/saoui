@@ -155,7 +155,6 @@ public abstract class ScreenGUI extends GuiScreen implements ParentElement {
         //elements.menuElements.keySet().stream().filter(Element::isFocus).forEach(element -> actionPerformed(element, Actions.KEY_TYPED, key));
     }
 
-    // TODO: check the way elements is built... Breakpoint gives some weird result (at least for base menu)
     @Override
         protected void mouseClicked(int cursorX, int cursorY, int button) throws IOException {
         super.mouseClicked(cursorX, cursorY, button);
@@ -175,11 +174,16 @@ public abstract class ScreenGUI extends GuiScreen implements ParentElement {
         super.mouseReleased(cursorX, cursorY, button);
         mouseDown &= ~(0x1 << button);
 
+        boolean found = false;
+
         try {
             for (ListCore listCore : elements.menuElements)
-                for (Element element : listCore.elements)
-                    if (element.isFocus() && element.mouseReleased(mc, cursorX, cursorY, button)) {
+                if (found) break;
+                else for (Element element : listCore.elements)
+                    if (element.isOpen() && element.mouseReleased(mc, cursorX, cursorY, button)||
+                            element.isFocus() && listCore.mouseOver(cursorX, cursorY, button) && element.mouseReleased(mc, cursorX, cursorY, button)) {
                         ListCore.actionPerformed(element, Actions.LEFT_RELEASED, button);
+                        found = true;
                         break;
                     }
 
@@ -194,7 +198,14 @@ public abstract class ScreenGUI extends GuiScreen implements ParentElement {
     }
 
     private void mouseWheel(int cursorX, int cursorY, int delta) {
-        elements.menuElements.stream().anyMatch(e -> e.mouseWheel(mc, cursorX, cursorY, delta));
+        boolean found = false;
+
+        try {
+            elements.menuElements.stream().anyMatch(e -> e.mouseWheel(mc, cursorX, cursorY, delta));
+        } catch (ConcurrentModificationException e){
+            //Do Nothing
+            LogCore.logWarn("mouseWheel ended unexpectedly");
+        }
     }
 
     @Override

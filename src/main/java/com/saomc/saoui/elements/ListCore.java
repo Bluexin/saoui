@@ -42,7 +42,7 @@ public class ListCore{
     public ColorUtil bgColor, disabledMask;
     public Container container;
     private int lastDragY, dragY;
-    private boolean dragging;
+    //private boolean dragging;
     public final List<Element> elements;
     public List<Element> items;
     private Element parentElement;
@@ -59,13 +59,14 @@ public class ListCore{
     private TextureManager textureManager = Minecraft.getMinecraft().getTextureManager();
     private ModelManager modelManager = Minecraft.getMinecraft().getRenderItem().getItemModelMesher().getModelManager();
     private ItemColors itemColors = Minecraft.getMinecraft().getItemColors();
-    protected RenderItem itemRender = new RenderItem(textureManager, modelManager, itemColors);
+    private RenderItem itemRender = new RenderItem(textureManager, modelManager, itemColors);
 
     public ListCore(ParentElement gui){
         this.scrollValue = 0;
         this.parent = gui;
         this.elements = new ArrayList<>();
         this.items = new ArrayList<>();
+        //this.dragging = false;
         bgColor = ColorUtil.DEFAULT_COLOR;
         disabledMask = ColorUtil.DISABLED_MASK;
     }
@@ -131,7 +132,7 @@ public class ListCore{
 
         isFocus = elements.get(0).isFocus();
 
-        height = getSize();
+        height = getListSize();
         //
         //This part issues an update call for each element
         for (int i = elements.size() - 1; i >= 0; i--) update(mc, i, elements.get(i));
@@ -143,7 +144,7 @@ public class ListCore{
             if (element.getElementType() != ElementType.MENU) {
                 if (!ElementBuilder.getInstance().isParentEnabled(element.getParent()))
                     element.setEnabled(false);
-                element.setY(getY(true) - height / 2 + (elements.indexOf(element) * element.getHeight() + elements.indexOf(element)));
+                element.setY(getOffset(index));
                 element.setX(getX(true));
             } else {
                 element.setX(getX(true));
@@ -156,12 +157,12 @@ public class ListCore{
         }
 
         //This sets the visibility for elements above or below the normal 5 shown. Will only trigger if the list is bigger than 5
-        /*
+
         if (element.getElementType() != ElementType.MENU && element.isEnabled() && elements.size() >= 5) {
             final int elementY = element.getY(false);
             final int elementSize = element.getHeight();
 
-            final int listY = getListY(false) + height;
+            final int listY = getListY(false);
             final int listSize = getListSize();
 
             if (elementY < listY) element.setVisibility(Math.max(1.0F - (float) (listY - elementY) / listSize, 0.0F));
@@ -169,12 +170,10 @@ public class ListCore{
                 element.setVisibility(Math.max(1.0F - (float) ((elementY + elementSize) - (listY + listSize)) / listSize, 0.0F));
             else element.setVisibility(1);
 
-            if (element.getVisibility() < 0.6F) {
-                element.setVisibility(0);
-            }
+            if (element.getVisibility() < 0.6F) element.setVisibility(0);
             else element.setVisibility(element.getVisibility() * element.getVisibility());
             scroll(0);
-        }*/
+        }
     }
 
     public void draw(Minecraft mc, int cursorX, int cursorY) {
@@ -227,6 +226,9 @@ public class ListCore{
 
                 final int arrowTop = getY(false) - height / 2;
 
+                GLCore.glTexturedRect(left + width, top, 2, height - 1, 40, 41, 2, 4);
+                GLCore.glTexturedRect(left + width, arrowTop + (height - 10) / 2, 30, 25, 10, 10);
+                /*
                 if (elements.size() > 5) {
                     GLCore.glTexturedRect(left + width, top, 2, height - 1, 40, 41, 2, 4);
                     GLCore.glTexturedRect(left + width, arrowTop + (height - 10) / 2, 30, 25, 10, 10);
@@ -234,7 +236,7 @@ public class ListCore{
                 else {
                     GLCore.glTexturedRect(left + width, 105, 2, height - 1, 40, 41, 2, 4);
                     GLCore.glTexturedRect(left + width, arrowTop + (height - 10) / 2, 30, 25, 10, 10);
-                }
+                }*/
                 GLCore.glBlend(false);
             }
         }
@@ -449,12 +451,12 @@ public class ListCore{
         return elements.get(index);
     }
 
-    /**
-     * Gets the element list size
-     * @return Returns the list size
-     */
-    protected int getSize() {
-        return getOffset(elements.size());
+    protected int getElementOffset(int index){
+        return elements.stream().limit(index).mapToInt(Element::getHeight).sum();
+    }
+
+    private int getReverseElementOffset(int index) {
+        return elements.stream().skip(index).mapToInt(Element::getHeight).sum();
     }
 
     protected int getListSize() {
@@ -464,7 +466,6 @@ public class ListCore{
     protected int getOffset(int index) {
         int a = Math.round(getElementOffset(index) - scrolledValue);
 
-        //FIXME This entire thing is broken
         if (elements.size() > 9) {
             if (getElementOffset(0) - scrolledValue > -getElementOffset(2)) { // elements can be added above
                 if (a >= getElementOffset(8)) {
@@ -478,18 +479,8 @@ public class ListCore{
         return a;
     }
 
-    private int getElementOffset(int index) {
-        return elements.stream().limit(index).mapToInt(Element::getHeight).sum();
-    }
-
-
-    private int getReverseElementOffset(int index) {
-        return elements.stream().skip(index).mapToInt(Element::getHeight).sum();
-    }
-
-
     public boolean keyTyped(Minecraft mc, char ch, int key) {
-        if (!elements.isEmpty() && elements.get(0).isFocus()){
+        if (!elements.isEmpty() && isFocus){
             keyAction(mc, ch, key);
             return true;
         }
@@ -558,11 +549,11 @@ public class ListCore{
      * @param cursorX The mouse cursors X position
      * @param cursorY The mouse cursors Y position
      */
-    public void mouseMoved(Minecraft mc, int cursorX, int cursorY) {
-        if (dragging) {
+    public void mouseMoved(Minecraft mc, int cursorX, int cursorY) {/*
+        if (dragging && isFocus) {
             dragY += scroll(cursorY - lastDragY);
             lastDragY = cursorY;
-        }
+        }*/
     }
 
     /**
@@ -577,10 +568,9 @@ public class ListCore{
      */
     public boolean mousePressed(Minecraft mc, int cursorX, int cursorY, int button) {
         if (mc.currentScreen == null) return false;
-        if (button == 0) {
+        if (button == 0 && isFocus) {
             dragY = 0;
             lastDragY = cursorY;
-            dragging = true;
         }
 
         for (int i = elements.size() - 1; i >= 0; i--) {
@@ -592,6 +582,7 @@ public class ListCore{
             if (elements.get(i).mousePressed(mc, cursorX, cursorY, button)) {
                 actionPerformed(elements.get(i), Actions.LEFT_PRESSED, button);
                 LogCore.logDebug("mousePressed for " + elements.get(i).getCaption());
+                //dragging = true;
                 return true;
             }
 
@@ -615,15 +606,16 @@ public class ListCore{
 
         boolean wasDragging = false;
 
+        /*
         if (button == 0) {
-            if (dragging) {
+            if (dragging && isFocus) {
                 dragY += scroll(cursorY - lastDragY);
                 wasDragging = (dragY > 0);
                 lastDragY = cursorY;
             }
 
             dragging = false;
-        }
+        }*/
         return (!wasDragging) && (mouseElementReleased(mc, cursorX, cursorY, button));
     }
 
@@ -663,9 +655,8 @@ public class ListCore{
      * @return Return true if the mouse wheel action was fired
      */
     public boolean mouseWheel(Minecraft mc, int cursorX, int cursorY, int delta) {
-        mouseElementWheel(mc, cursorX, cursorY, delta);
-        if (elements.size() > 5 && elements.get(0).isFocus()) scroll(Math.abs(delta * 2 * getListSize() / elements.size()) / delta);
-        return elements.get(0).isFocus();
+        if (elements.size() > 5 && isFocus) scroll(Math.abs(delta * 2 * getListSize() / elements.size()) / delta);
+        return mouseElementWheel(mc, cursorX, cursorY, delta);
     }
 
     /**
@@ -678,7 +669,7 @@ public class ListCore{
      * @param delta The mouse movement speed
      * @return Return true if the mouse wheel action was fired
      */
-    private void mouseElementWheel(Minecraft mc, int cursorX, int cursorY, int delta) {
+    private boolean mouseElementWheel(Minecraft mc, int cursorX, int cursorY, int delta) {
         for (int i = elements.size() - 1; i >= 0; i--) {
             if (i >= elements.size()) {
                 if (elements.size() > 0) i = elements.size() - 1;
@@ -687,8 +678,23 @@ public class ListCore{
 
             if (elements.get(i).mouseWheel(mc, cursorX, cursorY)) {
                 actionPerformed(elements.get(i), Actions.MOUSE_WHEEL, delta);
+                return true;
             }
         }
+        return false;
+    }
+
+    public boolean mouseOver(int cursorX, int cursorY, int flag){
+        if (isFocus && elements.stream().anyMatch(e -> e.mouseOver(cursorX, cursorY, flag))){
+            /*
+            if (dragging) {
+                dragY += scroll(cursorY - lastDragY);
+                lastDragY = cursorY;
+            }
+
+            dragging = false;*/
+            return true;
+        } else return false;
     }
 
     /**
@@ -718,7 +724,7 @@ public class ListCore{
      */
     private int scroll(int delta) {
         final int value = scrollValue;
-        if (elements.size() <= 9) scrollValue = Math.min(Math.max(scrollValue - delta, 0), getOffset(elements.size()) - getListSize());
+        if (elements.size() <= 9) scrollValue = Math.min(Math.max(scrollValue - delta, 0), getElementOffset(elements.size()) - getListSize());
         else {
             scrollValue -= delta;
             scrollValue %= getElementOffset(elements.size());
