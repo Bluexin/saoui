@@ -2,7 +2,7 @@ image: java:8
 
 cache:
   paths:
-    - /root/.m2/repository/
+    - /root/.gradle/
 
 before_script:
   # Enable the usage of sources over https
