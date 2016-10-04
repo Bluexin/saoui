@@ -1,13 +1,11 @@
 package com.saomc.saoui.elements;
 
-import com.mojang.realmsclient.gui.ChatFormatting;
 import com.saomc.saoui.GLCore;
-import com.saomc.saoui.SoundCore;
 import com.saomc.saoui.api.events.ElementAction;
 import com.saomc.saoui.api.screens.Actions;
 import com.saomc.saoui.api.screens.ElementType;
+import com.saomc.saoui.api.screens.ParentElement;
 import com.saomc.saoui.resources.StringNames;
-import com.saomc.saoui.screens.inventory.InventoryCore;
 import com.saomc.saoui.util.ColorUtil;
 import com.saomc.saoui.util.LogCore;
 import com.saomc.saoui.util.OptionCore;
@@ -19,28 +17,26 @@ import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.inventory.Container;
-import net.minecraft.item.Item;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  *
  * Created by Tencao on 23/08/2016.
  */
-public class ListCore{
+public class ElementController {
     private static final ResourceLocation RES_ITEM_GLINT = new ResourceLocation("textures/misc/enchanted_item_glint.png");
     private float scrolledValue;
     private int scrollValue;
     private ParentElement parent;
     public ColorUtil bgColor, disabledMask;
-    public Container container;
     private int lastDragY, dragY;
     //private boolean dragging;
     public final List<Element> elements;
@@ -61,7 +57,7 @@ public class ListCore{
     private ItemColors itemColors = Minecraft.getMinecraft().getItemColors();
     private RenderItem itemRender = new RenderItem(textureManager, modelManager, itemColors);
 
-    public ListCore(ParentElement gui){
+    public ElementController(ParentElement gui){
         this.scrollValue = 0;
         this.parent = gui;
         this.elements = new ArrayList<>();
@@ -84,26 +80,19 @@ public class ListCore{
         if (width <= 0) width = elements.stream().mapToInt(Element::getWidth).max().orElse(width);
 
         //This initiates a dynamic width for slots
-        if (!elements.isEmpty() && elements.stream().noneMatch(e -> e.getElementType() == ElementType.MENU || e.getElementType() == ElementType.INVENTORY)) {
-            int textSize = elements.stream().filter(e -> e.getCaption() != null).mapToInt(e -> e.getCaption().length()).max().orElse(13);
-            if (textSize > 13) {
-                if (textSize >= 50) textSize = 50;
-                if (width !=  100 + textSize + 5) {
-                    final int newWidth = 100 + textSize + 5;
-                    elements.forEach(e -> e.setWidth(newWidth));
-                }
-            }
-        }
+        String name = "";
+        for (Element element : elements)
+            if (GLCore.glStringWidth(element.getCaption()) > GLCore.glStringWidth(name))
+                name = element.getCaption();
 
-        //This initiates a dynamic width for items
-        if (!items.isEmpty()) {
-            int textSize = items.stream().mapToInt(Element::getWidth).max().orElse(13);
-            if (textSize > 13) {
-                if (textSize >= 50) textSize = 50;
-                final int newWidth = 100 + textSize;
-                items.forEach(e -> e.setWidth(newWidth));
-            }
-        }
+        for (Element item : items)
+            if (GLCore.glStringWidth(item.getCaption()) > GLCore.glStringWidth(name))
+                name = item.getCaption();
+        if (name.length() >= 50) name = name.substring(0, 50);
+        final int newWidth = 55 + (GLCore.glStringWidth(name));
+        elements.stream().filter(e -> e.getElementType() != ElementType.MENU).forEach(e -> e.setWidth(newWidth));
+        items.forEach(e -> e.setWidth(newWidth));
+
 
         //This first checks to make sure the parent is open before starting to add elements, to prevent cpu waste
         if (elements.stream().anyMatch(e -> e.getElementType() == ElementType.INVENTORY) && parentElement != null && parentElement.isOpen()) {
@@ -116,11 +105,16 @@ public class ListCore{
                         ItemStack item = e.getInventory().getStackInSlot(i);
                         //checks to see if the item is valid for storing
                         if (item != null && e.getItemFilter().isFine(item, false)) {
+                            LogCore.logInfo("Passing item - " + item.getDisplayName());
+                            Slot itemSlot = new Slot(e.getInventory(), i, 0, 0);
                             //If the item perfectly matches an existing element, add it
                             if (items.stream().anyMatch(items -> items.getItem() == item.getItem() && items.compareStack(item))) {
+                                LogCore.logInfo("Adding item - " + item.getDisplayName() + " with slot number - " + i + " to existing element");
                                 items.stream().filter(items -> items.getItem() == item.getItem() && items.compareStack(item)).forEach(items -> items.addSlot(slot));
-                            } else // Otherwise create a new element
-                                items.add(new Element(e.getParent(), e.getGui(), item.getItem(), i, e.getInventory()));
+                            } else { // Otherwise create a new element
+                                LogCore.logInfo("Adding item - " + item.getDisplayName() + " with slot number - " + i + " to new element");
+                                items.add(new Element(e.getParent(), e.getGui(), item.getItem(), i, e.getInventory(), parent));
+                            }
                         }
                     }
                 }
@@ -135,16 +129,20 @@ public class ListCore{
         height = getListSize();
         //
         //This part issues an update call for each element
-        for (int i = elements.size() - 1; i >= 0; i--) update(mc, i, elements.get(i));
+
+        elements.stream().forEachOrdered(element -> updateSlots(mc, elements.indexOf(element), element));
+
+        if (!items.isEmpty())
+            items.stream().forEachOrdered(item -> updateItems(mc, items.indexOf(item), item));
     }
 
-    public void update(Minecraft mc, int index, Element element) {
+    public void updateSlots(Minecraft mc, int index, Element element) {
         //Sets up the X and Y for the elements
         if (element.isEnabled())
             if (element.getElementType() != ElementType.MENU) {
                 if (!ElementBuilder.getInstance().isParentEnabled(element.getParent()))
                     element.setEnabled(false);
-                element.setY(getOffset(index));
+                element.setY(getOffset(index) + getY(true));
                 element.setX(getX(true));
             } else {
                 element.setX(getX(true));
@@ -158,12 +156,18 @@ public class ListCore{
 
         //This sets the visibility for elements above or below the normal 5 shown. Will only trigger if the list is bigger than 5
 
-        if (element.getElementType() != ElementType.MENU && element.isEnabled() && elements.size() >= 5) {
+        if (element.getElementType() != ElementType.MENU && element.isEnabled() && elements.size() > 5) {
             final int elementY = element.getY(false);
-            final int elementSize = element.getHeight();
+            final int elementSize = element.getHeight() - 20;
 
             final int listY = getListY(false);
             final int listSize = getListSize();
+
+            /*
+            LogCore.logInfo("Element name - " + element.getCaption());
+            LogCore.logInfo("ElementY - " + elementY + "  ElementSize - " + elementSize);
+            LogCore.logInfo("ListY - " + listY + "  ListSize - " + listSize);
+            LogCore.logInfo("Elements - " + (elementY + elementSize) + "   List - " + (listY + listSize));*/
 
             if (elementY < listY) element.setVisibility(Math.max(1.0F - (float) (listY - elementY) / listSize, 0.0F));
             else if (elementY + elementSize > listY + listSize)
@@ -172,6 +176,37 @@ public class ListCore{
 
             if (element.getVisibility() < 0.6F) element.setVisibility(0);
             else element.setVisibility(element.getVisibility() * element.getVisibility());
+            scroll(0);
+        }
+    }
+
+    public void updateItems(Minecraft mc, int index, Element item) {
+        //Sets up the X and Y for the elements
+        item.setY(getItemsOffset(index) + getY(true));
+        item.setX(getX(true));
+
+        //This sets the visibility for elements above or below the normal 5 shown. Will only trigger if the list is bigger than 5
+
+        if (items.size() > 5) {
+            final int elementY = item.getY(false);
+            final int elementSize = item.getHeight() - 20;
+
+            final int listY = getListY(false);
+            final int listSize = getListSize();
+
+            /*
+            LogCore.logInfo("Element name - " + element.getCaption());
+            LogCore.logInfo("ElementY - " + elementY + "  ElementSize - " + elementSize);
+            LogCore.logInfo("ListY - " + listY + "  ListSize - " + listSize);
+            LogCore.logInfo("Elements - " + (elementY + elementSize) + "   List - " + (listY + listSize));*/
+
+            if (elementY < listY) item.setVisibility(Math.max(1.0F - (float) (listY - elementY) / listSize, 0.0F));
+            else if (elementY + elementSize > listY + listSize)
+                item.setVisibility(Math.max(1.0F - (float) ((elementY + elementSize) - (listY + listSize)) / listSize, 0.0F));
+            else item.setVisibility(1);
+
+            if (item.getVisibility() < 0.6F) item.setVisibility(0);
+            else item.setVisibility(item.getVisibility() * item.getVisibility());
             scroll(0);
         }
     }
@@ -189,9 +224,10 @@ public class ListCore{
                     drawMenu(mc, cursorX, cursorY, elements.get(i));
                  else if (elements.get(i).getElementType() == ElementType.SLOT || elements.get(i).getElementType() == ElementType.OPTION)
                     drawSlot(mc, cursorX, cursorY, elements.get(i));
-                else if (elements.get(i).getElementType() == ElementType.INVENTORY)
-                    drawItem(mc, cursorX, cursorY, elements.get(i));
             }
+        if (elements.get(0).isEnabled() && !items.isEmpty())
+            items.stream().forEachOrdered(item -> drawItem(mc, cursorX, cursorY, item));
+
         //RenderHelper.disableStandardItemLighting();
     }
 
@@ -211,9 +247,20 @@ public class ListCore{
 
                 final int arrowTop = getY(false) - height / 2;
                 //final int yOffset = elements.size() > 5 ? 5 : elements.size();
+                int count;
+                int length;
+
+                if (items.isEmpty()) {
+                    count = elements.size() >= 5 ? 5 : elements.size();
+                    length = elements.get(0).getHeight() * count + count;
+                } else {
+                    count = items.size() >= 5 ? 5 : items.size();
+                    length = items.get(0).getHeight() * count + count;
+
+                }
                 boolean fullArrow = false;
 
-                GLCore.glTexturedRect(left - 2, top, 2, height - 1, 40, 41, 2, 4);
+                GLCore.glTexturedRect(left - 2, top, 2, length, 40, 41, 2, 4);
                 GLCore.glTexturedRect(left - 10, arrowTop + (height - 10) / 2, 20, 25, 10, 10);
                 GLCore.glBlend(false);
             } else if (x < 0) {
@@ -318,12 +365,12 @@ public class ListCore{
 
     private void drawItem(Minecraft mc, int cursorX, int cursorY, Element element){
         if (element.mouseOver(cursorX, cursorY, -1)) mouseMoved(mc, cursorX, cursorY);
-        mc.thePlayer.openContainer = (Container)element.getInventory();
 
         if (element.getVisibility() > 0){
             final int hoverState = element.hoverState(cursorX, cursorY);
             final int color0 = getColor(hoverState, true);
             final int color1 = getColor(hoverState, false);
+
             final int left = element.getX(false);
             final int top = element.getY(false);
 
@@ -332,35 +379,34 @@ public class ListCore{
 
             final int stackSize = element.getTotalStackSize();
 
-            GLCore.glBlend(true);
-            GLCore.glBindTexture(StringNames.slot);
-            GLCore.glColorRGBA(ColorUtil.multiplyAlpha(color0, element.getVisibility()));
-            if (hoverState == 2) {
-                GLCore.glColorRGBA(ColorUtil.multiplyAlpha(color1, element.getVisibility()));
-                GLCore.glTexturedRect(left, top, element.getWidth(), element.getHeight(), 0, 21, 10 - 16, 20 -2);
-            } else {
+            if (stackSize > 0) {
+                GLCore.glBlend(true);
+                GLCore.glBindTexture(StringNames.slot);
                 GLCore.glColorRGBA(ColorUtil.multiplyAlpha(color0, element.getVisibility()));
-                GLCore.glTexturedRect(left, top, element.getWidth(), element.getHeight(), 0, 1, 100 - 16, 20 - 2);
-            }
-            GLCore.glBindTexture(OptionCore.SAO_UI.isEnabled() ? StringNames.gui : StringNames.guiCustom);
+                if (hoverState == 2) {
+                    GLCore.glColor(1.0F, 1.0F, 1.0F);
+                    GLCore.glTexturedRect(left, top, element.getWidth(), element.getHeight(), 0, 21, 100 - 16, 20 - 2);
+                    GLCore.glString("x" + stackSize + "  " + element.getCaption(), left + iconOffset * 2 + 16 + 4, top + captionOffset, ColorUtil.multiplyAlpha(color1, element.getVisibility()), OptionCore.TEXT_SHADOW.isEnabled());
+                } else {
+                    GLCore.glColorRGBA(ColorUtil.multiplyAlpha(color0, element.getVisibility()));
+                    GLCore.glTexturedRect(left, top, element.getWidth(), element.getHeight(), 0, 1, 100 - 16, 20 - 2);
+                    GLCore.glString("x" + stackSize + "  " + element.getCaption(), left + iconOffset * 2 + 16 + 4, top + captionOffset, ColorUtil.multiplyAlpha(color0, element.getVisibility()), OptionCore.TEXT_SHADOW.isEnabled());
+                }
+                GLCore.glBindTexture(OptionCore.SAO_UI.isEnabled() ? StringNames.gui : StringNames.guiCustom);
 
-            GLCore.glColorRGBA(ColorUtil.multiplyAlpha(color1, element.getVisibility()));
-            GLCore.glTexturedRect(left + iconOffset, top + iconOffset, 140, 25, 16, 16);
-
-            if (stackSize > 0){
-                GLCore.glString("x" + stackSize, left + iconOffset * 2 + 16 + 4, top + captionOffset, ColorUtil.multiplyAlpha(color1, element.getVisibility()),  OptionCore.TEXT_SHADOW.isEnabled());
+                GLCore.glColorRGBA(ColorUtil.multiplyAlpha(color1, element.getVisibility()));
+                GLCore.glTexturedRect(left + iconOffset, top + iconOffset, 140, 25, 16, 16);
 
                 RenderHelper.enableGUIStandardItemLighting();
-                itemRender.renderItemIntoGUI(element.getItemStack(), x, y);
+                itemRender.renderItemIntoGUI(element.getItemStack(), left + iconOffset, top + iconOffset);
                 RenderHelper.disableStandardItemLighting();
 
-                if (element.getItemStack().isItemEnchanted()) renderEffectSlot(mc, x-  1, y - 1, element);
+                if (element.getItemStack().isItemEnchanted()) renderEffectSlot(mc, left, top, element);
                 else {
                     GLCore.glBlend(true);
                     GLCore.glAlphaTest(true);
                 }
             }
-            GLCore.glBlend(false);
 
         }
 
@@ -436,7 +482,7 @@ public class ListCore{
     }
 
     /**
-     * Gets the element lists specific to this ListCore
+     * Gets the element lists specific to this ElementController
      * @return Returns the group of elements
      */
     public List<Element> getElements() {
@@ -456,13 +502,21 @@ public class ListCore{
         return elements.stream().limit(index).mapToInt(e -> ElementOffset(e, true)).sum();
     }
 
+    private int getReverseElementOffset(int index) {
+        return elements.stream().skip(index).mapToInt(e -> ElementOffset(e, false)).sum();
+    }
+
     int ElementOffset(Element element, boolean normal){
         int height = element.getHeight();
         return normal ? height + 1 : height - 1;
     }
 
-    private int getReverseElementOffset(int index) {
-        return elements.stream().skip(index).mapToInt(e -> ElementOffset(e, false)).sum();
+    protected int getItemOffset(int index){
+        return items.stream().limit(index).mapToInt(e -> ElementOffset(e, true)).sum();
+    }
+
+    private int getReverseItemOffset(int index) {
+        return items.stream().skip(index).mapToInt(e -> ElementOffset(e, false)).sum();
     }
 
     protected int getListSize() {
@@ -482,6 +536,24 @@ public class ListCore{
                 a = Math.round(getElementOffset(elements.size()) + getElementOffset(index) - scrolledValue);
             }
         }
+
+        return a - 20;
+    }
+
+    protected int getItemsOffset(int index) {
+        int a = Math.round(getItemOffset(index) - scrolledValue);
+
+        if (items.size() > 9) {
+            if (getItemOffset(0) - scrolledValue > -getItemOffset(2)) { // elements can be added above
+                if (a >= getItemOffset(8)) {
+                    a = Math.round(getItemOffset(0) - getReverseItemOffset(index) - scrolledValue);
+                    if (a > getItemOffset(8) - scrolledValue) a = Math.round(getItemOffset(0) - getReverseItemOffset(index) - getItemOffset(items.size()) - scrolledValue);
+                }
+            } else if (getItemOffset(items.size()) - scrolledValue < getItemOffset(6) && index < items.size() - 8) { // elements can be added below
+                a = Math.round(getItemOffset(items.size()) + getItemOffset(index) - scrolledValue);
+            }
+        }
+
         return a - 20;
     }
 
@@ -499,14 +571,19 @@ public class ListCore{
         boolean listHighlight = elements.stream().anyMatch(Element::isHighlight);
 
         //Down key pressed
-        if (key == 208) {
+        if (Keyboard.isKeyDown(Keyboard.KEY_DOWN)) {
             if (listHighlight) {
                 for (int i = elements.size() - 1; i >= 0; i--) {
                     if (elements.get(i).isHighlight()) {
                         elements.get(i).setHighlight(false);
-                        if (elements.size() - 1 >= i + 1)
+                        if (elements.size() - 1 >= i + 1) {
                             elements.get(i + 1).setHighlight(true);
-                        else elements.get(0).setHighlight(true);
+                            if (elements.get(i + 1).getVisibility() < 1.0F) scroll(-20);
+                        }
+                        else {
+                            elements.get(0).setHighlight(true);
+                            if (elements.get(0).getVisibility() < 1.0F) scroll(-20);
+                        }
                         break;
                     }
                 }
@@ -515,14 +592,19 @@ public class ListCore{
         }
 
         //Up key pressed
-        if (key == 200) {
+        if (Keyboard.isKeyDown(Keyboard.KEY_UP)) {
             if (listHighlight) {
                 for (int i = elements.size() - 1; i >= 0; i--) {
                     if (elements.get(i).isHighlight()) {
                         elements.get(i).setHighlight(false);
-                        if (i == 0)
+                        if (i == 0) {
                             elements.get(elements.size() - 1).setHighlight(true);
-                        else elements.get(i - 1).setHighlight(true);
+                            if (elements.get(elements.size() - 1).getVisibility() < 1.0F) scroll(20);
+                        }
+                        else {
+                            elements.get(i - 1).setHighlight(true);
+                            if (elements.get(i - 1).getVisibility() < 1.0F) scroll(20);
+                        }
                         break;
                     }
                 }
@@ -530,7 +612,7 @@ public class ListCore{
         }
 
         //Right/Enter key pressed
-        if (key == 205 || key == 28) {
+        if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT) || Keyboard.isKeyDown(Keyboard.KEY_RETURN)) {
             if (listHighlight) {
                 for (int i = elements.size() - 1; i >= 0; i--) {
                     if (elements.get(i).isHighlight()) {
@@ -542,7 +624,7 @@ public class ListCore{
         }
 
         //Left/Backspace key pressed
-        if (key == 203 || key == 14) {
+        if (Keyboard.isKeyDown(Keyboard.KEY_LEFT) || Keyboard.isKeyDown(Keyboard.KEY_BACK)) {
             if (parentElement != null)
                 actionPerformed(parentElement, Actions.LEFT_RELEASED, 0);
         }
@@ -661,7 +743,7 @@ public class ListCore{
      * @return Return true if the mouse wheel action was fired
      */
     public boolean mouseWheel(Minecraft mc, int cursorX, int cursorY, int delta) {
-        if (elements.size() > 5 && isFocus) scroll(Math.abs(delta * 2 * getListSize() / elements.size()) / delta);
+        if (elements.size() > 4 && isFocus) scroll(Math.abs(delta * 2 * getListSize() / elements.size()) / delta);
         return mouseElementWheel(mc, cursorX, cursorY, delta);
     }
 
@@ -711,7 +793,7 @@ public class ListCore{
      * @param data Button ID
      */
     public static void actionPerformed(Element element, Actions action, int data) {
-        MinecraftForge.EVENT_BUS.post(new ElementAction(element.getCaption(), element.getCategory(), element.getParent(), action, data, element.getGui(), element.isOpen(), !element.isFocus(), element.getElementType()));
+        MinecraftForge.EVENT_BUS.post(new ElementAction(element.getCaption(), element.getCategory(), element.getParent(), action, data, element.getGui(), element.isOpen(), !element.isFocus(), element.getElementType(), element.getParentElement()));
     }
 
     /**

@@ -1,21 +1,19 @@
 package com.saomc.saoui.screens.window;
 
 import com.saomc.saoui.GLCore;
-import com.saomc.saoui.SoundCore;
-import com.saomc.saoui.api.events.ElementAction;
 import com.saomc.saoui.api.screens.Actions;
 import com.saomc.saoui.api.screens.GuiSelection;
 import com.saomc.saoui.colorstates.CursorStatus;
 import com.saomc.saoui.elements.Element;
+import com.saomc.saoui.elements.ElementController;
 import com.saomc.saoui.elements.ElementDispatcher;
-import com.saomc.saoui.elements.ListCore;
-import com.saomc.saoui.elements.ParentElement;
+import com.saomc.saoui.api.screens.ParentElement;
+import com.saomc.saoui.elements.defaultelements.DefaultElements;
 import com.saomc.saoui.resources.StringNames;
 import com.saomc.saoui.util.ColorUtil;
 import com.saomc.saoui.util.LogCore;
 import com.saomc.saoui.util.OptionCore;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.BufferUtils;
@@ -31,7 +29,6 @@ public abstract class ScreenGUI extends GuiScreen implements ParentElement {
 
     private static final float ROTATION_FACTOR = 0.25F;
     protected static CursorStatus CURSOR_STATUS = CursorStatus.SHOW;
-    protected final ElementDispatcher elements;
     private final Cursor emptyCursor;
     private GuiSelection type;
     private int mouseX, mouseY;
@@ -44,7 +41,9 @@ public abstract class ScreenGUI extends GuiScreen implements ParentElement {
     protected ScreenGUI(GuiSelection guiSelection) {
         super();
         type = guiSelection;
-        elements = new ElementDispatcher(this, guiSelection);
+        DefaultElements.dispatchItemFilter();
+        if (ElementDispatcher.isEmpty()) ElementDispatcher.clear();
+        ElementDispatcher.getInstance().dispatch(this, guiSelection);
         Cursor cursor = null;
         try {
             cursor = new Cursor(1, 1, 0, 0, 1, BufferUtils.createIntBuffer(1), null);
@@ -92,14 +91,14 @@ public abstract class ScreenGUI extends GuiScreen implements ParentElement {
 
     @Override
     public void updateScreen() {
-        if (this.elements == null) return;
-
-        this.elements.menuElements.forEach(e -> e.update(mc));
+        if (ElementDispatcher.isEmpty()) return;
+        ElementDispatcher.check();
+        ElementDispatcher.getElements().forEach(e -> e.update(mc));
     }
 
     @Override
     public void drawScreen(int cursorX, int cursorY, float partialTicks) {
-        if (this.elements == null) return;
+        if (ElementDispatcher.isEmpty()) return;
         mouseX = cursorX;
         mouseY = cursorY;
 
@@ -112,7 +111,7 @@ public abstract class ScreenGUI extends GuiScreen implements ParentElement {
 
         GLCore.glStartUI(mc);
 
-        this.elements.menuElements.forEach(e -> e.draw(mc, cursorX, cursorY));
+        ElementDispatcher.getElements().forEach(e -> e.draw(mc, cursorX, cursorY));
 
         if (CURSOR_STATUS == CursorStatus.SHOW) { // TODO: maybe there's a way to move all of this to the actual org.lwjgl.input.Cursor
 
@@ -149,19 +148,19 @@ public abstract class ScreenGUI extends GuiScreen implements ParentElement {
         if (OptionCore.CURSOR_TOGGLE.isEnabled() && isCtrlKeyDown()) lockCursor = !lockCursor;
         super.keyTyped(ch, key);
 
-        elements.menuElements.stream().anyMatch(e -> e.keyTyped(mc, ch, key));
+        ElementDispatcher.getElements().stream().anyMatch(e -> e.keyTyped(mc, ch, key));
         LogCore.logDebug("ch - " + ch + " key - " + key);
 
         //elements.menuElements.keySet().stream().filter(Element::isFocus).forEach(element -> actionPerformed(element, Actions.KEY_TYPED, key));
     }
 
     @Override
-        protected void mouseClicked(int cursorX, int cursorY, int button) throws IOException {
+    protected void mouseClicked(int cursorX, int cursorY, int button) throws IOException {
         super.mouseClicked(cursorX, cursorY, button);
         mouseDown |= (0x1 << button);
 
         try {
-            if (elements.menuElements.stream().noneMatch(list -> list.mousePressed(mc, cursorX, cursorY, button)))
+            if (ElementDispatcher.getElements().stream().noneMatch(controller -> controller.mousePressed(mc, cursorX, cursorY, button)))
                 backgroundClicked(cursorX, cursorY, button);
         } catch (ConcurrentModificationException e){
             //Do Nothing
@@ -177,12 +176,12 @@ public abstract class ScreenGUI extends GuiScreen implements ParentElement {
         boolean found = false;
 
         try {
-            for (ListCore listCore : elements.menuElements)
+            for (ElementController elementController : ElementDispatcher.getElements())
                 if (found) break;
-                else for (Element element : listCore.elements)
+                else for (Element element : elementController.elements)
                     if (element.isOpen() && element.mouseReleased(mc, cursorX, cursorY, button)||
-                            element.isFocus() && listCore.mouseOver(cursorX, cursorY, button) && element.mouseReleased(mc, cursorX, cursorY, button)) {
-                        ListCore.actionPerformed(element, Actions.LEFT_RELEASED, button);
+                            element.isFocus() && elementController.mouseOver(cursorX, cursorY, button) && element.mouseReleased(mc, cursorX, cursorY, button)) {
+                        ElementController.actionPerformed(element, Actions.LEFT_RELEASED, button);
                         found = true;
                         break;
                     }
@@ -201,7 +200,7 @@ public abstract class ScreenGUI extends GuiScreen implements ParentElement {
         boolean found = false;
 
         try {
-            elements.menuElements.stream().anyMatch(e -> e.mouseWheel(mc, cursorX, cursorY, delta));
+            ElementDispatcher.getElements().stream().anyMatch(e -> e.mouseWheel(mc, cursorX, cursorY, delta));
         } catch (ConcurrentModificationException e){
             //Do Nothing
             LogCore.logWarn("mouseWheel ended unexpectedly");
@@ -234,7 +233,7 @@ public abstract class ScreenGUI extends GuiScreen implements ParentElement {
     }
 
     protected void close() {
-        //elements.menuElements.clear(); // jic
+        ElementDispatcher.close();
     }
 
     protected void hideCursor() {

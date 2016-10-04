@@ -1,4 +1,4 @@
-package com.saomc.saoui.elements;
+package com.saomc.saoui.api.screens;
 
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;

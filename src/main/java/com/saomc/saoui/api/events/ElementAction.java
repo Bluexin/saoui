@@ -3,6 +3,8 @@ package com.saomc.saoui.api.events;
 import com.saomc.saoui.api.screens.Actions;
 import com.saomc.saoui.api.screens.ElementType;
 import com.saomc.saoui.api.screens.GuiSelection;
+import com.saomc.saoui.api.screens.ParentElement;
+import jdk.nashorn.internal.objects.annotations.Getter;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
 import javax.annotation.CheckForNull;
@@ -25,8 +27,9 @@ public class ElementAction extends Event {
     private boolean isOpen;
     private boolean isLocked;
     private ElementType elementType;
+    private ParentElement parentElement;
 
-    public ElementAction(String name, String category, String parent, Actions action, int data, GuiSelection gui, boolean open, boolean locked, ElementType elementType) {
+    public ElementAction(String name, String category, String parent, Actions action, int data, GuiSelection gui, boolean open, boolean locked, ElementType elementType, ParentElement parentElement) {
         this.name = name;
         this.category = category;
         this.parent = parent;
@@ -36,11 +39,13 @@ public class ElementAction extends Event {
         this.isOpen = open;
         this.isLocked = locked;
         this.elementType = elementType;
+        this.parentElement = parentElement;
     }
 
     /**
      * @return Returns the elements name that fired the event
      */
+    @Getter
     public String getName() {
         return this.name;
     }
@@ -49,6 +54,8 @@ public class ElementAction extends Event {
      * @return Returns what category this belongs too
      * WARNING - Can be null
      */
+    @Getter
+    @Nullable
     public String getCategory() {
         return this.category;
     }
@@ -57,6 +64,8 @@ public class ElementAction extends Event {
      * @return Returns what category this belongs too
      * WARNING - Can be null
      */
+    @Getter
+    @Nullable
     public String getParent() {
         return this.parent;
     }
@@ -64,6 +73,7 @@ public class ElementAction extends Event {
     /**
      * @return Returns what action was used
      */
+    @Getter
     public Actions getAction() {
         return this.action;
     }
@@ -71,6 +81,7 @@ public class ElementAction extends Event {
     /**
      * @return Returns data
      */
+    @Getter
     public int getData() {
         return this.data;
     }
@@ -78,6 +89,7 @@ public class ElementAction extends Event {
     /**
      * @return Returns the gui this was sent from
      */
+    @Getter
     public GuiSelection getGui() {
         return gui;
     }
@@ -88,6 +100,7 @@ public class ElementAction extends Event {
      *
      * @return Returns whether the element is already open
      */
+    @Getter
     public boolean isOpen() {
         return isOpen;
     }
@@ -99,6 +112,7 @@ public class ElementAction extends Event {
      *
      * @return Returns true if locked
      */
+    @Getter
     public boolean isLocked() {
         return isLocked;
     }
@@ -107,7 +121,20 @@ public class ElementAction extends Event {
      * Used to quickly identify the type of element
      * @return Returns the elements type
      */
+    @Getter
     public ElementType getElementType() {
         return elementType;
+    }
+
+    /**
+     * Used to get the ParentElement this belongs to
+     * Needed for certain tasks such as firing a prompt window
+     *
+     * @return Returns the ParentElement
+     */
+    @Getter
+    @Nullable
+    public ParentElement getParentElement() {
+        return parentElement;
     }
 }

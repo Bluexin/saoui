@@ -4,10 +4,10 @@ import com.saomc.saoui.SoundCore;
 import com.saomc.saoui.api.events.ElementAction;
 import com.saomc.saoui.api.screens.Actions;
 import com.saomc.saoui.api.screens.ElementType;
+import com.saomc.saoui.api.screens.WindowAlign;
 import com.saomc.saoui.elements.ElementBuilder;
-import com.saomc.saoui.elements.ElementDispatcher;
-import com.saomc.saoui.elements.ListCore;
 import com.saomc.saoui.screens.menu.IngameMenuGUI;
+import com.saomc.saoui.screens.window.WindowView;
 import com.saomc.saoui.util.LogCore;
 import com.saomc.saoui.util.OptionCore;
 import net.minecraft.client.Minecraft;
@@ -56,26 +56,27 @@ public class ElementHandler {
     }
 
     private static void slotAction(ElementAction e){
-        if (e.getCategory().equals("logout") && e.getParent().equals("settings") && OptionCore.LOGOUT.isEnabled()) logoutButton(e);
-        if (e.getCategory().equals("menu") && e.getParent().equals("settings")) menuButton(e);
-        if (e.getCategory().equals(OptionCore.VANILLA_OPTIONS.getName().toLowerCase()) && e.getParent().equals("settings")) vanillaOptions(e);
+        if (e.getCategory().equals("logout") && e.getParent().equals("settings") && OptionCore.LOGOUT.isEnabled()) logoutButton();
+        if (e.getCategory().equals("menu") && e.getParent().equals("settings")) menuButton();
+        if (e.getCategory().equals(OptionCore.VANILLA_OPTIONS.getName().toLowerCase()) && e.getParent().equals("settings")) vanillaOptions();
+        if (e.getCategory().equals("prompt") && e.getParent().equals("profile")) promptButton(e);
     }
 
-    private static void menuButton(ElementAction e){
+    private static void menuButton(){
         if (mc.currentScreen != null && mc.currentScreen instanceof IngameMenuGUI) {
             mc.currentScreen.onGuiClosed();
             mc.displayGuiScreen(new GuiIngameMenu());
         }
     }
 
-    private static void vanillaOptions(ElementAction e){
+    private static void vanillaOptions(){
         if (mc.currentScreen != null && mc.currentScreen instanceof IngameMenuGUI) {
             mc.currentScreen.onGuiClosed();
             mc.displayGuiScreen(new GuiOptions(mc.currentScreen, mc.gameSettings));
         }
     }
 
-    private static void logoutButton(ElementAction e){
+    private static void logoutButton(){
         if (mc.currentScreen != null && mc.currentScreen instanceof IngameMenuGUI) {
             mc.currentScreen.onGuiClosed();
             mc.theWorld.sendQuittingDisconnectingPacket();
@@ -83,5 +84,10 @@ public class ElementHandler {
             mc.loadWorld(null);
             mc.displayGuiScreen(new GuiMainMenu());
         }
+    }
+
+    private static void promptButton(ElementAction e){
+        String message = "This is a simple test prompt testing the window and how it handles long strings of text. This test is using the single button display mode with an event firing once the button has been hit";
+        //new GuiOpenEvent(new WindowView("Test Prompt", false, message, WindowAlign.HORIZONTAL_CENTER, WindowAlign.VERTICAL_CENTER, e.getParentElement()));
     }
 }

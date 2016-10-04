@@ -88,7 +88,8 @@ public class DefaultElements {
         // Skills need adding
 
         //Testing purposes only
-        b.addSlot("Test", "Profile", IconCore.SKILLS, GuiSelection.IngameMenuGUI);
+        b.addSlot("Test", "Profile", IconCore.OPTION, GuiSelection.IngameMenuGUI);
+        b.addSlot("Prompt", "Profile", IconCore.OPTION, GuiSelection.IngameMenuGUI);
         b.addSlot("Slot 1", "Test", IconCore.QUEST, GuiSelection.IngameMenuGUI);
         b.addSlot("Slot 2", "Test", IconCore.QUEST, GuiSelection.IngameMenuGUI);
         b.addSlot("Slot 3", "Test", IconCore.QUEST, GuiSelection.IngameMenuGUI);

@@ -1,24 +1,17 @@
 package com.saomc.saoui.elements;
 
-import com.saomc.saoui.api.screens.ElementType;
-import com.saomc.saoui.api.screens.GuiSelection;
-import com.saomc.saoui.api.screens.IIcon;
-import com.saomc.saoui.api.screens.ItemFilter;
-import com.saomc.saoui.util.ColorUtil;
+import com.saomc.saoui.api.screens.*;
 import com.saomc.saoui.util.LogCore;
 import com.saomc.saoui.util.OptionCore;
 import jdk.nashorn.internal.objects.annotations.Getter;
 import jdk.nashorn.internal.objects.annotations.Setter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.capabilities.CapabilityInject;
-import net.minecraftforge.fml.common.Optional;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -28,7 +21,7 @@ import java.util.List;
  * Created by Tencao on 30/07/2016.
  */
 
-public class Element implements ParentElement{
+public class Element implements ParentElement {
     private ParentElement parentElement;
     private ElementType elementType;
     private String category;
@@ -51,7 +44,7 @@ public class Element implements ParentElement{
     private ItemFilter itemFilter;
     private IInventory inventory;
     private Item item;
-    private List<Integer> slots;
+    private List<Integer> slots = new ArrayList<>();
 
     private Element() {
     }
@@ -116,15 +109,21 @@ public class Element implements ParentElement{
     }
 
     //Item specific
-    Element(String parent, GuiSelection gui, Item item, int slot, IInventory inventory) {
+    Element(String parent, GuiSelection gui, Item item, int slot, IInventory inventory, ParentElement parentElement) {
+        this.parentElement = parentElement;
         this.elementType = ElementType.ITEM;
-        this.parent = parent;
-        this.caption = getItemName();
-        this.category = getItemName().toLowerCase();
         this.gui = gui;
-        this.item = item;
+        this.parent = parent;
         this.slots.add(slot);
         this.inventory = inventory;
+        this.item = item;
+        this.caption = getItemName();
+        this.category = caption.toLowerCase();
+        this.enabled = true;
+        this.focus = true;
+        this.visibility = 1.0F;
+        this.width = 100;
+        this.height = 20;
     }
 
     public Element main() {
@@ -150,7 +149,7 @@ public class Element implements ParentElement{
     public void setEnabled(boolean state) {
         this.enabled = state;
         this.focus = state;
-        if (!state) visibility = 1.0F;
+        if (!state) this.visibility = 1.0F;
     }
 
     /**
@@ -258,7 +257,7 @@ public class Element implements ParentElement{
      */
     @Getter
     public int getX(boolean relative) {
-        return relative ? x : x + (parentElement != null ? parentElement.getX(relative) : 0);
+        return relative ? this.x : this.x + (this.parentElement != null ? this.parentElement.getX(relative) : 0);
     }
 
     /**
@@ -278,7 +277,7 @@ public class Element implements ParentElement{
      */
     @Getter
     public int getY(boolean relative) {
-        return relative ? y : y + (parentElement != null ? parentElement.getY(relative) : 0);
+        return relative ? this.y : this.y + (this.parentElement != null ? this.parentElement.getY(relative) : 0);
     }
 
     /**
@@ -379,7 +378,7 @@ public class Element implements ParentElement{
      */
     @Getter
     public boolean isRemoved() {
-        return isRemoved;
+        return this.isRemoved;
     }
 
     /**
@@ -389,17 +388,29 @@ public class Element implements ParentElement{
      */
     @Setter
     public void setRemoved(boolean removed) {
-        isRemoved = removed;
+        this.isRemoved = removed;
     }
 
     /**
      * Sets the parent element
      *
-     * @param parentElement The parent element
+     * @param parentElement The Parent Element
      */
     @Setter
     public void setParentElement(ParentElement parentElement){
         this.parentElement = parentElement;
+    }
+
+
+    /**
+     * Gets the parent element
+     *
+     * @return Returns the set Parent Element
+     */
+    @Getter
+    @Nullable
+    public ParentElement getParentElement(){
+        return this.parentElement;
     }
 
     @Getter
@@ -409,15 +420,15 @@ public class Element implements ParentElement{
 
     @Getter
     public final boolean mouseOver(int cursorX, int cursorY, int flag) {
-        if ((visibility >= 0.6) && (enabled)) {
+        if ((this.visibility >= 0.6) && (this.enabled)) {
             final int left = getX(false);
             final int top = getY(false);
 
             return (
                     (cursorX >= left) &&
                             (cursorY >= top) &&
-                            (cursorX <= left + width) &&
-                            (cursorY <= top + height)
+                            (cursorX <= left + this.width) &&
+                            (cursorY <= top + this.height)
             );
         } else {
             return false;
@@ -445,35 +456,34 @@ public class Element implements ParentElement{
 
     @Getter
     public int hoverState(int cursorX, int cursorY) {
-        if (elementType == ElementType.OPTION){
-            return option.isEnabled() ? 2 : mouseOver(cursorX, cursorY) ? 2 : focus ? 1 : 0;
+        if (this.elementType == ElementType.OPTION){
+            return this.option.isEnabled() ? 2 : mouseOver(cursorX, cursorY) ? 2 : this.focus ? 1 : 0;
         }
-        else if (elementType == ElementType.MENU || elementType == ElementType.SLOT)
-            return isOpen() ? 2 : mouseOver(cursorX, cursorY) ? 2 : isHighlight() ? 2 : focus ? 1 : 0;
-        else return 1;
+        else
+            return isOpen() ? 2 : mouseOver(cursorX, cursorY) ? 2 : isHighlight() ? 2 : this.focus ? 1 : 0;
     }
 
     @Getter
     @Nullable
     public ItemFilter getItemFilter() {
-        if (elementType != ElementType.INVENTORY) LogCore.logFatal("getItemFilter called on non-inventory element");
-        return itemFilter;
+        if (this.elementType != ElementType.INVENTORY) LogCore.logFatal("getItemFilter called on non-inventory element");
+        return this.itemFilter;
     }
 
     @Getter
     @Nullable
     public IInventory getInventory() {
-        if (elementType != ElementType.INVENTORY) LogCore.logFatal("getInventory called on non-inventory element");
-        return inventory;
+        if (this.elementType != ElementType.INVENTORY) LogCore.logFatal("getInventory called on non-inventory element");
+        return this.inventory;
     }
 
     @Getter
     public int getTotalStackSize() {
         int total = 0;
-        for (int slot : slots) {
-            if (inventory.getStackInSlot(slots.indexOf(slot)) != null && inventory.getStackInSlot(slots.indexOf(slot)).getItem() == item)
-                total += inventory.getStackInSlot(slots.indexOf(slot)).stackSize;
-            else slots.remove(slot);
+        for (int slot : this.slots) {
+            if (this.inventory.getStackInSlot(slot) != null && this.inventory.getStackInSlot(slot).getItem() == item)
+                total += this.inventory.getStackInSlot(slot).stackSize;
+            else this.slots.remove(slot);
         }
 
         return total;
@@ -482,12 +492,17 @@ public class Element implements ParentElement{
     @Getter
     @Nullable
     public String getItemName() {
-        return slots.isEmpty() ? inventory.getStackInSlot(slots.indexOf(0)).getDisplayName() : null;
+        LogCore.logInfo("slot - " + this.slots.get(0));
+        if (!this.slots.isEmpty() && this.inventory != null) {
+            if (this.inventory.getStackInSlot(this.slots.get(0)) != null)
+                return this.inventory.getStackInSlot(this.slots.get(0)).getDisplayName();
+        }
+        return null;
     }
 
     @Getter
     public boolean isSlotStored(int slot){
-        return slots.contains(slot);
+        return this.slots.contains(slot);
     }
 
     /**
@@ -502,43 +517,45 @@ public class Element implements ParentElement{
      */
     @Getter
     public boolean compareStack(ItemStack stack){
-        if (slots.isEmpty()) return false;
+        if (this.slots.isEmpty()) return false;
         else {
-            ItemStack mainStack = inventory.getStackInSlot(slots.indexOf(0));
-            return mainStack.getItem() == stack.getItem()
+            ItemStack mainStack = this.inventory.getStackInSlot(this.slots.get(0));
+            return this.item == stack.getItem()
                     && mainStack.getItemDamage() == stack.getItemDamage()
                     && mainStack.getDisplayName().equals(stack.getDisplayName())
                     && mainStack.getMetadata() == stack.getMetadata()
-                    && (mainStack.isItemEnchantable() && mainStack.getEnchantmentTagList() == stack.getEnchantmentTagList());
+                    && mainStack.getEnchantmentTagList() == stack.getEnchantmentTagList();
         }
     }
 
     @Getter
-    public boolean isSlotsEmpty(){ return slots.isEmpty(); }
+    public boolean isSlotsEmpty(){ return this.slots.isEmpty(); }
 
     @Getter
     @Nullable
-    public Item getItem(){ return item; }
+    public Item getItem(){ return this.item; }
 
     @Getter
     @Nullable
     public ItemStack getItemStack(){
-        if (slots.isEmpty()) return null;
-        else if (inventory.getStackInSlot(slots.indexOf(0)).getItem() != item){
-            slots.remove(0);
+        if (this.slots.isEmpty()) return null;
+        else if (this.inventory.getStackInSlot(this.slots.get(0)).getItem() != this.item){
+            this.slots.remove(0);
             return getItemStack();
         }
-        else return inventory.getStackInSlot(slots.indexOf(0)); }
+        else return this.inventory.getStackInSlot(this.slots.get(0)); }
 
     @Setter
     public void addSlot(int slot) {
-        slots.add(slot);
+        this.slots.add(slot);
     }
 
     public void itemCheck() {
-        for(int slot : slots)
-            if (inventory.getStackInSlot(slots.indexOf(slot)) == null || compareStack(inventory.getStackInSlot(slots.indexOf(slot))))
-                slots.remove(slot);
+        this.slots.stream().filter(slot -> this.inventory.getStackInSlot(slot) == null || !compareStack(this.inventory.getStackInSlot(slot))).forEach(slot -> this.slots.remove(slot));
+        /*
+        for(int slot : this.slots)
+            if (inventory.getStackInSlot(slot) == null || compareStack(inventory.getStackInSlot(slot)))
+                this.slots.remove(slot);*/
     }
 
 }

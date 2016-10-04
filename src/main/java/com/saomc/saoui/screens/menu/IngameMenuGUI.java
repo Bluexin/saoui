@@ -22,7 +22,6 @@ public class IngameMenuGUI extends ScreenGUI {
 
     @Override
     protected void init() {
-        DefaultElements.dispatchItemFilter();
         super.init();
 
         flowY = -height;
