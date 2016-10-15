@@ -9,7 +9,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public enum HealthStep {
+public enum HealthStep { // Could be loaded from file. Currently the HPBar loads it's own colors.
 
     VERY_LOW(0.1F, 0xBD0000FF),
     LOW(0.2F, 0xF40000FF),
@@ -22,9 +22,9 @@ public enum HealthStep {
     private final float healthLimit;
     private final int color;
 
-    HealthStep(float limit, int argb) {
+    HealthStep(float limit, int rgba) {
         healthLimit = limit;
-        color = argb;
+        color = rgba;
     }
 
     public static HealthStep getStep(Minecraft mc, EntityLivingBase entity, float time) {
@@ -38,7 +38,7 @@ public enum HealthStep {
         return step;
     }
 
-    public static HealthStep getStep(Minecraft mc, float health, float time) {
+    public static HealthStep getStep(float health) {
         HealthStep step = first();
 
         while ((health > step.getLimit()) && (step.ordinal() + 1 < values().length)) step = next(step);

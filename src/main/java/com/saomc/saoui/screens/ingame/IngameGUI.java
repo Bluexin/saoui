@@ -7,6 +7,9 @@ import com.saomc.saoui.screens.death.DeathScreen;
 import com.saomc.saoui.screens.menu.IngameMenuGUI;
 import com.saomc.saoui.social.StaticPlayerHelper;
 import com.saomc.saoui.social.party.PartyHelper;
+import com.saomc.saoui.themes.ThemeLoader;
+import com.saomc.saoui.themes.elements.DrawContext;
+import com.saomc.saoui.themes.elements.HudPartType;
 import com.saomc.saoui.util.OptionCore;
 import com.saomc.saoui.util.PlayerStats;
 import net.minecraft.block.material.Material;
@@ -30,8 +33,6 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Event;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
@@ -60,6 +61,8 @@ public class IngameGUI extends GuiIngameForge {
     private float time;
     private int healthBoxes;
     private GuiOverlayDebugForge debugOverlay;
+
+    private DrawContext ctx;
 
     public IngameGUI(Minecraft mc) {
         super(mc);
@@ -95,7 +98,6 @@ public class IngameGUI extends GuiIngameForge {
     }
 
     @Override
-    @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)
     protected void renderCrosshairs(float partialTicks) {
         if (pre(CROSSHAIRS)) return;
         if (OptionCore.CROSS_HAIR.isEnabled() && !(mc.currentScreen instanceof IngameMenuGUI || mc.currentScreen instanceof DeathScreen))
@@ -104,7 +106,6 @@ public class IngameGUI extends GuiIngameForge {
     }
 
     @Override
-    @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)
     protected void renderArmor(int width, int height) {
         if (OptionCore.VANILLA_UI.isEnabled()) super.renderArmor(width, height);
         else {
@@ -115,7 +116,6 @@ public class IngameGUI extends GuiIngameForge {
     }
 
     @Override
-    @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)
     protected void renderHotbar(ScaledResolution res, float partialTicks) {
         if (replaceEvent(HOTBAR)) return;
         ItemStack itemstack = mc.thePlayer.getHeldItemOffhand();
@@ -223,7 +223,6 @@ public class IngameGUI extends GuiIngameForge {
     }
 
     @Override
-    @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)
     protected void renderAir(int width, int height) {
         if (OptionCore.VANILLA_UI.isEnabled()) super.renderAir(width, height);
         else {
@@ -253,7 +252,6 @@ public class IngameGUI extends GuiIngameForge {
     }
 
     @Override
-    @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)
     public void renderHealth(int width, int height) {
         if (OptionCore.VANILLA_UI.isEnabled()) super.renderHealth(width, height);
         else {
@@ -270,7 +268,8 @@ public class IngameGUI extends GuiIngameForge {
 
             GLCore.glAlphaTest(true);
             GLCore.glBlend(true);
-            GLCore.glColor(1, 1, 1, 1);
+
+            /*GLCore.glColor(1, 1, 1, 1);
             GLCore.glBindTexture(OptionCore.SAO_UI.isEnabled() ? StringNames.gui : StringNames.guiCustom);
             GLCore.glTexturedRect(2, 2, zLevel, 0, 0, 16, 15);
             GLCore.glTexturedRect(18, 2, zLevel, usernameBoxes * 5, 15, 16, 0, 5, 15);
@@ -278,10 +277,15 @@ public class IngameGUI extends GuiIngameForge {
             GLCore.glBindTexture(OptionCore.SAO_UI.isEnabled() ? StringNames.gui : StringNames.guiCustom);
             GLCore.glColor(1, 1, 1, 1);
             GLCore.glTexturedRect(offsetUsername, 2, zLevel, 21, 0, healthBarWidth, 15);
-            HealthStep.getStep(mc, mc.thePlayer, time).glColor();
+            HealthStep.getStep(mc, mc.thePlayer, time).glColor();*/
 
+            if (ctx == null) this.ctx = new DrawContext(mc.thePlayer.getDisplayNameString(), mc, zLevel);
+            ctx.setHp(StaticPlayerHelper.getHealth(mc, mc.thePlayer, time) / StaticPlayerHelper.getMaxHealth(mc.thePlayer));
+            ctx.setZ(zLevel);
 
-            if (OptionCore.SAO_UI.isEnabled()) {
+            ThemeLoader.HUD.get(HudPartType.HEALTH_BOX).draw(ctx);
+
+            /*if (OptionCore.SAO_UI.isEnabled()) {
                 int h = healthHeight;
                 for (int i = 0; i < healthValue; i++) {
                     GLCore.glTexturedRect(offsetUsername + 1 + i, 5, zLevel, (healthHeight - h), 15, 1, h);
@@ -319,7 +323,7 @@ public class IngameGUI extends GuiIngameForge {
                         GLCore.glTexturedRect(offsetUsername + i + 4, 6, zLevel, 0, 245, 4, 4);
                 }
 
-            }
+            }*/
 
             mc.mcProfiler.endSection();
             post(HEALTH);
@@ -434,7 +438,6 @@ public class IngameGUI extends GuiIngameForge {
     }
 
     @Override
-    @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)
     public void renderFood(int width, int height) {
         if (OptionCore.VANILLA_UI.isEnabled()) super.renderFood(width, height);
         // See below, called by renderHealth
@@ -476,7 +479,6 @@ public class IngameGUI extends GuiIngameForge {
     }
 
     @Override
-    @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)
     protected void renderExperience(int width, int height) {
         if (OptionCore.VANILLA_UI.isEnabled()) super.renderExperience(width, height);
         else {
@@ -505,7 +507,6 @@ public class IngameGUI extends GuiIngameForge {
     }
 
     @Override
-    @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)
     protected void renderJumpBar(int width, int height) {
         if (OptionCore.VANILLA_UI.isEnabled()) super.renderJumpBar(width, height);
         else {
@@ -518,7 +519,6 @@ public class IngameGUI extends GuiIngameForge {
     }
 
     @Override
-    @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)
     protected void renderHealthMount(int width, int height) {
         if (OptionCore.VANILLA_UI.isEnabled()) super.renderHealthMount(width, height);
         else {
@@ -533,7 +533,6 @@ public class IngameGUI extends GuiIngameForge {
     }
 
     @Override
-    @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)
     protected void renderHUDText(int width, int height) {
         if (OptionCore.VANILLA_UI.isEnabled() || OptionCore.DEFAULT_DEBUG.isEnabled())
             super.renderHUDText(width, height);

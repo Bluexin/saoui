@@ -4,17 +4,14 @@ import com.saomc.saoui.SoundCore;
 import com.saomc.saoui.api.events.ElementAction;
 import com.saomc.saoui.api.screens.Actions;
 import com.saomc.saoui.api.screens.ElementType;
-import com.saomc.saoui.api.screens.WindowAlign;
 import com.saomc.saoui.elements.ElementBuilder;
 import com.saomc.saoui.screens.menu.IngameMenuGUI;
-import com.saomc.saoui.screens.window.WindowView;
 import com.saomc.saoui.util.LogCore;
 import com.saomc.saoui.util.OptionCore;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiIngameMenu;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.GuiOptions;
-import net.minecraftforge.client.event.GuiOpenEvent;
 
 import java.util.stream.Stream;
 
@@ -87,7 +84,7 @@ public class ElementHandler {
     }
 
     private static void promptButton(ElementAction e){
-        String message = "This is a simple test prompt testing the window and how it handles long strings of text. This test is using the single button display mode with an event firing once the button has been hit";
+        String message = "This is load simple test prompt testing the window and how it handles long strings of text. This test is using the single button display mode with an event firing once the button has been hit";
         //new GuiOpenEvent(new WindowView("Test Prompt", false, message, WindowAlign.HORIZONTAL_CENTER, WindowAlign.VERTICAL_CENTER, e.getParentElement()));
     }
 }

@@ -69,7 +69,7 @@ public interface InvTweaksAPI {
     int compareItems(ItemStack i, ItemStack j);
 
     /**
-     * Initiate a sort as if the player had clicked on a sorting button or pressed the sort key.
+     * Initiate load sort as if the player had clicked on load sorting button or pressed the sort key.
      */
     void sort(ContainerSection section, SortingMethod method);
 }

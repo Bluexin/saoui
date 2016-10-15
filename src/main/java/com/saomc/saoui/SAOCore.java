@@ -11,6 +11,7 @@ import com.saomc.saoui.events.ConfigHandler;
 import com.saomc.saoui.events.EventCore;
 import com.saomc.saoui.social.party.DefaultParty;
 import com.saomc.saoui.social.party.PartyHelper;
+import com.saomc.saoui.themes.ThemeLoader;
 import com.saomc.saoui.util.*;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
@@ -19,6 +20,7 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
+import javax.xml.bind.JAXBException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -39,6 +41,12 @@ public class SAOCore {
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
+        try {
+            ThemeLoader.load();
+        } catch (JAXBException e) {
+            e.printStackTrace();
+        }
+
         MinecraftForge.EVENT_BUS.register(new EventCore());
         ConfigHandler.preInit(event);
     }

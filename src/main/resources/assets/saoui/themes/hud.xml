@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<hud>
+    <parts>
+        <entry>
+            <key>HEALTH_BOX</key>
+            <value>
+                <x>2.0</x>
+                <y>2.0</y>
+                <z>0.0</z>
+                <calls>
+                    <element xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="glRectangle">
+                        <h>15.0</h>
+                        <rgba>FFFFFFFF</rgba>
+                        <srcH>15.0</srcH>
+                        <srcW>16.0</srcW>
+                        <srcX>0.0</srcX>
+                        <srcY>0.0</srcY>
+                        <texture>saoui:textures/guiEDT.png</texture>
+                        <w>16.0</w>
+                        <x>0.0</x>
+                        <y>0.0</y>
+                        <z>0.0</z>
+                    </element>
+                    <element xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="glRectangle">
+                        <h>15.0</h>
+                        <rgba>FFFFFFFF</rgba>
+                        <srcH>15.0</srcH>
+                        <srcW>5.0</srcW>
+                        <srcX>16.0</srcX>
+                        <srcY>0.0</srcY>
+                        <texture>saoui:textures/guiEDT.png</texture>
+                        <w>10.0</w>
+                        <x>16.0</x>
+                        <y>0.0</y>
+                        <z>0.0</z>
+                        <properties>
+                            <property>USERNAME</property>
+                        </properties>
+                    </element>
+                    <element xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="glString">
+                        <text>placeholder</text>
+                        <shadow>true</shadow>
+                        <rgba>FFFFFFFF</rgba>
+                        <h>15.0</h>
+                        <x>16.0</x>
+                        <y>1.0</y>
+                        <properties>
+                            <property>USERNAME</property>
+                        </properties>
+                    </element>
+                    <element xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="glRectangle">
+                        <h>15.0</h>
+                        <rgba>FFFFFFFF</rgba>
+                        <srcH>15.0</srcH>
+                        <srcW>234.0</srcW>
+                        <srcX>21.0</srcX>
+                        <srcY>0.0</srcY>
+                        <texture>saoui:textures/guiEDT.png</texture>
+                        <w>234.0</w>
+                        <x>16.0</x>
+                        <y>0.0</y>
+                        <z>0.0</z>
+                        <properties>
+                            <property>USERNAME_OFFSET_POS</property>
+                        </properties>
+                    </element>
+                    <element xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="hpBar">
+                        <h>9.0</h>
+                        <rgba>FFFFFFFF</rgba>
+                        <srcH>9.0</srcH>
+                        <srcW>215.0</srcW>
+                        <srcX>0.0</srcX>
+                        <srcY>188.0</srcY>
+                        <texture>saoui:textures/guiEDT.png</texture>
+                        <w>215.0</w>
+                        <x>18.0</x>
+                        <y>3.0</y>
+                        <z>0.0</z>
+                        <colorSteps>
+                            <item>BD0000FF</item>
+                            <item>F40000FF</item>
+                            <item>F47800FF</item>
+                            <item>F4BD00FF</item>
+                            <item>EDEB38FF</item>
+                            <item>93F43EFF</item>
+                            <item>B32DE3FF</item>
+                        </colorSteps>
+                        <properties>
+                            <property>USERNAME_OFFSET_POS</property>
+                        </properties>
+                    </element>
+                </calls>
+            </value>
+        </entry>
+    </parts>
+</hud>
