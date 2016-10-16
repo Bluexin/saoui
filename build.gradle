@@ -76,13 +76,13 @@ processResources
 idea { module { inheritOutputDirs = true } }
 
 uploadArchives {
-    if (System.hasProperty('REPO_PWD')) {
+    //if (System.hasProperty('REPO_PWD')) {
         repositories.mavenDeployer {
             repository(url: "http://maven.bluexin.be/repository/snapshots/") {
                 authentication(userName: "CI", password: System.getenv('REPO_PWD'))
             }
         }
-    } else println("No password set up!")
+    //} else println("No password set up!")
     
 }
 
