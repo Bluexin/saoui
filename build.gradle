@@ -81,6 +81,7 @@ uploadArchives {
             repository(url: "http://maven.bluexin.be/repository/snapshots/") {
                 authentication(userName: "CI", password: System.getenv('REPO_PWD'))
             }
+//            repository(url: 'file://G:\\saoui\\build\\mvn')
         }
     //} else println("No password set up!")
     
@@ -93,5 +94,6 @@ task deobfSourceJar(type: Jar, dependsOn: 'sourceMainJava') {
 }
 
 artifacts {
+    archives file("build/libs/saoui-${project.version}-sources-deobf.jar")
     archives sourceJar
 }
