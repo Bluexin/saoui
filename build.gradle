@@ -69,17 +69,18 @@ uploadArchives {
     
 }
 
-task deobfJar(type: Jar) {
-    from sourceSets.main.output
-    classifier = 'dev'
-}
+//task deobfJar(type: Jar) {
+//    from sourceSets.main.output
+//    classifier = 'dev'
+//}
 
 task sourceJar(type: Jar, dependsOn: "sourceMainJava", overwrite: true) {
-    from "build/sources/java"
+    from "build/sources/main/java"
+    from "build/resources/main"
     classifier = 'sources'
 }
 
 artifacts {
     archives sourceJar
-    archives deobfJar
+//    archives deobfJar
 }
