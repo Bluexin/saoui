@@ -1,0 +1,28 @@
+# gradle
+.gradle
+build
+gradle-app.setting
+
+# GMCP plugin
+/minecraft
+
+# eclipse
+.settings
+.metadata
+.classpath
+.project
+bin
+
+# intellij
+out
+*.idea
+*.iml
+
+# random stuff
+/repo/
+a.awk
+addChange.bat
+defaultSize.PNG
+editVer
+hp_example.PNG
+sao-1.10.2.zip

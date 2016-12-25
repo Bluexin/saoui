@@ -78,22 +78,26 @@ idea { module { inheritOutputDirs = true } }
 uploadArchives {
     //if (System.hasProperty('REPO_PWD')) {
         repositories.mavenDeployer {
-            repository(url: "http://maven.bluexin.be/repository/snapshots/") {
-                authentication(userName: "CI", password: System.getenv('REPO_PWD'))
-            }
-//            repository(url: 'file://G:\\saoui\\build\\mvn')
+//            repository(url: "http://maven.bluexin.be/repository/snapshots/") {
+//                authentication(userName: "CI", password: System.getenv('REPO_PWD'))
+//            }
+            repository(url: 'file://G:\\saoui\\build\\mvn')
         }
     //} else println("No password set up!")
     
 }
 
-task deobfSourceJar(type: Jar, dependsOn: 'sourceMainJava') {
-    from "build/sources/main/java"
-    from "build/resources/main"
-    classifier "sources-deobf"
+task deobfJar(type: Jar) {
+    from sourceSets.main.output
+    classifier = 'dev'
+}
+
+task sourceJar(type: Jar, dependsOn: "sourceMainJava") {
+    from "build/sources/java"
+    classifier = 'sources'
 }
 
 artifacts {
-    archives file("build/libs/saoui-${project.version}-sources-deobf.jar")
     archives sourceJar
+    archives deobfJar
 }

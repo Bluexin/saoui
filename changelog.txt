@@ -1,0 +1,33 @@
+new icons for ALO theme
+fixed mounts health bars/cursors showing up
+spectator mode now also has purple health bar
+other creative players should now be detected as such
+added players to dev list
+added a way to display the Absorption Effect
+added an option to change the positioning of the absorption value
+fixed icons (buffs) coloring
+added yellow color to absorb value rendering
+fixed floating-point values in absorb and 0 health (same bug)
+fixed items despawn noise
+other players now see the mount's HP bar
+updated gui files, new buff icons on ALO theme
+better death text
+smooth hunger <3
+babies health bar & crystal should be fixed
+Adding automatic changelog 
+Added a VersionChecker 
+Fixed version checker error and ConcurrentModificationException. Fixes #1 (or should)
+Added nice logo to the mod 
+Fixed ArmorStands having a cursor and health bar 
+Fixed little border-case issue with VersionChecker 
+Setting last things up for first public release 
+*Sigh* 
+Fixed bug with player list (default TAB) 
+Added almost all the potionEffects (No icons for harm/instant_damage, confusion/nausea, digSlowDown/mining_fatigue (inCodeName/unlocalized_name)) 
+Added almost all the potionEffects (with the textures this time ;p) 
+Updating SAO theme to HD one 
+Starting option sorting 
+Broken build! it is still usable, but GUIs are a bit broken, even though it's nothing harmfull, and options are BROKEN! 
+Made categories for the options! Also, fixed textue file :p 
+Little fix to options categories 
+Should allow other mods adding things to the UI 
