@@ -27,10 +27,7 @@ public class LogCore {
 
     public static void logDebug(String msg) {
         if (OptionCore.DEBUG_MODE.isEnabled()) // visible in main console
-        {
             logger.info(msg);
-        } else {
-            logger.debug(msg); // fml log
-        }
+        else logger.debug(msg); // fml log
     }
 }

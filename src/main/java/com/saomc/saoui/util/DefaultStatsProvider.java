@@ -1,13 +1,13 @@
 package com.saomc.saoui.util;
 
 import com.saomc.saoui.api.info.IPlayerStatsProvider;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.passive.EntityHorse;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.util.text.translation.I18n;
 
 import java.text.DecimalFormat;
 import java.util.Collection;
@@ -43,14 +43,14 @@ public class DefaultStatsProvider implements IPlayerStatsProvider {
             health /= 10.0F;
             String healthFormated = df1.format(health);
 
-            builder.append(I18n.translateToLocal("displayName")).append(": ").append(name).append('\n');
-            builder.append(I18n.translateToLocal("displayHpLong")).append(": ").append(healthFormated).append("/").append(maxHealth).append('\n');
-            builder.append(I18n.translateToLocal("displayResLong")).append(": ").append(resistance).append('\n');
-            builder.append(I18n.translateToLocal("displaySpdLong")).append(": ").append(speedFormated).append('\n');
+            builder.append(I18n.format("displayName")).append(": ").append(name).append('\n');
+            builder.append(I18n.format("displayHpLong")).append(": ").append(healthFormated).append("/").append(maxHealth).append('\n');
+            builder.append(I18n.format("displayResLong")).append(": ").append(resistance).append('\n');
+            builder.append(I18n.format("displaySpdLong")).append(": ").append(speedFormated).append('\n');
             if (mount instanceof EntityHorse) {
                 jump = ((EntityHorse) mount).getHorseJumpStrength();
                 String jumpFormated = df3.format(jump);
-                builder.append(I18n.translateToLocal("displayJmpLong")).append(": ").append(jumpFormated).append('\n');
+                builder.append(I18n.format("displayJmpLong")).append(": ").append(jumpFormated).append('\n');
             }
         } else {
             final int level = PlayerStats.instance().getStats().getLevel(player);
@@ -84,13 +84,13 @@ public class DefaultStatsProvider implements IPlayerStatsProvider {
             final float agility = attr(player.getAIMoveSpeed()) * 10;
             final float resistance = attr(player.getTotalArmorValue());
 
-            builder.append(I18n.translateToLocal("displayLvLong")).append(": ").append(level).append('\n');
-            builder.append(I18n.translateToLocal("displayXpLong")).append(": ").append(experience).append("%\n");
+            builder.append(I18n.format("displayLvLong")).append(": ").append(level).append('\n');
+            builder.append(I18n.format("displayXpLong")).append(": ").append(experience).append("%\n");
 
-            builder.append(I18n.translateToLocal("displayHpLong")).append(": ").append(health).append("/").append(maxHealth).append('\n');
-            builder.append(I18n.translateToLocal("displayStrLong")).append(": ").append(strength).append('\n');
-            builder.append(I18n.translateToLocal("displayDexLong")).append(": ").append(agility).append('\n');
-            builder.append(I18n.translateToLocal("displayResLong")).append(": ").append(resistance).append("\n");
+            builder.append(I18n.format("displayHpLong")).append(": ").append(health).append("/").append(maxHealth).append('\n');
+            builder.append(I18n.format("displayStrLong")).append(": ").append(strength).append('\n');
+            builder.append(I18n.format("displayDexLong")).append(": ").append(agility).append('\n');
+            builder.append(I18n.format("displayResLong")).append(": ").append(resistance).append("\n");
         }
 
         return builder.toString();

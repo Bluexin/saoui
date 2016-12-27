@@ -489,7 +489,7 @@ public class IngameGUI extends GuiIngameForge {
             final int offsetR = OptionCore.SAO_UI.isEnabled() ? HPXP_OFFSET_ORIG_R : HPXP_OFFSET_ALO_R;
             final int offsetD = OptionCore.SAO_UI.isEnabled() ? HPXP_OFFSET_ORIG_D : HPXP_OFFSET_ALO_D;
             final int offsetHealth = offsetUsername + 113 + (healthBoxes + 2) * 5 + offsetR;
-            final String levelStr = net.minecraft.util.text.translation.I18n.translateToLocal("displayLvShort") + ": " + String.valueOf(PlayerStats.instance().getStats().getLevel(mc.thePlayer));
+            final String levelStr = I18n.format("displayLvShort") + ": " + String.valueOf(PlayerStats.instance().getStats().getLevel(mc.thePlayer));
             final int levelStrWidth = fontRenderer.getStringWidth(levelStr);
             final int levelBoxes = (levelStrWidth + 4) / 5;
 

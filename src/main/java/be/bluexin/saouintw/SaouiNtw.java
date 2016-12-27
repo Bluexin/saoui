@@ -5,6 +5,7 @@ import be.bluexin.saouintw.proxy.CommonProxy;
 import com.saomc.saoui.SAOCore;
 import com.saomc.saoui.api.entity.rendering.RenderCapability;
 import com.saomc.saoui.communication.Communicator;
+import com.saomc.saoui.util.LogCore;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -40,8 +41,8 @@ public class SaouiNtw {
     @NetworkCheckHandler
     public boolean checkOtherSide(Map<String, String> remoteVersions, Side side) {
         if (side.equals(Side.SERVER)) {
-            Communicator.supportsPackets = SAOCore.VERSION.equals(remoteVersions.get(SAOCore.MODID + "ntw"));
-            System.out.println("Connected to a server " + (Communicator.supportsPackets ? "with" : "without") + " support for Packets.");
+            Communicator.INSTANCE.setSupportsPackets(SAOCore.VERSION.equals(remoteVersions.get(SAOCore.MODID + "ntw")));
+            LogCore.logInfo("Connected to a server " + (Communicator.INSTANCE.getSupportsPackets() ? "with" : "without") + " support for Packets.");
         }
 
         return true;

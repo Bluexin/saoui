@@ -92,8 +92,8 @@ public class PartyHelper {
             final Minecraft mc = Minecraft.getMinecraft();
             mc.thePlayer.addChatMessage(new TextComponentTranslation("ptJoin", player.getDisplayName()));
             if (this.party.getLeader().equals(mc.thePlayer)) {
-                party.getMembers().stream().filter(pl -> !pl.equals(mc.thePlayer)).forEach(member -> Communicator.send(CommandType.UPDATE_PARTY, member, '+' + player.getDisplayNameString()));
-                party.getMembers().stream().filter(pl -> !pl.equals(mc.thePlayer)).forEach(member -> Communicator.send(CommandType.UPDATE_PARTY, player, '+' + member.getDisplayNameString()));
+                party.getMembers().stream().filter(pl -> !pl.equals(mc.thePlayer)).forEach(member -> Communicator.INSTANCE.send(CommandType.UPDATE_PARTY, member, '+' + player.getDisplayNameString()));
+                party.getMembers().stream().filter(pl -> !pl.equals(mc.thePlayer)).forEach(member -> Communicator.INSTANCE.send(CommandType.UPDATE_PARTY, player, '+' + member.getDisplayNameString()));
             }
         }
     }
@@ -103,7 +103,7 @@ public class PartyHelper {
             final Minecraft mc = Minecraft.getMinecraft();
             mc.thePlayer.addChatMessage(new TextComponentTranslation("ptLeft", player.getDisplayName()));
             if (this.party.getLeader().equals(mc.thePlayer))
-                party.getMembers().stream().filter(pl -> pl.equals(mc.thePlayer)).forEach(member -> Communicator.send(CommandType.UPDATE_PARTY, member, '-' + player.getDisplayNameString()));
+                party.getMembers().stream().filter(pl -> pl.equals(mc.thePlayer)).forEach(member -> Communicator.INSTANCE.send(CommandType.UPDATE_PARTY, member, '-' + player.getDisplayNameString()));
         }
     }
 
@@ -121,17 +121,17 @@ public class PartyHelper {
         if (!party.isInParty(player)) {
             invited.add(player);
             final Minecraft mc = Minecraft.getMinecraft();
-            Communicator.send(CommandType.INVITE_TO_PARTY, player, hasParty() ? party.getLeader().getDisplayNameString() : StaticPlayerHelper.getName(mc));
+            Communicator.INSTANCE.send(CommandType.INVITE_TO_PARTY, player, hasParty() ? party.getLeader().getDisplayNameString() : StaticPlayerHelper.getName(mc));
         }
     }
 
     public void sendDissolve(Minecraft mc) {
         if (hasParty()) {
             if (party.getLeader().equals(mc.thePlayer)) {
-                party.getMembers().stream().filter(pl -> pl.equals(mc.thePlayer)).forEach(member -> Communicator.send(CommandType.DISSOLVE_PARTY, member));
+                party.getMembers().stream().filter(pl -> pl.equals(mc.thePlayer)).forEach(member -> Communicator.INSTANCE.send(CommandType.DISSOLVE_PARTY, member));
                 mc.thePlayer.addChatMessage(new TextComponentTranslation("ptDissolve"));
             } else {
-                Communicator.send(CommandType.DISSOLVE_PARTY, party.getLeader()); // aka leave PT
+                Communicator.INSTANCE.send(CommandType.DISSOLVE_PARTY, party.getLeader()); // aka leave PT
                 mc.thePlayer.addChatMessage(new TextComponentTranslation("ptLeave"));
             }
         }
@@ -155,7 +155,7 @@ public class PartyHelper {
         if (party.getLeader().equals(mc.thePlayer) && !party.isInParty(player) && invited.contains(player)) {
             addPlayer(player);
             invited.remove(player);
-        } else Communicator.send(CommandType.DISSOLVE_PARTY, player);
+        } else Communicator.INSTANCE.send(CommandType.DISSOLVE_PARTY, player);
     }
 
     public boolean hasParty() {

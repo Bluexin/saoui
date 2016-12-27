@@ -84,7 +84,7 @@ public class FriendsHandler {
             for (final String name : names)
                 if (!friendRequests.contains(new FriendRequest(name, 10000)) && !isFriend(name)) {
                     friendRequests.add(new FriendRequest(name, 10000));
-                    Communicator.send(CommandType.ADD_FRIEND_REQUEST, StaticPlayerHelper.findOnlinePlayer(mc, name));
+                    Communicator.INSTANCE.send(CommandType.ADD_FRIEND_REQUEST, StaticPlayerHelper.findOnlinePlayer(mc, name));
                 }
         }
     }
@@ -202,6 +202,6 @@ public class FriendsHandler {
             }));*/
 
             if (ingameFocus) mc.setIngameNotInFocus();
-        } else Communicator.send(CommandType.ACCEPT_ADD_FRIEND, player);
+        } else Communicator.INSTANCE.send(CommandType.ACCEPT_ADD_FRIEND, player);
     }
 }
