@@ -2,6 +2,7 @@ package be.bluexin.saouintw
 
 import com.saomc.saoui.api.entity.rendering.PlayerColorStateHandler
 import com.saomc.saoui.api.entity.rendering.RenderCapability
+import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraftforge.event.AttachCapabilitiesEvent
@@ -19,8 +20,8 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 internal class EventHandler {
 
     @SubscribeEvent
-    fun attachCapabilities(event: AttachCapabilitiesEvent.Entity) {
-        if (event.entity is EntityLivingBase && !event.entity.hasCapability(RenderCapability.RENDER_CAPABILITY, null))
+    fun attachCapabilities(event: AttachCapabilitiesEvent<Entity>) {
+        if (event.`object` is EntityLivingBase && !event.`object`.hasCapability(RenderCapability.RENDER_CAPABILITY, null))
             RenderCapability.register(event)
     }
 

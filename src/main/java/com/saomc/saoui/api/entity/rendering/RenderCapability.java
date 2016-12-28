@@ -1,6 +1,7 @@
 package com.saomc.saoui.api.entity.rendering;
 
 import com.saomc.saoui.SAOCore;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTBase;
@@ -79,9 +80,9 @@ public class RenderCapability {
      * @param event the event to add the capability to
      */
     @SuppressWarnings("ConstantConditions")
-    public static void register(final AttachCapabilitiesEvent.Entity event) {
+    public static void register(final AttachCapabilitiesEvent<Entity> event) {
         event.addCapability(KEY, new ICapabilitySerializable<NBTBase>() {
-            final RenderCapability inst = new RenderCapability((EntityLivingBase) event.getEntity());
+            final RenderCapability inst = new RenderCapability((EntityLivingBase) event.getObject());
 
             @Override
             public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
