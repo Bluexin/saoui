@@ -38,7 +38,7 @@ public enum HealthStep { // Could be loaded from file. Currently the HPBar loads
         return step;
     }
 
-    public static HealthStep getStep(float health) {
+    public static HealthStep getStep(double health) {
         HealthStep step = first();
 
         while ((health > step.getLimit()) && (step.ordinal() + 1 < values().length)) step = next(step);

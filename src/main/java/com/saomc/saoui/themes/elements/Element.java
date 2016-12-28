@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlTransient;
  * @author Bluexin
  */
 @XmlTransient //Prevents the mapping of load JavaBean property/type to XML representation
-@XmlSeeAlso({GLRectangle.class, GLString.class, HPBar.class})
+@XmlSeeAlso({GLRectangle.class, GLString.class})
 //Instructs JAXB to also bind other classes when binding this class
 public interface Element {
 

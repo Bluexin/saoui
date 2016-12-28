@@ -1,5 +1,6 @@
 package com.saomc.saoui.themes.elements;
 
+import com.saomc.saoui.screens.ingame.HealthStep;
 import com.saomc.saoui.social.StaticPlayerHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderItem;
@@ -20,6 +21,7 @@ public class HudDrawContext {
     private final RenderItem itemRenderer;
     private final Minecraft mc;
     private final double usernameWidth;
+    private HealthStep healthStep;
     private double z;
     private float time;
     private double hpPct;
@@ -33,7 +35,8 @@ public class HudDrawContext {
         this.usernameWidth = (1 + (mc.fontRendererObj.getStringWidth(username) + 4) / 5) * 5;
     }
 
-    public String getUsername() {
+    @Deprecated // deprecated for use in java only
+    public String username() {
         return username;
     }
 
@@ -49,17 +52,24 @@ public class HudDrawContext {
         this.z = z;
     }
 
+    @Deprecated
     public double getUsernameWidth() {
         return usernameWidth;
     }
 
-    public double getHpPct() {
+    public double usernamewidth() {
+        return usernameWidth;
+    }
+
+    @Deprecated // deprecated for use in java only
+    public double hpPct() {
         return hpPct;
     }
 
     public void setTime(float time) {
         this.time = time;
         this.hpPct = StaticPlayerHelper.getHealth(mc, mc.player, time) / StaticPlayerHelper.getMaxHealth(mc.player);
+        healthStep = HealthStep.getStep(hpPct);
     }
 
     public EntityPlayer getPlayer() {
@@ -68,5 +78,9 @@ public class HudDrawContext {
 
     public RenderItem getItemRenderer() {
         return itemRenderer;
+    }
+
+    public HealthStep healthStep() {
+        return healthStep;
     }
 }

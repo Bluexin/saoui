@@ -6,9 +6,9 @@ package com.saomc.saoui.themes.elements;
  * @author Bluexin
  */
 public interface ElementParent {
-    double getX();
+    double getX(HudDrawContext ctx);
 
-    double getY();
+    double getY(HudDrawContext ctx);
 
-    double getZ();
+    double getZ(HudDrawContext ctx);
 }

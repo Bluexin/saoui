@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<hud>
+<hud xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <parts>
         <entry>
             <key>HEALTH_BOX</key>
@@ -8,9 +8,9 @@
                 <y>2.0</y>
                 <z>0.0</z>
                 <calls>
-                    <element xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="glRectangle">
+                    <element xsi:type="glRectangle">
                         <h>15.0</h>
-                        <rgba>FFFFFFFF</rgba>
+                        <rgba>0xFFFFFFFF</rgba>
                         <srcH>15.0</srcH>
                         <srcW>16.0</srcW>
                         <srcX>0.0</srcX>
@@ -21,76 +21,117 @@
                         <y>0.0</y>
                         <z>0.0</z>
                     </element>
-                    <element xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="glRectangle">
+                    <element xsi:type="glRectangle">
                         <h>15.0</h>
-                        <rgba>FFFFFFFF</rgba>
+                        <rgba>0xFFFFFFFF</rgba>
                         <srcH>15.0</srcH>
                         <srcW>5.0</srcW>
                         <srcX>16.0</srcX>
                         <srcY>0.0</srcY>
                         <texture>saoui:textures/guiEDT.png</texture>
-                        <w>10.0</w>
+                        <w>usernamewidth</w>
                         <x>16.0</x>
                         <y>0.0</y>
                         <z>0.0</z>
-                        <properties>
-                            <property>USERNAME</property>
-                        </properties>
                     </element>
-                    <element xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="glString">
-                        <text>placeholder</text>
+                    <element xsi:type="glString">
+                        <text>username</text>
                         <shadow>true</shadow>
-                        <rgba>FFFFFFFF</rgba>
+                        <rgba>0xFFFFFFFF</rgba>
                         <h>15.0</h>
                         <x>16.0</x>
                         <y>1.0</y>
-                        <properties>
-                            <property>USERNAME</property>
-                        </properties>
                     </element>
-                    <element xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="glRectangle">
+                    <element xsi:type="glRectangle">
                         <h>15.0</h>
-                        <rgba>FFFFFFFF</rgba>
+                        <rgba>0xFFFFFFFF</rgba>
                         <srcH>15.0</srcH>
                         <srcW>234.0</srcW>
                         <srcX>21.0</srcX>
                         <srcY>0.0</srcY>
                         <texture>saoui:textures/guiEDT.png</texture>
                         <w>234.0</w>
-                        <x>16.0</x>
+                        <x>16.0 + usernamewidth</x>
                         <y>0.0</y>
                         <z>0.0</z>
-                        <properties>
-                            <property>USERNAME_OFFSET_POS</property>
-                        </properties>
                     </element>
-                    <element xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="hpBar">
+                    <element xsi:type="glRectangle">
                         <h>9.0</h>
-                        <rgba>FFFFFFFF</rgba>
+                        <rgba>
+                            healthStep == VERY_LOW? 0xBD0000FF:
+                            healthStep == LOW? 0xF40000FF:
+                            healthStep == VERY_DAMAGED? 0xF47800FF:
+                            healthStep == DAMAGED? 0xF4BD00FF:
+                            healthStep == OKAY? 0xEDEB38FF:
+                            healthStep == GOOD? 0x93F43EFF:
+                            healthStep == CREATIVE? 0xB32DE3FF:
+                            0xFFFFFFFF
+                        </rgba>
                         <srcH>9.0</srcH>
-                        <srcW>215.0</srcW>
+                        <srcW>215.0 * hpPct</srcW>
                         <srcX>0.0</srcX>
                         <srcY>188.0</srcY>
                         <texture>saoui:textures/guiEDT.png</texture>
-                        <w>215.0</w>
-                        <x>18.0</x>
+                        <w>215.0 * hpPct</w>
+                        <x>18.0 + usernamewidth</x>
                         <y>3.0</y>
                         <z>0.0</z>
-                        <colorSteps>
-                            <item>BD0000FF</item>
-                            <item>F40000FF</item>
-                            <item>F47800FF</item>
-                            <item>F4BD00FF</item>
-                            <item>EDEB38FF</item>
-                            <item>93F43EFF</item>
-                            <item>B32DE3FF</item>
-                        </colorSteps>
-                        <properties>
-                            <property>USERNAME_OFFSET_POS</property>
-                        </properties>
                     </element>
                 </calls>
             </value>
         </entry>
+        <!--<entry>-->
+        <!--<key>HOTBAR</key>-->
+        <!--<value>-->
+        <!--<x>0.0</x>-->
+        <!--<y>0.0</y>-->
+        <!--<z>0.0</z>-->
+        <!--<calls>-->
+        <!--<element xsi:type="glHotbarItem">-->
+
+        <!--</element>-->
+        <!---->
+        <!--&lt;!&ndash;&lt;!&ndash;GLCore.glBlend(true);&ndash;&gt;&ndash;&gt;-->
+        <!--&lt;!&ndash;&lt;!&ndash;GLCore.tryBlendFuncSeparate(770, 771, 1, 0);&ndash;&gt;&ndash;&gt;-->
+        <!--&lt;!&ndash;&lt;!&ndash;GLCore.glBindTexture(OptionCore.SAO_UI.isEnabled() ? StringNames.gui : StringNames.guiCustom);&ndash;&gt;&ndash;&gt;-->
+        <!--&lt;!&ndash;&lt;!&ndash;GLCore.glColor(1, 1, 1, 1);&ndash;&gt;&ndash;&gt;-->
+
+        <!--&lt;!&ndash;&lt;!&ndash;final InventoryPlayer inv = mc.thePlayer.inventory;&ndash;&gt;&ndash;&gt;-->
+        <!--&lt;!&ndash;&lt;!&ndash;final int slotCount = 9;&ndash;&gt;&ndash;&gt;-->
+        <!--&lt;!&ndash;&lt;!&ndash;final int slotsY = (res.getScaledHeight() - (slotCount * 22)) / 2;&ndash;&gt;&ndash;&gt;-->
+        <!--&lt;!&ndash;&lt;!&ndash;final int y = (res.getScaledHeight() - (slotCount * 22)) / 2 + (22 * 10);&ndash;&gt;&ndash;&gt;-->
+
+        <!--&lt;!&ndash;&lt;!&ndash;for (int i = 0; i < slotCount; i++) {&ndash;&gt;&ndash;&gt;-->
+        <!--&lt;!&ndash;&lt;!&ndash;GLCore.glColorRGBA(i == inv.currentItem ? 0xFFBA66FF : 0xCDCDCDAA);&ndash;&gt;&ndash;&gt;-->
+        <!--&lt;!&ndash;&lt;!&ndash;GLCore.glTexturedRect(res.getScaledWidth() - 24, slotsY + (22 * i: zLevel, 0, 25, 20, 20);&ndash;&gt;&ndash;&gt;-->
+        <!--&lt;!&ndash;&lt;!&ndash;}&ndash;&gt;&ndash;&gt;-->
+
+        <!--&lt;!&ndash;&lt;!&ndash;if (itemstack != null) {&ndash;&gt;&ndash;&gt;-->
+        <!--&lt;!&ndash;&lt;!&ndash;if (enumhandside == EnumHandSide.LEFT) {&ndash;&gt;&ndash;&gt;-->
+        <!--&lt;!&ndash;&lt;!&ndash;GLCore.glColorRGBA(0xFFBA66FF);&ndash;&gt;&ndash;&gt;-->
+        <!--&lt;!&ndash;&lt;!&ndash;GLCore.glTexturedRect(res.getScaledWidth() - 24, y, zLevel, 0, 25, 20, 20);&ndash;&gt;&ndash;&gt;-->
+        <!--&lt;!&ndash;&lt;!&ndash;} else {&ndash;&gt;&ndash;&gt;-->
+        <!--&lt;!&ndash;&lt;!&ndash;GLCore.glColorRGBA(0xCDCDCDAA);&ndash;&gt;&ndash;&gt;-->
+        <!--&lt;!&ndash;&lt;!&ndash;super.renderHotbarItem(res.getScaledWidth() - 24, y, partialTicks, mc.thePlayer, itemstack);&ndash;&gt;&ndash;&gt;-->
+        <!--&lt;!&ndash;&lt;!&ndash;}&ndash;&gt;&ndash;&gt;-->
+        <!--&lt;!&ndash;&lt;!&ndash;}&ndash;&gt;&ndash;&gt;-->
+
+        <!--&lt;!&ndash;&lt;!&ndash;GLCore.glColor(1, 1, 1, 1);&ndash;&gt;&ndash;&gt;-->
+
+        <!--&lt;!&ndash;&lt;!&ndash;GLCore.glBlend(false);&ndash;&gt;&ndash;&gt;-->
+        <!--&lt;!&ndash;&lt;!&ndash;GLCore.glRescaleNormal(true);&ndash;&gt;&ndash;&gt;-->
+        <!--&lt;!&ndash;&lt;!&ndash;RenderHelper.enableGUIStandardItemLighting();&ndash;&gt;&ndash;&gt;-->
+
+        <!--&lt;!&ndash;&lt;!&ndash;for (int i = 0; i < slotCount; i++)&ndash;&gt;&ndash;&gt;-->
+        <!--&lt;!&ndash;&lt;!&ndash;super.renderHotbarItem(res.getScaledWidth() - 22, slotsY + 2 + (22 * i: partialTicks, mc.thePlayer, mc.thePlayer.inventory.mainInventory[i]);&ndash;&gt;&ndash;&gt;-->
+
+        <!--&lt;!&ndash;&lt;!&ndash;if (itemstack != null) {&ndash;&gt;&ndash;&gt;-->
+        <!--&lt;!&ndash;&lt;!&ndash;super.renderHotbarItem(res.getScaledWidth() - 22, y + 2, partialTicks, mc.thePlayer, itemstack);&ndash;&gt;&ndash;&gt;-->
+        <!--&lt;!&ndash;&lt;!&ndash;}&ndash;&gt;&ndash;&gt;-->
+        <!--&lt;!&ndash;&lt;!&ndash;GLCore.glRescaleNormal(false);&ndash;&gt;&ndash;&gt;-->
+        <!--&lt;!&ndash;&lt;!&ndash;RenderHelper.disableStandardItemLighting();&ndash;&gt;&ndash;&gt;-->
+        <!--</calls>-->
+        <!--</value>-->
+        <!--</entry>-->
     </parts>
 </hud>

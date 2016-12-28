@@ -1,5 +1,7 @@
 package com.saomc.saoui.themes.util;
 
+import com.saomc.saoui.screens.ingame.HealthStep;
+import com.saomc.saoui.themes.elements.ElementParent;
 import com.saomc.saoui.themes.elements.HudDrawContext;
 import gnu.jel.CompilationException;
 import gnu.jel.Library;
@@ -14,10 +16,12 @@ public final class LibHelper {
 
     static {
         Class[] staticLib = new Class[]{
-                Math.class
+                Math.class,
+                HealthStep.class
         };
         Class[] dynLib = new Class[]{
-                HudDrawContext.class
+                HudDrawContext.class,
+                ElementParent.class
         };
         Class[] dotClasses = new Class[]{
                 String.class

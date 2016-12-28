@@ -10,5 +10,10 @@ public enum HudPartType {
     /**
      * Key for the HudPart rendering the HP box on-screen.
      */
-    HEALTH_BOX
+    HEALTH_BOX,
+
+    /**
+     * Key for the HudPart rendering the hotbar parts
+     */
+    HOTBAR
 }
