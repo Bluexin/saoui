@@ -40,16 +40,16 @@ public class PacketPipeline {
         ntw.sendToAll(message);
     }
 
-    public static void sendToAllAround(IMessage message, TargetPoint point) {
+    private static void sendToAllAround(IMessage message, TargetPoint point) {
         ntw.sendToAllAround(message, point);
     }
 
-    public static void sendToAllAround(IMessage message, int dimension, double x, double y, double z, double range) {
+    private static void sendToAllAround(IMessage message, int dimension, double x, double y, double z, double range) {
         sendToAllAround(message, new TargetPoint(dimension, x, y, z, range));
     }
 
     public static void sendToAllAround(IMessage message, EntityPlayer player, double range) {
-        sendToAllAround(message, player.worldObj.provider.getDimension(), player.posX, player.posY, player.posZ, range);
+        sendToAllAround(message, player.world.provider.getDimension(), player.posX, player.posY, player.posZ, range);
     }
 
     public static void sendToDimension(IMessage message, int dimensionId) {

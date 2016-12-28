@@ -8,7 +8,7 @@ import com.saomc.saoui.api.screens.ParentElement;
 import com.saomc.saoui.resources.StringNames;
 import com.saomc.saoui.util.ColorUtil;
 import com.saomc.saoui.util.LogCore;
-import com.saomc.saoui.util.OptionCore;
+import com.saomc.saoui.config.OptionCore;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.RenderItem;
@@ -16,7 +16,6 @@ import net.minecraft.client.renderer.block.model.ModelManager;
 import net.minecraft.client.renderer.color.ItemColors;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -75,6 +74,7 @@ public class ElementController {
         if (parentElement != null) {
             x = parentElement.getX(true) + parentElement.getWidth() + 14;
             y = parentElement.getY(true) + parentElement.getHeight() / 2;
+            top = y + getListSize() >= 5 ? 22 : getListSize() >= 3 ? 15 : 0;
         }
 
         if (width <= 0) width = elements.stream().mapToInt(Element::getWidth).max().orElse(width);
@@ -142,7 +142,7 @@ public class ElementController {
             if (element.getElementType() != ElementType.MENU) {
                 if (!ElementBuilder.getInstance().isParentEnabled(element.getParent()))
                     element.setEnabled(false);
-                element.setY(getOffset(index) + getY(true));
+                element.setY(top - getOffset(index));
                 element.setX(getX(true));
             } else {
                 element.setX(getX(true));
@@ -243,7 +243,7 @@ public class ElementController {
                 GLCore.glColorRGBA(ColorUtil.DEFAULT_COLOR.multiplyAlpha(1.0F));
 
                 final int left = getX(false);
-                final int top = getListY(false) + 1;
+                final int top = getY(true) + 1;
 
                 final int arrowTop = getY(false) - height / 2;
                 //final int yOffset = elements.size() > 5 ? 5 : elements.size();

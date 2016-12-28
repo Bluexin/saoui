@@ -1,6 +1,6 @@
 package com.saomc.saoui;
 
-import com.saomc.saoui.util.OptionCore;
+import com.saomc.saoui.config.OptionCore;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.PositionedSoundRecord;
@@ -36,13 +36,13 @@ public class SoundCore {
     public static void playAtEntity(Entity entity, String name) {
         final Minecraft mc = Minecraft.getMinecraft();
 
-        if (mc.theWorld != null && mc.theWorld.isRemote) {
+        if (mc.world != null && mc.world.isRemote) {
             play(mc.getSoundHandler(), name, (float) entity.posX, (float) entity.posY, (float) entity.posZ);
         }
     }
 
     public static void play(Minecraft mc, String name) {
-        if (mc != null && mc.theWorld != null && mc.theWorld.isRemote) {
+        if (mc != null && mc.world != null && mc.world.isRemote) {
             play(mc.getSoundHandler(), name);
         }
     }
@@ -64,11 +64,11 @@ public class SoundCore {
     }
 
     //Helper functions - 1.8.8 mirror
-    public static PositionedSoundRecord create(ResourceLocation soundResource) {
+    private static PositionedSoundRecord create(ResourceLocation soundResource) {
         return new PositionedSoundRecord(soundResource, SoundCategory.MASTER, 1.0F, 1.0F, false, 0, ISound.AttenuationType.NONE, 0.0F, 0.0F, 0.0F);
     }
 
-    public static PositionedSoundRecord create(ResourceLocation soundResource, float xPosition, float yPosition, float zPosition) {
+    private static PositionedSoundRecord create(ResourceLocation soundResource, float xPosition, float yPosition, float zPosition) {
         return new PositionedSoundRecord(soundResource, SoundCategory.MASTER, 4.0F, 1.0F, false, 0, ISound.AttenuationType.LINEAR, xPosition, yPosition, zPosition);
     }
 }

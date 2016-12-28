@@ -2,7 +2,7 @@ package com.saomc.saoui.social.friends;
 
 import com.saomc.saoui.communication.CommandType;
 import com.saomc.saoui.communication.Communicator;
-import com.saomc.saoui.events.ConfigHandler;
+import com.saomc.saoui.config.ConfigHandler;
 import com.saomc.saoui.social.StaticPlayerHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;

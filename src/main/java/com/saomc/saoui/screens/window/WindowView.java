@@ -1,17 +1,14 @@
 package com.saomc.saoui.screens.window;
 
 import com.saomc.saoui.GLCore;
-import com.saomc.saoui.api.screens.GuiSelection;
 import com.saomc.saoui.api.screens.ParentElement;
 import com.saomc.saoui.api.screens.WindowAlign;
 import com.saomc.saoui.resources.StringNames;
 import com.saomc.saoui.util.ColorUtil;
 import com.saomc.saoui.util.LogCore;
-import com.saomc.saoui.util.OptionCore;
+import com.saomc.saoui.config.OptionCore;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.GuiYesNo;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 

@@ -1,6 +1,7 @@
 package com.saomc.saoui.screens.ingame;
 
 import com.saomc.saoui.GLCore;
+import com.saomc.saoui.config.OptionCore;
 import com.saomc.saoui.effects.StatusEffects;
 import com.saomc.saoui.resources.StringNames;
 import com.saomc.saoui.screens.death.DeathScreen;
@@ -10,7 +11,6 @@ import com.saomc.saoui.social.party.PartyHelper;
 import com.saomc.saoui.themes.ThemeLoader;
 import com.saomc.saoui.themes.elements.HudDrawContext;
 import com.saomc.saoui.themes.elements.HudPartType;
-import com.saomc.saoui.util.OptionCore;
 import com.saomc.saoui.util.PlayerStats;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
@@ -72,7 +72,7 @@ public class IngameGUI extends GuiIngameForge {
     @Override
     public void renderGameOverlay(float partialTicks) {
         fontRenderer = mc.fontRendererObj;
-        username = mc.thePlayer.getDisplayNameString();
+        username = mc.player.getDisplayNameString();
         maxNameWidth = fontRenderer.getStringWidth(username);
         usernameBoxes = 1 + (maxNameWidth + 4) / 5;
         offsetUsername = 18 + usernameBoxes * 5;
@@ -118,8 +118,8 @@ public class IngameGUI extends GuiIngameForge {
     @Override
     protected void renderHotbar(ScaledResolution res, float partialTicks) {
         if (replaceEvent(HOTBAR)) return;
-        ItemStack itemstack = mc.thePlayer.getHeldItemOffhand();
-        EnumHandSide enumhandside = mc.thePlayer.getPrimaryHand().opposite();
+        ItemStack itemstack = mc.player.getHeldItemOffhand();
+        EnumHandSide enumhandside = mc.player.getPrimaryHand().opposite();
         if (mc.playerController.isSpectator()) this.spectatorGui.renderTooltip(res, partialTicks);
         else if (OptionCore.DEFAULT_HOTBAR.isEnabled()) super.renderHotbar(res, partialTicks);
         else if (OptionCore.HOR_HOTBAR.isEnabled()) {
@@ -128,7 +128,7 @@ public class IngameGUI extends GuiIngameForge {
             GLCore.glBindTexture(OptionCore.SAO_UI.isEnabled() ? StringNames.gui : StringNames.guiCustom);
             GLCore.glColor(1, 1, 1, 1);
 
-            final InventoryPlayer inv = mc.thePlayer.inventory;
+            final InventoryPlayer inv = mc.player.inventory;
             final int slotCount = 9;
             int w = res.getScaledWidth() / 2;
 
@@ -155,16 +155,17 @@ public class IngameGUI extends GuiIngameForge {
 
             for (int i = 0; i < slotCount; i++) {
                 int x = res.getScaledWidth() / 2 - 92 + i * 20 + 2;
-                int y = res.getScaledHeight() - 17 - 3;
-                super.renderHotbarItem(x, y, partialTicks, mc.thePlayer, mc.thePlayer.inventory.mainInventory[i]);
+                int z = res.getScaledHeight() - 17 - 3;
+                super.renderHotbarItem(x, z, partialTicks, mc.player, mc.player.inventory.mainInventory[i]);
             }
 
             if (itemstack != null) {
+                int l1 = res.getScaledHeight() - 16 - 3;
 
                 if (enumhandside == EnumHandSide.LEFT) {
-                    super.renderHotbarItem(w - 91 - 27, res.getScaledHeight() - 17 - 3, partialTicks, mc.thePlayer, itemstack);
+                    super.renderHotbarItem(w - 91 - 27, res.getScaledHeight() - 17 - 3, partialTicks, mc.player, itemstack);
                 } else {
-                    super.renderHotbarItem(w + 91 + 10, res.getScaledHeight() - 17 - 3, partialTicks, mc.thePlayer, itemstack);
+                    super.renderHotbarItem(w + 91 + 10, res.getScaledHeight() - 17 - 3, partialTicks, mc.player, itemstack);
                 }
             }
             GLCore.glRescaleNormal(false);
@@ -176,7 +177,7 @@ public class IngameGUI extends GuiIngameForge {
             GLCore.glBindTexture(OptionCore.SAO_UI.isEnabled() ? StringNames.gui : StringNames.guiCustom);
             GLCore.glColor(1, 1, 1, 1);
 
-            final InventoryPlayer inv = mc.thePlayer.inventory;
+            final InventoryPlayer inv = mc.player.inventory;
             final int slotCount = 9;
             final int slotsY = (res.getScaledHeight() - (slotCount * 22)) / 2;
             final int y = (res.getScaledHeight() - (slotCount * 22)) / 2 + (22 * 10);
@@ -192,7 +193,7 @@ public class IngameGUI extends GuiIngameForge {
                     GLCore.glTexturedRect(res.getScaledWidth() - 24, y, zLevel, 0, 25, 20, 20);
                 } else {
                     GLCore.glColorRGBA(0xCDCDCDAA);
-                    super.renderHotbarItem(res.getScaledWidth() - 24, y, partialTicks, mc.thePlayer, itemstack);
+                    super.renderHotbarItem(res.getScaledWidth() - 24, y, partialTicks, mc.player, itemstack);
                 }
             }
 
@@ -203,13 +204,13 @@ public class IngameGUI extends GuiIngameForge {
             RenderHelper.enableGUIStandardItemLighting();
 
             for (int i = 0; i < slotCount; i++)
-                super.renderHotbarItem(res.getScaledWidth() - 22, slotsY + 2 + (22 * i), partialTicks, mc.thePlayer, mc.thePlayer.inventory.mainInventory[i]);
+                super.renderHotbarItem(res.getScaledWidth() - 22, slotsY + 2 + (22 * i), partialTicks, mc.player, mc.player.inventory.mainInventory[i]);
 
             if (itemstack != null) {
                 if (enumhandside == EnumHandSide.LEFT) {
-                    super.renderHotbarItem(res.getScaledWidth() - 22, y + 2, partialTicks, mc.thePlayer, itemstack);
+                    super.renderHotbarItem(res.getScaledWidth() - 22, y + 2, partialTicks, mc.player, itemstack);
                 } else {
-                    super.renderHotbarItem(res.getScaledWidth() - 22, y + 2, partialTicks, mc.thePlayer, itemstack);
+                    super.renderHotbarItem(res.getScaledWidth() - 22, y + 2, partialTicks, mc.player, itemstack);
                 }
             }
             GLCore.glRescaleNormal(false);
@@ -232,8 +233,8 @@ public class IngameGUI extends GuiIngameForge {
 
             if (player.isInsideOfMaterial(Material.WATER)) {
                 int air = player.getAir();
-                int full = MathHelper.ceiling_double_int((double) (air - 2) * 10.0D / 300.0D);
-                int partial = MathHelper.ceiling_double_int((double) air * 10.0D / 300.0D) - full;
+                int full = MathHelper.ceil((double) (air - 2) * 10.0D / 300.0D);
+                int partial = MathHelper.ceil((double) air * 10.0D / 300.0D) - full;
 
                 for (int i = 0; i < full + partial; ++i) {
                     drawTexturedModalRect(left - i * 8 - 9, top, (i < full ? 16 : 25), 18, 9, 9);
@@ -265,7 +266,7 @@ public class IngameGUI extends GuiIngameForge {
             GLCore.glAlphaTest(true);
             GLCore.glBlend(true);
 
-            if (ctx == null) this.ctx = new HudDrawContext(mc.thePlayer, mc, itemRenderer);
+            if (ctx == null) this.ctx = new HudDrawContext(mc.player, mc, itemRenderer);
             ctx.setTime(time);
             ctx.setZ(zLevel);
 
@@ -278,13 +279,13 @@ public class IngameGUI extends GuiIngameForge {
 
             if (!OptionCore.REMOVE_HPXP.isEnabled()) {
                 String absorb = OptionCore.ALT_ABSORB_POS.isEnabled() ? "" : " ";
-                if (mc.thePlayer.getAbsorptionAmount() > 0) {
-                    absorb += "(+" + (int) Math.ceil(mc.thePlayer.getAbsorptionAmount());
+                if (mc.player.getAbsorptionAmount() > 0) {
+                    absorb += "(+" + (int) Math.ceil(mc.player.getAbsorptionAmount());
                     absorb += ')';
                     absorb += OptionCore.ALT_ABSORB_POS.isEnabled() ? ' ' : "";
                 }
 
-                final String healthStr = String.valueOf((OptionCore.ALT_ABSORB_POS.isEnabled() ? absorb : "") + (int) Math.ceil(StaticPlayerHelper.getHealth(mc, mc.thePlayer, time))) + (OptionCore.ALT_ABSORB_POS.isEnabled() ? "" : absorb) + " / " + String.valueOf((int) Math.ceil(StaticPlayerHelper.getMaxHealth(mc.thePlayer)));
+                final String healthStr = String.valueOf((OptionCore.ALT_ABSORB_POS.isEnabled() ? absorb : "") + (int) Math.ceil(StaticPlayerHelper.getHealth(mc, mc.player, time))) + (OptionCore.ALT_ABSORB_POS.isEnabled() ? "" : absorb) + " / " + String.valueOf((int) Math.ceil(StaticPlayerHelper.getMaxHealth(mc.player)));
                 final int healthStrWidth = fontRenderer.getStringWidth(healthStr);
 
                 final int absStart = healthStr.indexOf('(');
@@ -315,7 +316,7 @@ public class IngameGUI extends GuiIngameForge {
             mc.mcProfiler.startSection("effects");
 
             final int offsetForEffects = offsetUsername + healthBarWidth - 4;
-            final List<StatusEffects> effects = StatusEffects.getEffects(mc.thePlayer);
+            final List<StatusEffects> effects = StatusEffects.getEffects(mc.player);
 
             GLCore.glBindTexture(OptionCore.SAO_UI.isEnabled() ? StringNames.gui : StringNames.guiCustom);
 
@@ -335,7 +336,7 @@ public class IngameGUI extends GuiIngameForge {
                 final int baseY = 35;
                 final int h = 15;
                 for (final EntityPlayer player : PartyHelper.instance().listMembers()) {
-                    if (player == mc.thePlayer) continue;
+                    if (player == mc.player) continue;
 
                     GLCore.glBindTexture(OptionCore.SAO_UI.isEnabled() ? StringNames.gui : StringNames.guiCustom);
 
@@ -392,7 +393,7 @@ public class IngameGUI extends GuiIngameForge {
     private void renderFood(int healthWidth, int healthHeight, int offsetUsername, int stepOne, int stepTwo, int stepThree) {
         if (replaceEvent(FOOD)) return;
         mc.mcProfiler.startSection("food");
-        final int foodValue = (int) (StaticPlayerHelper.getHungerFract(mc, mc.thePlayer, time) * healthWidth);
+        final int foodValue = (int) (StaticPlayerHelper.getHungerFract(mc, mc.player, time) * healthWidth);
         int h = foodValue < 12 ? 12 - foodValue : 0;
         int o = healthHeight;
         GLCore.glColorRGBA(0x8EE1E8);
@@ -435,7 +436,7 @@ public class IngameGUI extends GuiIngameForge {
             final int offsetR = OptionCore.SAO_UI.isEnabled() ? HPXP_OFFSET_ORIG_R : HPXP_OFFSET_ALO_R;
             final int offsetD = OptionCore.SAO_UI.isEnabled() ? HPXP_OFFSET_ORIG_D : HPXP_OFFSET_ALO_D;
             final int offsetHealth = offsetUsername + 113 + (healthBoxes + 2) * 5 + offsetR;
-            final String levelStr = I18n.format("displayLvShort") + ": " + String.valueOf(PlayerStats.instance().getStats().getLevel(mc.thePlayer));
+            final String levelStr = I18n.format("displayLvShort") + ": " + String.valueOf(PlayerStats.instance().getStats().getLevel(mc.player));
             final int levelStrWidth = fontRenderer.getStringWidth(levelStr);
             final int levelBoxes = (levelStrWidth + 4) / 5;
 
@@ -489,7 +490,7 @@ public class IngameGUI extends GuiIngameForge {
             ArrayList<String> listR = new ArrayList<>();
 
             if (mc.isDemo()) {
-                long time = mc.theWorld.getTotalWorldTime();
+                long time = mc.world.getTotalWorldTime();
                 if (time >= 120500L) listR.add(I18n.format("demo.demoExpired"));
                 else
                     listR.add(I18n.format("demo.remainingTime", StringUtils.ticksToElapsedTime((int) (120500L - time))));

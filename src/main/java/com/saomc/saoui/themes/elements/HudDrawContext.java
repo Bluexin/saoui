@@ -59,7 +59,7 @@ public class HudDrawContext {
 
     public void setTime(float time) {
         this.time = time;
-        this.hpPct = StaticPlayerHelper.getHealth(mc, mc.thePlayer, time) / StaticPlayerHelper.getMaxHealth(mc.thePlayer);
+        this.hpPct = StaticPlayerHelper.getHealth(mc, mc.player, time) / StaticPlayerHelper.getMaxHealth(mc.player);
     }
 
     public EntityPlayer getPlayer() {

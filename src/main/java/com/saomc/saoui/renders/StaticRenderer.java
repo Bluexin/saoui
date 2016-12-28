@@ -7,7 +7,7 @@ import com.saomc.saoui.effects.DeathParticles;
 import com.saomc.saoui.resources.StringNames;
 import com.saomc.saoui.screens.ingame.HealthStep;
 import com.saomc.saoui.social.StaticPlayerHelper;
-import com.saomc.saoui.util.OptionCore;
+import com.saomc.saoui.config.OptionCore;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -37,21 +37,21 @@ public class StaticRenderer { // TODO: add usage of scale, offset etc from capab
 
         if (living.deathTime == 1) living.deathTime++;
 
-        if (!dead && !living.isInvisibleToPlayer(mc.thePlayer)) {
+        if (!dead && !living.isInvisibleToPlayer(mc.player)) {
             if (OptionCore.COLOR_CURSOR.isEnabled() && living.hasCapability(RenderCapability.RENDER_CAPABILITY, null))
                 doRenderColorCursor(renderManager, mc, living, x, y, z, 64);
 
-            if (OptionCore.HEALTH_BARS.isEnabled() && !living.equals(mc.thePlayer) && living.hasCapability(RenderCapability.RENDER_CAPABILITY, null))
+            if (OptionCore.HEALTH_BARS.isEnabled() && !living.equals(mc.player) && living.hasCapability(RenderCapability.RENDER_CAPABILITY, null))
                 doRenderHealthBar(renderManager, mc, living, x, y, z);
         }
     }
 
-    public static void doRenderColorCursor(RenderManager renderManager, Minecraft mc, EntityLivingBase entity, double x, double y, double z, int distance) {
+    private static void doRenderColorCursor(RenderManager renderManager, Minecraft mc, EntityLivingBase entity, double x, double y, double z, int distance) {
         if (entity.getRidingEntity() != null) return;
         if (OptionCore.LESS_VISUALS.isEnabled() && !(entity instanceof IMob || StaticPlayerHelper.getHealth(mc, entity, SAOCore.UNKNOWN_TIME_DELAY) != StaticPlayerHelper.getMaxHealth(entity)))
             return;
 
-        if (entity.worldObj.isRemote) {
+        if (entity.world.isRemote) {
             double d3 = entity.getDistanceSqToEntity(renderManager.renderViewEntity);
 
             if (d3 <= (double) (distance * distance)) {
@@ -78,7 +78,7 @@ public class StaticRenderer { // TODO: add usage of scale, offset etc from capab
                 GLCore.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
 
                 if (OptionCore.SPINNING_CRYSTALS.isEnabled()) {
-                    double a = (entity.worldObj.getTotalWorldTime() % 40) / 20.0D * Math.PI;
+                    double a = (entity.world.getTotalWorldTime() % 40) / 20.0D * Math.PI;
                     double cos = Math.cos(a);//Math.PI / 3 * 2);
                     double sin = Math.sin(a);//Math.PI / 3 * 2);
 
@@ -121,7 +121,7 @@ public class StaticRenderer { // TODO: add usage of scale, offset etc from capab
     }
 
     private static void doRenderHealthBar(RenderManager renderManager, Minecraft mc, EntityLivingBase living, double x, double y, double z) {
-        if (living.getRidingEntity() != null && living.getRidingEntity() == mc.thePlayer) return;
+        if (living.getRidingEntity() != null && living.getRidingEntity() == mc.player) return;
         if (OptionCore.LESS_VISUALS.isEnabled() && !(living instanceof IMob || StaticPlayerHelper.getHealth(mc, living, SAOCore.UNKNOWN_TIME_DELAY) != StaticPlayerHelper.getMaxHealth(living)))
             return;
 
@@ -177,9 +177,9 @@ public class StaticRenderer { // TODO: add usage of scale, offset etc from capab
     }
 
     public static void doSpawnDeathParticles(Minecraft mc, Entity living) {
-        final World world = living.worldObj;
+        final World world = living.world;
 
-        if (living.worldObj.isRemote) {
+        if (living.world.isRemote) {
             final float[][] colors = {
                     {1F / 0xFF * 0x9A, 1F / 0xFF * 0xFE, 1F / 0xFF * 0x2E},
                     {1F / 0xFF * 0x01, 1F / 0xFF * 0xFF, 1F / 0xFF * 0xFF},

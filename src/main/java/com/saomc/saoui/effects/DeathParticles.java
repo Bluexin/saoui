@@ -21,15 +21,15 @@ public class DeathParticles extends Particle {
 
     public static Queue<DeathParticles> queuedRenders = new ArrayDeque<>();
 
-    float ParticleScale;
-    float time;
-    float particleX;
-    float particleY;
-    float particleZ;
-    float f0;
-    float f1;
-    float rotationY; // Rotation around Y axis
-    float speedRotationY; // Rotation speed around Y axis
+    private float ParticleScale;
+    private float time;
+    private float particleX;
+    private float particleY;
+    private float particleZ;
+    private float f0;
+    private float f1;
+    private float rotationY; // Rotation around Y axis
+    private float speedRotationY; // Rotation speed around Y axis
 
     public DeathParticles(World world, double xCoord, double yCoord, double zCoord, float redValue, float greenValue, float blueValue) {
         this(world, xCoord, yCoord, zCoord, redValue, greenValue, blueValue, 1.0F);
@@ -51,7 +51,7 @@ public class DeathParticles extends Particle {
         this.particleMaxAge = (int) ((float) this.particleMaxAge * scale);
     }
 
-    public static void dispatchQueuedRenders(Tessellator tessellator) {
+    static void dispatchQueuedRenders(Tessellator tessellator) {
         RenderDispatcher.particleFxCount = 0;
 
         Minecraft.getMinecraft().renderEngine.bindTexture(StringNames.particleLarge);
@@ -108,7 +108,7 @@ public class DeathParticles extends Particle {
         x4 = (this.particleX - f0) * scale;
         y4 = -this.particleY * scale;
         z4 = (this.particleZ - f1) * scale;
-        EnumFacing e = Minecraft.getMinecraft().thePlayer.getHorizontalFacing();
+        EnumFacing e = Minecraft.getMinecraft().player.getHorizontalFacing();
         boolean q = e.equals(EnumFacing.NORTH) || e.equals(EnumFacing.SOUTH);
         final double a = (q ? rotationY < 1.5F && rotationY > 0.5F ? rotationY - 1.0F : rotationY + 1.0F : rotationY) * Math.PI;
         final double cos = Math.cos(a);
@@ -141,7 +141,7 @@ public class DeathParticles extends Particle {
         if (this.particleAge++ >= this.particleMaxAge) this.isExpired = true;
 
         this.motionY += 0.004D;
-        this.moveEntity(this.motionX, this.motionY, this.motionZ);
+        this.move(this.motionX, this.motionY, this.motionZ);
         this.motionX *= 0.8999999761581421D;
         this.motionY *= 0.8999999761581421D;
         this.motionZ *= 0.8999999761581421D;

@@ -1,6 +1,7 @@
 package com.saomc.saoui.util;
 
 import com.saomc.saoui.SAOCore;
+import com.saomc.saoui.config.OptionCore;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

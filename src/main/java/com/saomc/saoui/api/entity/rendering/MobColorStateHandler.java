@@ -32,7 +32,7 @@ public class MobColorStateHandler implements IColorStateHandler {
      */
     private ColorState cached = null;
 
-    public MobColorStateHandler(EntityLivingBase entity) {
+    MobColorStateHandler(EntityLivingBase entity) {
         this.theEnt = new WeakReference<>(entity);
     }
 
@@ -44,9 +44,9 @@ public class MobColorStateHandler implements IColorStateHandler {
         if (!entity.isNonBoss()) return cached = BOSS;
         if (entity instanceof EntityWolf && ((EntityWolf) entity).isAngry()) return KILLER;
         if (entity instanceof EntityTameable && ((EntityTameable) entity).isTamed())
-            return Objects.equals(((EntityTameable) entity).getOwner(), Minecraft.getMinecraft().thePlayer) ? INNOCENT : VIOLENT;
+            return Objects.equals(((EntityTameable) entity).getOwner(), Minecraft.getMinecraft().player) ? INNOCENT : VIOLENT;
         if (entity instanceof IMob)
-            return entity.canEntityBeSeen(Minecraft.getMinecraft().thePlayer) ? KILLER : VIOLENT;
+            return entity.canEntityBeSeen(Minecraft.getMinecraft().player) ? KILLER : VIOLENT;
         if (entity instanceof IAnimals) return cached = INNOCENT;
         if (entity instanceof IEntityOwnable) return cached = VIOLENT;
         return cached = INVALID;

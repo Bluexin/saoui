@@ -1,7 +1,6 @@
 package com.saomc.saoui.api.screens;
 
 import com.saomc.saoui.elements.Element;
-import com.saomc.saoui.util.OptionCore;
 import net.minecraft.inventory.IInventory;
 
 import java.util.List;

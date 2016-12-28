@@ -3,7 +3,7 @@ package com.saomc.saoui.elements;
 import com.google.common.collect.LinkedHashMultimap;
 import com.saomc.saoui.api.screens.*;
 import com.saomc.saoui.util.LogCore;
-import com.saomc.saoui.util.OptionCore;
+import com.saomc.saoui.config.OptionCore;
 import net.minecraft.client.Minecraft;
 import net.minecraft.inventory.IInventory;
 import net.minecraftforge.fml.relauncher.Side;
@@ -47,7 +47,7 @@ public class ElementBuilder implements IElementBuilder {
      * @param name The name of the element
      * @return Returns true if enabled
      */
-    public boolean isParentEnabled(String name) {
+    boolean isParentEnabled(String name) {
         return elementList.values().stream().filter(e -> e.getCategory().equals(name.toLowerCase())).anyMatch(Element::isEnabled);
     }
 
@@ -69,7 +69,7 @@ public class ElementBuilder implements IElementBuilder {
         }
     }
 
-    public void setCategoryFocus(GuiSelection gui, String category, boolean state){
+    private void setCategoryFocus(GuiSelection gui, String category, boolean state){
         elementList.get(category.toLowerCase()).stream().filter(e -> e.getGui() == gui).forEach(e -> e.setFocus(state));
         LogCore.logDebug("Setting category focus for " + category + " to " + state);
     }
@@ -276,13 +276,13 @@ public class ElementBuilder implements IElementBuilder {
      */
     @Override
     public void addInventory(String parent, GuiSelection gui, ItemFilter itemFilter) {
-        if (Minecraft.getMinecraft().thePlayer == null)
+        if (Minecraft.getMinecraft().player == null)
             LogCore.logFatal("WARNING - Attempted to addInventory before world load \n" +
                     "Parent - " + parent + "\n" +
                     "Gui - " + gui + "\n" +
                     "Inventory - Players Inventory");
         else if (elementList.get(parent.toLowerCase()).stream().noneMatch(element -> element.getElementType() == ElementType.INVENTORY && element.getItemFilter() == itemFilter && element.getGui() == gui)){
-            elementList.put(parent.toLowerCase(), new Element(parent.toLowerCase(), gui, itemFilter, Minecraft.getMinecraft().thePlayer.inventory));
+            elementList.put(parent.toLowerCase(), new Element(parent.toLowerCase(), gui, itemFilter, Minecraft.getMinecraft().player.inventory));
             LogCore.logDebug("Element added, name - ItemList   parent - " + parent + "   type - Items");
         } else LogCore.logWarn("Warning, attempted to add the same element twice \n " +
                 "Element name - ItemList\n" +
@@ -302,7 +302,7 @@ public class ElementBuilder implements IElementBuilder {
      */
     @Override
     public void addInventory(String parent, GuiSelection gui, ItemFilter itemFilter, IInventory inventory) {
-        if (Minecraft.getMinecraft().thePlayer == null)
+        if (Minecraft.getMinecraft().player == null)
             LogCore.logFatal("WARNING - Attempted to addInventory before world load \n" +
                     "Parent - " + parent + "\n" +
                     "Gui - " + gui + "\n" +

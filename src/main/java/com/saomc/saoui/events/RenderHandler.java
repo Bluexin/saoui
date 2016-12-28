@@ -6,7 +6,7 @@ import com.saomc.saoui.screens.death.DeathScreen;
 import com.saomc.saoui.screens.ingame.IngameGUI;
 import com.saomc.saoui.screens.menu.IngameMenuGUI;
 import com.saomc.saoui.screens.menu.StartupGUI;
-import com.saomc.saoui.util.OptionCore;
+import com.saomc.saoui.config.OptionCore;
 import net.minecraft.client.gui.GuiGameOver;
 import net.minecraft.client.gui.GuiIngameMenu;
 import net.minecraft.client.gui.GuiMainMenu;
@@ -24,9 +24,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SideOnly(Side.CLIENT)
-public class RenderHandler {
+class RenderHandler {
 
-    static final List<EntityLivingBase> deadHandlers = new ArrayList<>();
+    private static final List<EntityLivingBase> deadHandlers = new ArrayList<>();
     private static boolean menuGUI = true;
 
     static void checkingameGUI() {
@@ -63,7 +63,7 @@ public class RenderHandler {
         }
         if (e.getGui() instanceof GuiInventory && !OptionCore.DEFAULT_INVENTORY.isEnabled()) {
             if (EventCore.mc.playerController.isInCreativeMode())
-                e.setGui(new GuiContainerCreative(EventCore.mc.thePlayer));
+                e.setGui(new GuiContainerCreative(EventCore.mc.player));
             else if (!(EventCore.mc.currentScreen instanceof IngameMenuGUI))
                 e.setGui(new IngameMenuGUI((GuiInventory) EventCore.mc.currentScreen));
             else e.setCanceled(true);
@@ -83,7 +83,7 @@ public class RenderHandler {
     }
 
     static void deathCheck() {
-        if (EventCore.mc.currentScreen instanceof DeathScreen && EventCore.mc.thePlayer.getHealth() > 0.0F) {
+        if (EventCore.mc.currentScreen instanceof DeathScreen && EventCore.mc.player.getHealth() > 0.0F) {
             EventCore.mc.currentScreen.onGuiClosed();
             EventCore.mc.setIngameFocus();
         }
@@ -99,7 +99,7 @@ public class RenderHandler {
 
     static void renderEntity(RenderLivingEvent.Post e) {
         if (!OptionCore.UI_ONLY.isEnabled()) {
-            if (e.getEntity() != EventCore.mc.thePlayer) {
+            if (e.getEntity() != EventCore.mc.player) {
                 StaticRenderer.render(e.getRenderer().getRenderManager(), e.getEntity(), e.getX(), e.getY(), e.getZ());
             }
         }

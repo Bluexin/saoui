@@ -1,7 +1,6 @@
-package com.saomc.saoui.events;
+package com.saomc.saoui.config;
 
 import com.saomc.saoui.SAOCore;
-import com.saomc.saoui.util.OptionCore;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 

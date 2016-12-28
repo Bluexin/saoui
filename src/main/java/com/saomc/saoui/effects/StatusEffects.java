@@ -2,7 +2,7 @@ package com.saomc.saoui.effects;
 
 import com.saomc.saoui.GLCore;
 import com.saomc.saoui.resources.StringNames;
-import com.saomc.saoui.util.OptionCore;
+import com.saomc.saoui.config.OptionCore;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;

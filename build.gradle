@@ -29,11 +29,9 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 minecraft {
-    version = "1.10.2-12.18.1.2011"
+    version = "1.10.2-12.18.3.2185"
     runDir = "run"
-    mappings = "snapshot_20160725"
-
-//    srgExtra "PK: gnu/jel saoui/shade/gnu/jel"
+    mappings = "stable_29"
 }
 
 reobf{

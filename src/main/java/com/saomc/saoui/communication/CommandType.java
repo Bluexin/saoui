@@ -18,7 +18,7 @@ public enum CommandType {
     UPDATE_PARTY((target, args) -> PartyHelper.instance().receiveUpdate(target, args)),
 
     CONFIRM_INVITE_PARTY((target, args) -> PartyHelper.instance().receiveConfirmation(target, args)),
-    CANCEL_INVITE_PARTY((target, args) -> StaticPlayerHelper.thePlayer().addChatMessage(new TextComponentTranslation("ptDecline", target.getDisplayName()))),
+    CANCEL_INVITE_PARTY((target, args) -> StaticPlayerHelper.thePlayer().sendMessage(new TextComponentTranslation("ptDecline", target.getDisplayName()))),
 
     ADD_FRIEND_REQUEST((target, args) -> FriendsHandler.instance().addFriendRequest(target)),
 

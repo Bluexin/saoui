@@ -23,12 +23,12 @@ public class EventHandler {
     public static boolean IS_SNEAKING = false;
 
     static void nameNotification(ClientChatReceivedEvent e) {
-        if (!(mc.currentScreen instanceof GuiConnecting) && e.getMessage().getUnformattedText().contains(mc.thePlayer.getDisplayNameString()))
+        if (!(mc.currentScreen instanceof GuiConnecting) && e.getMessage().getUnformattedText().contains(mc.player.getDisplayNameString()))
             SoundCore.play(mc, SoundCore.MESSAGE);
     }
 
     static void abilityCheck() {
-        if (mc.thePlayer == null) {
+        if (mc.player == null) {
             IS_SPRINTING = false;
             IS_SNEAKING = false;
         } else if (mc.inGameHasFocus) {

@@ -2,7 +2,7 @@ package com.saomc.saoui.elements;
 
 import com.saomc.saoui.api.screens.*;
 import com.saomc.saoui.util.LogCore;
-import com.saomc.saoui.util.OptionCore;
+import com.saomc.saoui.config.OptionCore;
 import jdk.nashorn.internal.objects.annotations.Getter;
 import jdk.nashorn.internal.objects.annotations.Setter;
 import net.minecraft.client.Minecraft;

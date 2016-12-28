@@ -52,7 +52,7 @@ public class SendCommand implements IMessage {
     public static class Handler extends AbstractServerPacketHandler<SendCommand> {
         @Override
         public IMessage handleServerPacket(EntityPlayer player, SendCommand message, MessageContext ctx) {
-            PacketPipeline.sendTo(new ReceiveCommand(message.cmd, player, message.args), (EntityPlayerMP) player.worldObj.getPlayerEntityByName(message.target));
+            PacketPipeline.sendTo(new ReceiveCommand(message.cmd, player, message.args), (EntityPlayerMP) player.world.getPlayerEntityByName(message.target));
             return null;
         }
     }

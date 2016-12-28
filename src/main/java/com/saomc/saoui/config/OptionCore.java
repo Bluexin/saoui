@@ -1,7 +1,6 @@
-package com.saomc.saoui.util;
+package com.saomc.saoui.config;
 
 import com.saomc.saoui.GLCore;
-import com.saomc.saoui.events.ConfigHandler;
 import jdk.nashorn.internal.objects.annotations.Getter;
 import jdk.nashorn.internal.objects.annotations.Setter;
 import net.minecraft.client.Minecraft;

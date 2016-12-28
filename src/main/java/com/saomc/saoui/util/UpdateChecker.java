@@ -2,7 +2,7 @@ package com.saomc.saoui.util;
 
 import com.google.common.collect.Lists;
 import com.saomc.saoui.SAOCore;
-import com.saomc.saoui.events.ConfigHandler;
+import com.saomc.saoui.config.ConfigHandler;
 
 import java.io.BufferedReader;
 import java.io.IOException;

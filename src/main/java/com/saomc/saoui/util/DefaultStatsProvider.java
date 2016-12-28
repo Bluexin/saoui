@@ -1,6 +1,7 @@
 package com.saomc.saoui.util;
 
 import com.saomc.saoui.api.info.IPlayerStatsProvider;
+import com.saomc.saoui.config.OptionCore;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -29,7 +30,7 @@ public class DefaultStatsProvider implements IPlayerStatsProvider {
         EntityLivingBase mount = (EntityLivingBase) player.getRidingEntity();
 
         if (player.isRiding() && OptionCore.MOUNT_STAT_VIEW.isEnabled()) {
-            final String name = mount.getCustomNameTag();
+            final String name = mount.getName();
             final double maxHealth = attr(mount.getMaxHealth());
             double health = attr(mount.getHealth());
             final double resistance = attr(mount.getTotalArmorValue());
@@ -65,20 +66,19 @@ public class DefaultStatsProvider implements IPlayerStatsProvider {
 
             float itemDamage = 0.0F;
 
-            if (player.getHeldEquipment() != null) {
-                if (player.getHeldItemMainhand() != null) {
-                    final Collection<?> itemAttackMain = player.getHeldItemMainhand().getAttributeModifiers(EntityEquipmentSlot.MAINHAND).get(SharedMonsterAttributes.ATTACK_DAMAGE.getAttributeUnlocalizedName());
+            if (player.getHeldItemMainhand() != null) {
+                final Collection<?> itemAttackMain = player.getHeldItemMainhand().getAttributeModifiers(EntityEquipmentSlot.MAINHAND).get(SharedMonsterAttributes.ATTACK_DAMAGE.getName());
 
-                    itemDamage += itemAttackMain.stream().filter(value -> value instanceof AttributeModifier).map(value -> (AttributeModifier) value)
-                            .filter(mod -> mod.getName().equals("Weapon modifier")).mapToDouble(AttributeModifier::getAmount).sum();
-                }
-                if (player.getHeldItemOffhand() != null) {
-                    final Collection<?> itemAttackOff = player.getHeldItemOffhand().getAttributeModifiers(EntityEquipmentSlot.OFFHAND).get(SharedMonsterAttributes.ATTACK_DAMAGE.getAttributeUnlocalizedName());
-
-                    itemDamage += itemAttackOff.stream().filter(value -> value instanceof AttributeModifier).map(value -> (AttributeModifier) value)
-                            .filter(mod -> mod.getName().equals("Weapon modifier")).mapToDouble(AttributeModifier::getAmount).sum();
-                }
+                itemDamage += itemAttackMain.stream().filter(value -> value instanceof AttributeModifier).map(value -> (AttributeModifier) value)
+                        .filter(mod -> mod.getName().equals("Weapon modifier")).mapToDouble(AttributeModifier::getAmount).sum();
             }
+            if (player.getHeldItemOffhand() != null) {
+                final Collection<?> itemAttackOff = player.getHeldItemOffhand().getAttributeModifiers(EntityEquipmentSlot.OFFHAND).get(SharedMonsterAttributes.ATTACK_DAMAGE.getName());
+
+                itemDamage += itemAttackOff.stream().filter(value -> value instanceof AttributeModifier).map(value -> (AttributeModifier) value)
+                        .filter(mod -> mod.getName().equals("Weapon modifier")).mapToDouble(AttributeModifier::getAmount).sum();
+            }
+
 
             final float strength = attr(attackDamage + itemDamage);
             final float agility = attr(player.getAIMoveSpeed()) * 10;

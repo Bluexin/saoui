@@ -70,11 +70,11 @@ public class DeathScreen extends ScreenGUI {
 
     public void confirmClicked(boolean result, int id) {
         if (result) {
-            mc.theWorld.sendQuittingDisconnectingPacket();
-            mc.loadWorld((WorldClient) null);
+            mc.world.sendQuittingDisconnectingPacket();
+            mc.loadWorld(null);
             mc.displayGuiScreen(new GuiMainMenu());
         } else {
-            mc.thePlayer.respawnPlayer();
+            mc.player.respawnPlayer();
             mc.displayGuiScreen(null);
         }
     }

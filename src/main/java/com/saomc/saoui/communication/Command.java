@@ -1,6 +1,6 @@
 package com.saomc.saoui.communication;
 
-import com.saomc.saoui.util.OptionCore;
+import com.saomc.saoui.config.OptionCore;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -23,21 +23,21 @@ public class Command {
         if (!raw.contains("$")) throw new MissingFormatArgumentException("<username> not found in \"" + raw + '"');
         if (!raw.contains(CommandType.PREFIX) || !raw.contains(CommandType.SUFFIX))
             throw new MissingFormatArgumentException("invalid command: \"" + raw + '"');
-        this.from = Minecraft.getMinecraft().theWorld.getPlayerEntityByName(raw.substring(raw.indexOf('$') + 1, raw.lastIndexOf('$')));
+        this.from = Minecraft.getMinecraft().world.getPlayerEntityByName(raw.substring(raw.indexOf('$') + 1, raw.lastIndexOf('$')));
         this.type = CommandType.getCommand(raw);
-        this.to = Minecraft.getMinecraft().thePlayer;
+        this.to = Minecraft.getMinecraft().player;
         this.args = getContent(raw);
     }
 
     Command(CommandType type, EntityPlayer to, String... args) {
         this.type = type;
         this.to = to;
-        this.from = Minecraft.getMinecraft().thePlayer;
+        this.from = Minecraft.getMinecraft().player;
         this.args = args;
     }
 
     public static boolean processCommand(String raw) {
-        if (Minecraft.getMinecraft().thePlayer == null || !OptionCore.CLIENT_CHAT_PACKETS.isEnabled()) return false;
+        if (Minecraft.getMinecraft().player == null || !OptionCore.CLIENT_CHAT_PACKETS.isEnabled()) return false;
         if (raw.contains(CommandType.PREFIX) && raw.contains(CommandType.SUFFIX)) {
             final Command command;
             try {
@@ -46,7 +46,7 @@ public class Command {
                 return false;
             }
             if (command.type != null) {
-                if (!command.from.equals(Minecraft.getMinecraft().thePlayer)) command.activate();
+                if (!command.from.equals(Minecraft.getMinecraft().player)) command.activate();
                 return true;
             }
         }
@@ -67,8 +67,8 @@ public class Command {
     }
 
     void send(Minecraft mc) {
-        if (mc.thePlayer == null || !OptionCore.CLIENT_CHAT_PACKETS.isEnabled()) return;
-        mc.thePlayer.sendChatMessage(this.toChat());
+        if (mc.player == null || !OptionCore.CLIENT_CHAT_PACKETS.isEnabled()) return;
+        mc.player.sendChatMessage(this.toChat());
     }
 
     private void activate() {

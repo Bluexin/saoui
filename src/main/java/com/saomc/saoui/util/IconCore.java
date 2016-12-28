@@ -2,10 +2,10 @@ package com.saomc.saoui.util;
 
 import com.saomc.saoui.GLCore;
 import com.saomc.saoui.api.screens.IIcon;
+import com.saomc.saoui.config.OptionCore;
 import com.saomc.saoui.resources.StringNames;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import org.lwjgl.opengl.GL11;
 
 @SideOnly(Side.CLIENT)
 public enum IconCore implements IIcon {

@@ -12,7 +12,7 @@ import com.saomc.saoui.elements.defaultelements.DefaultElements;
 import com.saomc.saoui.resources.StringNames;
 import com.saomc.saoui.util.ColorUtil;
 import com.saomc.saoui.util.LogCore;
-import com.saomc.saoui.util.OptionCore;
+import com.saomc.saoui.config.OptionCore;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -63,9 +63,9 @@ public abstract class ScreenGUI extends GuiScreen implements ParentElement {
     }
 
     protected void init() {
-        if (mc.thePlayer != null) {
-            rotationYaw = new float[]{mc.thePlayer.rotationYaw};
-            rotationPitch = new float[]{mc.thePlayer.rotationPitch};
+        if (mc.player != null) {
+            rotationYaw = new float[]{mc.player.rotationYaw};
+            rotationPitch = new float[]{mc.player.rotationPitch};
         }
     }
 
@@ -102,9 +102,9 @@ public abstract class ScreenGUI extends GuiScreen implements ParentElement {
         mouseX = cursorX;
         mouseY = cursorY;
 
-        if (mc.thePlayer != null) {
-            mc.thePlayer.rotationYaw = rotationYaw[0] - getCursorX() * ROTATION_FACTOR;
-            mc.thePlayer.rotationPitch = rotationPitch[0] - getCursorY() * ROTATION_FACTOR;
+        if (mc.player != null) {
+            mc.player.rotationYaw = rotationYaw[0] - getCursorX() * ROTATION_FACTOR;
+            mc.player.rotationPitch = rotationPitch[0] - getCursorY() * ROTATION_FACTOR;
         }
 
 //        super.drawScreen(cursorX, cursorY, partialTicks); -> we might not want this to be called. Shouldn't have any effect ("empty" call)
@@ -192,7 +192,7 @@ public abstract class ScreenGUI extends GuiScreen implements ParentElement {
         }
     }
 
-    protected void backgroundClicked(int cursorX, int cursorY, int button) {
+    private void backgroundClicked(int cursorX, int cursorY, int button) {
         LogCore.logDebug("Background Clicked");
     }
 
@@ -236,15 +236,15 @@ public abstract class ScreenGUI extends GuiScreen implements ParentElement {
         ElementDispatcher.close();
     }
 
-    protected void hideCursor() {
+    private void hideCursor() {
         if (!cursorHidden) toggleHideCursor();
     }
 
-    protected void showCursor() {
+    private void showCursor() {
         if (cursorHidden) toggleHideCursor();
     }
 
-    protected void toggleHideCursor() {
+    private void toggleHideCursor() {
         cursorHidden = !cursorHidden;
         try {
             Mouse.setNativeCursor(cursorHidden ? emptyCursor : null);

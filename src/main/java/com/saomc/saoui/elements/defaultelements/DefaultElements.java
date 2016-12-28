@@ -7,7 +7,7 @@ import com.saomc.saoui.elements.ElementProvider;
 import com.saomc.saoui.screens.inventory.InventoryCore;
 import com.saomc.saoui.util.IconCore;
 import com.saomc.saoui.util.LogCore;
-import com.saomc.saoui.util.OptionCore;
+import com.saomc.saoui.config.OptionCore;
 
 import java.util.stream.Stream;
 

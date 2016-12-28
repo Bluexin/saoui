@@ -1,7 +1,7 @@
 package com.saomc.saoui.screens.menu;
 
 import com.saomc.saoui.SAOCore;
-import com.saomc.saoui.events.ConfigHandler;
+import com.saomc.saoui.config.ConfigHandler;
 import com.saomc.saoui.util.UpdateChecker;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;

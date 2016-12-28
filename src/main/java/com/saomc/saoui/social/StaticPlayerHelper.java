@@ -1,6 +1,6 @@
 package com.saomc.saoui.social;
 
-import com.saomc.saoui.util.OptionCore;
+import com.saomc.saoui.config.OptionCore;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -17,25 +17,25 @@ import java.util.UUID;
  * @author Bluexin
  */
 public class StaticPlayerHelper {
-    public static final float HEALTH_ANIMATION_FACTOR = 0.075F;
-    public static final float HEALTH_FRAME_FACTOR = HEALTH_ANIMATION_FACTOR * HEALTH_ANIMATION_FACTOR * 0x40 * 0x64;
-    public static Map<UUID, Float> healthSmooth = new HashMap<>();
-    public static Map<UUID, Float> hungerSmooth = new HashMap<>();
+    private static final float HEALTH_ANIMATION_FACTOR = 0.075F;
+    private static final float HEALTH_FRAME_FACTOR = HEALTH_ANIMATION_FACTOR * HEALTH_ANIMATION_FACTOR * 0x40 * 0x64;
+    private static Map<UUID, Float> healthSmooth = new HashMap<>();
+    private static Map<UUID, Float> hungerSmooth = new HashMap<>();
 
     public static List<EntityPlayer> listOnlinePlayers(Minecraft mc, double range) {
         //noinspection ConstantConditions -> how could 'p' be null?
-        return mc.theWorld.getPlayers(EntityPlayer.class, p -> mc.thePlayer.getDistanceToEntity(p) <= range);
+        return mc.world.getPlayers(EntityPlayer.class, p -> mc.player.getDistanceToEntity(p) <= range);
     }
 
-    public static List<EntityPlayer> listOnlinePlayers(Minecraft mc) {
-        return mc.theWorld.playerEntities;
+    private static List<EntityPlayer> listOnlinePlayers(Minecraft mc) {
+        return mc.world.playerEntities;
     }
 
     public static EntityPlayer findOnlinePlayer(Minecraft mc, String username) {
-        return mc.theWorld.getPlayerEntityByName(username);
+        return mc.world.getPlayerEntityByName(username);
     }
 
-    public static boolean[] isOnline(Minecraft mc, String[] names) { // TODO: update a boolean[] upon player join server? (/!\ client-side)
+    private static boolean[] isOnline(Minecraft mc, String[] names) { // TODO: update a boolean[] upon player join server? (/!\ client-side)
         final List<EntityPlayer> players = listOnlinePlayers(mc);
         final boolean[] online = new boolean[names.length];
 
@@ -56,7 +56,7 @@ public class StaticPlayerHelper {
     }
 
     public static String getName(Minecraft mc) {
-        return getName(mc.thePlayer);
+        return getName(mc.player);
     }
 
     public static String unformatName(String name) {
@@ -159,6 +159,6 @@ public class StaticPlayerHelper {
     }
 
     public static EntityPlayer thePlayer() {
-        return Minecraft.getMinecraft().thePlayer;
+        return Minecraft.getMinecraft().player;
     }
 }
