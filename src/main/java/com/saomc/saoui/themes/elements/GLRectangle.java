@@ -68,7 +68,7 @@ public class GLRectangle implements Element {
     protected GLRectangle() {
     }
 
-    public void draw(DrawContext ctx) {
+    public void draw(HudDrawContext ctx) {
         ElementParent p = this.parent.get();
         if (p != null) {
 

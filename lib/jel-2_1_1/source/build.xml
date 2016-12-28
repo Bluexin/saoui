@@ -1,0 +1,351 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="JEL" basedir="." default="main">
+    <property name="jel.version" value="2.1.1"/>
+    <property name="junit.jar" value="third-party/junit.jar"/>
+    <property name="dist.dir" value="build/dist"/>
+    <property name="javadoc.path" value="/usr/share/doc/sun-java6-jdk/html/api"/>
+
+    <tstamp>
+        <format pattern="yyyy" property="build.year"/>
+    </tstamp>
+
+    <path id="compile.classpath">
+        <!--    <path refid="torque.classpath"/> -->
+    </path>
+
+    <path id="test.classpath">
+        <path refid="compile.classpath"/>
+        <pathelement location="${junit.jar}"/>
+        <pathelement location="build/classes"/>
+        <pathelement location="build/test-classes"/>
+    </path>
+
+    <path id="test.classpath.opt">
+        <path refid="compile.classpath"/>
+        <pathelement location="${junit.jar}"/>
+        <pathelement location="build/classes-opt"/>
+        <pathelement location="build/test-classes"/>
+    </path>
+
+    <path id="test.dist.classpath">
+        <path refid="compile.classpath"/>
+        <pathelement location="${junit.jar}"/>
+        <pathelement location="build/test-classes"/>
+        <pathelement location="${dist.dir}/lib/jel_g.jar"/>
+    </path>
+
+    <path id="test.dist.classpath.opt">
+        <path refid="compile.classpath"/>
+        <pathelement location="${junit.jar}"/>
+        <pathelement location="build/test-classes"/>
+        <pathelement location="${dist.dir}/lib/jel.jar"/>
+    </path>
+
+
+    <target
+        name="init"
+        description="==> init directories">
+        <mkdir dir="build/classes"/>
+        <mkdir dir="build/javadoc"/>
+        <mkdir dir="${dist.dir}"/>
+        <mkdir dir="${dist.dir}/lib"/>
+        <mkdir dir="build/classes-opt"/>
+        <mkdir dir="build/classes-opt5"/>
+        <mkdir dir="build/test-classes"/>
+        <mkdir dir="build/test-data"/>
+        <mkdir dir="build/test-data-opt"/>
+        <mkdir dir="build/test-reports"/>
+        <!-- for generated distribution -->
+        <mkdir dir="${dist.dir}"/>
+        <mkdir dir="${dist.dir}/docs"/>
+        <mkdir dir="${dist.dir}/docs/api"/>
+        <mkdir dir="${dist.dir}/lib"/>
+        <mkdir dir="${dist.dir}/source"/>
+        <mkdir dir="${dist.dir}/source/src"/>
+        <mkdir dir="${dist.dir}/source/third-party"/>
+        <mkdir dir="${dist.dir}/samples"/>
+        <mkdir dir="${dist.dir}/samples/testsuite"/>
+        <mkdir dir="${dist.dir}/samples/testbed"/>
+        <mkdir dir="${dist.dir}/samples/calculator"/>
+        <!-- enable debugging in the work build -->
+        <mkdir dir="build/src/java/gnu/jel/debug"/>
+        <copy file="src/java/gnu/jel/debug/Debug.java" todir="build/src/java/gnu/jel/debug/">
+            <filterset>
+                <filter token="DEBUG" value="true"/>
+            </filterset>
+        </copy>
+        <mkdir dir="build/src/java-opt/gnu/jel/debug"/>
+        <copy file="src/java/gnu/jel/debug/Debug.java" todir="build/src/java-opt/gnu/jel/debug/">
+            <filterset>
+                <filter token="DEBUG" value="false"/>
+            </filterset>
+        </copy>
+    </target>
+
+    <uptodate property="tables.uptodate"
+              srcfile="src/java/gnu/jel/TableWriter.java"
+              targetfile="build/classes/gnu/jel/tables.dat"/>
+
+    <target name="java-compile" depends="init">
+        <javac classpathref="compile.classpath"
+               debug="on"
+               deprecation="on"
+               destdir="build/classes"
+               includeantruntime="false">
+            <compilerarg value="-Xlint"/>
+            <compilerarg value="-Xlint:-fallthrough"/>
+            <src path="build/src/java"/>
+            <src path="src/java"/>
+            <exclude name="gnu/jel/debug/Debug.java"/>
+        </javac>
+        <javac classpathref="compile.classpath"
+               debug="off"
+               deprecation="on"
+               destdir="build/classes-opt"
+               includeantruntime="false">
+            <src path="build/src/java-opt"/>
+            <src path="src/java"/>
+            <exclude name="gnu/jel/debug/Debug.java"/>
+        </javac>
+        <javac classpathref="compile.classpath"
+               debug="off"
+               deprecation="on"
+               destdir="build/classes-opt5"
+               includeantruntime="false"
+               source="1.5"
+               target="1.5">
+            <src path="build/src/java-opt"/>
+            <src path="src/java"/>
+            <exclude name="gnu/jel/debug/Debug.java"/>
+        </javac>
+    </target>
+
+    <target name="generate-tables" depends="java-compile"
+            unless="tables.uptodate">
+        <copy file="src/java/gnu/jel/JEL.properties" todir="build/classes/gnu/jel"/>
+        <echo message="Generating tables..."/>
+        <java
+            classname="gnu.jel.TableWriter"
+            classpathref="test.classpath"
+            dir="build/classes"
+            fork="true"
+        />
+        <copy file="build/classes/gnu/jel/tables.dat" todir="build/classes-opt/gnu/jel"/>
+        <copy file="src/java/gnu/jel/JEL.properties" todir="build/classes-opt/gnu/jel"/>
+        <copy file="build/classes/gnu/jel/tables.dat" todir="build/classes-opt5/gnu/jel"/>
+        <copy file="src/java/gnu/jel/JEL.properties" todir="build/classes-opt5/gnu/jel"/>
+    </target>
+
+    <target name="compile" depends="generate-tables"/>
+
+    <target
+        name="test-compile" depends="compile">
+        <javac classpathref="test.classpath"
+               debug="on"
+               deprecation="on"
+               destdir="build/test-classes"
+               includeantruntime="false"
+               srcdir="src/tests">
+            <compilerarg value="-Xlint"/>
+            <compilerarg value="-Xlint:-fallthrough"/>
+        </javac>
+    </target>
+
+    <target
+        name="test" depends="compile,test-compile">
+        <junit errorProperty="test.failed" failureProperty="test.failed"
+               fork="on"
+               printsummary="false">
+            <classpath refid="test.classpath"/>
+            <formatter type="brief" usefile="false"/>
+            <formatter type="xml"/>
+            <batchtest todir="build/test-data">
+                <fileset dir="build/test-classes" includes="**/*Test.class"/>
+            </batchtest>
+        </junit>
+        <junit errorProperty="test.failed" failureProperty="test.failed"
+               fork="on"
+               printsummary="false">
+            <classpath refid="test.classpath.opt"/>
+            <formatter type="brief" usefile="false"/>
+            <formatter type="xml"/>
+            <batchtest todir="build/test-data-opt">
+                <fileset dir="build/test-classes" includes="**/*Test.class"/>
+            </batchtest>
+        </junit>
+        <junitreport todir="build/test-data">
+            <fileset dir="build/test-data">
+                <include name="TEST-*.xml"/>
+            </fileset>
+            <fileset dir="build/test-data-opt">
+                <include name="TEST-*.xml"/>
+            </fileset>
+            <report format="frames" todir="build/test-reports"/>
+        </junitreport>
+        <fail if="test.failed"
+              message="Tests failed, see the reports &amp; logs..."/>
+    </target>
+
+    <target name="clean" description="==> clean up the generated directories">
+        <delete dir="build/">
+        </delete>
+    </target>
+
+    <target name="javadoc">
+        <javadoc author="true"
+                 defaultexcludes="yes"
+                 destdir="build/javadoc"
+                 packagenames="gnu.jel.*"
+                 use="true"
+                 version="true"
+                 windowtitle="JEL API">
+            <fileset defaultexcludes="yes" dir="src/java/">
+                <include name="gnu/jel/**/*.java"/>
+                <exclude name="gnu/jel/debug/Debug.java"/>
+            </fileset>
+            <fileset defaultexcludes="yes" dir="build/src/java/">
+                <include name="gnu/jel/debug/Debug.java"/>
+            </fileset>
+            <doctitle><![CDATA[<h1>JEL</h1>]]></doctitle>
+            <bottom>
+                <![CDATA[<p><i>Copyright &#169; 1998-${build.year} Konstantin L. Metlov All Rights Reserved.</i></p><p>Permission is granted to copy, distribute and/or modify this document under the terms of the GNU Free Documentation License, Version 1.3 or any later version published by the Free Software Foundation; with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts. A copy of the license is included in the JEL manual.</p>]]></bottom>
+            <!-- <tag name="todo" scope="all" description="To do:" /> -->
+            <link href="http://java.sun.com/javase/6/docs/api/" offline="true" packagelistLoc="${javadoc.path}"/>
+        </javadoc>
+    </target>
+
+
+    <target name="dist" depends="compile,test-compile,javadoc"
+            description="make the distribution">
+        <jar destfile="${dist.dir}/lib/jel.jar">
+            <fileset dir="build/classes-opt/">
+                <include name="**/*.class"/>
+                <exclude name="gnu/jel/debug/Debug.class"/>
+                <exclude name="gnu/jel/TableWriter.class"/>
+                <exclude name="*.class"/>
+                <include name="gnu/jel/tables.dat"/>
+                <include name="gnu/jel/JEL.properties"/>
+            </fileset>
+        </jar>
+        <jar destfile="${dist.dir}/lib/jel_jdk5.jar">
+            <fileset dir="build/classes-opt5/">
+                <include name="**/*.class"/>
+                <exclude name="gnu/jel/debug/Debug.class"/>
+                <exclude name="gnu/jel/TableWriter.class"/>
+                <exclude name="*.class"/>
+                <include name="gnu/jel/tables.dat"/>
+                <include name="gnu/jel/JEL.properties"/>
+            </fileset>
+        </jar>
+        <jar destfile="${dist.dir}/lib/jel_g.jar">
+            <fileset dir="build/classes/">
+                <include name="**/*.class"/>
+                <exclude name="*.class"/>
+                <include name="gnu/jel/tables.dat"/>
+                <include name="gnu/jel/JEL.properties"/>
+            </fileset>
+        </jar>
+        <jar destfile="${dist.dir}/samples/testsuite/tests.jar">
+            <manifest>
+                <attribute name="Main-Class" value="gnu.jel.JELTestSuite"/>
+                <attribute name="Class-Path" value="../../source/third-party/junit.jar ../../lib/jel.jar"/>
+            </manifest>
+            <fileset dir="build/test-classes/">
+                <include name="**/*.class"/>
+            </fileset>
+        </jar>
+        <copy file="src/docs/README.testsuite" tofile="${dist.dir}/samples/testsuite/README"/>
+        <copy file="third-party/junit.jar" todir="${dist.dir}/source/third-party"/>
+        <copy todir="${dist.dir}/source/src">
+            <fileset dir="src/"> <!-- these files are for WWW site only -->
+                <exclude name="docs/html/index.html"/>
+                <exclude name="docs/html/back1.gif"/>
+                <exclude name="docs/html/gnu-head-sm-transp.png"/>
+                <exclude name="docs/html/jel.css"/>
+                <exclude name="docs/html/license.txt"/>
+            </fileset>
+            <filterset>
+                <filter token="date" value="${TODAY}"/>
+                <filter token="year" value="${build.year}"/>
+                <filter token="version" value="${jel.version}"/>
+            </filterset>
+        </copy>
+        <copy file="build.xml" todir="${dist.dir}/source/"/>
+        <!-- test bed -->
+        <copy todir="${dist.dir}/samples/testbed">
+            <fileset dir="src/java/">
+                <include name="DVResolverProvider.java"/>
+                <include name="Data.java"/>
+                <include name="GlobalContext.java"/>
+                <include name="YourTestBed.java"/>
+            </fileset>
+        </copy>
+        <copy file="src/docs/README.calculator" tofile="${dist.dir}/samples/calculator/README"/>
+        <!-- calculator -->
+        <copy todir="${dist.dir}/samples/calculator">
+            <fileset file="src/java/Calculator.java"/>
+            <fileset file="build/classes/Calculator.class"/>
+        </copy>
+        <!-- html hand-written docs -->
+        <copy todir="${dist.dir}/docs">
+            <fileset dir="src/docs/html"><!-- these files are for WWW site only -->
+                <exclude name="index.html"/>
+                <exclude name="back1.gif"/>
+                <exclude name="gnu-head-sm-transp.png"/>
+                <exclude name="jel.css"/>
+                <exclude name="license.txt"/>
+            </fileset>
+        </copy>
+        <copy todir="${dist.dir}/docs/api">
+            <fileset dir="build/javadoc"/>
+        </copy>
+        <copy todir="${dist.dir}">
+            <fileset dir="src/docs">
+                <include name="CODEGEN_HOW_TO"/>
+                <include name="COPYING"/>
+                <include name="README"/>
+                <include name="RELNOTES"/>
+            </fileset>
+            <filterset>
+                <filter token="date" value="${TODAY}"/>
+                <filter token="year" value="${build.year}"/>
+                <filter token="version" value="${jel.version}"/>
+            </filterset>
+        </copy>
+    </target>
+
+    <target
+        name="dist-test" depends="dist,test-compile">
+        <junit errorProperty="test.failed" failureProperty="test.failed"
+               fork="on"
+               printsummary="false">
+            <classpath refid="test.dist.classpath"/>
+            <formatter type="brief" usefile="false"/>
+            <formatter type="xml"/>
+            <batchtest todir="build/test-data">
+                <fileset dir="build/test-classes" includes="**/*Test.class"/>
+            </batchtest>
+        </junit>
+        <junit errorProperty="test.failed" failureProperty="test.failed"
+               fork="on"
+               printsummary="false">
+            <classpath refid="test.dist.classpath.opt"/>
+            <formatter type="brief" usefile="false"/>
+            <formatter type="xml"/>
+            <batchtest todir="build/test-data-opt">
+                <fileset dir="build/test-classes" includes="**/*Test.class"/>
+            </batchtest>
+        </junit>
+        <junitreport todir="build/test-data">
+            <fileset dir="build/test-data">
+                <include name="TEST-*.xml"/>
+            </fileset>
+            <fileset dir="build/test-data-opt">
+                <include name="TEST-*.xml"/>
+            </fileset>
+            <report format="frames" todir="build/test-reports"/>
+        </junitreport>
+        <fail if="test.failed"
+              message="Tests failed, see the reports &amp; logs..."/>
+    </target>
+</project>

@@ -1,0 +1,26 @@
+This is the testsuite for JEL. It contains many expressions (>15000), 
+testing various aspects of the compiler.   Apart from being useful in 
+JEL development,  this test suite may help the users to test compati-
+bility of JEL with their version of JVM (in case it is a non-standard
+one, or after a major Java specification update).
+
+Please run the testsuite  jar  file from the current directory in JEL
+distribution like this:
+
+java -jar tests.jar
+
+Testsuite depends on ../../source/third-party/junit.jar and tests JEL
+classes in  ../../lib/jel.jar.  If you need to test the debug version 
+of the library   (e.g. for a better diagnostics after jel.jar testing 
+have failed), you will  need  to  specify the class path and the main 
+class manually like this:
+
+java -cp tests.jar:../../source/third-party/junit.jar:../../lib/jel_g.jar gnu.jel.JELTestSuite
+
+
+More tests in form of patches or wishes are always WELCOME !!!
+
+                              Copyright (C) 2009 Konstantin L. Metlov
+
+This file is licensed to you under the terms of GNU Free Documentation
+License as given in the appendix of JEL Manual.

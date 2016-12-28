@@ -1,0 +1,123 @@
+This is a brief explanation on how to drive JEL's code generator in
+order to generate Java bytecode bypassing JEL's parser. If you plan to
+generate expressions by a program (as opposed to letting user to type
+them) this document might help you to eliminate parsing overhead. It
+might be also useful to someone who wishes to build a compiler for
+more complex languages on top of JEL.
+
+Why would you want to use JEL's code generator, as opposed to other
+Java assemblers/code generators ? Two main reasons for this are
+
+1) Size. Up to my knowledge JEL is smallest of Java assemblers.
+
+2) Performance. Due to the table-driven design instructions are
+fetched from pre-built tables instead of computing them at run-time.
+
+2) Convenience. JEL can match data types to instructions to
+automatically generate the correct Java instructions for a particular
+operation on a particular data type. It does widening data type
+conversions automatically.
+
+There are two modes in which you can use JEL's code generator. The
+first is RAW assembler, it is provided by gnu.jel.ClassFile, and the
+second is type-matching assembler (implemented in gnu.jel.OPxxx
+classes).
+
+
+I. RAW MODE.
+
+By manipulating methods of gnu.jel.ClassFile you can create almost
+arbitrary Java classfiles (not only descendants of
+gnu.jel.CompiledExpression). The only feature currently absent from
+ClassFile is writing Exception tables (but this can be easily
+added). The ClassFile frees user from paying attention to the details
+of the Java class file format (like constant pool handling) and
+concentrate directly on the bytecode.
+
+
+II. TYPE-MATCHING ASSEMBLER.
+
+This helps to generate the bytecode once you have started a method of
+your class using ClassFile. It only works for expressions right now,
+but can be extended in obvious way to handle the control structures,
+which was not implemented because it would blow up the size compiler
+size and go out of a niche intended for JEL. I do have plans (when
+time permits) to make another project for a full featured programming
+language compiler on top of JEL.
+
+In order to generate the code for an expression you need first write
+it in a reverse Polish notation, then, set up an empty paramOPs stack,
+and then instantiate the OPxxx classes for each operand/operation in
+order. After passing through all your expression from left to right
+you'll have only a single OP in paramOPs stack, which represents all
+your expression.
+
+For example suppose you want to add a numbers
+
+1+2+2
+
+in reverse Polish notation this reads as
+
+2 2 1 + +
+
+to create JEL's internal representation of this expression you do
+
+java.util.Stack paramOps= new java.util.Stack();
+
+paramOPs.push(new OPLoad(new Byte(2)));
+paramOPs.push(new OPLoad(new Integer(2)));
+paramOPs.push(new OPLoad(new Long(1)));
+paramOPs.push(new OPbinary(paramOPs,0)); // 0 codes for '+' operation
+paramOPs.push(new OPbinary(paramOPs,0));
+
+your code is now
+
+OP code=(OP) paramOPs.pop();
+
+The type matching and widening conversions are done automatically by
+JEL, you can query the result type by checking code.resType field. In
+the case of the expression above the result will be equal to
+Class.forName("java.lang.Long").
+
+You can perform constants folding on an expression by doing
+
+code.eval();
+
+and throwing away a possibly emerged exception, which only signals
+that the code can't be evaluated completely. For the expression given
+above there will be no exception, because it is constant.
+
+Finally, you can flush the Java bytecode into the ClassFile (say,
+named cf) you have already set up.
+
+code.compile(cf);
+
+It will be appended to the code for the current method you already
+have there.
+
+
+III. WHAT INTERFACES MAY OR MAY NOT CHANGE.
+
+The reason for writing this document was that JEL internal interfaces
+have reached more or less optimal shape. Nevertheless, some things may
+change in future. In particular, the additional (convenience)
+bytecodes defined in ClassFile.code(long) method may change. The
+ClassFile.newMethod() will certainly change when exception tables will
+be implemented (however a compatible version may be provided).
+
+The methods of gnu.jel.OP will not change (there can be some more
+added though), and the constructors of all existing gnu.jel.OPxxx
+classes will not change (they are all what is needed to know to use
+JEL's code generator for expressions).
+
+If you are interested in using JEL's code generator directly, please
+drop me a note, so that I can inform you about interface changes.
+
+I hope this text was helpful. If not, send your suggestions to
+metlov@fti.dn.ua . Please, contact me also if I forgot to make some of
+the methods described above (or required otherwise) public.
+
+                               Copyright (C) 2009 Konstantin L. Metlov
+
+This file is licensed to you under the terms of GNU Free Documentation
+License as given in the appendix of JEL Manual.

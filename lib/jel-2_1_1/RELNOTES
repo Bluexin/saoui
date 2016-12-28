@@ -1,0 +1,24 @@
+
+                   NEW FEATURES in version 2.1.1.
+
+1. Better error messages for numerical literal overflow.
+   Unlike the previous versions, which simply claimed that an unexpected
+   character is encountered when numerical literals were too large to fit
+   in various data types, this version returns a fully customizable error
+   messages in a number of such cases.
+
+2. Automatic boxing of the primitive types (and JEL reflection types).
+   JEL now automatically wraps the primitive types into the corresponding
+   Java reflection objects. Thus, it is now possible to call the function
+   func(Integer i) via the expression "func(1)". Note that in this case
+   two conversions are actually performed: 1) from byte to int (which is
+   evaluated at compile time); 2) from int to java.lang.Integer (which
+   takes place at run time).
+   Still, it is advisable to use the primitive types in your expressions
+   as much as possible for the best performance.
+
+3. Minor spelling fixes.
+
+May 9 2016
+
+           Konstantin L. Metlov.

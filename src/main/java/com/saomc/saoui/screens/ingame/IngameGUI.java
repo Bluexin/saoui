@@ -8,7 +8,7 @@ import com.saomc.saoui.screens.menu.IngameMenuGUI;
 import com.saomc.saoui.social.StaticPlayerHelper;
 import com.saomc.saoui.social.party.PartyHelper;
 import com.saomc.saoui.themes.ThemeLoader;
-import com.saomc.saoui.themes.elements.DrawContext;
+import com.saomc.saoui.themes.elements.HudDrawContext;
 import com.saomc.saoui.themes.elements.HudPartType;
 import com.saomc.saoui.util.OptionCore;
 import com.saomc.saoui.util.PlayerStats;
@@ -62,7 +62,7 @@ public class IngameGUI extends GuiIngameForge {
     private int healthBoxes;
     private GuiOverlayDebugForge debugOverlay;
 
-    private DrawContext ctx;
+    private HudDrawContext ctx;
 
     public IngameGUI(Minecraft mc) {
         super(mc);
@@ -155,12 +155,11 @@ public class IngameGUI extends GuiIngameForge {
 
             for (int i = 0; i < slotCount; i++) {
                 int x = res.getScaledWidth() / 2 - 92 + i * 20 + 2;
-                int z = res.getScaledHeight() - 17 - 3;
-                super.renderHotbarItem(x, z, partialTicks, mc.thePlayer, mc.thePlayer.inventory.mainInventory[i]);
+                int y = res.getScaledHeight() - 17 - 3;
+                super.renderHotbarItem(x, y, partialTicks, mc.thePlayer, mc.thePlayer.inventory.mainInventory[i]);
             }
 
             if (itemstack != null) {
-                int l1 = res.getScaledHeight() - 16 - 3;
 
                 if (enumhandside == EnumHandSide.LEFT) {
                     super.renderHotbarItem(w - 91 - 27, res.getScaledHeight() - 17 - 3, partialTicks, mc.thePlayer, itemstack);
@@ -207,8 +206,6 @@ public class IngameGUI extends GuiIngameForge {
                 super.renderHotbarItem(res.getScaledWidth() - 22, slotsY + 2 + (22 * i), partialTicks, mc.thePlayer, mc.thePlayer.inventory.mainInventory[i]);
 
             if (itemstack != null) {
-                int l1 = res.getScaledHeight() - 16 - 3;
-
                 if (enumhandside == EnumHandSide.LEFT) {
                     super.renderHotbarItem(res.getScaledWidth() - 22, y + 2, partialTicks, mc.thePlayer, itemstack);
                 } else {
@@ -261,7 +258,6 @@ public class IngameGUI extends GuiIngameForge {
             final int healthBarWidth = 234;
             final int healthWidth = 216;
             final int healthHeight = OptionCore.SAO_UI.isEnabled() ? 9 : 4;
-            final int healthValue = (int) (StaticPlayerHelper.getHealth(mc, mc.thePlayer, time) / StaticPlayerHelper.getMaxHealth(mc.thePlayer) * healthWidth);
             int stepOne = (int) (healthWidth / 3.0F - 3);
             int stepTwo = (int) (healthWidth / 3.0F * 2.0F - 3);
             int stepThree = healthWidth - 3;
@@ -269,61 +265,11 @@ public class IngameGUI extends GuiIngameForge {
             GLCore.glAlphaTest(true);
             GLCore.glBlend(true);
 
-            /*GLCore.glColor(1, 1, 1, 1);
-            GLCore.glBindTexture(OptionCore.SAO_UI.isEnabled() ? StringNames.gui : StringNames.guiCustom);
-            GLCore.glTexturedRect(2, 2, zLevel, 0, 0, 16, 15);
-            GLCore.glTexturedRect(18, 2, zLevel, usernameBoxes * 5, 15, 16, 0, 5, 15);
-            GLCore.glString(fontRenderer, username, 18, 3 + (15 - fontRenderer.FONT_HEIGHT) / 2, 0xFFFFFFFF, true);
-            GLCore.glBindTexture(OptionCore.SAO_UI.isEnabled() ? StringNames.gui : StringNames.guiCustom);
-            GLCore.glColor(1, 1, 1, 1);
-            GLCore.glTexturedRect(offsetUsername, 2, zLevel, 21, 0, healthBarWidth, 15);
-            HealthStep.getStep(mc, mc.thePlayer, time).glColor();*/
-
-            if (ctx == null) this.ctx = new DrawContext(mc.thePlayer.getDisplayNameString(), mc, zLevel);
-            ctx.setHp(StaticPlayerHelper.getHealth(mc, mc.thePlayer, time) / StaticPlayerHelper.getMaxHealth(mc.thePlayer));
+            if (ctx == null) this.ctx = new HudDrawContext(mc.thePlayer, mc, itemRenderer);
+            ctx.setTime(time);
             ctx.setZ(zLevel);
 
             ThemeLoader.HUD.get(HudPartType.HEALTH_BOX).draw(ctx);
-
-            /*if (OptionCore.SAO_UI.isEnabled()) {
-                int h = healthHeight;
-                for (int i = 0; i < healthValue; i++) {
-                    GLCore.glTexturedRect(offsetUsername + 1 + i, 5, zLevel, (healthHeight - h), 15, 1, h);
-
-                    if (((i >= 105) && (i <= 110)) || (i >= healthValue - h)) {
-                        h--;
-
-                        if (h <= 0) break;
-                    }
-                }
-            } else {
-                int h = healthValue <= 12 ? 12 - healthValue : 0;
-                int o = healthHeight;
-                for (int i = 0; i < healthValue; i++) {
-                    GLCore.glTexturedRect(offsetUsername + 4 + i, 6 + (healthHeight - o), zLevel, h, 236 + (healthHeight - o), 1, o);
-                    if (healthValue < healthWidth && i >= healthValue - 3) o--;
-
-                    if (healthValue <= 12) {
-                        h++;
-                        if (h > 12) break;
-                    } else if ((i >= stepOne && i <= stepOne + 3) || (i >= stepTwo && i <= stepTwo + 3) || (i >= stepThree)) {
-                        h++;
-
-                        if (h > 12) break;
-                    }
-                }
-
-                if (healthValue >= stepTwo && healthValue < stepThree)
-                    GLCore.glTexturedRect(offsetUsername + healthValue, 6, zLevel, 11, 245, 7, 4);
-                if (healthValue >= stepOne && healthValue < stepTwo + 4)
-                    GLCore.glTexturedRect(offsetUsername + healthValue, 6, zLevel, 4, 245, 7, 4);
-                if (healthValue < stepOne + 4 && healthValue > 0) {
-                    GLCore.glTexturedRect(offsetUsername + healthValue + 2, 6, zLevel, 0, 245, 4, 4);
-                    for (int i = 0; i < healthValue - 2; i++)
-                        GLCore.glTexturedRect(offsetUsername + i + 4, 6, zLevel, 0, 245, 4, 4);
-                }
-
-            }*/
 
             mc.mcProfiler.endSection();
             post(HEALTH);

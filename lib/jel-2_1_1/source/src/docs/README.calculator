@@ -1,0 +1,59 @@
+How to run the JEL calculator.
+
+Calculator is one of the simpliest (and FIRST) JEL based programs. It
+takes the expression as it's input, evaluates it once and prints the
+result.
+
+The sample command line to invoke the calculator on Windows is
+
+   jre -cp ".;../../lib/jel.jar" Calculator "2*2"
+
+on Linux this will be
+
+   java -cp ".:../../lib/jel.jar" Calculator "2*2"
+
+Both these commans should print the answer 4 promptly in their respec-
+tive environments.
+
+You can use functions, of java.lang.Math in your expressions.
+
+Expressions to try : "2*2", "pow(sin(1),2)+pow(sin(3),2)",
+"exp(log(55))", "exp(log(55F))", or any other....
+
+Please report BUGS to metlov@fti.dn.ua.
+
+Notes :
+ 1. Some shells try to interpret parts of expressions themselves when
+they are not quoted. For example expression "2|2" can not be properly
+executed in bash without quotes. Be sure to quote expressions if Your
+shell requires it.
+
+ 2. This example does not demonstrate actual power of JEL as
+expression is evaluated only once. Then, compiling it becomes the
+waste of resources. Have this in mind, please.
+
+ 3. The same as the first note. For the simple programs (as
+Calculator) You can achieve faster performance by DISABLING the JIT
+compiler in Your VM. This is because only single expression is to be
+compiled most methods in the compiler are executed only once. Be
+informed, that the classical(not HotSpot) JIT compiles methods when
+they are actually called. There is certain overhead connected with JIT
+compilation, and if most methods are going to be executed once better
+performance can be achieved by DISABLING jit. In the long run, of
+course, JVM with JIT outperforms JVM without it.
+
+Try to compare the runtime of 
+
+   jre -cp ".;../../lib/jel.jar" Calculator "2*2"
+
+ and
+
+   jre -nojit -cp ".;../../lib/jel.jar" Calculator "2*2"
+
+to see which is faster.
+
+
+                               Copyright (C) 2016 Konstantin L. Metlov
+
+This file is licensed to you under the terms of GNU Free Documentation
+License as given in the appendix of JEL Manual.

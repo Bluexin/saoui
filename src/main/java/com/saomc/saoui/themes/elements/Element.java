@@ -19,7 +19,7 @@ public interface Element {
      *
      * @param ctx additional info about the draws
      */
-    void draw(DrawContext ctx);
+    void draw(HudDrawContext ctx);
 
     /**
      * Called during setup, used to initialize anything extra (after it has finished loading).

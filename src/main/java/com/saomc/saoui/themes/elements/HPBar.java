@@ -44,7 +44,7 @@ public class HPBar extends GLRectangle {
     }
 
     @Override
-    public void draw(DrawContext ctx) {
+    public void draw(HudDrawContext ctx) {
         ElementParent p = this.parent.get();
         if (p != null) {
 
@@ -55,9 +55,9 @@ public class HPBar extends GLRectangle {
             if (this.properties.contains(RenderingProperty.USERNAME_OFFSET_POS)) x += ctx.getUsernameWidth();
             else if (this.properties.contains(RenderingProperty.USERNAME_OFFSET_NEG)) x -= ctx.getUsernameWidth();
 
-            GLCore.glColorRGBA(this.colorSteps[HealthStep.getStep((float) ctx.getHp()).ordinal()]);
+            GLCore.glColorRGBA(this.colorSteps[HealthStep.getStep((float) ctx.getHpPct()).ordinal()]);
             GLCore.glBindTexture(this.rl);
-            GLCore.glTexturedRect(x, y, z, w * ctx.getHp(), h, srcX, srcY, srcW * ctx.getHp(), srcH);
+            GLCore.glTexturedRect(x, y, z, w * ctx.getHpPct(), h, srcX, srcY, srcW * ctx.getHpPct(), srcH);
         }
     }
 }

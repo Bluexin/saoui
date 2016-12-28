@@ -1,0 +1,1511 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>Java Expressions Library</title>
+    <meta name="generator" content="DocBook XSL Stylesheets V1.76.1"/>
+</head>
+<body>
+<div class="book" title="Java Expressions Library">
+    <div class="titlepage">
+        <div>
+            <div><h1 class="title"><a id="idp13520"></a>Java Expressions Library</h1></div>
+            <div>
+                <div class="author"><h3 class="author"><span class="honorific">Dr</span>. <span class="firstname">Konstantin</span>
+                    <span class="othername">L.</span> <span class="surname">Metlov</span></h3></div>
+            </div>
+            <div><p class="copyright">Copyright © 1998, 1999, 2000, 2001, 2003, 2006, 2007, 2009, 2015 Konstantin L.
+                Metlov &lt;metlov@fti.dn.ua&gt;</p></div>
+            <div>
+                <div class="legalnotice" title="Licensing"><a id="idp602624"></a>
+                    <p class="legalnotice-title"><strong>Licensing</strong></p>
+                    <p>Permission is granted to copy, distribute and/or modify this document under the
+                        terms of the GNU Free Documentation License, Version 1.3 or any later version
+                        published by the Free Software Foundation; with no Invariant Sections, no
+                        Front-Cover Texts, and no Back-Cover Texts. A copy of the license is included in
+                        the <a class="link" href="#fdl" title="Appendix A. GNU Free Documentation License">Appendix</a>.
+                    </p></div>
+            </div>
+        </div>
+        <hr/>
+    </div>
+    <div class="toc"><p><strong>Table of Contents</strong></p>
+        <dl>
+            <dt><span class="chapter"><a href="#idp1502360">1. About this manual</a></span></dt>
+            <dt><span class="chapter"><a href="#idp1956288">2. JEL design goals</a></span></dt>
+            <dt><span class="chapter"><a href="#idp2423168">3. Features</a></span></dt>
+            <dt><span class="chapter"><a href="#idp54784">4. How to use JEL.</a></span></dt>
+            <dt><span class="chapter"><a href="#idp29672">5. Using libraries</a></span></dt>
+            <dd>
+                <dl>
+                    <dt><span class="section"><a href="#idp396832">Exporting static methods of classes to JEL
+  namespace.</a></span></dt>
+                    <dt><span class="section"><a href="#idp2977336">Exporting virtual methods of classes to JEL namespace.</a></span>
+                    </dt>
+                    <dt><span class="section"><a href="#idp2997144">Variable number of arguments support.</a></span>
+                    </dt>
+                    <dt><span class="section"><a href="#idp2999944">Enabling the dot operator on objects.</a></span>
+                    </dt>
+                    <dt><span class="section"><a href="#idp3002712">Dynamic variables interface.</a></span></dt>
+                    <dt><span class="section"><a href="#idp3023368">Objects down-casting.</a></span></dt>
+                </dl>
+            </dd>
+            <dt><span class="chapter"><a href="#idp3027152">6. Automatic unwrapping of objects to primitive
+  types.</a></span></dt>
+            <dt><span class="chapter"><a href="#idp3036592">7. Error detection and reporting</a></span></dt>
+            <dt><span class="chapter"><a href="#idp3042600">8. Making things faster</a></span></dt>
+            <dt><span class="chapter"><a href="#idp3050776">9. Serialization of compiled expressions</a></span></dt>
+            <dt><span class="chapter"><a href="#idp3054600">10. Limitations of JEL</a></span></dt>
+            <dt><span class="chapter"><a href="#idp3056784">11. Summarizing remarks</a></span></dt>
+            <dt><span class="appendix"><a href="#fdl">A. GNU Free Documentation License</a></span></dt>
+        </dl>
+    </div>
+    <div class="chapter" title="Chapter 1. About this manual">
+        <div class="titlepage">
+            <div>
+                <div><h2 class="title"><a id="idp1502360"></a>Chapter 1. About this manual</h2></div>
+            </div>
+        </div>
+        <p>This manual is mostly examples-based. It starts with two
+            simple step-by-step examples (showing how to deal with static and
+            dynamic libraries), which should give enough information for basic
+            JEL usage (but don't forget to read the rest of this manual to learn
+            how to get the top performance from JEL). Additional information
+            can be found in <a class="ulink" href="api/index.html" target="_top">API
+                documentation</a>.</p></div>
+    <div class="chapter" title="Chapter 2. JEL design goals">
+        <div class="titlepage">
+            <div>
+                <div><h2 class="title"><a id="idp1956288"></a>Chapter 2. JEL design goals</h2></div>
+            </div>
+        </div>
+        <p>The main design goal was to create light weight expression compiler
+            generating extremely fast code. The main emphasis is the code
+            execution time and not the compilation time (it is nevertheless
+            small). The other goal was to make JEL language to be very close to
+            Java language with direct access to all built-in Java data types and
+            functions.</p></div>
+    <div class="chapter" title="Chapter 3. Features">
+        <div class="titlepage">
+            <div>
+                <div><h2 class="title"><a id="idp2423168"></a>Chapter 3. Features</h2></div>
+            </div>
+        </div>
+        <div class="itemizedlist">
+            <ul class="itemizedlist" type="disc">
+                <li class="listitem"><p>Support for all Java data types (boolean, byte,
+                    char, short, long, int, float, double, arrays,
+                    references)</p></li>
+                <li class="listitem"><p>Octal (0456) and hexadecimal (0x1FFF)
+                    literals.</p></li>
+                <li class="listitem"><p>Support for all Java arithmetic operators: +
+                    (add),- (subtract), * (multiply), / (divide), % (remainder), &amp;
+                    (bitwise and),| (bitwise or), ^ (bitwise xor),~ (bitwise
+                    complement), &lt;&lt; (left shift), &gt;&gt; (right signed shift),
+                    &gt;&gt;&gt; (right unsigned shift); on most of supported data
+                    types according to Java Language Specification
+                    (JLS)</p></li>
+                <li class="listitem"><p>Comparison operators (==,!=,&lt;,&gt;=,&gt;,&lt;=)
+                    as defined by Java Language Specification (JLS).</p></li>
+                <li class="listitem"><p>dot (".") operator on objects
+                    ("abc".length()==3).</p></li>
+                <li class="listitem"><p>dot (".") operator on objects
+                    ("abc".length()==3).</p></li>
+                <li class="listitem"><p>Boolean logical operators (&amp;&amp;,||,!) with
+                    lazy evaluation (i.e. in the expression
+                    false&amp;&amp;complexBooleanFunction() the function is never
+                    called).</p></li>
+                <li class="listitem"><p>Conditionals (true?2:3 = 2)</p></li>
+                <li class="listitem"><p>Direct access to methods and fields of Java
+                    objects.</p></li>
+                <li class="listitem"><p>Method overloading according to
+                    Java Language Specification.</p></li>
+                <li class="listitem"><p>Support for methods with variable number of
+                    arguments (varargs), which is enabled for all methods,
+                    accepting array as their last argument.</p></li>
+                <li class="listitem"><p>Dynamic variables interface allowing to add
+                    variables to JEL namespace without supplying the class file
+                    defining them.</p></li>
+                <li class="listitem"><p>Automatic unwrapping of designated objects to Java
+                    primitive types.</p></li>
+                <li class="listitem"><p>Support for strings. Objects of class
+                    java.lang.String can be directly entered into expressions using
+                    double quotes, also the standard Java escape codes are
+                    parsed. Example : "a string\n\015".</p></li>
+                <li class="listitem"><p>String concatenation ("a"+2+(2&gt;3)+object
+                    = "a2false"+object.toString()).</p></li>
+                <li class="listitem"><p>User definable string comparison using usual
+                    relational operators "&lt;", "&lt;=", "&gt;",
+                    "&gt;=", "==", "!=", which uses
+                    locale by default.</p></li>
+                <li class="listitem"><p>User-controllable object down-casting using
+                    "(class.name)var" syntax. It is possible to assign names
+                    to classes in JEL expressions to be different from their real Java
+                    class names.</p></li>
+                <li class="listitem"><p>Constants folding, extended (by default, but can
+                    be controlled) to static methods (which are automatically called
+                    at compile time) and static fields (which are considered
+                    constants).</p></li>
+                <li class="listitem"><p>High performance of generated code.</p></li>
+            </ul>
+        </div>
+    </div>
+    <div class="chapter" title="Chapter 4. How to use JEL.">
+        <div class="titlepage">
+            <div>
+                <div><h2 class="title"><a id="idp54784"></a>Chapter 4. How to use JEL.</h2></div>
+            </div>
+        </div>
+        <p>In this section a simple example of a program using JEL is
+            given, and explained with references to more detailed sections of
+            this manual. The example program evaluates the expression given on
+            its command line (similar program exists in the distribution under
+            the name <code class="filename">./samples/Calculator.java</code>), let's
+            follow it step by step.</p>
+        <pre class="programlisting">
+    public static void main(String[] args) {
+    
+    // Assemble the expression
+    StringBuffer expr_sb=new StringBuffer();
+    for(int i=0;i&lt;args.length;i++) {
+      expr_sb.append(args[i]);
+      expr_sb.append(' ');
+      };
+    String expr=expr_sb.toString();
+  </pre>
+        <p>This first part of the program is not related to JEL. It's
+            purpose is to assemble the expression, possibly, containing spaces
+            into the single line. This has to be done, because shells tend to
+            tokenize parameters but we don't need it here.
+        </p>
+        <pre class="programlisting">    // Set up the library
+    Class[] staticLib=new Class[1];
+    try {
+      staticLib[0]=Class.forName("java.lang.Math");
+    } catch(ClassNotFoundException e) {
+      // Can't be ;)) ...... in java ... ;)
+    };
+    Library lib=new Library(staticLib,null,null,null,null);
+    try {
+    lib.markStateDependent("random",null);
+    } catch (NoSuchMethodException e) {
+      // Can't be also
+    };
+  </pre>
+        <p>
+            This piece of code establishes the namespace for use in JEL compiled
+            expressions. The <code class="classname">gnu.jel.Library</code> object
+            maintains this namespace.</p>
+        <p>There can be two types of names in the Library :
+            <span class="emphasis"><em>static</em></span> and
+            <span class="emphasis"><em>virtual</em></span> (dynamic).</p>
+        <p>Methods and variables of the first class are assumed (by
+            default) to be dependent only on their arguments i.e. not to save
+            any information from call to call (they are
+            "stateless")... Examples are mathematical functions like
+            <code class="function">sin</code>, <code class="function">cos</code>,
+            <code class="function">log</code>, constants <code class="constant">E</code>,
+            <code class="constant">PI</code> in <code class="constant">java.lang.Math</code>. For
+            such methods (fields) it does not matter how many times (when) they
+            will be called (their value will be taken) the result will always be
+            the same provided arguments (if they are present) are the
+            same. Stateless methods will be evaluated by JEL at compile time if
+            their arguments are constants (known at compile time). To define set
+            of static functions(fields) it is needed to pass the array of Class
+            objects, defining those functions, as the first parameter of the
+            library constructor (see example above). Note ONLY STATIC functions
+            of the Classes, passed in the first argument of the
+            <code class="classname">gnu.jel.Library</code> constructor will be defined
+            in the namespace. By default all static functions are considered
+            "stateless" by JEL.</p>
+        <p>However, some static functions still save their state (in
+            static variables) in between calls. Thus they return different
+            results, depending on when (how many times) they are is called even
+            if their arguments are the same. If such function is evaluated at
+            compile time, we have troubles, because it will be evaluated only
+            once during expression lifetime and it's state dependence will be
+            lost. Typical example of the static function, having a state is
+            <code class="function">java.lang.Math.random</code>. JEL has special
+            mechanism, provided by <code class="classname">gnu.jel.Library</code> class
+            to mark static functions as state dependent. (see the above example
+            to find out how it was done for the
+            <code class="function">java.lang.Math.random</code>)</p>
+        <p>The virtual functions, which are
+            <span class="emphasis"><em>explicitly</em></span> state dependent, will be discussed
+            later in this document. The example we currently consider does not
+            use them. However, virtual functions are, actually, most important
+            to JEL because expression, containing all stateless functions, is a
+            constant, it will be completely evaluated at compile time, there is
+            absolutely no sense to evaluate such expression repeatedly (this is
+            what JEL was designed for). Still we shall continue with this simple
+            example as the following code is mostly independent of whether we
+            use virtual functions or not...</p>
+        <pre class="programlisting">    // Compile
+    CompiledExpression expr_c=null;
+    try {
+      expr_c=Evaluator.compile(expr,lib);
+    } catch (CompilationException ce) {
+      System.err.print("–––COMPILATION ERROR :");
+      System.err.println(ce.getMessage());
+      System.err.print("                       ");
+      System.err.println(expr);
+      int column=ce.getColumn(); // Column, where error was found
+      for(int i=0;i&lt;column+23-1;i++) System.err.print(' ');
+      System.err.println('^');
+    };</pre>
+        <p>
+
+            This chunk of code is for the expression compilation. The crucial
+            line is the call to <code class="function">Evaluator.compile</code>, it is the
+            point, where expression gets transformed into Java bytecode,
+            loaded into the Java Virtual Machine using JEL ClassLoader and
+            returned to caller as an instance of the subclass of
+            <code class="classname">gnu.jel.CompiledExpression</code>.
+            Typical user of JEL is not
+            required to know what magic is going on inside of
+            <code class="function">Evaluator.compile(...)</code>.
+            Other code in this chunk is for
+            the error reporting and will be discussed in the specialized
+            section <a class="link" href="#ERRORS">Error detection and reporting</a> below.
+        </p>
+        <pre class="programlisting">
+      if (expr_c !=null) {
+      
+      // Evaluate (Can do it now any number of times FAST !!!)
+      Number result=null;
+      try {
+	result=(Number)expr_c.evaluate(null);
+      } catch (Throwable e) {
+	System.err.println("Exception emerged from JEL compiled"+
+			   " code (IT'S OK) :");
+	System.err.print(e);
+      };
+  </pre>
+        <p>
+            This code does the evaluation of the expression. It is done by
+            calling the <code class="function">evaluate</code> method of the JEL
+            compiled class, it is defined abstract in
+            <code class="classname">gnu.jel.CompiledExpression</code> but is
+            redefined in the class compiled by JEL. The argument of this method
+            is discussed in the section on virtual functions below. If only
+            static functions are present in the library it is safe to pass the
+            <code class="constant">null</code> pointer as the argument to
+            <code class="function">evaluate</code>.
+        </p>
+        <p>Result of the <code class="function">evaluate</code> method is always
+            an object. JEL converts primitive numeric types into instances of
+            corresponding Java reflection classes (read the section
+            <a class="link" href="#FASTER">Making things faster</a> to find out how to avoid
+            this conversion). For example, a value of primitive type
+            <span class="type">long</span> will be returned as an instance of
+            <code class="classname">java.lang.Long</code> class (<span class="type">int</span> maps to
+            <code class="classname">java.lang.Integer</code>, <span class="type">float</span> to
+            <code class="classname">java.lang.Float</code>, etc.). If result is an arbitrary Java
+            object it is returned as the reference to that object.</p>
+        <p>The </p>
+        <pre class="programlisting">try ... catch</pre>
+        <p> clause
+            around the call to <code class="function">evaluate</code> will be enforced by the Java
+            compiler. It is required as errors can appear during evaluation. The
+            general rule is: <span class="emphasis"><em>syntax, types incompatibility and function
+  resolution errors will be reported at compile time (as thrown
+  instance of <code class="classname">gnu.jel.CompilationException</code>),
+  while the errors in the
+  values of numbers will be reported at the execution
+  time</em></span>. For example expression "1/0" will generate no error
+            at compile time (nevertheless it is the constant expression and its
+            evaluation is attempted), but at the time of calling
+            <code class="function">execute</code>
+            you will get a <code class="classname">java.lang.ArithmeticError</code> (division
+            by zero) as it should be.</p>
+        <pre class="programlisting">      // Print result
+      if (result==null) 
+	System.out.println("void");
+      else
+	System.out.println(result.toString());
+   };
+};</pre>
+        <p>
+            This last piece of code will print the result. And is concluding our
+            brief tour of the JEL usage.</p></div>
+    <div class="chapter" title="Chapter 5. Using libraries">
+        <div class="titlepage">
+            <div>
+                <div><h2 class="title"><a id="idp29672"></a>Chapter 5. Using libraries</h2></div>
+            </div>
+        </div>
+        <div class="toc"><p><strong>Table of Contents</strong></p>
+            <dl>
+                <dt><span class="section"><a href="#idp396832">Exporting static methods of classes to JEL
+  namespace.</a></span></dt>
+                <dt><span class="section"><a
+                        href="#idp2977336">Exporting virtual methods of classes to JEL namespace.</a></span></dt>
+                <dt><span class="section"><a href="#idp2997144">Variable number of arguments support.</a></span></dt>
+                <dt><span class="section"><a href="#idp2999944">Enabling the dot operator on objects.</a></span></dt>
+                <dt><span class="section"><a href="#idp3002712">Dynamic variables interface.</a></span></dt>
+                <dt><span class="section"><a href="#idp3023368">Objects down-casting.</a></span></dt>
+            </dl>
+        </div>
+        <p>The namespace of JEL expressions is represented by
+            <code class="classname">gnu.jel.Library</code> class. Its constructor:
+        </p>
+        <pre class="programlisting">Library(Class[] staticLib, Class[] dynamicLib,
+Class[] dotClasses, DVMap  resolver,
+Hashtable cnmap)</pre>
+        <p>has five arguments. Their purposes are
+            following:</p>
+        <div class="variablelist">
+            <dl>
+                <dt><span class="term">staticLib</span></dt>
+                <dd><p>enumerates classes whose <span class="emphasis"><em>static</em></span>
+                    methods are exported to JEL namespace and become usable from within
+                    expressions. Such methods do not require <code class="varname">this</code> pointer
+                    supplied to them at execution time.
+                    <a class="link" href="#STATICLIB">More details</a></p></dd>
+                <dt><span class="term">dynamicLib</span></dt>
+                <dd><p>enumerates classes whose <span class="emphasis"><em>virtual</em></span> methods
+                    are exported. These methods require the references to the
+                    corresponding classes (<code class="varname">this</code> pointers) supplied to the
+                    expression at run-time. This is done using the <span class="type">Class[]</span>&gt;
+                    argument of <code class="classname">CompiledExpression</code>'s
+                    <code class="function">evaluate</code> method.
+                    <a class="link" href="#VIRTUALLIB">More details</a></p></dd>
+                <dt><span class="term">dotClasses</span></dt>
+                <dd><p>controls access for the dot (".")
+                    operator on classes.
+                    <a class="link" href="#DOTOPER">More details</a></p></dd>
+                <dt><span class="term">resolver</span></dt>
+                <dd><p>Dynamic variables interface. Allows to add new
+                    variables to the expressions names without supplying the class files
+                    defining them.
+                    <a class="link" href="#DYNVARS">More details</a></p></dd>
+                <dt><span class="term">cnmap</span></dt>
+                <dd><p>Maps the class names usable inside JEL expressions for
+                    non-primitive type casts into the Java classes
+                    <a class="link" href="#OBJCASTS">More details</a></p></dd>
+            </dl>
+        </div>
+        <p>The details on usage of each of these arguments are given in a
+            separate sections below.</p>
+        <p>The working example using all current functionality of JEL
+            namespace is given in the
+            <code class="filename">examples/YourTestBed</code> directory in
+            the distribution. You'll want to check it after reading this section.</p>
+        <div class="section" title="Exporting static methods of classes to JEL namespace.">
+            <div class="titlepage">
+                <div>
+                    <div><h2 class="title" style="clear: both"><a id="idp396832"></a>Exporting static methods of classes
+                        to JEL
+                        namespace.</h2></div>
+                </div>
+            </div>
+            <p>The array of references to classes
+                (<code class="classname">java.lang.Class</code>) whose public
+                <span class="emphasis"><em>static</em></span> methods and fields are to be exported should
+                be passed as the first argument of the library constructor
+                (<em class="parameter"><code>staticLib</code></em>). The public static fields and
+                methods of all these classes are merged together into the JEL namespace. The
+                non-public or non-static members of <em class="parameter"><code>staticLib</code></em> classes
+                are ignored.</p>
+            <p>Methods overloading is supported and works also across classes
+                (because the JEL namespace works similarly to the namespace defined
+                in a single Java class). For example, if a class <code class="classname">C1</code>
+                contains the method <code class="function">public static C1.func(int)</code>
+                and a class <code class="classname">C2</code> contains the method
+                <code class="function">public static C2.func(double)</code> and both these
+                classes are passed as elements of the <em class="parameter"><code>staticLib</code></em>
+                array. Then, the JEL expression <strong class="userinput"><code>"func(1)"</code></strong> calls
+                <code class="function">C1.func(int)</code> and the expression
+                <strong class="userinput"><code>"func(1.0)"</code></strong> calls
+                <code class="function">C2.func(double)</code>. It also means
+                that methods and fields of all classes supplied to the
+                <code class="classname">Library</code> are subject to the same constraints
+                as members of a single Java class.</p>
+            <p>Moreover, because JEL allows to call methods with no arguments
+                omitting the empty brackets (that is <strong class="userinput"><code>"func()"</code></strong>
+                and <strong class="userinput"><code>"func"</code></strong> are equivalent) there should be no
+                fields and methods with no arguments having the same names in all
+                classes presented to the <code class="classname">Library</code> constructor.</p>
+            <p>To check whether the set of classes you gave to the library
+                constructor satisfies all required constraints run your program
+                against the debug version of JEL library
+                (<code class="filename">jel_g.jar</code>). Then, potential problems will be
+                reported to you on the standard output.</p></div>
+        <div class="section" title="Exporting virtual methods of classes to JEL namespace.">
+            <div class="titlepage">
+                <div>
+                    <div><h2 class="title" style="clear: both"><a id="idp2977336"></a>Exporting virtual methods of
+                        classes to JEL namespace.</h2></div>
+                </div>
+            </div>
+            <p>The second argument of the library constructor
+                (<em class="parameter"><code>dynamicLib</code></em>) works similarly to the first one.
+                Except that only public <span class="emphasis"><em>virtual</em></span> members are taken from
+                the listed classes. These members are merged into the namespace created from
+                classes from the <em class="parameter"><code>staticLib</code></em>. The rules for methods
+                overloading are the same as for classes listed in the first argument of library
+                constructor. Also, the overloading is working across the classes
+                listed in both first and second arguments of the Library constructor.</p>
+            <p>The crucial difference in the handling of classes listed in the
+                <em class="parameter"><code>dynamicLib</code></em> and the <em class="parameter"><code>staticLib</code></em>
+                comes from the fact that virtual members of <em class="parameter"><code>dynamicLib</code></em>
+                require <code class="varname">this</code> reference to the instance of the object of
+                their defining class be supplied at run-time. Thus, if
+                <code class="classname">C1</code> contains the virtual method
+                <code class="function">public func(double x)</code> its invocation actually requires
+                <span class="emphasis"><em>two</em></span> arguments, one is <em class="parameter"><code>x</code></em>
+                and the
+                other is the reference to the instance of class
+                <code class="classname">C1</code>.</p>
+            <p>References to the instances of classes of the
+                <em class="parameter"><code>dynamicLib</code></em> array are supplied at the
+                execution time to the argument of the
+                <code class="function">evaluate(Object[] context)</code> method of
+                <code class="classname">gnu.jel.CompiledExpression</code>.
+                The elements of the <em class="parameter"><code>context</code></em> array
+                should be instances of classes listed in <em class="parameter"><code>dynamicLib</code></em>
+                array at compile time and there should be one-to-one correspondence between
+                them. For example, if
+            </p>
+            <pre class="programlisting">dynamicLib[0]=com.mycompany.MyClass.class)</pre>
+            <p>,
+                the corresponding
+                entry in the context array, <em class="parameter"><code>context[0]</code></em>,
+                must be a reference to
+                the <span class="emphasis"><em>instance</em></span> of
+                <code class="classname">com.mycompany.MyClass</code>.</p>
+            <p>Formally, for every <code class="varname">i</code>, it should be possible to cast
+                the object in the <em class="parameter"><code>context[i]</code></em>
+                into the class, supplied in the <em class="parameter"><code>dynamicLib[i]</code></em> array
+                of the <code class="classname">Library</code> constructor,
+                otherwise <code class="classname">ClassCastException</code> will be thrown from
+                <code class="function">evaluate</code>.</p>
+            <p>Let's walk through the example, which calculates function of the
+                single variable many times and uses virtual method calls. This example
+                will consist of two classes : a user written class (providing access
+                to the variable) and the main class compiling and evaluating
+                expressions. First start with the variable
+                provider:</p>
+            <pre class="programlisting">public class VariableProvider {
+  public double xvar;
+  
+  public double x() {return xvar;};
+};</pre>
+            <p>
+                This class is trivial, it just defines the function, returning the
+                value of the variable <code class="varname">x</code>.</p>
+            <p>In the main class (see the first JEL example for headers) the code,
+                constructing the library will be replaced
+                with:</p>
+            <pre class="programlisting">    // Set up library
+    Class[] staticLib=new Class[1];
+    try {
+      staticLib[0]=Class.forName("java.lang.Math");
+    } catch(ClassNotFoundException e) {
+      // Can't be ;)) ...... in java ... ;)
+    };
+
+    Class[] dynamicLib=new Class[1];
+    VariableProvider variables=new VariableProvider();
+    Object[] context=new Object[1];
+    context[0]=variables;
+    dynamicLib[0]=variables.getClass();
+    
+    Library lib=new Library(staticLib,dynamicLib,null,null,null);
+    try {
+    lib.markStateDependent("random",null);
+    } catch (NoSuchMethodException e) {
+      // Can't be also
+    };</pre>
+            <p>Absent in the static example, the additional code
+                creates the <code class="classname">VariableProvider</code> and assigns its
+                reference to an element of <em class="parameter"><code>context</code></em> array (to be
+                passed to the <code class="function">evaluate</code> method
+                of the compiled expression). Also, now the
+                <em class="parameter"><code>dynamicLib</code></em> array as not null and contains
+                the reference to the <code class="classname">VariableProvider</code> class.</p>
+            <p>The code for compilation is exactly the same as in the example for
+                static functions, except we have additional function <code class="varname">x</code>
+                and the variable <code class="varname">xvar</code> defined for use inside the
+                compiled expressions. JEL has the special notation for the functions,
+                having no arguments, namely, brackets in <strong class="userinput"><code>"x()"</code></strong>
+                can be omitted to be "x". This allows to compile now ( with the above
+                defined library) the expressions like <strong class="userinput"><code>"sin(x)"</code></strong>,
+                <strong class="userinput"><code>"exp(x*x)"</code></strong>,
+                <strong class="userinput"><code>"pow(sin(x),2)+pow(cos(x),2)"</code></strong>...</p>
+            <p>The code for evaluation of an expression having virtual
+                functions is replaced with:
+            </p>
+            <pre class="programlisting">
+      if (expr_c !=null) {
+    
+        try {
+           for(int i=0;i&lt;100;i++) {
+              variables.xvar=i;      // &lt;- Value of the variable
+              System.out.println(expr_c.evaluate(context));
+                               //^^^^^^^^^^^^^^^ evaluating 100 times
+           };
+        } catch (Throwable e) {
+	   System.err.println("Exception emerged from JEL compiled"+
+		              " code (IT'S OK) :");
+           System.err.print(e);
+        };
+    };</pre>
+            <p>
+                Note the two major differences: 1. we have explicitly
+                assigned the value to the variable; 2. the array of object references
+                (consisting of one element in this example) is passed to the
+                <code class="function">evaluate</code> method. This piece of code will evaluate
+                expressions for <code class="varname">x=0..99</code> with
+                step <code class="constant">1</code>.</p>
+            <p>This concludes our dynamic library example. Try to modify the
+                <code class="filename">./Calculator.java</code> sample yourself to allow
+                compilation of virtual functions as described above.</p></div>
+        <div class="section" title="Variable number of arguments support.">
+            <div class="titlepage">
+                <div>
+                    <div><h2 class="title" style="clear: both"><a id="idp2997144"></a>Variable number of arguments
+                        support.</h2></div>
+                </div>
+            </div>
+            <p>Since the version 2.0.3 JEL supports calling methods with
+                variable number of arguments. Moreover, because the information
+                about the variable arguments declaration is not available via
+                Java reflection, this support extends to all methods, having the
+                array last argument. For example, if two following functions are
+                declared in the library classes (static or dynamic)
+            </p>
+            <pre class="programlisting">
+       public int sum (int[] args);
+       public double powersum(double power, double[] args);</pre>
+            <p>
+
+                it is possible to use them in the expressions as
+                <strong class="userinput"><code>"sum(1)"</code></strong>,
+                <strong class="userinput"><code>"sum(1,2)"</code></strong>,
+                <strong class="userinput"><code>"powersum(2,1,2,3)"</code></strong>, etc... The argument
+                array will be created automatically by the compiler in these
+                cases. The methods with variable number of arguments are subject
+                to the same method overloading rules, automatic argument type
+                conversions and constants folding as other methods.
+            </p></div>
+        <div class="section" title="Enabling the dot operator on objects.">
+            <div class="titlepage">
+                <div>
+                    <div><h2 class="title" style="clear: both"><a id="idp2999944"></a>Enabling the dot operator on
+                        objects.</h2></div>
+                </div>
+            </div>
+            <p>The third argument of <code class="classname">gnu.jel.Library</code>
+                constructor enumerates classes which are available for dot operator
+                within the expression. If this parameter is <code class="constant">null</code>
+                JEL would not allow to use the dot operator at all. If it is an array
+                of the length zero (e.g. <code class="constant">new Class[0]</code>)
+                JEL will open access to public methods
+                of <span class="emphasis"><em>ALL</em></span> objects encountered in the expression. From the
+                security point of view allowing access to all objects can be
+                dangerous, that is why there is a third case of non-zero length
+                array explicitly enumerating classes allowing the dot operator on
+                them.</p>
+            <p>Once the dot operator is allowed on a class, it is possible to call
+                all its public methods using the syntax
+                <strong class="userinput"><code>".method(arg1,arg2,...)"</code></strong> in any context
+                where this class appears in an expression.</p></div>
+        <div class="section" title="Dynamic variables interface.">
+            <div class="titlepage">
+                <div>
+                    <div><h2 class="title" style="clear: both"><a id="idp3002712"></a>Dynamic variables interface.</h2>
+                    </div>
+                </div>
+            </div>
+            <p>All methods of exporting names into JEL namespace described up to
+                this point relied on the Java class files for actual description of
+                methods names and parameters. However, sometimes it is required to add
+                a new variable to JEL namespace at run-time.</p>
+            <p>One of the solutions would be to generate a new class file (e.g. using
+                JEL) and supply it as a first or second argument of the library
+                constructor. Unfortunately this can be quite cumbersome and time
+                consuming.</p>
+            <p>The other solution can be to define a family of methods in JEL
+                namespace </p>
+            <pre class="programlisting">YYY getXXXProperty(String name)</pre>
+            <p>for
+                each possible variable types, where <code class="classname">YYY</code> is the class
+                representing the property type and <code class="classname">XXX</code> is the name
+                of the type. Then, supposing we have methods
+            </p>
+            <pre class="programlisting">  double getDoubleProperty(String name); // YYY=double XXX=Double
+  String getStringProperty(String name); // YYY=java.lang.String XXX=String</pre>
+            <p>in the JEL namespace (either static or dynamic),
+                the variables with arbitrary names can be entered into expression
+                using the syntax</p>
+            <pre class="programlisting">getStringProperty("x") +
+  (getDoubleProperty("y")+1.0)</pre>
+            <p>This way has two drawbacks: 1) user has to remember the type of the
+                variable (to call the appropriate <code class="function">getXXX()</code> method);
+                2) a lot to type.</p>
+            <p>Since the version 0.9.3 JEL provides the way to solve both
+                these problems. To do that the fourth argument
+                (<em class="parameter"><code>resolver</code></em>) of the library constructor is
+                used. This argument supplies the reference to the subclass of
+                <code class="classname">gnu.jel.DVMap</code>, and is used by JEL to resolve
+                the dynamic variable names. The <code class="classname">gnu.jel.DVMap</code>
+                has an abstract method
+            </p>
+            <pre class="programlisting">public String getTypeName(String  name)</pre>
+            <p>
+                which returns XXX (see above) for a given variable name, or null if no
+                such variable is defined. Note that for resolver to work the family of
+                methods
+            </p>
+            <pre class="programlisting">YYY getXXXProperty(String name)</pre>
+            <p>
+                must still be present in JEL namespace (e.g. as members of one of
+                <em class="parameter"><code>dynamicLib[]</code></em> classes).</p>
+            <p>Then, supposing</p>
+            <pre class="programlisting">resolver.getTypeName("x")=="String" &amp;&amp;
+resolver.getTypeName("y")=="Double"</pre>
+            <p>
+                the expression <strong class="userinput"><code>"x+(y+1.0)"</code></strong> will be automatically
+                converted by JEL into
+            </p>
+            <pre class="programlisting">getStringProperty("x")+(getDoubleProperty("y")+1.0)</pre>
+            <p>
+                and compiled. Thus, user does not have to remember the variable types,
+                typing is reduced and the existence of variables can be checked at the
+                compile time.</p>
+            <p>JEL also supports a hierarchical structure of variables. This means
+                the dot (".") symbol can be present in the dynamic variable
+                names. For example if
+            </p>
+            <pre class="programlisting">resolver.getTypeName("x")!=null &amp;&amp;
+resolver.getTypeName("x.f1")=="String" &amp;&amp; 
+resolver.getTypeName("x.f2")=="Double"</pre>
+            <p>
+                the expression <strong class="userinput"><code>"x.f1+(x.f2+1.0)"</code></strong> will
+                be compiled by JEL as
+            </p>
+            <pre class="programlisting">getStringProperty("x.f1")+(getDoubleProperty("x.f2")+1.0)</pre>
+            <p>
+                and (combined with dot operator) the expression
+                <strong class="userinput"><code>"x.f1.length()"</code></strong> will result in the length
+                of the string <code class="function">getString("x1.f1")</code>.</p>
+            <p>Notice in the last example that if one wants to have defined
+                the dynamic variable <strong class="userinput"><code>"x.y"</code></strong> the variable
+                <strong class="userinput"><code>"x"</code></strong> must
+                also be the dynamic variable
+                (<code class="constant">resolver.getTypeName("x")!=null</code>).</p>
+            <p>If there is conflict between the dynamic variable name and other
+                name in JEL namespace the dynamic variable has a priority.</p>
+            <p>Since JEL 0.9.9 it is possible to translate the names of dynamic
+                variables from strings into the constants of Java primitive
+                types. This is done using non-identity <code class="function">DVMap.translate</code>
+                method. The translation helps to improve performance in some cases.</p>
+            <p>Consider the following example. Suppose the underlying storage for
+                dynamic variables is an array (or <code class="classname">Vector</code>), so that
+                the value of the variable can be obtained by an integer index into that
+                array (like numbered columns in a spreadsheet). Next, assume you still
+                want to refer to the variables by names (e.g. you allowed user to assign
+                names to the columns). Now, if the first column is named
+                <strong class="userinput"><code>"x"</code></strong> and
+                is of Double type, an expression <strong class="userinput"><code>"x"</code></strong>,
+                using dynamic variables interface with identity translation will be
+                compiled into <strong class="userinput"><code>getDoubleProperty("x")</code></strong>.
+                It means the translation of
+                the string <strong class="userinput"><code>"x"</code></strong> into the column number
+                <code class="constant">1</code> will have to be
+                performed at run-time each time the expression is
+                evaluated. Considering that Java strings are immutable, this may incur
+                a substantial performance penalty.</p>
+            <p>The performance can be improved if the <code class="function">translate</code>
+                method of <code class="classname">DVMap</code> is overridden by the following:
+            </p>
+            <pre class="programlisting">public Object translate(String name) {
+   if (name.equals("x")) return new Integer(1);
+   return name;
+   };</pre>
+            <p>
+                This is already a non-identity translation. With such
+                <code class="classname">DVMap</code> the expression "x" will be
+                compiled by JEL into <strong class="userinput"><code>getDoubleProperty(1)</code></strong>,
+                note that it is
+                <code class="function">getDoubleProperty(int)</code> method, which is called.
+                This way the mapping of the variable name into the variable index is
+                performed at compile-time, while at run-time the index is readily available.
+                By defining the appropriate translations the dynamic variable lookup can
+                be split in a user-controlled way between the expression compilation
+                and execution stages to achieve the best performance.</p>
+            <p>The <code class="function">translate</code> method is allowed to return
+                only instances of Java reflection classes wrapping the primitive types
+                (<code class="classname">java.lang.Integer</code>,
+                <code class="classname">java.lang.Double</code>, etc), or
+                strings (otherwise an exception will emerge at compile-time). This is
+                because only these types of objects can be stored in the Java class
+                files directly. Also, it is responsibility of the caller to ensure
+                that JEL namespace contains <code class="function">getXXXProperty</code> methods
+                with all the necessary argument types, corresponding to the translations
+                defined in <code class="classname">DVMap</code>. For identity translations only
+                <code class="function">getXXXProperty</code> methods accepting strings are
+                necessary.</p></div>
+        <div class="section" title="Objects down-casting.">
+            <div class="titlepage">
+                <div>
+                    <div><h2 class="title" style="clear: both"><a id="idp3023368"></a>Objects down-casting.</h2></div>
+                </div>
+            </div>
+            <p>The <em class="parameter"><code>cnmap</code></em> argument of
+                <code class="classname">gnu.jel.Library</code> constructor,
+                allows to enable the non-primitive type casts in JEL compiled
+                expressions. If <code class="constant">cnmap!=null</code> it must be
+                <code class="classname">java.util.Hashtable</code> with
+                <code class="classname">java.lang.Class</code> objects as
+                elements and <code class="classname">java.lang.String</code> objects as keys.
+                When the object cast
+                <strong class="userinput"><code>"(non_primitive_type_name) var"</code></strong> is
+                encountered in the expression, "the non_primitive_type_name"
+                string is looked in the <em class="parameter"><code>cnmap</code></em> hashtable and the
+                cast to the corresponding class is generated by JEL. The absence of the
+                name in the hashtable produces the compile-time error. It is possible for
+                keys in <em class="parameter"><code>cnmap</code></em> to contain "." (dot) symbols
+                in them.</p></div>
+    </div>
+    <div class="chapter" title="Chapter 6. Automatic unwrapping of objects to primitive types.">
+        <div class="titlepage">
+            <div>
+                <div><h2 class="title"><a id="idp3027152"></a>Chapter 6. Automatic unwrapping of objects to primitive
+                    types.</h2></div>
+            </div>
+        </div>
+        <p>This problem appears mostly when one uses dynamic variables, but may
+            also arise in other cases. Suppose a reference to the object of the
+            class <code class="classname">Weight</code> (representing a weight of a certain item)
+            appeared in the expression. It is clear that
+            <code class="classname">Weight</code> is always represented by a floating point
+            number (although it may have other properties, like units). If the
+            class <code class="classname">Weight</code> has the method
+        </p>
+        <pre class="programlisting">public double getValue()</pre>
+        <p>
+            the value of weight can be accessed in expressions using syntax
+            <code class="constant">w.getValue()</code>, supposing the variable
+            <code class="varname">w</code> has type <code class="classname">Weight</code>.</p>
+        <p>To save typing (since version 0.9.3 of JEL) one may have the class
+            <code class="classname">Weight</code> implement
+            <code class="classname">gnu.jel.reflect.Double</code> interface. Then,
+            the aforementioned getValue method will be called automatically by JEL
+            (or object <code class="varname">w</code> will be "unwrapped" to
+            primitive type). This
+            unwrapping will be performed automatically when needed: one can have
+            expressions <strong class="userinput"><code>"w+1.0"</code></strong> meaning
+            <strong class="userinput"><code>"w.getValue()+1"</code></strong> and
+            <strong class="userinput"><code>"w.getUnits()"</code></strong> both
+            valid (in the second case <code class="varname">w</code>
+            is not "unwrapped"). </p>
+        <p>There are <code class="classname">gnu.jel.reflect.*</code> interfaces
+            for all Java primitive types. To use the automatic unwrapping one
+            just needs to make his classes to implement one of these interfaces.</p>
+        <p>There is a similar mechanism for strings (since version 0.9.6)
+            and a corresponding empty interface
+            <code class="classname">gnu.jel.reflect.String</code>
+            to denote objects automatically convertible to
+            <code class="classname">java.lang.String</code> by means of their
+            <code class="function">.toString()</code> method. For
+            example, if <code class="varname">x</code> is of a class implementing
+            <code class="classname">gnu.jel.reflect.String</code> interface the expression
+            <strong class="userinput"><code>x+"a"</code></strong> will be compiled into
+            <strong class="userinput"><code>x.toString()+"a"</code></strong> (otherwise this expression
+            produces a error message). The objects automatically convertible to
+            strings can also be supplied as arguments of methods requiring
+            <code class="classname">java.lang.String</code> (usual method overloading rules
+            apply). Still, in the current version of JEL it is impossible to
+            cast methods of <code class="classname">java.lang.String</code> on such objects.
+            That is <strong class="userinput"><code>x.substring(1)</code></strong> is a syntax error
+            (unless <code class="varname">x</code> itself
+            has the <code class="function">.substring(int)</code> method). This deficiency can be
+            addressed in future.</p></div>
+    <div class="chapter" title="Chapter 7. Error detection and reporting">
+        <div class="titlepage">
+            <div>
+                <div><h2 class="title"><a id="idp3036592"></a>Chapter 7. Error detection and reporting</h2></div>
+            </div>
+        </div>
+        <p>Expressions are made by human, and making errors is the
+            natural property of humans, consequently, JEL has to be aware of
+            that.</p>
+        <p>There are two places, where errors can appear. First are the
+            compilation errors, which are thrown in the form of
+            <code class="classname">gnu.jel.CompilationException</code> by the
+            <code class="function">gnu.jel.Evaluator.compile</code>. These errors signal about
+            syntax problems in the entered expressions, wrong function names,
+            illegal <span class="emphasis"><em>types</em></span> combinations, but NOT about illegal
+            values of arguments of functions. The second source of errors is the
+            compiled code itself, Throwables, thrown out of
+            <code class="function">gnu.jel.CompiledExpression.evaluate</code> are primarily due to
+            the invalid <span class="emphasis"><em>values</em></span> of function arguments.</p>
+        <p>Compilation errors are easy to process. Normally, you should
+            surround compilation by the
+        </p>
+        <pre class="programlisting">   try {
+      // ... compilation
+   catch (CompilationException e) {
+      // ... process and report the error
+   }</pre>
+        <p>
+            block. Caught <code class="classname">gnu.jel.CompilationException</code> can be
+            interrogated, then, on the subject of WHERE error has occurred
+            (<code class="function">getCol</code>) and WHAT was the
+            error (<code class="function">getMessage</code>). This
+            information should then be presented to user. It is wise to use
+            information about error column to position the cursor automatically
+            to the erroneous place in the expression.</p>
+        <p>Errors of the second type are appearing during the function
+            evaluation and can not be so nicely dealt with by JEL. They depend
+            on the actual library, supplied to the compiler. For example
+            methods of <code class="classname">java.lang.Math</code> do not generate any checked
+            exceptions at all (still, Errors are possible), but you may connect
+            library, of functions throwing exceptions. As a general rule :
+            <span class="emphasis"><em>exceptions thrown by functions from the library are thrown from
+   <code class="function">evaluate</code> method</em></span></p></div>
+    <div class="chapter" title="Chapter 8. Making things faster">
+        <div class="titlepage">
+            <div>
+                <div><h2 class="title"><a id="idp3042600"></a>Chapter 8. Making things faster</h2></div>
+            </div>
+        </div>
+        <p>In the above text the result of the computation, returned by
+            <code class="function">evaluate</code> was always an object. While this is
+            very flexible it is not very fast. Objects have to be allocated on
+            heap and garbage collected. When the result of computation is a
+            value of one of Java primitive types it can be desirable to
+            retrieve it without creation of the object. This can be done (since
+            the version 0.2 of JEL) with <code class="function">evaluateXX()</code>
+            family of calls (see
+            <code class="classname">gnu.jel.CompiledExpression</code>. There is an
+            <code class="function">evaluateXX()</code> method for each Java primitive
+            type, if you know what type expression has you can just call the
+            corresponding method.</p>
+        <p>If you do not know the type of the compiled expression you can
+            query it using <code class="function">getType</code>. Be warned, that the
+            call to wrong <code class="function">evaluateXX</code> method will result in
+            exception. Another tricky point is that JEL always selects smallest
+            data type for constant representation. Namely, expression
+            <strong class="userinput"><code>"1"</code></strong> has type
+            <span class="type">byte</span> and not <span class="type">int</span>, thus in
+            most cases you will have to query the type, and only then, call the
+            proper <code class="function">evaluateXX</code> method.</p>
+        <p>It is anyway possible to eliminate type checks at evaluation
+            time completely. There is a version of
+            <code class="function">compile</code> method in
+            <code class="classname">gnu.jel.Evaluator</code>, which allows to fix
+            the type of the result. It directs the compiler to perform the
+            widening conversion to the given type, before returning the
+            result. For example: if you fix the type to be <span class="type">int</span>
+            (passing <code class="classname">java.lang.Integer.TYPE</code> as an
+            argument to compile) all expressions (such as
+            <strong class="userinput"><code>"1"</code></strong>, <strong class="userinput"><code>"2+5"</code></strong>,
+            <strong class="userinput"><code>"2*2"</code></strong>) will be evaluated by
+            <code class="function">evaluate_int</code> method of
+            the compiled expression. Also, the attempt to evaluate
+            <strong class="userinput"><code>"1+2L"</code></strong> will be rejected by compiler,
+            asking to insert the explicit narrowing conversion (such as
+            <strong class="userinput"><code>"(int)(1+2L)"</code></strong>).</p></div>
+    <div class="chapter" title="Chapter 9. Serialization of compiled expressions">
+        <div class="titlepage">
+            <div>
+                <div><h2 class="title"><a id="idp3050776"></a>Chapter 9. Serialization of compiled expressions</h2>
+                </div>
+            </div>
+        </div>
+        <p>There used to be a specialized serialization interface in JEL up
+            to version 0.8.3. The need for such interface was dictated by the fact
+            that JEL allowed to use constants of arbitrary reference types in
+            expressions, which is not supported directly by the Java class file
+            format. Starting with version 0.9 this feature was removed and now JEL
+            generates ordinary Java class files.</p>
+        <p>To store compiled expressions into a file just grab their code with
+            <code class="function">gnu.jel.Evaluator.compileBits</code>. The code is returned as a
+            byte array which is easy to save/restore. Then, the expression can be
+            instantiated using <code class="classname">gnu.jel.ImageLoader</code> with the code
+        </p>
+        <pre class="programlisting">byte[] image;
+// ... code to read the JEL-generated class file into the "image" ...
+CompiledExpression expression=(CompiledExpression)(ImageLoader.load(image)).newInstance();</pre>
+        <p>
+            or, alternatively, by compiling your source against generated
+            class file. Note that in this version of JEL all generated classes
+            have the name "dump" and are in the root package. If there
+            will be such need in future the Evaluator interface can be extended to
+            assign user-supplied names for new expressions.</p></div>
+    <div class="chapter" title="Chapter 10. Limitations of JEL">
+        <div class="titlepage">
+            <div>
+                <div><h2 class="title"><a id="idp3054600"></a>Chapter 10. Limitations of JEL</h2></div>
+            </div>
+        </div>
+        <p>There is one serious limitation, which should be
+            mentioned. Actually it is not a JEL limitation but rather a limitation
+            of the typical Java run-time</p>
+        <p>To load compiled expressions into the Java virtual machine memory
+            JEL uses a custom <code class="classname">java.lang.ClassLoader</code>. While there
+            is nothing wrong with that, setting up a classLoader is a privileged
+            operation in Java. This means either JEL should run in a Java
+            <span class="emphasis"><em>application</em></span> (there are no security restrictions on Java
+            applications), or , if JEL is distributed in some custom
+            <span class="emphasis"><em>applet</em></span> the applet should be
+            <span class="emphasis"><em>signed</em></span>.</p></div>
+    <div class="chapter" title="Chapter 11. Summarizing remarks">
+        <div class="titlepage">
+            <div>
+                <div><h2 class="title"><a id="idp3056784"></a>Chapter 11. Summarizing remarks</h2></div>
+            </div>
+        </div>
+        <p> I hope you found JEL useful. Don't hesitate to contact me if
+            there are any problems with JEL, please, report BUGS, suggest tests,
+            send me your patches,... There are still many improvements to be
+            done.</p>
+        <p>Most current information about JEL should be available at
+            <a class="ulink" href="http://www.fti.dn.ua/JEL/" target="_top">http://www.fti.dn.ua/JEL/</a>.</p>
+        <p>JEL is the "free software" and is distributed to you
+            under terms of GNU General Public License. Find the precise terms of
+            the license in the file ./COPYING in the root of this distribution.</p>
+        <p>Please, contact the author directly if you'd like JEL to be
+            commercially licensed to you on a different terms.</p></div>
+    <div class="appendix" title="Appendix A. GNU Free Documentation License">
+        <div class="titlepage">
+            <div>
+                <div><h2 class="title"><a id="fdl"></a>Appendix A. GNU Free Documentation License</h2></div>
+            </div>
+        </div>
+        <p>Version 1.3, 3 November 2008</p>
+        <p>
+            Copyright © 2000, 2001, 2002, 2007, 2008
+            <a class="ulink" href="http://www.fsf.org/" target="_top">Free Software Foundation, Inc.</a>
+        </p>
+        <p>
+            Everyone is permitted to copy and distribute verbatim copies of this
+            license document, but changing it is not allowed.
+        </p>
+        <h3><a id="section0"></a>
+            0. PREAMBLE
+        </h3>
+        <p>
+            The purpose of this License is to make a manual, textbook, or other
+            functional and useful document “free” in the sense of freedom:
+            to assure everyone the effective freedom to copy and redistribute it, with
+            or without modifying it, either commercially or
+            noncommercially. Secondarily, this License preserves for the author and
+            publisher a way to get credit for their work, while not being considered
+            responsible for modifications made by others.
+        </p>
+        <p>
+            This License is a kind of “copyleft”, which means that
+            derivative works of the document must themselves be free in the same
+            sense. It complements the GNU General Public License, which is a copyleft
+            license designed for free software.
+        </p>
+        <p>
+            We have designed this License in order to use it for manuals for free
+            software, because free software needs free documentation: a free program
+            should come with manuals providing the same freedoms that the software
+            does. But this License is not limited to software manuals; it can be used
+            for any textual work, regardless of subject matter or whether it is
+            published as a printed book. We recommend this License principally for
+            works whose purpose is instruction or reference.
+        </p>
+        <h3><a id="section1"></a>
+            1. APPLICABILITY AND DEFINITIONS
+        </h3>
+        <p>
+            This License applies to any manual or other work, in any medium, that
+            contains a notice placed by the copyright holder saying it can be
+            distributed under the terms of this License. Such a notice grants a
+            world-wide, royalty-free license, unlimited in duration, to use that work
+            under the conditions stated herein. The “Document”, below,
+            refers to any such manual or work. Any member of the public is a licensee,
+            and is addressed as “you”. You accept the license if you copy,
+            modify or distribute the work in a way requiring permission under
+            copyright law.
+        </p>
+        <p>
+            A “Modified Version” of the Document means any work containing
+            the Document or a portion of it, either copied verbatim, or with
+            modifications and/or translated into another language.
+        </p>
+        <p>
+            A “Secondary Section” is a named appendix or a front-matter
+            section of the Document that deals exclusively with the relationship of
+            the publishers or authors of the Document to the Document’s overall
+            subject (or to related matters) and contains nothing that could fall
+            directly within that overall subject. (Thus, if the Document is in part a
+            textbook of mathematics, a Secondary Section may not explain any
+            mathematics.) The relationship could be a matter of historical connection
+            with the subject or with related matters, or of legal, commercial,
+            philosophical, ethical or political position regarding them.
+        </p>
+        <p>
+            The “Invariant Sections” are certain Secondary Sections whose
+            titles are designated, as being those of Invariant Sections, in the notice
+            that says that the Document is released under this License. If a section
+            does not fit the above definition of Secondary then it is not allowed to
+            be designated as Invariant. The Document may contain zero Invariant
+            Sections. If the Document does not identify any Invariant Sections then
+            there are none.
+        </p>
+        <p>
+            The “Cover Texts” are certain short passages of text that are
+            listed, as Front-Cover Texts or Back-Cover Texts, in the notice that says
+            that the Document is released under this License. A Front-Cover Text may
+            be at most 5 words, and a Back-Cover Text may be at most 25 words.
+        </p>
+        <p>
+            A “Transparent” copy of the Document means a machine-readable
+            copy, represented in a format whose specification is available to the
+            general public, that is suitable for revising the document
+            straightforwardly with generic text editors or (for images composed of
+            pixels) generic paint programs or (for drawings) some widely available
+            drawing editor, and that is suitable for input to text formatters or for
+            automatic translation to a variety of formats suitable for input to text
+            formatters. A copy made in an otherwise Transparent file format whose
+            markup, or absence of markup, has been arranged to thwart or discourage
+            subsequent modification by readers is not Transparent. An image format is
+            not Transparent if used for any substantial amount of text. A copy that is
+            not “Transparent” is called “Opaque”.
+        </p>
+        <p>
+            Examples of suitable formats for Transparent copies include plain ASCII
+            without markup, Texinfo input format, LaTeX input format, SGML or XML
+            using a publicly available DTD, and standard-conforming simple HTML,
+            PostScript or PDF designed for human modification. Examples of transparent
+            image formats include PNG, XCF and JPG. Opaque formats include proprietary
+            formats that can be read and edited only by proprietary word processors,
+            SGML or XML for which the DTD and/or processing tools are not generally
+            available, and the machine-generated HTML, PostScript or PDF produced by
+            some word processors for output purposes only.
+        </p>
+        <p>
+            The “Title Page” means, for a printed book, the title page
+            itself, plus such following pages as are needed to hold, legibly, the
+            material this License requires to appear in the title page. For works in
+            formats which do not have any title page as such, “Title Page”
+            means the text near the most prominent appearance of the work’s
+            title, preceding the beginning of the body of the text.
+        </p>
+        <p>
+            The “publisher” means any person or entity that distributes
+            copies of the Document to the public.
+        </p>
+        <p>
+            A section “Entitled XYZ” means a named subunit of the Document
+            whose title either is precisely XYZ or contains XYZ in parentheses
+            following text that translates XYZ in another language. (Here XYZ stands
+            for a specific section name mentioned below, such as
+            “Acknowledgements”, “Dedications”,
+            “Endorsements”, or “History”.) To “Preserve
+            the Title” of such a section when you modify the Document means that
+            it remains a section “Entitled XYZ” according to this
+            definition.
+        </p>
+        <p>
+            The Document may include Warranty Disclaimers next to the notice which
+            states that this License applies to the Document. These Warranty
+            Disclaimers are considered to be included by reference in this License,
+            but only as regards disclaiming warranties: any other implication that
+            these Warranty Disclaimers may have is void and has no effect on the
+            meaning of this License.
+        </p>
+        <h3><a id="section2"></a>
+            2. VERBATIM COPYING
+        </h3>
+        <p>
+            You may copy and distribute the Document in any medium, either
+            commercially or noncommercially, provided that this License, the copyright
+            notices, and the license notice saying this License applies to the
+            Document are reproduced in all copies, and that you add no other
+            conditions whatsoever to those of this License. You may not use technical
+            measures to obstruct or control the reading or further copying of the
+            copies you make or distribute. However, you may accept compensation in
+            exchange for copies. If you distribute a large enough number of copies you
+            must also follow the conditions in section 3.
+        </p>
+        <p>
+            You may also lend copies, under the same conditions stated above, and you
+            may publicly display copies.
+        </p>
+        <h3><a id="section3"></a>
+            3. COPYING IN QUANTITY
+        </h3>
+        <p>
+            If you publish printed copies (or copies in media that commonly have
+            printed covers) of the Document, numbering more than 100, and the
+            Document’s license notice requires Cover Texts, you must enclose
+            the copies in covers that carry, clearly and legibly, all these Cover
+            Texts: Front-Cover Texts on the front cover, and Back-Cover Texts on the
+            back cover. Both covers must also clearly and legibly identify you as the
+            publisher of these copies. The front cover must present the full title
+            with all words of the title equally prominent and visible. You may add
+            other material on the covers in addition. Copying with changes limited to
+            the covers, as long as they preserve the title of the Document and satisfy
+            these conditions, can be treated as verbatim copying in other respects.
+        </p>
+        <p>
+            If the required texts for either cover are too voluminous to fit legibly,
+            you should put the first ones listed (as many as fit reasonably) on the
+            actual cover, and continue the rest onto adjacent pages.
+        </p>
+        <p>
+            If you publish or distribute Opaque copies of the Document numbering more
+            than 100, you must either include a machine-readable Transparent copy
+            along with each Opaque copy, or state in or with each Opaque copy a
+            computer-network location from which the general network-using public has
+            access to download using public-standard network protocols a complete
+            Transparent copy of the Document, free of added material. If you use the
+            latter option, you must take reasonably prudent steps, when you begin
+            distribution of Opaque copies in quantity, to ensure that this Transparent
+            copy will remain thus accessible at the stated location until at least one
+            year after the last time you distribute an Opaque copy (directly or
+            through your agents or retailers) of that edition to the public.
+        </p>
+        <p>
+            It is requested, but not required, that you contact the authors of the
+            Document well before redistributing any large number of copies, to give
+            them a chance to provide you with an updated version of the Document.
+        </p>
+        <h3><a id="section4"></a>
+            4. MODIFICATIONS
+        </h3>
+        <p>
+            You may copy and distribute a Modified Version of the Document under the
+            conditions of sections 2 and 3 above, provided that you release the
+            Modified Version under precisely this License, with the Modified Version
+            filling the role of the Document, thus licensing distribution and
+            modification of the Modified Version to whoever possesses a copy of it. In
+            addition, you must do these things in the Modified Version:
+        </p>
+        <div class="orderedlist">
+            <ol class="orderedlist" type="A">
+                <li class="listitem">
+                    Use in the Title Page (and on the covers, if any) a title distinct
+                    from that of the Document, and from those of previous versions (which
+                    should, if there were any, be listed in the History section of the
+                    Document). You may use the same title as a previous version if the
+                    original publisher of that version gives permission.
+                </li>
+                <li class="listitem">
+                    List on the Title Page, as authors, one or more persons or entities
+                    responsible for authorship of the modifications in the Modified
+                    Version, together with at least five of the principal authors of the
+                    Document (all of its principal authors, if it has fewer than five),
+                    unless they release you from this requirement.
+                </li>
+                <li class="listitem">
+                    State on the Title page the name of the publisher of the Modified
+                    Version, as the publisher.
+                </li>
+                <li class="listitem">
+                    Preserve all the copyright notices of the Document.
+                </li>
+                <li class="listitem">
+                    Add an appropriate copyright notice for your modifications adjacent to
+                    the other copyright notices.
+                </li>
+                <li class="listitem">
+                    Include, immediately after the copyright notices, a license notice
+                    giving the public permission to use the Modified Version under the
+                    terms of this License, in the form shown in the Addendum below.
+                </li>
+                <li class="listitem">
+                    Preserve in that license notice the full lists of Invariant Sections
+                    and required Cover Texts given in the Document’s license
+                    notice.
+                </li>
+                <li class="listitem">
+                    Include an unaltered copy of this License.
+                </li>
+                <li class="listitem">
+                    Preserve the section Entitled “History”, Preserve its
+                    Title, and add to it an item stating at least the title, year, new
+                    authors, and publisher of the Modified Version as given on the Title
+                    Page. If there is no section Entitled “History” in the
+                    Document, create one stating the title, year, authors, and publisher
+                    of the Document as given on its Title Page, then add an item
+                    describing the Modified Version as stated in the previous sentence.
+                </li>
+                <li class="listitem">
+                    Preserve the network location, if any, given in the Document for
+                    public access to a Transparent copy of the Document, and likewise the
+                    network locations given in the Document for previous versions it was
+                    based on. These may be placed in the “History”
+                    section. You may omit a network location for a work that was published
+                    at least four years before the Document itself, or if the original
+                    publisher of the version it refers to gives permission.
+                </li>
+                <li class="listitem">
+                    For any section Entitled “Acknowledgements” or
+                    “Dedications”, Preserve the Title of the section, and
+                    preserve in the section all the substance and tone of each of the
+                    contributor acknowledgements and/or dedications given therein.
+                </li>
+                <li class="listitem">
+                    Preserve all the Invariant Sections of the Document, unaltered in
+                    their text and in their titles. Section numbers or the equivalent are
+                    not considered part of the section titles.
+                </li>
+                <li class="listitem">
+                    Delete any section Entitled “Endorsements”. Such a section
+                    may not be included in the Modified Version.
+                </li>
+                <li class="listitem">
+                    Do not retitle any existing section to be Entitled
+                    “Endorsements” or to conflict in title with any Invariant
+                    Section.
+                </li>
+                <li class="listitem">
+                    Preserve any Warranty Disclaimers.
+                </li>
+            </ol>
+        </div>
+        <p>
+            If the Modified Version includes new front-matter sections or appendices
+            that qualify as Secondary Sections and contain no material copied from the
+            Document, you may at your option designate some or all of these sections
+            as invariant. To do this, add their titles to the list of Invariant
+            Sections in the Modified Version’s license notice. These titles
+            must be distinct from any other section titles.
+        </p>
+        <p>
+            You may add a section Entitled “Endorsements”, provided it
+            contains nothing but endorsements of your Modified Version by various
+            parties — for example, statements of peer review or that the text
+            has been approved by an organization as the authoritative definition of a
+            standard.
+        </p>
+        <p>
+            You may add a passage of up to five words as a Front-Cover Text, and a
+            passage of up to 25 words as a Back-Cover Text, to the end of the list of
+            Cover Texts in the Modified Version. Only one passage of Front-Cover Text
+            and one of Back-Cover Text may be added by (or through arrangements made
+            by) any one entity. If the Document already includes a cover text for the
+            same cover, previously added by you or by arrangement made by the same
+            entity you are acting on behalf of, you may not add another; but you may
+            replace the old one, on explicit permission from the previous publisher
+            that added the old one.
+        </p>
+        <p>
+            The author(s) and publisher(s) of the Document do not by this License give
+            permission to use their names for publicity for or to assert or imply
+            endorsement of any Modified Version.
+        </p>
+        <h3><a id="section5"></a>
+            5. COMBINING DOCUMENTS
+        </h3>
+        <p>
+            You may combine the Document with other documents released under this
+            License, under the terms defined in section 4 above for modified versions,
+            provided that you include in the combination all of the Invariant Sections
+            of all of the original documents, unmodified, and list them all as
+            Invariant Sections of your combined work in its license notice, and that
+            you preserve all their Warranty Disclaimers.
+        </p>
+        <p>
+            The combined work need only contain one copy of this License, and multiple
+            identical Invariant Sections may be replaced with a single copy. If there
+            are multiple Invariant Sections with the same name but different contents,
+            make the title of each such section unique by adding at the end of it, in
+            parentheses, the name of the original author or publisher of that section
+            if known, or else a unique number. Make the same adjustment to the section
+            titles in the list of Invariant Sections in the license notice of the
+            combined work.
+        </p>
+        <p>
+            In the combination, you must combine any sections Entitled
+            “History” in the various original documents, forming one
+            section Entitled “History”; likewise combine any sections
+            Entitled “Acknowledgements”, and any sections Entitled
+            “Dedications”. You must delete all sections Entitled
+            “Endorsements”.
+        </p>
+        <h3><a id="section6"></a>
+            6. COLLECTIONS OF DOCUMENTS
+        </h3>
+        <p>
+            You may make a collection consisting of the Document and other documents
+            released under this License, and replace the individual copies of this
+            License in the various documents with a single copy that is included in
+            the collection, provided that you follow the rules of this License for
+            verbatim copying of each of the documents in all other respects.
+        </p>
+        <p>
+            You may extract a single document from such a collection, and distribute
+            it individually under this License, provided you insert a copy of this
+            License into the extracted document, and follow this License in all other
+            respects regarding verbatim copying of that document.
+        </p>
+        <h3><a id="section7"></a>
+            7. AGGREGATION WITH INDEPENDENT WORKS
+        </h3>
+        <p>
+            A compilation of the Document or its derivatives with other separate and
+            independent documents or works, in or on a volume of a storage or
+            distribution medium, is called an “aggregate” if the copyright
+            resulting from the compilation is not used to limit the legal rights of
+            the compilation’s users beyond what the individual works
+            permit. When the Document is included in an aggregate, this License does
+            not apply to the other works in the aggregate which are not themselves
+            derivative works of the Document.
+        </p>
+        <p>
+            If the Cover Text requirement of section 3 is applicable to these copies
+            of the Document, then if the Document is less than one half of the entire
+            aggregate, the Document’s Cover Texts may be placed on covers that
+            bracket the Document within the aggregate, or the electronic equivalent of
+            covers if the Document is in electronic form. Otherwise they must appear
+            on printed covers that bracket the whole aggregate.
+        </p>
+        <h3><a id="section8"></a>
+            8. TRANSLATION
+        </h3>
+        <p>
+            Translation is considered a kind of modification, so you may distribute
+            translations of the Document under the terms of section 4. Replacing
+            Invariant Sections with translations requires special permission from
+            their copyright holders, but you may include translations of some or all
+            Invariant Sections in addition to the original versions of these Invariant
+            Sections. You may include a translation of this License, and all the
+            license notices in the Document, and any Warranty Disclaimers, provided
+            that you also include the original English version of this License and the
+            original versions of those notices and disclaimers. In case of a
+            disagreement between the translation and the original version of this
+            License or a notice or disclaimer, the original version will prevail.
+        </p>
+        <p>
+            If a section in the Document is Entitled “Acknowledgements”,
+            “Dedications”, or “History”, the requirement
+            (section 4) to Preserve its Title (section 1) will typically require
+            changing the actual title.
+        </p>
+        <h3><a id="section9"></a>
+            9. TERMINATION
+        </h3>
+        <p>
+            You may not copy, modify, sublicense, or distribute the Document except as
+            expressly provided under this License. Any attempt otherwise to copy,
+            modify, sublicense, or distribute it is void, and will automatically
+            terminate your rights under this License.
+        </p>
+        <p>
+            However, if you cease all violation of this License, then your license
+            from a particular copyright holder is reinstated (a) provisionally, unless
+            and until the copyright holder explicitly and finally terminates your
+            license, and (b) permanently, if the copyright holder fails to notify you
+            of the violation by some reasonable means prior to 60 days after the
+            cessation.
+        </p>
+        <p>
+            Moreover, your license from a particular copyright holder is reinstated
+            permanently if the copyright holder notifies you of the violation by some
+            reasonable means, this is the first time you have received notice of
+            violation of this License (for any work) from that copyright holder, and
+            you cure the violation prior to 30 days after your receipt of the notice.
+        </p>
+        <p>
+            Termination of your rights under this section does not terminate the
+            licenses of parties who have received copies or rights from you under this
+            License. If your rights have been terminated and not permanently
+            reinstated, receipt of a copy of some or all of the same material does not
+            give you any rights to use it.
+        </p>
+        <h3><a id="section10"></a>
+            10. FUTURE REVISIONS OF THIS LICENSE
+        </h3>
+        <p>
+            The Free Software Foundation may publish new, revised versions of the GNU
+            Free Documentation License from time to time. Such new versions will be
+            similar in spirit to the present version, but may differ in detail to
+            address new problems or concerns. See
+            <a class="ulink" href="http://www.gnu.org/copyleft/" target="_top">Copyleft</a>.
+        </p>
+        <p>
+            Each version of the License is given a distinguishing version number. If
+            the Document specifies that a particular numbered version of this License
+            “or any later version” applies to it, you have the option of
+            following the terms and conditions either of that specified version or of
+            any later version that has been published (not as a draft) by the Free
+            Software Foundation. If the Document does not specify a version number of
+            this License, you may choose any version ever published (not as a draft)
+            by the Free Software Foundation. If the Document specifies that a proxy
+            can decide which future versions of this License can be used, that
+            proxy’s public statement of acceptance of a version permanently
+            authorizes you to choose that version for the Document.
+        </p>
+        <h3><a id="section11"></a>
+            11. RELICENSING
+        </h3>
+        <p>
+            “Massive Multiauthor Collaboration Site” (or “MMC
+            Site”) means any World Wide Web server that publishes copyrightable
+            works and also provides prominent facilities for anybody to edit those
+            works. A public wiki that anybody can edit is an example of such a
+            server. A “Massive Multiauthor Collaboration” (or
+            “MMC”) contained in the site means any set of copyrightable
+            works thus published on the MMC site.
+        </p>
+        <p>
+            “CC-BY-SA” means the Creative Commons Attribution-Share Alike
+            3.0 license published by Creative Commons Corporation, a not-for-profit
+            corporation with a principal place of business in San Francisco,
+            California, as well as future copyleft versions of that license published
+            by that same organization.
+        </p>
+        <p>
+            “Incorporate” means to publish or republish a Document, in
+            whole or in part, as part of another Document.
+        </p>
+        <p>
+            An MMC is “eligible for relicensing” if it is licensed under
+            this License, and if all works that were first published under this
+            License somewhere other than this MMC, and subsequently incorporated in
+            whole or in part into the MMC, (1) had no cover texts or invariant
+            sections, and (2) were thus incorporated prior to November 1, 2008.
+        </p>
+        <p>
+            The operator of an MMC Site may republish an MMC contained in the site
+            under CC-BY-SA on the same site at any time before August 1, 2009,
+            provided the MMC is eligible for relicensing.
+        </p>
+        <h3><a id="addendum"></a>
+            ADDENDUM: How to use this License for your documents
+        </h3>
+        <p>
+            To use this License in a document you have written, include a copy of the
+            License in the document and put the following copyright and license
+            notices just after the title page:
+        </p>
+        <pre class="screen">Copyright © YEAR YOUR NAME
+
+Permission is granted to copy, distribute and/or modify this document under the
+terms of the GNU Free Documentation License, Version 1.3 or any later version
+published by the Free Software Foundation; with no Invariant Sections, no
+Front-Cover Texts, and no Back-Cover Texts. A copy of the license is included in
+the section entitled “GNU Free Documentation License”.</pre>
+        <p>
+            If you have Invariant Sections, Front-Cover Texts and Back-Cover Texts,
+            replace the “with… Texts.” line with this:
+        </p>
+        <pre class="screen">with the Invariant Sections being LIST THEIR TITLES, with the Front-Cover Texts
+being LIST, and with the Back-Cover Texts being LIST.</pre>
+        <p>
+            If you have Invariant Sections without Cover Texts, or some other
+            combination of the three, merge those two alternatives to suit the
+            situation.
+        </p>
+        <p>
+            If your document contains nontrivial examples of program code, we
+            recommend releasing these examples in parallel under your choice of free
+            software license, such as the GNU General Public License, to permit their
+            use in free software.
+        </p></div>
+</div>
+</body>
+</html>

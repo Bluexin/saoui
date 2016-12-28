@@ -35,7 +35,7 @@ public class HudPart implements ElementParent {
         this.elements.forEach(e -> e.setup(this));
     }
 
-    public void draw(DrawContext ctx) {
+    public void draw(HudDrawContext ctx) {
         this.elements.forEach(e -> e.draw(ctx));
     }
 }

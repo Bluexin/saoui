@@ -21,7 +21,7 @@ public class GLString extends GLRectangle {
     }
 
     @Override
-    public void draw(DrawContext ctx) {
+    public void draw(HudDrawContext ctx) {
         ElementParent p = this.parent.get();
         if (p != null) {
 

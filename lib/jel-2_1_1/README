@@ -1,0 +1,111 @@
+This document corresponds to the jel version 2.1.1
+Distribution assembled May 9 2016.
+
+
+	     Welcome to Java Expressions Library (JEL) .
+
+JEL is designed to evaluate expressions, written in simple, JAVA like
+language. Unlike many other approaches to the same problem, JEL, is not
+interpreter but it is a compiler. It compiles expressions directly to
+Java bytecodes. Other feature of JEL is the possibility to call Java
+functions directly (without any wrappers) from the expressions it
+compiles. JEL also performs constants folding extended to static methods
+(so that sin(1.0) is considered a constant expression and evaluated at a
+compile time) with possibility to override this behaviour on method by
+method basis, i.e. for Math.random(). One of the design goals of JEL was
+to make it as SMALL as possible, but with extensibility in mind.
+
+You can find more details about JEL and its features if You open file
+./docs/manual.html in Your favorite WWW browser.
+
+
+			 I. DISTRIBUTED FILES
+
+The structure of the distribution is following:
+
+./docs
+	Contains documentation, both written and javadoc generated.
+
+./lib
+	Holds precompiled JEL library in two versions : optimized
+	(jel.jar),and debug (jel_g.jar). If You use JEL regularly it
+	is the best to put one of those libraries into Your CLASSPATH.
+	the third file in this directory (jel_rt.jar) is a runtime for
+	unserialized JEL compiled expressions (includes String 
+	manipulation library).
+
+./samples
+	Contains samples and test suite for JEL. Currently (version 2.1.1)
+	there is only one sample, Calculator. If You write a simple,
+	free program, using JEL, I will be happy to put is as a
+	sample. Anyway, there are still more samples coming in the
+	next version.
+
+./source
+	Contains JEL source. If You make any modifications to JEL it is
+	the best to do them directly in the ./src directory, because it 
+	most closely resembles the structure of my SVN repository. This
+	directory contains ALL source files, some of them are duplicated
+	in ./samples but ./src is the master copy. It should be possible
+	to build JEL by running ant in this directory.
+
+
+			   II. INSTALLATION
+
+There is not much care to take about JEL installation. First, of
+course, You need to install JAVA (if You don't have it already). JEL
+2.0 should work in any JDK 5 compatible Java virtual machine (for older JDKs
+please use earlier versons of JEL).
+
+If You don't want to type long command lines I would suggest to put
+JEL into the Java CLASSPATH. The other approach can be to write shell
+scripts, prepending ./lib/jel.jar to CLASSPATH of programs, using
+JEL. I didn't prepackage such scripts first of all, because I have
+CLASSPATH set, and, second , because these scripts will be very much
+platform dependent.
+
+When compling JEL from source it is important to have the code generator
+tables in place (otherwise the exception with the message  "[DEBUG]
+Exception when reading tables" will be thrown). The tables are kept in
+"gnu/jel/tables.dat" file inside of lib/*.jar archives, and (provided
+gnu/jel/TableKeeper.java is unchanged) can be simply copied into
+src/gnu/jel before running the freshly recompiled code. 
+
+If you change the tables in TableKeeper.java, it is necessary to
+regenerate the "tables.dat". If you use the ANT build script the 
+"tables.dat" file will be rebuilt automatically for you. Otherwise
+you'll need to compile the TableWriter.java and run it inside of 
+"source/src/java" directory with the command "java gnu.jel.TableKeeper".
+After the run, the file "gnu/jel/tables.dat" will be written. The
+non-debug version of TableKeeper.java has the code for writing 
+"tables.dat" file omitted. 
+
+                           III. TEST SUITE
+
+It is recommended to run JEL test suite after the installation. Please
+consult ./samples/testsuite/README.TestSuite for details on how to run
+it.
+
+			    IIV. LICENSING
+
+JEL is distributed to You under terms of the GNU General Public
+License. This means it is "free software" (see file ./COPYING for
+precise definition). However, any program, using JEL _MUST_ be the
+"free software" as well.
+
+Commercial support is available. To find out more contact 
+me (metlov@fti.dn.ua) directly.
+
+I would be very happy to consider requests for JEL enhancements and
+modifications (to fit some particular purpose), syntax of the input
+language, for example, can be easily changed... Contact me directly if
+You need customized, supported version of JEL.
+
+
+(c) 1998-2016 Konstantin L. Metlov <metlov@fti.dn.ua>
+
+    This software is distributed to You under the terms of the
+    GNU General Public license (GPLv3 and later). Copying and 
+    modifications are permitted. NO WARRANTY of any kind is provided.
+    For precise terms of the license see the file COPYING in the
+    root of the distribution.

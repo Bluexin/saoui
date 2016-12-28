@@ -1,0 +1,19 @@
+This is a JEL test bed for Your pleasure. Feel free to modify it and
+play with other expressions.
+
+TO PLAY
+
+1) set the CLASSPATH
+	UNIX (bash):> export CLASSPATH=$CLASSPATH:<jeldir>/lib/jel.jar:.
+
+  where <jeldir> is the directory where JEL is installed
+
+2) compile
+	:> javac YourTestBed
+
+3) run
+	:> java YourTestBed
+
+4) modify, add more expressions
+
+5) go to 2
