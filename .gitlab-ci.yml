@@ -15,7 +15,7 @@ build:
   variables:
     NAME: "Builds stalker"
     MESSAGE: "$CI_PROJECT_NAME build $CI_BUILD_ID successful: $(git log -1 --pretty=%B)"
-    IMG: "https://media-elerium.cursecdn.com/avatars/32/342/635879298539661649.png"
+    IMG: "https://cdn.discordapp.com/icons/131019825681006592/9df46a9d968c06e8eb264c590cc23a43.jpg"
   script:
     - chmod +x gradlew
     - ./gradlew setupCIWorkspace build uploadArchives
