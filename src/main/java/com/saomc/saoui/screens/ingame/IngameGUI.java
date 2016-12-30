@@ -18,14 +18,10 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiOverlayDebug;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumHandSide;
 import net.minecraft.util.StringUtils;
 import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.client.GuiIngameForge;
@@ -118,103 +114,18 @@ public class IngameGUI extends GuiIngameForge {
     @Override
     protected void renderHotbar(ScaledResolution res, float partialTicks) {
         if (replaceEvent(HOTBAR)) return;
-        ItemStack itemstack = mc.player.getHeldItemOffhand();
-        EnumHandSide enumhandside = mc.player.getPrimaryHand().opposite();
         if (mc.playerController.isSpectator()) this.spectatorGui.renderTooltip(res, partialTicks);
         else if (OptionCore.DEFAULT_HOTBAR.isEnabled()) super.renderHotbar(res, partialTicks);
-        else if (OptionCore.HOR_HOTBAR.isEnabled()) {
+        else {
             GLCore.glBlend(true);
             GLCore.tryBlendFuncSeparate(770, 771, 1, 0);
-            GLCore.glBindTexture(OptionCore.SAO_UI.isEnabled() ? StringNames.gui : StringNames.guiCustom);
-            GLCore.glColor(1, 1, 1, 1);
 
-            final InventoryPlayer inv = mc.player.inventory;
-            final int slotCount = 9;
-            int w = res.getScaledWidth() / 2;
-
-            for (int i = 0; i < slotCount; i++) {
-                GLCore.glColorRGBA(i == inv.currentItem ? 0xFFBA66FF : 0xCDCDCDAA);
-                GLCore.glTexturedRect(res.getScaledWidth() / 2 - 91 - 1 + i * 20, res.getScaledHeight() - 22 - 1, zLevel, 0, 25, 20, 20);
-            }
-
-            if (itemstack != null) {
-                if (enumhandside == EnumHandSide.LEFT) {
-                    GLCore.glColorRGBA(0xFFBA66FF);
-                    GLCore.glTexturedRect(w - 91 - 29, res.getScaledHeight() - 23, zLevel, 0, 25, 20, 20);
-                } else {
-                    GLCore.glColorRGBA(0xCDCDCDAA);
-                    GLCore.glTexturedRect(w + 91, res.getScaledHeight() - 23, zLevel, 0, 25, 20, 20);
-                }
-            }
-
-            GLCore.glColor(1, 1, 1, 1);
-
-            GLCore.glBlend(false);
-            GLCore.glRescaleNormal(true);
-            RenderHelper.enableGUIStandardItemLighting();
-
-            for (int i = 0; i < slotCount; i++) {
-                int x = res.getScaledWidth() / 2 - 92 + i * 20 + 2;
-                int z = res.getScaledHeight() - 17 - 3;
-                super.renderHotbarItem(x, z, partialTicks, mc.player, mc.player.inventory.mainInventory[i]);
-            }
-
-            if (itemstack != null) {
-                int l1 = res.getScaledHeight() - 16 - 3;
-
-                if (enumhandside == EnumHandSide.LEFT) {
-                    super.renderHotbarItem(w - 91 - 27, res.getScaledHeight() - 17 - 3, partialTicks, mc.player, itemstack);
-                } else {
-                    super.renderHotbarItem(w + 91 + 10, res.getScaledHeight() - 17 - 3, partialTicks, mc.player, itemstack);
-                }
-            }
-            GLCore.glRescaleNormal(false);
-            RenderHelper.disableStandardItemLighting();
-
-        } else {
-            GLCore.glBlend(true);
-            GLCore.tryBlendFuncSeparate(770, 771, 1, 0);
-            GLCore.glBindTexture(OptionCore.SAO_UI.isEnabled() ? StringNames.gui : StringNames.guiCustom);
-            GLCore.glColor(1, 1, 1, 1);
-
-            final InventoryPlayer inv = mc.player.inventory;
-            final int slotCount = 9;
-            final int slotsY = (res.getScaledHeight() - (slotCount * 22)) / 2;
-            final int y = (res.getScaledHeight() - (slotCount * 22)) / 2 + (22 * 10);
-
-            for (int i = 0; i < slotCount; i++) {
-                GLCore.glColorRGBA(i == inv.currentItem ? 0xFFBA66FF : 0xCDCDCDAA);
-                GLCore.glTexturedRect(res.getScaledWidth() - 24, slotsY + (22 * i), zLevel, 0, 25, 20, 20);
-            }
-
-            if (itemstack != null) {
-                if (enumhandside == EnumHandSide.LEFT) {
-                    GLCore.glColorRGBA(0xFFBA66FF);
-                    GLCore.glTexturedRect(res.getScaledWidth() - 24, y, zLevel, 0, 25, 20, 20);
-                } else {
-                    GLCore.glColorRGBA(0xCDCDCDAA);
-                    super.renderHotbarItem(res.getScaledWidth() - 24, y, partialTicks, mc.player, itemstack);
-                }
-            }
-
-            GLCore.glColor(1, 1, 1, 1);
-
-            GLCore.glBlend(false);
-            GLCore.glRescaleNormal(true);
-            RenderHelper.enableGUIStandardItemLighting();
-
-            for (int i = 0; i < slotCount; i++)
-                super.renderHotbarItem(res.getScaledWidth() - 22, slotsY + 2 + (22 * i), partialTicks, mc.player, mc.player.inventory.mainInventory[i]);
-
-            if (itemstack != null) {
-                if (enumhandside == EnumHandSide.LEFT) {
-                    super.renderHotbarItem(res.getScaledWidth() - 22, y + 2, partialTicks, mc.player, itemstack);
-                } else {
-                    super.renderHotbarItem(res.getScaledWidth() - 22, y + 2, partialTicks, mc.player, itemstack);
-                }
-            }
-            GLCore.glRescaleNormal(false);
-            RenderHelper.disableStandardItemLighting();
+            if (ctx == null) this.ctx = new HudDrawContext(mc.player, mc, itemRenderer);
+            ctx.setTime(time);
+            ctx.setZ(zLevel);
+            ctx.setPartialTicks(partialTicks);
+            ctx.setScaledResolution(res);
+            ThemeLoader.HUD.get(HudPartType.HOTBAR).draw(ctx);
         }
 
         post(HOTBAR);

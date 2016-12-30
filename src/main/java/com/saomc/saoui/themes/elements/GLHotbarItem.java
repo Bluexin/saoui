@@ -1,8 +1,10 @@
 package com.saomc.saoui.themes.elements;
 
+import com.saomc.saoui.GLCore;
 import com.saomc.saoui.themes.util.ExpressionAdapter;
 import com.saomc.saoui.themes.util.IntExpressionWrapper;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHandSide;
@@ -19,9 +21,11 @@ public class GLHotbarItem extends GLRectangle {
 
     @XmlJavaTypeAdapter(value = ExpressionAdapter.IntExpressionAdapter.class)
     protected IntExpressionWrapper slot;
-    protected EnumHandSide hand;
     @XmlJavaTypeAdapter(value = ExpressionAdapter.IntExpressionAdapter.class)
-    protected IntExpressionWrapper selectedrgba;
+    protected IntExpressionWrapper itemXoffset;
+    @XmlJavaTypeAdapter(value = ExpressionAdapter.IntExpressionAdapter.class)
+    protected IntExpressionWrapper itemYoffset;
+    protected EnumHandSide hand;
 
     protected GLHotbarItem() {
     }
@@ -53,10 +57,16 @@ public class GLHotbarItem extends GLRectangle {
     public void draw(HudDrawContext ctx) {
         super.draw(ctx);
 
-        if (hand == null) {
-
-        } else {
-
+        if (hand == null)
+            renderHotbarItem(x.execute(ctx).intValue() + itemXoffset.execute(ctx), y.execute(ctx).intValue() + itemYoffset.execute(ctx), ctx.getPartialTicks(), ctx.getPlayer(), ctx.getPlayer().inventory.mainInventory[slot.execute(ctx)], ctx);
+        else if (hand == ctx.getPlayer().getPrimaryHand().opposite()) {
+            GLCore.glBlend(false);
+            GLCore.glRescaleNormal(true);
+            RenderHelper.enableGUIStandardItemLighting();
+            renderHotbarItem(x.execute(ctx).intValue() + itemXoffset.execute(ctx), y.execute(ctx).intValue() + itemYoffset.execute(ctx), ctx.getPartialTicks(), ctx.getPlayer(), ctx.getPlayer().inventory.offHandInventory[slot.execute(ctx)], ctx);
+            GLCore.glRescaleNormal(false);
+            RenderHelper.disableStandardItemLighting();
+            GLCore.glBlend(true);
         }
     }
 }

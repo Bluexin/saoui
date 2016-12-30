@@ -6,7 +6,6 @@ import com.saomc.saoui.themes.util.ExpressionAdapter;
 import com.saomc.saoui.themes.util.IntExpressionWrapper;
 import net.minecraft.util.ResourceLocation;
 
-import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.lang.ref.WeakReference;
 
@@ -38,7 +37,6 @@ public class GLRectangle implements Element {
     @XmlJavaTypeAdapter(value = ExpressionAdapter.DoubleExpressionAdapter.class)
     protected DoubleExpressionWrapper srcH;
     protected ResourceLocation rl;
-    @XmlElementWrapper
     protected transient WeakReference<ElementParent> parent;
     private String texture;
 
@@ -52,6 +50,7 @@ public class GLRectangle implements Element {
             double y = this.y.execute(ctx) + p.getY(ctx);
             double z = this.z.execute(ctx) + p.getZ(ctx) + ctx.getZ();
 
+            GLCore.glBlend(true);
             GLCore.glColorRGBA(this.rgba.execute(ctx));
             GLCore.glBindTexture(this.rl);
             GLCore.glTexturedRect(x, y, z, w.execute(ctx), h.execute(ctx), srcX.execute(ctx), srcY.execute(ctx), srcW.execute(ctx), srcH.execute(ctx));

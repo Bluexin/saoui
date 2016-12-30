@@ -4,16 +4,19 @@ import com.saomc.saoui.api.events.EventInitParty;
 import com.saomc.saoui.api.events.EventInitSkills;
 import com.saomc.saoui.api.events.EventInitStatsProvider;
 import com.saomc.saoui.api.events.EventinitElements;
+import com.saomc.saoui.config.ConfigHandler;
 import com.saomc.saoui.config.OptionCore;
 import com.saomc.saoui.elements.ElementBuilder;
 import com.saomc.saoui.elements.ElementProvider;
 import com.saomc.saoui.elements.defaultelements.DefaultElements;
-import com.saomc.saoui.config.ConfigHandler;
 import com.saomc.saoui.events.EventCore;
 import com.saomc.saoui.social.party.DefaultParty;
 import com.saomc.saoui.social.party.PartyHelper;
 import com.saomc.saoui.themes.ThemeLoader;
-import com.saomc.saoui.util.*;
+import com.saomc.saoui.util.DefaultSkills;
+import com.saomc.saoui.util.DefaultStatsProvider;
+import com.saomc.saoui.util.PlayerStats;
+import com.saomc.saoui.util.SkillList;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
@@ -21,7 +24,6 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
-import javax.xml.bind.JAXBException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -41,12 +43,12 @@ public class SAOCore {
     }*/
 
     @Mod.EventHandler
-    public void preInit(FMLPreInitializationEvent event) {
-        try {
+    public void preInit(FMLPreInitializationEvent event) throws Exception {
+//        try {
             ThemeLoader.load();
-        } catch (JAXBException e) {
-            e.printStackTrace();
-        }
+//        } catch (JAXBException e) {
+//            e.printStackTrace();
+//        }
 
         MinecraftForge.EVENT_BUS.register(new EventCore());
         ConfigHandler.preInit(event);

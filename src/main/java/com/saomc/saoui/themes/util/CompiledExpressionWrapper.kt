@@ -17,7 +17,10 @@ abstract class CompiledExpressionWrapper<out T>(val compiledExpression: Compiled
      */
     abstract fun execute(ctx: HudDrawContext): T
 
-    fun warn(e: Throwable) = LogCore.logWarn("An error occurred while executing an Expression.\n${e.message}")
+    fun warn(e: Throwable) {
+        LogCore.logWarn("An error occurred while executing an Expression.\n${e.message}\n${e.cause}")
+        e.printStackTrace()
+    }
 }
 
 class IntExpressionWrapper(compiledExpression: CompiledExpression) : CompiledExpressionWrapper<Int>(compiledExpression) {

@@ -3,6 +3,7 @@ package com.saomc.saoui.themes.elements;
 import com.saomc.saoui.screens.ingame.HealthStep;
 import com.saomc.saoui.social.StaticPlayerHelper;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.entity.player.EntityPlayer;
 
@@ -25,6 +26,8 @@ public class HudDrawContext {
     private double z;
     private float time;
     private double hpPct;
+    private ScaledResolution scaledResolution;
+    private float partialTicks;
 
     public HudDrawContext(EntityPlayer player, Minecraft mc, RenderItem itemRenderer) {
         this.username = player.getDisplayNameString();
@@ -82,5 +85,33 @@ public class HudDrawContext {
 
     public HealthStep healthStep() {
         return healthStep;
+    }
+
+    public int selectedslot() {
+        return player.inventory.currentItem;
+    }
+
+    public int scaledwidth() {
+        return scaledResolution.getScaledWidth();
+    }
+
+    public int scaledheight() {
+        return scaledResolution.getScaledHeight();
+    }
+
+    public void setScaledResolution(ScaledResolution scaledResolution) {
+        this.scaledResolution = scaledResolution;
+    }
+
+    public float getPartialTicks() {
+        return partialTicks;
+    }
+
+    public void setPartialTicks(float partialTicks) {
+        this.partialTicks = partialTicks;
+    }
+
+    public boolean offhandEmpty(int slot) {
+        return slot >= 0 && player.inventory.offHandInventory.length > slot && player.inventory.offHandInventory[slot] == null;
     }
 }

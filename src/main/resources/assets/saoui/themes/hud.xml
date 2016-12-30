@@ -80,58 +80,193 @@
                 </calls>
             </value>
         </entry>
-        <!--<entry>-->
-        <!--<key>HOTBAR</key>-->
-        <!--<value>-->
-        <!--<x>0.0</x>-->
-        <!--<y>0.0</y>-->
-        <!--<z>0.0</z>-->
-        <!--<calls>-->
-        <!--<element xsi:type="glHotbarItem">-->
-
-        <!--</element>-->
-        <!---->
-        <!--&lt;!&ndash;&lt;!&ndash;GLCore.glBlend(true);&ndash;&gt;&ndash;&gt;-->
-        <!--&lt;!&ndash;&lt;!&ndash;GLCore.tryBlendFuncSeparate(770, 771, 1, 0);&ndash;&gt;&ndash;&gt;-->
-        <!--&lt;!&ndash;&lt;!&ndash;GLCore.glBindTexture(OptionCore.SAO_UI.isEnabled() ? StringNames.gui : StringNames.guiCustom);&ndash;&gt;&ndash;&gt;-->
-        <!--&lt;!&ndash;&lt;!&ndash;GLCore.glColor(1, 1, 1, 1);&ndash;&gt;&ndash;&gt;-->
-
-        <!--&lt;!&ndash;&lt;!&ndash;final InventoryPlayer inv = mc.thePlayer.inventory;&ndash;&gt;&ndash;&gt;-->
-        <!--&lt;!&ndash;&lt;!&ndash;final int slotCount = 9;&ndash;&gt;&ndash;&gt;-->
-        <!--&lt;!&ndash;&lt;!&ndash;final int slotsY = (res.getScaledHeight() - (slotCount * 22)) / 2;&ndash;&gt;&ndash;&gt;-->
-        <!--&lt;!&ndash;&lt;!&ndash;final int y = (res.getScaledHeight() - (slotCount * 22)) / 2 + (22 * 10);&ndash;&gt;&ndash;&gt;-->
-
-        <!--&lt;!&ndash;&lt;!&ndash;for (int i = 0; i < slotCount; i++) {&ndash;&gt;&ndash;&gt;-->
-        <!--&lt;!&ndash;&lt;!&ndash;GLCore.glColorRGBA(i == inv.currentItem ? 0xFFBA66FF : 0xCDCDCDAA);&ndash;&gt;&ndash;&gt;-->
-        <!--&lt;!&ndash;&lt;!&ndash;GLCore.glTexturedRect(res.getScaledWidth() - 24, slotsY + (22 * i: zLevel, 0, 25, 20, 20);&ndash;&gt;&ndash;&gt;-->
-        <!--&lt;!&ndash;&lt;!&ndash;}&ndash;&gt;&ndash;&gt;-->
-
-        <!--&lt;!&ndash;&lt;!&ndash;if (itemstack != null) {&ndash;&gt;&ndash;&gt;-->
-        <!--&lt;!&ndash;&lt;!&ndash;if (enumhandside == EnumHandSide.LEFT) {&ndash;&gt;&ndash;&gt;-->
-        <!--&lt;!&ndash;&lt;!&ndash;GLCore.glColorRGBA(0xFFBA66FF);&ndash;&gt;&ndash;&gt;-->
-        <!--&lt;!&ndash;&lt;!&ndash;GLCore.glTexturedRect(res.getScaledWidth() - 24, y, zLevel, 0, 25, 20, 20);&ndash;&gt;&ndash;&gt;-->
-        <!--&lt;!&ndash;&lt;!&ndash;} else {&ndash;&gt;&ndash;&gt;-->
-        <!--&lt;!&ndash;&lt;!&ndash;GLCore.glColorRGBA(0xCDCDCDAA);&ndash;&gt;&ndash;&gt;-->
-        <!--&lt;!&ndash;&lt;!&ndash;super.renderHotbarItem(res.getScaledWidth() - 24, y, partialTicks, mc.thePlayer, itemstack);&ndash;&gt;&ndash;&gt;-->
-        <!--&lt;!&ndash;&lt;!&ndash;}&ndash;&gt;&ndash;&gt;-->
-        <!--&lt;!&ndash;&lt;!&ndash;}&ndash;&gt;&ndash;&gt;-->
-
-        <!--&lt;!&ndash;&lt;!&ndash;GLCore.glColor(1, 1, 1, 1);&ndash;&gt;&ndash;&gt;-->
-
-        <!--&lt;!&ndash;&lt;!&ndash;GLCore.glBlend(false);&ndash;&gt;&ndash;&gt;-->
-        <!--&lt;!&ndash;&lt;!&ndash;GLCore.glRescaleNormal(true);&ndash;&gt;&ndash;&gt;-->
-        <!--&lt;!&ndash;&lt;!&ndash;RenderHelper.enableGUIStandardItemLighting();&ndash;&gt;&ndash;&gt;-->
-
-        <!--&lt;!&ndash;&lt;!&ndash;for (int i = 0; i < slotCount; i++)&ndash;&gt;&ndash;&gt;-->
-        <!--&lt;!&ndash;&lt;!&ndash;super.renderHotbarItem(res.getScaledWidth() - 22, slotsY + 2 + (22 * i: partialTicks, mc.thePlayer, mc.thePlayer.inventory.mainInventory[i]);&ndash;&gt;&ndash;&gt;-->
-
-        <!--&lt;!&ndash;&lt;!&ndash;if (itemstack != null) {&ndash;&gt;&ndash;&gt;-->
-        <!--&lt;!&ndash;&lt;!&ndash;super.renderHotbarItem(res.getScaledWidth() - 22, y + 2, partialTicks, mc.thePlayer, itemstack);&ndash;&gt;&ndash;&gt;-->
-        <!--&lt;!&ndash;&lt;!&ndash;}&ndash;&gt;&ndash;&gt;-->
-        <!--&lt;!&ndash;&lt;!&ndash;GLCore.glRescaleNormal(false);&ndash;&gt;&ndash;&gt;-->
-        <!--&lt;!&ndash;&lt;!&ndash;RenderHelper.disableStandardItemLighting();&ndash;&gt;&ndash;&gt;-->
-        <!--</calls>-->
-        <!--</value>-->
-        <!--</entry>-->
+        <entry>
+            <key>HOTBAR</key>
+            <value>
+                <x>0.0</x>
+                <y>0.0</y>
+                <z>0.0</z>
+                <calls>
+                    <element xsi:type="glHotbarItem">
+                        <h>20.0</h>
+                        <rgba>0 == selectedslot ? 0xFFBA66FF : 0xCDCDCDAA</rgba>
+                        <srcH>20.0</srcH>
+                        <srcW>20.0</srcW>
+                        <srcX>0.0</srcX>
+                        <srcY>25.0</srcY>
+                        <texture>saoui:textures/guiEDT.png</texture>
+                        <w>20.0</w>
+                        <x>scaledwidth - 24</x>
+                        <y>scaledheight / 2.0 - 99</y>
+                        <z>0.0</z>
+                        <slot>0</slot>
+                        <itemXoffset>2</itemXoffset>
+                        <itemYoffset>2</itemYoffset>
+                    </element>
+                    <element xsi:type="glHotbarItem">
+                        <h>20.0</h>
+                        <rgba>1 == selectedslot ? 0xFFBA66FF : 0xCDCDCDAA</rgba>
+                        <srcH>20.0</srcH>
+                        <srcW>20.0</srcW>
+                        <srcX>0.0</srcX>
+                        <srcY>25.0</srcY>
+                        <texture>saoui:textures/guiEDT.png</texture>
+                        <w>20.0</w>
+                        <x>scaledwidth - 24</x>
+                        <y>scaledheight / 2.0 - 77</y>
+                        <z>0.0</z>
+                        <slot>1</slot>
+                        <itemXoffset>2</itemXoffset>
+                        <itemYoffset>2</itemYoffset>
+                    </element>
+                    <element xsi:type="glHotbarItem">
+                        <h>20.0</h>
+                        <rgba>2 == selectedslot ? 0xFFBA66FF : 0xCDCDCDAA</rgba>
+                        <srcH>20.0</srcH>
+                        <srcW>20.0</srcW>
+                        <srcX>0.0</srcX>
+                        <srcY>25.0</srcY>
+                        <texture>saoui:textures/guiEDT.png</texture>
+                        <w>20.0</w>
+                        <x>scaledwidth - 24</x>
+                        <y>scaledheight / 2.0 - 55</y>
+                        <z>0.0</z>
+                        <slot>2</slot>
+                        <itemXoffset>2</itemXoffset>
+                        <itemYoffset>2</itemYoffset>
+                    </element>
+                    <element xsi:type="glHotbarItem">
+                        <h>20.0</h>
+                        <rgba>3 == selectedslot ? 0xFFBA66FF : 0xCDCDCDAA</rgba>
+                        <srcH>20.0</srcH>
+                        <srcW>20.0</srcW>
+                        <srcX>0.0</srcX>
+                        <srcY>25.0</srcY>
+                        <texture>saoui:textures/guiEDT.png</texture>
+                        <w>20.0</w>
+                        <x>scaledwidth - 24</x>
+                        <y>scaledheight / 2.0 - 33</y>
+                        <z>0.0</z>
+                        <slot>3</slot>
+                        <itemXoffset>2</itemXoffset>
+                        <itemYoffset>2</itemYoffset>
+                    </element>
+                    <element xsi:type="glHotbarItem">
+                        <h>20.0</h>
+                        <rgba>4 == selectedslot ? 0xFFBA66FF : 0xCDCDCDAA</rgba>
+                        <srcH>20.0</srcH>
+                        <srcW>20.0</srcW>
+                        <srcX>0.0</srcX>
+                        <srcY>25.0</srcY>
+                        <texture>saoui:textures/guiEDT.png</texture>
+                        <w>20.0</w>
+                        <x>scaledwidth - 24</x>
+                        <y>scaledheight / 2.0 - 11</y>
+                        <z>0.0</z>
+                        <slot>4</slot>
+                        <itemXoffset>2</itemXoffset>
+                        <itemYoffset>2</itemYoffset>
+                    </element>
+                    <element xsi:type="glHotbarItem">
+                        <h>20.0</h>
+                        <rgba>5 == selectedslot ? 0xFFBA66FF : 0xCDCDCDAA</rgba>
+                        <srcH>20.0</srcH>
+                        <srcW>20.0</srcW>
+                        <srcX>0.0</srcX>
+                        <srcY>25.0</srcY>
+                        <texture>saoui:textures/guiEDT.png</texture>
+                        <w>20.0</w>
+                        <x>scaledwidth - 24</x>
+                        <y>scaledheight / 2.0 + 11</y>
+                        <z>0.0</z>
+                        <slot>5</slot>
+                        <itemXoffset>2</itemXoffset>
+                        <itemYoffset>2</itemYoffset>
+                    </element>
+                    <element xsi:type="glHotbarItem">
+                        <h>20.0</h>
+                        <rgba>6 == selectedslot ? 0xFFBA66FF : 0xCDCDCDAA</rgba>
+                        <srcH>20.0</srcH>
+                        <srcW>20.0</srcW>
+                        <srcX>0.0</srcX>
+                        <srcY>25.0</srcY>
+                        <texture>saoui:textures/guiEDT.png</texture>
+                        <w>20.0</w>
+                        <x>scaledwidth - 24</x>
+                        <y>scaledheight / 2.0 + 33</y>
+                        <z>0.0</z>
+                        <slot>6</slot>
+                        <itemXoffset>2</itemXoffset>
+                        <itemYoffset>2</itemYoffset>
+                    </element>
+                    <element xsi:type="glHotbarItem">
+                        <h>20.0</h>
+                        <rgba>7 == selectedslot ? 0xFFBA66FF : 0xCDCDCDAA</rgba>
+                        <srcH>20.0</srcH>
+                        <srcW>20.0</srcW>
+                        <srcX>0.0</srcX>
+                        <srcY>25.0</srcY>
+                        <texture>saoui:textures/guiEDT.png</texture>
+                        <w>20.0</w>
+                        <x>scaledwidth - 24</x>
+                        <y>scaledheight / 2.0 + 55</y>
+                        <z>0.0</z>
+                        <slot>7</slot>
+                        <itemXoffset>2</itemXoffset>
+                        <itemYoffset>2</itemYoffset>
+                    </element>
+                    <element xsi:type="glHotbarItem">
+                        <h>20.0</h>
+                        <rgba>8 == selectedslot ? 0xFFBA66FF : 0xCDCDCDAA</rgba>
+                        <srcH>20.0</srcH>
+                        <srcW>20.0</srcW>
+                        <srcX>0.0</srcX>
+                        <srcY>25.0</srcY>
+                        <texture>saoui:textures/guiEDT.png</texture>
+                        <w>20.0</w>
+                        <x>scaledwidth - 24</x>
+                        <y>scaledheight / 2.0 + 77</y>
+                        <z>0.0</z>
+                        <slot>8</slot>
+                        <itemXoffset>2</itemXoffset>
+                        <itemYoffset>2</itemYoffset>
+                    </element>
+                    <element xsi:type="glHotbarItem">
+                        <h>20.0</h>
+                        <rgba>offhandEmpty(0) ? 0xCDCDCDAA : 0xFFBA66FF</rgba>
+                        <srcH>20.0</srcH>
+                        <srcW>20.0</srcW>
+                        <srcX>0.0</srcX>
+                        <srcY>25.0</srcY>
+                        <texture>saoui:textures/guiEDT.png</texture>
+                        <w>20.0</w>
+                        <x>scaledwidth - 24</x>
+                        <y>scaledheight / 2 + 121</y>
+                        <z>0.0</z>
+                        <slot>0</slot>
+                        <itemXoffset>2</itemXoffset>
+                        <itemYoffset>2</itemYoffset>
+                        <hand>RIGHT</hand>
+                    </element>
+                    <element xsi:type="glHotbarItem">
+                        <h>20.0</h>
+                        <rgba>offhandEmpty(0) ? 0xCDCDCDAA : 0xFFBA66FF</rgba>
+                        <srcH>20.0</srcH>
+                        <srcW>20.0</srcW>
+                        <srcX>0.0</srcX>
+                        <srcY>25.0</srcY>
+                        <texture>saoui:textures/guiEDT.png</texture>
+                        <w>20.0</w>
+                        <x>scaledwidth - 24</x>
+                        <y>scaledheight / 2 + 121</y>
+                        <z>0.0</z>
+                        <slot>0</slot>
+                        <itemXoffset>2</itemXoffset>
+                        <itemYoffset>2</itemYoffset>
+                        <hand>LEFT</hand>
+                    </element>
+                </calls>
+            </value>
+        </entry>
     </parts>
 </hud>
