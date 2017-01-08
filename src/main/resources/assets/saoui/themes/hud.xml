@@ -83,8 +83,8 @@
         <entry>
             <key>HOTBAR</key>
             <value>
-                <x>0.0</x>
-                <y>0.0</y>
+                <x>scaledwidth - 24</x>
+                <y>scaledheight / 2.0</y>
                 <z>0.0</z>
                 <calls>
                     <element xsi:type="glHotbarItem">
@@ -96,8 +96,8 @@
                         <srcY>25.0</srcY>
                         <texture>saoui:textures/guiEDT.png</texture>
                         <w>20.0</w>
-                        <x>scaledwidth - 24</x>
-                        <y>scaledheight / 2.0 - 99</y>
+                        <x>0.0</x>
+                        <y>-99</y>
                         <z>0.0</z>
                         <slot>0</slot>
                         <itemXoffset>2</itemXoffset>
@@ -112,8 +112,8 @@
                         <srcY>25.0</srcY>
                         <texture>saoui:textures/guiEDT.png</texture>
                         <w>20.0</w>
-                        <x>scaledwidth - 24</x>
-                        <y>scaledheight / 2.0 - 77</y>
+                        <x>0.0</x>
+                        <y>-77</y>
                         <z>0.0</z>
                         <slot>1</slot>
                         <itemXoffset>2</itemXoffset>
@@ -128,8 +128,8 @@
                         <srcY>25.0</srcY>
                         <texture>saoui:textures/guiEDT.png</texture>
                         <w>20.0</w>
-                        <x>scaledwidth - 24</x>
-                        <y>scaledheight / 2.0 - 55</y>
+                        <x>0.0</x>
+                        <y>-55</y>
                         <z>0.0</z>
                         <slot>2</slot>
                         <itemXoffset>2</itemXoffset>
@@ -144,8 +144,8 @@
                         <srcY>25.0</srcY>
                         <texture>saoui:textures/guiEDT.png</texture>
                         <w>20.0</w>
-                        <x>scaledwidth - 24</x>
-                        <y>scaledheight / 2.0 - 33</y>
+                        <x>0.0</x>
+                        <y>-33</y>
                         <z>0.0</z>
                         <slot>3</slot>
                         <itemXoffset>2</itemXoffset>
@@ -160,8 +160,8 @@
                         <srcY>25.0</srcY>
                         <texture>saoui:textures/guiEDT.png</texture>
                         <w>20.0</w>
-                        <x>scaledwidth - 24</x>
-                        <y>scaledheight / 2.0 - 11</y>
+                        <x>0.0</x>
+                        <y>-11</y>
                         <z>0.0</z>
                         <slot>4</slot>
                         <itemXoffset>2</itemXoffset>
@@ -176,8 +176,8 @@
                         <srcY>25.0</srcY>
                         <texture>saoui:textures/guiEDT.png</texture>
                         <w>20.0</w>
-                        <x>scaledwidth - 24</x>
-                        <y>scaledheight / 2.0 + 11</y>
+                        <x>0.0</x>
+                        <y>11</y>
                         <z>0.0</z>
                         <slot>5</slot>
                         <itemXoffset>2</itemXoffset>
@@ -192,8 +192,8 @@
                         <srcY>25.0</srcY>
                         <texture>saoui:textures/guiEDT.png</texture>
                         <w>20.0</w>
-                        <x>scaledwidth - 24</x>
-                        <y>scaledheight / 2.0 + 33</y>
+                        <x>0.0</x>
+                        <y>33</y>
                         <z>0.0</z>
                         <slot>6</slot>
                         <itemXoffset>2</itemXoffset>
@@ -208,8 +208,8 @@
                         <srcY>25.0</srcY>
                         <texture>saoui:textures/guiEDT.png</texture>
                         <w>20.0</w>
-                        <x>scaledwidth - 24</x>
-                        <y>scaledheight / 2.0 + 55</y>
+                        <x>0.0</x>
+                        <y>55</y>
                         <z>0.0</z>
                         <slot>7</slot>
                         <itemXoffset>2</itemXoffset>
@@ -224,8 +224,8 @@
                         <srcY>25.0</srcY>
                         <texture>saoui:textures/guiEDT.png</texture>
                         <w>20.0</w>
-                        <x>scaledwidth - 24</x>
-                        <y>scaledheight / 2.0 + 77</y>
+                        <x>0.0</x>
+                        <y>77</y>
                         <z>0.0</z>
                         <slot>8</slot>
                         <itemXoffset>2</itemXoffset>
@@ -240,8 +240,8 @@
                         <srcY>25.0</srcY>
                         <texture>saoui:textures/guiEDT.png</texture>
                         <w>20.0</w>
-                        <x>scaledwidth - 24</x>
-                        <y>scaledheight / 2 + 121</y>
+                        <x>0.0</x>
+                        <y>121</y>
                         <z>0.0</z>
                         <slot>0</slot>
                         <itemXoffset>2</itemXoffset>
@@ -257,8 +257,8 @@
                         <srcY>25.0</srcY>
                         <texture>saoui:textures/guiEDT.png</texture>
                         <w>20.0</w>
-                        <x>scaledwidth - 24</x>
-                        <y>scaledheight / 2 + 121</y>
+                        <x>0.0</x>
+                        <y>121</y>
                         <z>0.0</z>
                         <slot>0</slot>
                         <itemXoffset>2</itemXoffset>
