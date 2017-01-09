@@ -17,7 +17,7 @@ public abstract class ExpressionAdapter<T extends CompiledExpressionWrapper> ext
     @Override
     public T unmarshal(String v) throws Exception {
         try {
-            return wrap(Evaluator.compile(v, LibHelper.lib, getType()));
+            return wrap(Evaluator.compile(v, LibHelper.LIB, getType()));
         } catch (CompilationException ce) {
             StringBuilder sb = new StringBuilder("An error occurred during theme loading. See more info below.\n")
                     .append("–––COMPILATION ERROR :\n")
@@ -27,7 +27,7 @@ public abstract class ExpressionAdapter<T extends CompiledExpressionWrapper> ext
             int column = ce.getColumn(); // Column, where error was found
             for (int i = 0; i < column + 23 - 1; i++) sb.append(' ');
             sb.append('\n').append('^');
-            LogCore.logWarn(sb.toString());
+            LogCore.logFatal(sb.toString());
         }
 
         return null;

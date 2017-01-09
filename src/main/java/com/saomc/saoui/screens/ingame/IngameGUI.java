@@ -9,8 +9,8 @@ import com.saomc.saoui.screens.menu.IngameMenuGUI;
 import com.saomc.saoui.social.StaticPlayerHelper;
 import com.saomc.saoui.social.party.PartyHelper;
 import com.saomc.saoui.themes.ThemeLoader;
-import com.saomc.saoui.themes.elements.HudDrawContext;
 import com.saomc.saoui.themes.elements.HudPartType;
+import com.saomc.saoui.themes.util.HudDrawContext;
 import com.saomc.saoui.util.PlayerStats;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
@@ -54,6 +54,7 @@ public class IngameGUI extends GuiIngameForge {
     private int width;
     private int height;
     private ScaledResolution res = null;
+    @Deprecated // see if we can get around not using this one anymore, will reduce amount of calculations
     private float time;
     private int healthBoxes;
     private GuiOverlayDebugForge debugOverlay;
