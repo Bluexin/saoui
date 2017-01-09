@@ -65,18 +65,4 @@ public interface IHudDrawContext {
      * @return whether the specified offhand slot is empty
      */
     boolean offhandEmpty(int slot);
-
-    /**
-     * Used to get the width in pixels of the string with the current fontrenderer.
-     *
-     * @param s the string to query the width of
-     * @return width in pixels of the provided string with current fontrenderer
-     */
-    int strWidth(String s);
-
-    /**
-     * @return the current absorption amount the player has
-     */
-    float absorption();
-
 }

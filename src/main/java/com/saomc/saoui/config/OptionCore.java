@@ -104,8 +104,6 @@ public enum OptionCore implements IOption {
         return o.isEnabled();
     }
 
-    // TODO: make a way for themes to register custom options?
-
     @Override
     public final String toString() {
         return name;
@@ -197,4 +195,6 @@ public enum OptionCore implements IOption {
     public boolean isCategory() {
         return isCategory;
     }
+
+    // TODO: make a way for themes to register custom options?
 }

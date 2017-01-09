@@ -6,8 +6,6 @@ import gnu.jel.CompiledExpression;
 import gnu.jel.Evaluator;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 
 /**
  * Part of saoui by Bluexin.
@@ -19,19 +17,16 @@ public abstract class ExpressionAdapter<T extends CompiledExpressionWrapper> ext
     @Override
     public T unmarshal(String v) throws Exception {
         try {
-            return wrap(Evaluator.compile(v.replace('\n', ' '), LibHelper.LIB, getType()));
+            return wrap(Evaluator.compile(v, LibHelper.LIB, getType()));
         } catch (CompilationException ce) {
             StringBuilder sb = new StringBuilder("An error occurred during theme loading. See more info below.\n")
                     .append("–––COMPILATION ERROR :\n")
                     .append(ce.getMessage()).append('\n')
                     .append("                       ")
-                    .append(v).append('\n');
+                    .append(v);
             int column = ce.getColumn(); // Column, where error was found
             for (int i = 0; i < column + 23 - 1; i++) sb.append(' ');
-            sb.append('^');
-            StringWriter w = new StringWriter();
-            ce.printStackTrace(new PrintWriter(w));
-            sb.append('\n').append(w);
+            sb.append('\n').append('^');
             LogCore.logFatal(sb.toString());
         }
 
@@ -100,21 +95,6 @@ public abstract class ExpressionAdapter<T extends CompiledExpressionWrapper> ext
         @Override
         protected StringExpressionWrapper wrap(CompiledExpression ce) {
             return new StringExpressionWrapper(ce);
-        }
-    }
-
-    /**
-     * Adapts an expression that should return a boolean.
-     */
-    public static class BooleanExpressionAdapter extends ExpressionAdapter<BooleanExpressionWrapper> {
-        @Override
-        protected Class getType() {
-            return Boolean.TYPE;
-        }
-
-        @Override
-        protected BooleanExpressionWrapper wrap(CompiledExpression ce) {
-            return new BooleanExpressionWrapper(ce);
         }
     }
 }

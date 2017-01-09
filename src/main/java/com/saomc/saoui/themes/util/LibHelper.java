@@ -20,8 +20,7 @@ public final class LibHelper {
         Class[] staticLib = new Class[]{
                 Math.class,
                 HealthStep.class,
-                OptionCore.class,
-                String.class
+                OptionCore.class
         };
         Class[] dynLib = new Class[]{
                 IHudDrawContext.class,
