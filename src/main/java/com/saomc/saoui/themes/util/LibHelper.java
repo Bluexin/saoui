@@ -1,8 +1,10 @@
 package com.saomc.saoui.themes.util;
 
+import com.saomc.saoui.api.info.IOption;
+import com.saomc.saoui.api.themes.IHudDrawContext;
+import com.saomc.saoui.config.OptionCore;
 import com.saomc.saoui.screens.ingame.HealthStep;
 import com.saomc.saoui.themes.elements.ElementParent;
-import com.saomc.saoui.themes.elements.HudDrawContext;
 import gnu.jel.CompilationException;
 import gnu.jel.Library;
 
@@ -12,23 +14,25 @@ import gnu.jel.Library;
  * @author Bluexin
  */
 public final class LibHelper {
-    public final static Library lib;
+    public final static Library LIB;
 
     static {
         Class[] staticLib = new Class[]{
                 Math.class,
-                HealthStep.class
+                HealthStep.class,
+                OptionCore.class
         };
         Class[] dynLib = new Class[]{
-                HudDrawContext.class,
+                IHudDrawContext.class,
                 ElementParent.class
         };
         Class[] dotClasses = new Class[]{
-                String.class
+                String.class,
+                IOption.class
         };
-        lib = new Library(staticLib, dynLib, dotClasses, null, null);
+        LIB = new Library(staticLib, dynLib, dotClasses, null, null);
         try {
-            lib.markStateDependent("random", null);
+            LIB.markStateDependent("random", null);
         } catch (CompilationException e) {
             e.printStackTrace();
         }

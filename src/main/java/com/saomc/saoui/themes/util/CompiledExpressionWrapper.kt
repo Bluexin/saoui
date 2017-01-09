@@ -1,6 +1,5 @@
 package com.saomc.saoui.themes.util
 
-import com.saomc.saoui.themes.elements.HudDrawContext
 import com.saomc.saoui.util.LogCore
 import gnu.jel.CompiledExpression
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter
@@ -14,7 +13,7 @@ abstract class CompiledExpressionWrapper<out T>(val compiledExpression: Compiled
     /**
      * Evaluates an expression.
      *
-     * @param ctx Context to use when evaluating the expression.
+     * @param ctx HudDrawContext to use when evaluating the expression.
      */
     abstract fun execute(ctx: HudDrawContext): T
 

@@ -1,6 +1,7 @@
 package com.saomc.saoui.config;
 
 import com.saomc.saoui.GLCore;
+import com.saomc.saoui.api.info.IOption;
 import jdk.nashorn.internal.objects.annotations.Getter;
 import jdk.nashorn.internal.objects.annotations.Setter;
 import net.minecraft.client.Minecraft;
@@ -11,7 +12,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.util.stream.Stream;
 
 @SideOnly(Side.CLIENT)
-public enum OptionCore {
+public enum OptionCore implements IOption {
 
     //Main Categories
     VANILLA_OPTIONS(I18n.format("guiOptions"), false, false, null, false),
@@ -30,9 +31,12 @@ public enum OptionCore {
     LOGOUT(I18n.format("optionLogout"), false, false, UI, false),
     GUI_PAUSE(I18n.format("optionGuiPause"), true, false, UI, false),
     // Themes
+    @Deprecated // TODO: way to load other xml-defined themes
     VANILLA_UI(I18n.format("optionDefaultUI"), false, false, THEME, true),
-    ALO_UI(I18n.format("optionALOUI"), false, false, THEME, true),
-    SAO_UI(I18n.format("optionSAOUI"), true, false, THEME, true),
+    @Deprecated // TODO: way to load other xml-defined themes
+            ALO_UI(I18n.format("optionALOUI"), false, false, THEME, true),
+    @Deprecated // TODO: way to load other xml-defined themes
+            SAO_UI(I18n.format("optionSAOUI"), true, false, THEME, true),
     // Health Options
     SMOOTH_HEALTH(I18n.format("optionSmoothHealth"), true, false, HEALTH_OPTIONS, false),
     HEALTH_BARS(I18n.format("optionHealthBars"), true, false, HEALTH_OPTIONS, false),
@@ -80,6 +84,26 @@ public enum OptionCore {
         return Stream.of(values()).filter(option -> option.toString().equals(str)).findAny().orElse(null);
     }
 
+    /**
+     * Easy downcaster to use with JEL.
+     *
+     * @param o the option to downcast
+     * @return downcasted option
+     */
+    public static IOption get(OptionCore o) {
+        return o;
+    }
+
+    /**
+     * Easy getter to use with JEL.
+     *
+     * @param o the option to get
+     * @return whether the option is enabled
+     */
+    public static boolean isEnabled(OptionCore o) {
+        return o.isEnabled();
+    }
+
     @Override
     public final String toString() {
         return name;
@@ -101,6 +125,7 @@ public enum OptionCore {
      * @return Returns true if the Option is selected/enabled
      */
     @Getter
+    @Override
     public boolean isEnabled() {
         return this.value;
     }
@@ -113,6 +138,7 @@ public enum OptionCore {
      * @return Returns true if restricted
      */
     @Getter
+    @Override
     public boolean isRestricted() {
         return this.restricted;
     }
@@ -121,6 +147,7 @@ public enum OptionCore {
      * @return Returns the Category
      */
     @Getter
+    @Override
     public OptionCore getCategory() {
         return this.category;
     }
@@ -151,8 +178,12 @@ public enum OptionCore {
 
     /**
      * @return Returns the Option name in String format
+     *
+     * Deprecated:
+     * @see OptionCore#toString()
      */
     @Getter
+    @Deprecated
     public String getName() {
         return name;
     }
@@ -164,4 +195,6 @@ public enum OptionCore {
     public boolean isCategory() {
         return isCategory;
     }
+
+    // TODO: make a way for themes to register custom options?
 }
