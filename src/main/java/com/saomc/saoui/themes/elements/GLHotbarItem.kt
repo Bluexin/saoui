@@ -1,7 +1,6 @@
 package com.saomc.saoui.themes.elements
 
 import com.saomc.saoui.GLCore
-import com.saomc.saoui.themes.util.HudDrawContext
 import com.saomc.saoui.themes.util.IntExpressionWrapper
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.renderer.RenderHelper
@@ -45,7 +44,6 @@ open class GLHotbarItem constructor() : GLRectangle() {
     }
 
     override fun draw(ctx: HudDrawContext) {
-        if (!(enabled?.execute(ctx) ?: true)) return
         super.draw(ctx)
 
         val p: ElementParent? = this.parent.get()

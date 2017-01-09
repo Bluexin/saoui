@@ -2,9 +2,9 @@ package com.saomc.saoui.themes.elements
 
 import com.saomc.saoui.GLCore
 import com.saomc.saoui.themes.util.DoubleExpressionWrapper
-import com.saomc.saoui.themes.util.HudDrawContext
 import com.saomc.saoui.themes.util.IntExpressionWrapper
 import net.minecraft.util.ResourceLocation
+import java.lang.ref.WeakReference
 import javax.xml.bind.annotation.XmlRootElement
 import javax.xml.bind.annotation.XmlSeeAlso
 
@@ -16,8 +16,11 @@ import javax.xml.bind.annotation.XmlSeeAlso
 // Needed for XML loading
 @XmlSeeAlso(GLString::class, GLHotbarItem::class)
 @XmlRootElement
-open class GLRectangle : Element() {
+open class GLRectangle : Element {
     protected var rgba: IntExpressionWrapper? = null
+    protected var x: DoubleExpressionWrapper? = null
+    protected var y: DoubleExpressionWrapper? = null
+    protected var z: DoubleExpressionWrapper? = null
     protected var srcX: DoubleExpressionWrapper? = null
     protected var srcY: DoubleExpressionWrapper? = null
     protected var w: DoubleExpressionWrapper? = null
@@ -25,11 +28,10 @@ open class GLRectangle : Element() {
     protected var srcW: DoubleExpressionWrapper? = null
     protected var srcH: DoubleExpressionWrapper? = null
     protected var rl: ResourceLocation? = null
+    @Transient lateinit protected var parent: WeakReference<ElementParent>
     private val texture: String? = null
 
     override fun draw(ctx: HudDrawContext) {
-        if (!(enabled?.execute(ctx) ?: true)) return
-
         val p: ElementParent? = this.parent.get()
         val x = (this.x?.execute(ctx) ?: 0.0) + (p?.getX(ctx) ?: 0.0)
         val y = (this.y?.execute(ctx) ?: 0.0) + (p?.getY(ctx) ?: 0.0)
@@ -38,12 +40,11 @@ open class GLRectangle : Element() {
         GLCore.glBlend(true)
         GLCore.glColorRGBA(this.rgba?.execute(ctx) ?: 0xFFFFFFFF.toInt())
         GLCore.glBindTexture(this.rl)
-        GLCore.glTexturedRect(x, y, z, w?.execute(ctx) ?: 0.0, h?.execute(ctx) ?: 0.0, srcX?.execute(ctx) ?: 0.0, srcY?.execute(ctx) ?: 0.0, srcW?.execute(ctx) ?: w?.execute(ctx) ?: 0.0, srcH?.execute(ctx) ?: h?.execute(ctx) ?: 0.0)
+        GLCore.glTexturedRect(x, y, z, w?.execute(ctx) ?: 0.0, h?.execute(ctx) ?: 0.0, srcX?.execute(ctx) ?: 0.0, srcY?.execute(ctx) ?: 0.0, srcW?.execute(ctx) ?: 0.0, srcH?.execute(ctx) ?: 0.0)
     }
 
-    override fun setup(parent: ElementParent): Boolean {
+    override fun setup(parent: ElementParent) {
         if (this.texture != null) this.rl = ResourceLocation(this.texture)
-        return super.setup(parent)
+        this.parent = WeakReference(parent)
     }
-
 }

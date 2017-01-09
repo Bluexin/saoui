@@ -1,8 +1,8 @@
 package com.saomc.saoui.themes.elements
 
 import com.saomc.saoui.GLCore
-import com.saomc.saoui.themes.util.HudDrawContext
 import com.saomc.saoui.themes.util.StringExpressionWrapper
+
 import javax.xml.bind.annotation.XmlRootElement
 
 /**
@@ -17,7 +17,6 @@ open class GLString : GLRectangle() {
     private val shadow = true
 
     override fun draw(ctx: HudDrawContext) {
-        if (!(enabled?.execute(ctx) ?: true)) return
         val p = this.parent.get()
         val x = (this.x?.execute(ctx) ?: 0.0) + (p?.getX(ctx) ?: 0.0)
         val y = (this.y?.execute(ctx) ?: 0.0) + (p?.getY(ctx) ?: 0.0) + ((this.h?.execute(ctx) ?: 0.0) - ctx.mc.fontRendererObj.FONT_HEIGHT) / 2.0
