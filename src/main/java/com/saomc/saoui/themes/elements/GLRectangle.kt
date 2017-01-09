@@ -2,6 +2,7 @@ package com.saomc.saoui.themes.elements
 
 import com.saomc.saoui.GLCore
 import com.saomc.saoui.themes.util.DoubleExpressionWrapper
+import com.saomc.saoui.themes.util.HudDrawContext
 import com.saomc.saoui.themes.util.IntExpressionWrapper
 import net.minecraft.util.ResourceLocation
 import java.lang.ref.WeakReference
