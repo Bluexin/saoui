@@ -1,0 +1,104 @@
+<?xml version='1.0'?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           elementFormDefault="qualified"
+           targetNamespace="http://www.bluexin.be/com/saomc/saoui/hud-schema"
+           xmlns="http://www.bluexin.be/com/saomc/saoui/hud-schema">
+
+    <xs:element name="hud">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="parts">
+                    <xs:complexType>
+                        <xs:sequence maxOccurs="unbounded">
+                            <xs:element name="entry" type="HudPart"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="HudPart">
+        <xs:all>
+            <xs:element name="key">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:enumeration value="HEALTH_BOX"/>
+                        <xs:enumeration value="HOTBAR"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="value">
+                <xs:complexType>
+                    <xs:all>
+                        <xs:element name="x" minOccurs="0" type="xs:string"/>
+                        <xs:element name="y" minOccurs="0" type="xs:string"/>
+                        <xs:element name="z" minOccurs="0" type="xs:string"/>
+                        <xs:element name="calls">
+                            <xs:complexType>
+                                <xs:choice maxOccurs="unbounded">
+                                    <xs:element name="glRectangle" type="GLRectangle"/>
+                                    <xs:element name="glString" type="GLString"/>
+                                    <xs:element name="glHotbarItem" type="GLHotbarItem"/>
+                                </xs:choice>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:all>
+                </xs:complexType>
+            </xs:element>
+        </xs:all>
+    </xs:complexType>
+
+    <xs:simpleType name="Element"/>
+
+    <xs:complexType name="GLRectangle">
+        <xs:complexContent>
+            <xs:extension base="Element"/>
+            <xs:all>
+                <xs:element name="rgba" minOccurs="0" type="xs:string"/>
+                <xs:element name="x" minOccurs="0" type="xs:string"/>
+                <xs:element name="y" minOccurs="0" type="xs:string"/>
+                <xs:element name="z" minOccurs="0" type="xs:string"/>
+                <xs:element name="srcX" minOccurs="0" type="xs:string"/>
+                <xs:element name="srcY" minOccurs="0" type="xs:string"/>
+                <xs:element name="w" minOccurs="0" type="xs:string"/>
+                <xs:element name="h" minOccurs="0" type="xs:string"/>
+                <xs:element name="srcW" minOccurs="0" type="xs:string"/>
+                <xs:element name="srcH" minOccurs="0" type="xs:string"/>
+                <xs:element name="texture" minOccurs="0" type="xs:anyURI"/>
+            </xs:all>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="GLString">
+        <xs:complexContent>
+            <xs:extension base="GLRectangle">
+                <xs:all>
+                    <xs:element name="text" type="xs:string"/>
+                    <xs:element name="shadow" type="xs:boolean"/>
+                </xs:all>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="GLHotbarItem">
+        <xs:complexContent>
+            <xs:extension base="GLRectangle">
+                <xs:all>
+                    <xs:element name="slot" type="xs:string"/>
+                    <xs:element name="itemXoffset" type="xs:string"/>
+                    <xs:element name="itemYoffset" type="xs:string"/>
+                    <xs:element name="hand" minOccurs="0" type="xs:string">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:enumeration value="LEFT"/>
+                                <xs:enumeration value="RIGHT"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:element>
+                </xs:all>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+</xs:schema>
