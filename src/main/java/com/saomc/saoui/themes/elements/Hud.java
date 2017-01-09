@@ -14,6 +14,14 @@ public class Hud {
 
     private Map<HudPartType, HudPart> parts = new HashMap<>();
 
+    public Hud(Map<HudPartType, HudPart> parts) {
+        this.parts = parts;
+    }
+
+    @SuppressWarnings("unused")
+    protected Hud() {
+    }
+
     public HudPart get(HudPartType key) {
         return parts.get(key);
     }

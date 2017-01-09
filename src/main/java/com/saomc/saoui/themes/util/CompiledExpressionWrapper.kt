@@ -3,6 +3,7 @@ package com.saomc.saoui.themes.util
 import com.saomc.saoui.themes.elements.HudDrawContext
 import com.saomc.saoui.util.LogCore
 import gnu.jel.CompiledExpression
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter
 
 /**
  * Typesafe wrappers for {@link CompiledExpression}
@@ -23,6 +24,7 @@ abstract class CompiledExpressionWrapper<out T>(val compiledExpression: Compiled
     }
 }
 
+@XmlJavaTypeAdapter(ExpressionAdapter.IntExpressionAdapter::class)
 class IntExpressionWrapper(compiledExpression: CompiledExpression) : CompiledExpressionWrapper<Int>(compiledExpression) {
     override fun execute(ctx: HudDrawContext): Int = try {
         compiledExpression.evaluate_int(arrayOf(ctx))
@@ -32,6 +34,7 @@ class IntExpressionWrapper(compiledExpression: CompiledExpression) : CompiledExp
     }
 }
 
+@XmlJavaTypeAdapter(ExpressionAdapter.DoubleExpressionAdapter::class)
 class DoubleExpressionWrapper(compiledExpression: CompiledExpression) : CompiledExpressionWrapper<Double>(compiledExpression) {
     override fun execute(ctx: HudDrawContext): Double = try {
         compiledExpression.evaluate_double(arrayOf(ctx))
@@ -41,6 +44,7 @@ class DoubleExpressionWrapper(compiledExpression: CompiledExpression) : Compiled
     }
 }
 
+@XmlJavaTypeAdapter(ExpressionAdapter.StringExpressionAdapter::class)
 class StringExpressionWrapper(compiledExpression: CompiledExpression) : CompiledExpressionWrapper<String>(compiledExpression) {
     override fun execute(ctx: HudDrawContext): String = try {
         compiledExpression.evaluate(arrayOf(ctx)).toString()

@@ -9,6 +9,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Part of saoui by Bluexin.
@@ -17,15 +18,17 @@ import java.io.IOException;
  */
 public class ThemeLoader {
 
+    //TODO: tests
+
     public static Hud HUD;
 
     public static void load() throws JAXBException {
         ResourceLocation hudRL = new ResourceLocation(SAOCore.MODID, "themes/hud.xml");
 
-        JAXBContext context = JAXBContext.newInstance(Hud.class);
+        JAXBContext context = JAXBContext.newInstance(/*GLRectangle.class, */Hud.class);
         Unmarshaller um = context.createUnmarshaller();
 
-        try (java.io.InputStream is = Minecraft.getMinecraft().getResourceManager().getResource(hudRL).getInputStream()) {
+        try (InputStream is = Minecraft.getMinecraft().getResourceManager().getResource(hudRL).getInputStream()) {
             HUD = (Hud) um.unmarshal(is);
         } catch (IOException e) {
             e.printStackTrace();
