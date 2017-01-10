@@ -38,12 +38,12 @@ open class GLRectangle : Element() {
         GLCore.glBlend(true)
         GLCore.glColorRGBA(this.rgba?.execute(ctx) ?: 0xFFFFFFFF.toInt())
         GLCore.glBindTexture(this.rl)
-        GLCore.glTexturedRect(x, y, z, w?.execute(ctx) ?: 0.0, h?.execute(ctx) ?: 0.0, srcX?.execute(ctx) ?: 0.0, srcY?.execute(ctx) ?: 0.0, srcW?.execute(ctx) ?: 0.0, srcH?.execute(ctx) ?: 0.0)
+        GLCore.glTexturedRect(x, y, z, w?.execute(ctx) ?: 0.0, h?.execute(ctx) ?: 0.0, srcX?.execute(ctx) ?: 0.0, srcY?.execute(ctx) ?: 0.0, srcW?.execute(ctx) ?: w?.execute(ctx) ?: 0.0, srcH?.execute(ctx) ?: h?.execute(ctx) ?: 0.0)
     }
 
-    override fun setup(parent: ElementParent) {
-        super.setup(parent)
+    override fun setup(parent: ElementParent): Boolean {
         if (this.texture != null) this.rl = ResourceLocation(this.texture)
+        return super.setup(parent)
     }
 
 }

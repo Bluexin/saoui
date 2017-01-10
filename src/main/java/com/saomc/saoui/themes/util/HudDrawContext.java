@@ -128,4 +128,9 @@ public class HudDrawContext implements IHudDrawContext {
     public boolean offhandEmpty(int slot) {
         return slot >= 0 && player.inventory.offHandInventory.length > slot && player.inventory.offHandInventory[slot] == null;
     }
+
+    @Override
+    public int strWidth(String s) {
+        return mc.fontRendererObj.getStringWidth(s);
+    }
 }

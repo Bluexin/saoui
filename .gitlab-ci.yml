@@ -14,8 +14,7 @@ before_script:
 build:
   variables:
     NAME: "Builds stalker"
-    CONTENT: "$(git log -1 --pretty=%B)"
-    MESSAGE: "$CI_PROJECT_NAME ($CI_BUILD_REF_NAME) build successful: "
+    MESSAGE: "Project $CI_PROJECT_NAME (branch $CI_BUILD_REF_NAME) build successful: "
     IMG: "https://cdn.discordapp.com/icons/131019825681006592/9df46a9d968c06e8eb264c590cc23a43.jpg"
   script:
     - chmod +x gradlew
