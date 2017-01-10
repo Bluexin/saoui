@@ -6,6 +6,8 @@ import gnu.jel.CompiledExpression;
 import gnu.jel.Evaluator;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 /**
  * Part of saoui by Bluexin.
@@ -23,10 +25,13 @@ public abstract class ExpressionAdapter<T extends CompiledExpressionWrapper> ext
                     .append("–––COMPILATION ERROR :\n")
                     .append(ce.getMessage()).append('\n')
                     .append("                       ")
-                    .append(v);
+                    .append(v).append('\n');
             int column = ce.getColumn(); // Column, where error was found
             for (int i = 0; i < column + 23 - 1; i++) sb.append(' ');
-            sb.append('\n').append('^');
+            sb.append('^');
+            StringWriter w = new StringWriter();
+            ce.printStackTrace(new PrintWriter(w));
+            sb.append('\n').append(w);
             LogCore.logFatal(sb.toString());
         }
 
@@ -104,7 +109,7 @@ public abstract class ExpressionAdapter<T extends CompiledExpressionWrapper> ext
     public static class BooleanExpressionAdapter extends ExpressionAdapter<BooleanExpressionWrapper> {
         @Override
         protected Class getType() {
-            return String.class;
+            return Boolean.TYPE;
         }
 
         @Override

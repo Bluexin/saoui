@@ -27,28 +27,13 @@
                     </xs:restriction>
                 </xs:simpleType>
             </xs:element>
-            <xs:element name="value">
-                <xs:complexType>
-                    <xs:all>
-                        <xs:element name="x" minOccurs="0" type="xs:string"/>
-                        <xs:element name="y" minOccurs="0" type="xs:string"/>
-                        <xs:element name="z" minOccurs="0" type="xs:string"/>
-                        <xs:element name="calls">
-                            <xs:complexType>
-                                <xs:sequence maxOccurs="unbounded">
-                                    <xs:element ref="element"/>
-                                </xs:sequence>
-                            </xs:complexType>
-                        </xs:element>
-                    </xs:all>
-                </xs:complexType>
-            </xs:element>
+            <xs:element name="value" type="ElementGroup"/>
         </xs:all>
     </xs:complexType>
 
     <xs:complexType name="Element" abstract="true">
-        <xs:attribute name="name" default="anonymous" type="xs:string" use="optional"/>
         <xs:complexContent>
+            <xs:attribute name="name" default="anonymous" type="xs:string"/>
             <xs:all>
                 <xs:element name="x" default="0" minOccurs="0" type="xs:string"/>
                 <xs:element name="y" default="0" minOccurs="0" type="xs:string"/>
@@ -118,7 +103,7 @@
                 <xs:all>
                     <xs:element name="children">
                         <xs:complexType>
-                            <xs:sequence maxOccurs="unbounded">
+                            <xs:sequence maxOccurs="unbounded" minOccurs="0">
                                 <xs:element ref="element"/>
                             </xs:sequence>
                         </xs:complexType>
