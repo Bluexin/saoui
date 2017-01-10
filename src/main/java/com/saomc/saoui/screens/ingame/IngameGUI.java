@@ -190,37 +190,38 @@ public class IngameGUI extends GuiIngameForge {
             renderFood(healthWidth, healthHeight, offsetUsername, stepOne, stepTwo, stepThree);
 
             if (!OptionCore.REMOVE_HPXP.isEnabled()) {
-                String absorb = OptionCore.ALT_ABSORB_POS.isEnabled() ? "" : " ";
-                if (mc.player.getAbsorptionAmount() > 0) {
-                    absorb += "(+" + (int) Math.ceil(mc.player.getAbsorptionAmount());
-                    absorb += ')';
-                    absorb += OptionCore.ALT_ABSORB_POS.isEnabled() ? ' ' : "";
-                }
+//                String absorb = OptionCore.ALT_ABSORB_POS.isEnabled() ? "" : " ";
+//                if (mc.player.getAbsorptionAmount() > 0) {
+//                    absorb += "(+" + (int) Math.ceil(mc.player.getAbsorptionAmount());
+//                    absorb += ')';
+//                    absorb += OptionCore.ALT_ABSORB_POS.isEnabled() ? ' ' : "";
+//                }
 
-                final String healthStr = String.valueOf((OptionCore.ALT_ABSORB_POS.isEnabled() ? absorb : "") + (int) Math.ceil(StaticPlayerHelper.getHealth(mc, mc.player, time))) + (OptionCore.ALT_ABSORB_POS.isEnabled() ? "" : absorb) + " / " + String.valueOf((int) Math.ceil(StaticPlayerHelper.getMaxHealth(mc.player)));
+                final String healthStr = String.valueOf(/*(OptionCore.ALT_ABSORB_POS.isEnabled() ? absorb : "") + */(int) Math.ceil(StaticPlayerHelper.getHealth(mc, mc.player, time))) /*+ (OptionCore.ALT_ABSORB_POS.isEnabled() ? "" : absorb) */ + " / " + String.valueOf((int) Math.ceil(StaticPlayerHelper.getMaxHealth(mc.player)));
                 final int healthStrWidth = fontRenderer.getStringWidth(healthStr);
 
-                final int absStart = healthStr.indexOf('(');
+//                final int absStart = healthStr.indexOf('(');
                 String[] strs;
-                if (absStart >= 0) strs = new String[]{
-                        healthStr.substring(0, absStart),
-                        healthStr.substring(absStart, healthStr.indexOf(')') + 1),
-                        healthStr.substring(healthStr.indexOf(')') + 1)
-                };
-                else strs = new String[]{"", "", healthStr};
+//                if (absStart >= 0) strs = new String[]{
+//                        healthStr.substring(0, absStart),
+//                        healthStr.substring(absStart, healthStr.indexOf(')') + 1),
+//                        healthStr.substring(healthStr.indexOf(')') + 1)
+//                };
+                /*else */
+                strs = new String[]{"", "", healthStr};
 
-                healthBoxes = (healthStrWidth + 4) / 5;
+                healthBoxes = healthStrWidth;
 
-                final int offsetR = OptionCore.SAO_UI.isEnabled() ? HPXP_OFFSET_ORIG_R : HPXP_OFFSET_ALO_R;
-                final int offsetD = OptionCore.SAO_UI.isEnabled() ? HPXP_OFFSET_ORIG_D : HPXP_OFFSET_ALO_D;
-                GLCore.glColor(1, 1, 1, 1);
-                GLCore.glTexturedRect(offsetUsername + 113 + offsetR, 13 + offsetD, zLevel, 60, 15, 5, 13);
-                GLCore.glTexturedRect(offsetUsername + 118 + offsetR, 13 + offsetD, zLevel, healthBoxes * 5, 13, 66, 15, 5, 13);
-                GLCore.glTexturedRect(offsetUsername + 118 + offsetR + healthBoxes * 5, 13 + +offsetD, zLevel, 70, 15, 5, 13);
+//                final int offsetR = OptionCore.SAO_UI.isEnabled() ? HPXP_OFFSET_ORIG_R : HPXP_OFFSET_ALO_R;
+//                final int offsetD = OptionCore.SAO_UI.isEnabled() ? HPXP_OFFSET_ORIG_D : HPXP_OFFSET_ALO_D;
+//                GLCore.glColor(1, 1, 1, 1);
+//                GLCore.glTexturedRect(offsetUsername + 113 + offsetR, 13 + offsetD, zLevel, 60, 15, 5, 13);
+//                GLCore.glTexturedRect(offsetUsername + 118 + offsetR, 13 + offsetD, zLevel, healthBoxes * 5, 13, 66, 15, 5, 13);
+//                GLCore.glTexturedRect(offsetUsername + 118 + offsetR + healthBoxes * 5, 13 + +offsetD, zLevel, 70, 15, 5, 13);
 
-                GLCore.glString(strs[0], offsetUsername + 118 + offsetR, 16 + offsetD, 0xFFFFFFFF, true);
-                GLCore.glString(strs[1], offsetUsername + 118 + offsetR + fontRenderer.getStringWidth(strs[0]), 16 + offsetD, 0xFF55FFFF, true);
-                GLCore.glString(strs[2], offsetUsername + 118 + offsetR + fontRenderer.getStringWidth(strs[0] + strs[1]), 16 + offsetD, 0xFFFFFFFF, true);
+//                GLCore.glString(strs[0], offsetUsername + 118 + offsetR, 16 + offsetD, 0xFFFFFFFF, true);
+//                GLCore.glString(strs[1], offsetUsername + 118 + offsetR + fontRenderer.getStringWidth(strs[0]), 16 + offsetD, 0xFF55FFFF, true);
+//                GLCore.glString(strs[2], offsetUsername + 118 + offsetR + fontRenderer.getStringWidth(strs[0] + strs[1]), 16 + offsetD, 0xFFFFFFFF, true);*/
             }
 
             GLCore.glColor(1.0F, 1.0F, 1.0F, 1.0F);
@@ -347,7 +348,7 @@ public class IngameGUI extends GuiIngameForge {
 
             final int offsetR = OptionCore.SAO_UI.isEnabled() ? HPXP_OFFSET_ORIG_R : HPXP_OFFSET_ALO_R;
             final int offsetD = OptionCore.SAO_UI.isEnabled() ? HPXP_OFFSET_ORIG_D : HPXP_OFFSET_ALO_D;
-            final int offsetHealth = offsetUsername + 113 + (healthBoxes + 2) * 5 + offsetR;
+            final int offsetHealth = offsetUsername + 113 + healthBoxes + 10 + offsetR;
             final String levelStr = I18n.format("displayLvShort") + ": " + String.valueOf(PlayerStats.instance().getStats().getLevel(mc.player));
             final int levelStrWidth = fontRenderer.getStringWidth(levelStr);
             final int levelBoxes = (levelStrWidth + 4) / 5;

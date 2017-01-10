@@ -2,6 +2,7 @@ package com.saomc.saoui.themes;
 
 import com.saomc.saoui.SAOCore;
 import com.saomc.saoui.themes.elements.Hud;
+import com.saomc.saoui.util.LogCore;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 
@@ -23,6 +24,7 @@ public class ThemeLoader {
     public static Hud HUD;
 
     public static void load() throws JAXBException {
+        long start = System.currentTimeMillis();
         ResourceLocation hudRL = new ResourceLocation(SAOCore.MODID, "themes/hud.xml");
 
         JAXBContext context = JAXBContext.newInstance(Hud.class);
@@ -35,5 +37,7 @@ public class ThemeLoader {
         }
 
         HUD.setup();
+
+        LogCore.logInfo("Loaded theme and set it up in " + (System.currentTimeMillis() - start) + "ms.");
     }
 }

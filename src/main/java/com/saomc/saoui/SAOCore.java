@@ -31,7 +31,7 @@ import java.util.Arrays;
 public class SAOCore {
     public static final String MODID = "saoui";
     public static final String NAME = "Sword Art Online UI";
-    public static final String VERSION = "1.9-1.6.0-Dev1";
+    public static final String VERSION = "2.0-indev";
     public static final float UNKNOWN_TIME_DELAY = -1F;
     // TODO: optimize things, ie remove public and static!
 
