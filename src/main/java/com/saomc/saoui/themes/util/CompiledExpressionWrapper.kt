@@ -17,7 +17,7 @@ abstract class CompiledExpressionWrapper<out T>(val compiledExpression: Compiled
      */
     abstract fun execute(ctx: HudDrawContext): T
 
-    fun warn(e: Throwable) {
+    protected fun warn(e: Throwable) {
         LogCore.logWarn("An error occurred while executing an Expression.\n${e.message}\n${e.cause}")
         e.printStackTrace()
     }
@@ -50,5 +50,15 @@ class StringExpressionWrapper(compiledExpression: CompiledExpression) : Compiled
     } catch (e: Throwable) {
         warn(e)
         "--Error!"
+    }
+}
+
+@XmlJavaTypeAdapter(ExpressionAdapter.BooleanExpressionAdapter::class)
+class BooleanExpressionWrapper(compiledExpression: CompiledExpression) : CompiledExpressionWrapper<Boolean>(compiledExpression) {
+    override fun execute(ctx: HudDrawContext): Boolean = try {
+        compiledExpression.evaluate_boolean(arrayOf(ctx))
+    } catch (e: Throwable) {
+        warn(e)
+        false
     }
 }

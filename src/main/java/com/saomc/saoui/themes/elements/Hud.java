@@ -9,7 +9,7 @@ import java.util.Map;
  *
  * @author Bluexin
  */
-@XmlRootElement
+@XmlRootElement(namespace = "http://www.bluexin.be/com/saomc/saoui/hud-schema")
 public class Hud {
 
     private Map<HudPartType, HudPart> parts = new HashMap<>();

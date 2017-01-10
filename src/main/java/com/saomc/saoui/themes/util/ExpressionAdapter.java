@@ -97,4 +97,19 @@ public abstract class ExpressionAdapter<T extends CompiledExpressionWrapper> ext
             return new StringExpressionWrapper(ce);
         }
     }
+
+    /**
+     * Adapts an expression that should return a boolean.
+     */
+    public static class BooleanExpressionAdapter extends ExpressionAdapter<BooleanExpressionWrapper> {
+        @Override
+        protected Class getType() {
+            return String.class;
+        }
+
+        @Override
+        protected BooleanExpressionWrapper wrap(CompiledExpression ce) {
+            return new BooleanExpressionWrapper(ce);
+        }
+    }
 }
