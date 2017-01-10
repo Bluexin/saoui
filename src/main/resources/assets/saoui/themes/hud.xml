@@ -6,56 +6,43 @@
             <value>
                 <x>2.0</x>
                 <y>2.0</y>
-                <z>0.0</z>
                 <calls>
-                    <bl:glRectangle>
-                        <h>15.0</h>
-                        <rgba>0xFFFFFFFF</rgba>
-                        <srcH>15.0</srcH>
-                        <srcW>16.0</srcW>
-                        <srcX>0.0</srcX>
-                        <srcY>0.0</srcY>
-                        <texture>saoui:textures/guiEDT.png</texture>
-                        <w>16.0</w>
-                        <x>0.0</x>
-                        <y>0.0</y>
-                        <z>0.0</z>
-                    </bl:glRectangle>
-                    <bl:glRectangle>
-                        <h>15.0</h>
-                        <rgba>0xFFFFFFFF</rgba>
-                        <srcH>15.0</srcH>
-                        <srcW>5.0</srcW>
-                        <srcX>16.0</srcX>
-                        <srcY>0.0</srcY>
-                        <texture>saoui:textures/guiEDT.png</texture>
-                        <w>usernamewidth</w>
-                        <x>16.0</x>
-                        <y>0.0</y>
-                        <z>0.0</z>
-                    </bl:glRectangle>
-                    <bl:glString>
+                    <elementGroup name="background">
+                        <children>
+                            <glRectangle>
+                                <h>15.0</h>
+                                <srcH>15.0</srcH>
+                                <srcW>16.0</srcW>
+                                <texture>saoui:textures/guiEDT.png</texture>
+                                <w>16.0</w>
+                            </glRectangle>
+                            <glRectangle>
+                                <h>15.0</h>
+                                <srcH>15.0</srcH>
+                                <srcW>5.0</srcW>
+                                <srcX>16.0</srcX>
+                                <texture>saoui:textures/guiEDT.png</texture>
+                                <w>usernamewidth</w>
+                                <x>16.0</x>
+                            </glRectangle>
+                            <glRectangle>
+                                <h>15.0</h>
+                                <srcH>15.0</srcH>
+                                <srcW>234.0</srcW>
+                                <srcX>21.0</srcX>
+                                <texture>saoui:textures/guiEDT.png</texture>
+                                <w>234.0</w>
+                                <x>16.0 + usernamewidth</x>
+                            </glRectangle>
+                        </children>
+                    </elementGroup>
+                    <glString name="username">
                         <text>username</text>
-                        <shadow>true</shadow>
-                        <rgba>0xFFFFFFFF</rgba>
                         <h>15.0</h>
                         <x>16.0</x>
                         <y>1.0</y>
-                    </bl:glString>
-                    <bl:glRectangle>
-                        <h>15.0</h>
-                        <rgba>0xFFFFFFFF</rgba>
-                        <srcH>15.0</srcH>
-                        <srcW>234.0</srcW>
-                        <srcX>21.0</srcX>
-                        <srcY>0.0</srcY>
-                        <texture>saoui:textures/guiEDT.png</texture>
-                        <w>234.0</w>
-                        <x>16.0 + usernamewidth</x>
-                        <y>0.0</y>
-                        <z>0.0</z>
-                    </bl:glRectangle>
-                    <bl:glRectangle>
+                    </glString>
+                    <glRectangle name="health bar">
                         <h>9.0</h>
                         <rgba>
                             healthStep == VERY_LOW? 0xBD0000FF:
@@ -69,14 +56,12 @@
                         </rgba>
                         <srcH>9.0</srcH>
                         <srcW>215.0 * hpPct</srcW>
-                        <srcX>0.0</srcX>
                         <srcY>188.0</srcY>
                         <texture>saoui:textures/guiEDT.png</texture>
                         <w>215.0 * hpPct</w>
                         <x>18.0 + usernamewidth</x>
                         <y>3.0</y>
-                        <z>0.0</z>
-                    </bl:glRectangle>
+                    </glRectangle>
                 </calls>
             </value>
         </entry>
@@ -85,186 +70,153 @@
             <value>
                 <x>scaledwidth - 24</x>
                 <y>scaledheight / 2.0</y>
-                <z>0.0</z>
                 <calls>
-                    <bl:glHotbarItem>
+                    <glHotbarItem>
                         <h>20.0</h>
                         <rgba>0 == selectedslot ? 0xFFBA66FF : 0xCDCDCDAA</rgba>
                         <srcH>20.0</srcH>
                         <srcW>20.0</srcW>
-                        <srcX>0.0</srcX>
                         <srcY>25.0</srcY>
                         <texture>saoui:textures/guiEDT.png</texture>
                         <w>20.0</w>
-                        <x>0.0</x>
                         <y>-99</y>
-                        <z>0.0</z>
                         <slot>0</slot>
                         <itemXoffset>2</itemXoffset>
                         <itemYoffset>2</itemYoffset>
-                    </bl:glHotbarItem>
-                    <bl:glHotbarItem>
+                    </glHotbarItem>
+                    <glHotbarItem>
                         <h>20.0</h>
                         <rgba>1 == selectedslot ? 0xFFBA66FF : 0xCDCDCDAA</rgba>
                         <srcH>20.0</srcH>
                         <srcW>20.0</srcW>
-                        <srcX>0.0</srcX>
                         <srcY>25.0</srcY>
                         <texture>saoui:textures/guiEDT.png</texture>
                         <w>20.0</w>
-                        <x>0.0</x>
                         <y>-77</y>
                         <z>0.0</z>
                         <slot>1</slot>
                         <itemXoffset>2</itemXoffset>
                         <itemYoffset>2</itemYoffset>
-                    </bl:glHotbarItem>
-                    <bl:glHotbarItem>
+                    </glHotbarItem>
+                    <glHotbarItem>
                         <h>20.0</h>
                         <rgba>2 == selectedslot ? 0xFFBA66FF : 0xCDCDCDAA</rgba>
                         <srcH>20.0</srcH>
                         <srcW>20.0</srcW>
-                        <srcX>0.0</srcX>
                         <srcY>25.0</srcY>
                         <texture>saoui:textures/guiEDT.png</texture>
                         <w>20.0</w>
-                        <x>0.0</x>
                         <y>-55</y>
-                        <z>0.0</z>
                         <slot>2</slot>
                         <itemXoffset>2</itemXoffset>
                         <itemYoffset>2</itemYoffset>
-                    </bl:glHotbarItem>
-                    <bl:glHotbarItem>
+                    </glHotbarItem>
+                    <glHotbarItem>
                         <h>20.0</h>
                         <rgba>3 == selectedslot ? 0xFFBA66FF : 0xCDCDCDAA</rgba>
                         <srcH>20.0</srcH>
                         <srcW>20.0</srcW>
-                        <srcX>0.0</srcX>
                         <srcY>25.0</srcY>
                         <texture>saoui:textures/guiEDT.png</texture>
                         <w>20.0</w>
-                        <x>0.0</x>
                         <y>-33</y>
-                        <z>0.0</z>
                         <slot>3</slot>
                         <itemXoffset>2</itemXoffset>
                         <itemYoffset>2</itemYoffset>
-                    </bl:glHotbarItem>
-                    <bl:glHotbarItem>
+                    </glHotbarItem>
+                    <glHotbarItem>
                         <h>20.0</h>
                         <rgba>4 == selectedslot ? 0xFFBA66FF : 0xCDCDCDAA</rgba>
                         <srcH>20.0</srcH>
                         <srcW>20.0</srcW>
-                        <srcX>0.0</srcX>
                         <srcY>25.0</srcY>
                         <texture>saoui:textures/guiEDT.png</texture>
                         <w>20.0</w>
-                        <x>0.0</x>
                         <y>-11</y>
-                        <z>0.0</z>
                         <slot>4</slot>
                         <itemXoffset>2</itemXoffset>
                         <itemYoffset>2</itemYoffset>
-                    </bl:glHotbarItem>
-                    <bl:glHotbarItem>
+                    </glHotbarItem>
+                    <glHotbarItem>
                         <h>20.0</h>
                         <rgba>5 == selectedslot ? 0xFFBA66FF : 0xCDCDCDAA</rgba>
                         <srcH>20.0</srcH>
                         <srcW>20.0</srcW>
-                        <srcX>0.0</srcX>
                         <srcY>25.0</srcY>
                         <texture>saoui:textures/guiEDT.png</texture>
                         <w>20.0</w>
-                        <x>0.0</x>
                         <y>11</y>
-                        <z>0.0</z>
                         <slot>5</slot>
                         <itemXoffset>2</itemXoffset>
                         <itemYoffset>2</itemYoffset>
-                    </bl:glHotbarItem>
-                    <bl:glHotbarItem>
+                    </glHotbarItem>
+                    <glHotbarItem>
                         <h>20.0</h>
                         <rgba>6 == selectedslot ? 0xFFBA66FF : 0xCDCDCDAA</rgba>
                         <srcH>20.0</srcH>
                         <srcW>20.0</srcW>
-                        <srcX>0.0</srcX>
                         <srcY>25.0</srcY>
                         <texture>saoui:textures/guiEDT.png</texture>
                         <w>20.0</w>
-                        <x>0.0</x>
                         <y>33</y>
-                        <z>0.0</z>
                         <slot>6</slot>
                         <itemXoffset>2</itemXoffset>
                         <itemYoffset>2</itemYoffset>
-                    </bl:glHotbarItem>
-                    <bl:glHotbarItem>
+                    </glHotbarItem>
+                    <glHotbarItem>
                         <h>20.0</h>
                         <rgba>7 == selectedslot ? 0xFFBA66FF : 0xCDCDCDAA</rgba>
                         <srcH>20.0</srcH>
                         <srcW>20.0</srcW>
-                        <srcX>0.0</srcX>
                         <srcY>25.0</srcY>
                         <texture>saoui:textures/guiEDT.png</texture>
                         <w>20.0</w>
-                        <x>0.0</x>
                         <y>55</y>
-                        <z>0.0</z>
                         <slot>7</slot>
                         <itemXoffset>2</itemXoffset>
                         <itemYoffset>2</itemYoffset>
-                    </bl:glHotbarItem>
-                    <bl:glHotbarItem>
+                    </glHotbarItem>
+                    <glHotbarItem>
                         <h>20.0</h>
                         <rgba>8 == selectedslot ? 0xFFBA66FF : 0xCDCDCDAA</rgba>
                         <srcH>20.0</srcH>
                         <srcW>20.0</srcW>
-                        <srcX>0.0</srcX>
                         <srcY>25.0</srcY>
                         <texture>saoui:textures/guiEDT.png</texture>
                         <w>20.0</w>
-                        <x>0.0</x>
                         <y>77</y>
-                        <z>0.0</z>
                         <slot>8</slot>
                         <itemXoffset>2</itemXoffset>
                         <itemYoffset>2</itemYoffset>
-                    </bl:glHotbarItem>
-                    <bl:glHotbarItem>
+                    </glHotbarItem>
+                    <glHotbarItem>
                         <h>20.0</h>
                         <rgba>offhandEmpty(0) ? 0xCDCDCDAA : 0xFFBA66FF</rgba>
                         <srcH>20.0</srcH>
                         <srcW>20.0</srcW>
-                        <srcX>0.0</srcX>
                         <srcY>25.0</srcY>
                         <texture>saoui:textures/guiEDT.png</texture>
                         <w>20.0</w>
-                        <x>0.0</x>
                         <y>121</y>
-                        <z>0.0</z>
                         <slot>0</slot>
                         <itemXoffset>2</itemXoffset>
                         <itemYoffset>2</itemYoffset>
                         <hand>RIGHT</hand>
-                    </bl:glHotbarItem>
-                    <bl:glHotbarItem>
+                    </glHotbarItem>
+                    <glHotbarItem>
                         <h>20.0</h>
                         <rgba>offhandEmpty(0) ? 0xCDCDCDAA : 0xFFBA66FF</rgba>
                         <srcH>20.0</srcH>
                         <srcW>20.0</srcW>
-                        <srcX>0.0</srcX>
                         <srcY>25.0</srcY>
                         <texture>saoui:textures/guiEDT.png</texture>
                         <w>20.0</w>
-                        <x>0.0</x>
                         <y>121</y>
-                        <z>0.0</z>
                         <slot>0</slot>
                         <itemXoffset>2</itemXoffset>
                         <itemYoffset>2</itemYoffset>
                         <hand>LEFT</hand>
-                    </bl:glHotbarItem>
+                    </glHotbarItem>
                 </calls>
             </value>
         </entry>
