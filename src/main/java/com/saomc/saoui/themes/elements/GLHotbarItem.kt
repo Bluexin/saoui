@@ -45,6 +45,7 @@ open class GLHotbarItem constructor() : GLRectangle() {
     }
 
     override fun draw(ctx: HudDrawContext) {
+        if (!(enabled?.execute(ctx) ?: true)) return
         super.draw(ctx)
 
         val p: ElementParent? = this.parent.get()

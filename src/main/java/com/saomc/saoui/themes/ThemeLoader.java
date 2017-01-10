@@ -25,7 +25,7 @@ public class ThemeLoader {
     public static void load() throws JAXBException {
         ResourceLocation hudRL = new ResourceLocation(SAOCore.MODID, "themes/hud.xml");
 
-        JAXBContext context = JAXBContext.newInstance(/*GLRectangle.class, */Hud.class);
+        JAXBContext context = JAXBContext.newInstance(Hud.class);
         Unmarshaller um = context.createUnmarshaller();
 
         try (InputStream is = Minecraft.getMinecraft().getResourceManager().getResource(hudRL).getInputStream()) {
