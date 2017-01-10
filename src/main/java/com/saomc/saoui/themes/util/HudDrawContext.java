@@ -133,9 +133,4 @@ public class HudDrawContext implements IHudDrawContext {
     public int strWidth(String s) {
         return mc.fontRendererObj.getStringWidth(s);
     }
-
-    @Override
-    public float absorption() {
-        return player.getAbsorptionAmount();
-    }
 }

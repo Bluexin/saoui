@@ -18,6 +18,10 @@ import javax.xml.bind.annotation.XmlSeeAlso
 @XmlSeeAlso(GLRectangle::class, ElementGroup::class) //Instructs JAXB to also bind other classes when binding this class
 abstract class Element {
 
+    companion object {
+        val DEFAULT_NAME = "anonymous"
+    }
+
     /**
      * X position.
      */
@@ -42,8 +46,7 @@ abstract class Element {
     /**
      * Friendly name for this element. Mostly used for debug purposes.
      */
-    @XmlAttribute
-    protected var name: String = "anonymous"
+    @XmlAttribute val name: String = DEFAULT_NAME
 
     /**
      * Draw this element on the screen.
@@ -54,14 +57,18 @@ abstract class Element {
     abstract fun draw(ctx: HudDrawContext)
 
     /**
-     * Called during setup, used to initialize anything extra (after it has finished loading).
+     * Called during setup, used to initialize anything extra (after it has finished loading)
+     * and returns whether this is an anonymous element.
 
      * @param parent the parent to this element
+     * @return whether this is an anonymous element
      */
     @OverridingMethodsMustInvokeSuper
-    open fun setup(parent: ElementParent) {
+    open fun setup(parent: ElementParent): Boolean {
         this.parent = WeakReference(parent)
-        LogCore.logInfo("Set up $this")
+        return if (name != DEFAULT_NAME) {
+            LogCore.logInfo("Set up $this in ${parent.name}"); false
+        } else true
     }
 
     override fun toString() = "$name ($javaClass)"

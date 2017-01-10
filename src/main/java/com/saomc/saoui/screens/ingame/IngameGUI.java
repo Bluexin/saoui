@@ -190,15 +190,14 @@ public class IngameGUI extends GuiIngameForge {
             renderFood(healthWidth, healthHeight, offsetUsername, stepOne, stepTwo, stepThree);
 
             if (!OptionCore.REMOVE_HPXP.isEnabled()) {
-                String absorb;
-                if (mc.player.getAbsorptionAmount() > 0) {
-                    absorb = OptionCore.ALT_ABSORB_POS.isEnabled() ? "" : " ";
-                    absorb += "(+" + (int) Math.ceil(mc.player.getAbsorptionAmount());
-                    absorb += ')';
-                    absorb += OptionCore.ALT_ABSORB_POS.isEnabled() ? ' ' : "";
-                } else absorb = "";
+//                String absorb = OptionCore.ALT_ABSORB_POS.isEnabled() ? "" : " ";
+//                if (mc.player.getAbsorptionAmount() > 0) {
+//                    absorb += "(+" + (int) Math.ceil(mc.player.getAbsorptionAmount());
+//                    absorb += ')';
+//                    absorb += OptionCore.ALT_ABSORB_POS.isEnabled() ? ' ' : "";
+//                }
 
-                final String healthStr = String.valueOf((OptionCore.ALT_ABSORB_POS.isEnabled() ? absorb : "") + (int) Math.ceil(StaticPlayerHelper.getHealth(mc, mc.player, time))) + (OptionCore.ALT_ABSORB_POS.isEnabled() ? "" : absorb) + " / " + String.valueOf((int) Math.ceil(StaticPlayerHelper.getMaxHealth(mc.player)));
+                final String healthStr = String.valueOf(/*(OptionCore.ALT_ABSORB_POS.isEnabled() ? absorb : "") + */(int) Math.ceil(StaticPlayerHelper.getHealth(mc, mc.player, time))) /*+ (OptionCore.ALT_ABSORB_POS.isEnabled() ? "" : absorb) */ + " / " + String.valueOf((int) Math.ceil(StaticPlayerHelper.getMaxHealth(mc.player)));
                 final int healthStrWidth = fontRenderer.getStringWidth(healthStr);
 
 //                final int absStart = healthStr.indexOf('(');

@@ -13,4 +13,6 @@ interface ElementParent {
     fun getY(ctx: HudDrawContext): Double
 
     fun getZ(ctx: HudDrawContext): Double
+
+    val name: String
 }
