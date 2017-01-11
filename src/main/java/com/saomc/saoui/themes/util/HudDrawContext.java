@@ -6,6 +6,8 @@ import com.saomc.saoui.screens.ingame.HealthStep;
 import com.saomc.saoui.social.StaticPlayerHelper;
 import com.saomc.saoui.util.PlayerStats;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -28,7 +30,6 @@ public class HudDrawContext implements IHudDrawContext {
     private final IPlayerStatsProvider stats;
     private HealthStep healthStep;
     private double z;
-    private float time;
     private float hp;
     private float maxHp;
     private ScaledResolution scaledResolution;
@@ -53,12 +54,18 @@ public class HudDrawContext implements IHudDrawContext {
         return mc;
     }
 
+    @Override
     public double getZ() {
         return z;
     }
 
     public void setZ(float z) {
         this.z = z;
+    }
+
+    @Override
+    public FontRenderer getFontRenderer() {
+        return mc.fontRendererObj;
     }
 
     @Override
@@ -81,17 +88,22 @@ public class HudDrawContext implements IHudDrawContext {
         return maxHp;
     }
 
+    /**
+     * Aka partialTicks
+     */
     public void setTime(float time) {
-        this.time = time;
         this.hp = StaticPlayerHelper.getHealth(mc, mc.player, time);
         this.maxHp = StaticPlayerHelper.getMaxHealth(mc.player);
         healthStep = HealthStep.getStep(hpPct());
+        partialTicks = time;
     }
 
+    @Override
     public EntityPlayer getPlayer() {
         return player;
     }
 
+    @Override
     public RenderItem getItemRenderer() {
         return itemRenderer;
     }
@@ -124,10 +136,6 @@ public class HudDrawContext implements IHudDrawContext {
         return partialTicks;
     }
 
-    public void setPartialTicks(float partialTicks) {
-        this.partialTicks = partialTicks;
-    }
-
     @Override
     public boolean offhandEmpty(int slot) {
         return slot >= 0 && player.inventory.offHandInventory.length > slot && player.inventory.offHandInventory[slot] == null;
@@ -151,5 +159,10 @@ public class HudDrawContext implements IHudDrawContext {
     @Override
     public float experience() {
         return stats.getExpPct(player);
+    }
+
+    @Override
+    public float horsejump() {
+        return ((EntityPlayerSP) player).getHorseJumpPower();
     }
 }

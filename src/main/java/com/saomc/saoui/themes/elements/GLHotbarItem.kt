@@ -1,7 +1,7 @@
 package com.saomc.saoui.themes.elements
 
 import com.saomc.saoui.GLCore
-import com.saomc.saoui.themes.util.HudDrawContext
+import com.saomc.saoui.api.themes.IHudDrawContext
 import com.saomc.saoui.themes.util.IntExpressionWrapper
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.renderer.RenderHelper
@@ -26,7 +26,7 @@ open class GLHotbarItem constructor() : GLRectangle() {
     /*
     From net.minecraft.client.gui.GuiIngame
      */
-    private fun renderHotbarItem(x: Int, y: Int, partialTicks: Float, player: EntityPlayer, stack: ItemStack, ctx: HudDrawContext) {
+    private fun renderHotbarItem(x: Int, y: Int, partialTicks: Float, player: EntityPlayer, stack: ItemStack, ctx: IHudDrawContext) {
         val f = stack.animationsToGo.toFloat() - partialTicks
 
         if (f > 0.0f) {
@@ -41,10 +41,10 @@ open class GLHotbarItem constructor() : GLRectangle() {
 
         if (f > 0.0f) GlStateManager.popMatrix()
 
-        ctx.itemRenderer.renderItemOverlays(ctx.mc.fontRendererObj, stack, x, y)
+        ctx.itemRenderer.renderItemOverlays(ctx.fontRenderer, stack, x, y)
     }
 
-    override fun draw(ctx: HudDrawContext) {
+    override fun draw(ctx: IHudDrawContext) {
         if (!(enabled?.execute(ctx) ?: true)) return
         super.draw(ctx)
 

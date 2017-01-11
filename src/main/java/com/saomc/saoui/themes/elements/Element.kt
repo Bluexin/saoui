@@ -1,8 +1,8 @@
 package com.saomc.saoui.themes.elements
 
+import com.saomc.saoui.api.themes.IHudDrawContext
 import com.saomc.saoui.themes.util.BooleanExpressionWrapper
 import com.saomc.saoui.themes.util.DoubleExpressionWrapper
-import com.saomc.saoui.themes.util.HudDrawContext
 import com.saomc.saoui.util.LogCore
 import java.lang.ref.WeakReference
 import javax.annotation.OverridingMethodsMustInvokeSuper
@@ -54,7 +54,7 @@ abstract class Element {
 
      * @param ctx additional info about the draws
      */
-    abstract fun draw(ctx: HudDrawContext)
+    abstract fun draw(ctx: IHudDrawContext)
 
     /**
      * Called during setup, used to initialize anything extra (after it has finished loading)

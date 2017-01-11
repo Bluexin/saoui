@@ -1,8 +1,8 @@
 package com.saomc.saoui.themes.elements
 
 import com.saomc.saoui.GLCore
+import com.saomc.saoui.api.themes.IHudDrawContext
 import com.saomc.saoui.themes.util.DoubleExpressionWrapper
-import com.saomc.saoui.themes.util.HudDrawContext
 import com.saomc.saoui.themes.util.IntExpressionWrapper
 import net.minecraft.util.ResourceLocation
 import javax.xml.bind.annotation.XmlRootElement
@@ -27,7 +27,7 @@ open class GLRectangle : Element() {
     protected var rl: ResourceLocation? = null
     private val texture: String? = null
 
-    override fun draw(ctx: HudDrawContext) {
+    override fun draw(ctx: IHudDrawContext) {
         if (!(enabled?.execute(ctx) ?: true)) return
 
         val p: ElementParent? = this.parent.get()

@@ -25,6 +25,9 @@
                         <xs:enumeration value="HEALTH_BOX"/>
                         <xs:enumeration value="HOTBAR"/>
                         <xs:enumeration value="EXPERIENCE"/>
+                        <xs:enumeration value="CROSS_HAIR"/>
+                        <xs:enumeration value="ARMOR"/>
+                        <xs:enumeration value="JUMP_BAR"/>
                     </xs:restriction>
                 </xs:simpleType>
             </xs:element>

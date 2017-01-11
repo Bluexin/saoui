@@ -1,6 +1,9 @@
 package com.saomc.saoui.api.themes;
 
 import com.saomc.saoui.screens.ingame.HealthStep;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.renderer.RenderItem;
+import net.minecraft.entity.player.EntityPlayer;
 
 /**
  * Getters to use in JEL (for access in xml themes).
@@ -89,4 +92,15 @@ public interface IHudDrawContext {
      */
     float experience();
 
+    double getZ();
+
+    FontRenderer getFontRenderer();
+
+    RenderItem getItemRenderer();
+
+    EntityPlayer getPlayer();
+
+    float getPartialTicks();
+
+    float horsejump();
 }

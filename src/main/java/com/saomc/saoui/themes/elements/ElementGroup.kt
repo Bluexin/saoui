@@ -1,6 +1,6 @@
 package com.saomc.saoui.themes.elements
 
-import com.saomc.saoui.themes.util.HudDrawContext
+import com.saomc.saoui.api.themes.IHudDrawContext
 import com.saomc.saoui.util.LogCore
 import javax.xml.bind.annotation.XmlElementRef
 import javax.xml.bind.annotation.XmlElementWrapper
@@ -12,19 +12,19 @@ import javax.xml.bind.annotation.XmlRootElement
  * @author Bluexin
  */
 @XmlRootElement
-open class ElementGroup : Element(), ElementParent {
+open class ElementGroup : Element(), ElementParent { // TODO: make elementGroups with a texture for less RL instantiation and binding on children
 
     @XmlElementWrapper(name = "children")
     @XmlElementRef(type = Element::class)
     protected lateinit var elements: List<Element>
 
-    override fun getX(ctx: HudDrawContext) = (parent.get()?.getX(ctx) ?: 0.0) + (this.x?.execute(ctx) ?: 0.0)
+    override fun getX(ctx: IHudDrawContext) = (parent.get()?.getX(ctx) ?: 0.0) + (this.x?.execute(ctx) ?: 0.0)
 
-    override fun getY(ctx: HudDrawContext) = (parent.get()?.getY(ctx) ?: 0.0) + (this.y?.execute(ctx) ?: 0.0)
+    override fun getY(ctx: IHudDrawContext) = (parent.get()?.getY(ctx) ?: 0.0) + (this.y?.execute(ctx) ?: 0.0)
 
-    override fun getZ(ctx: HudDrawContext) = (parent.get()?.getZ(ctx) ?: 0.0) + (this.z?.execute(ctx) ?: 0.0)
+    override fun getZ(ctx: IHudDrawContext) = (parent.get()?.getZ(ctx) ?: 0.0) + (this.z?.execute(ctx) ?: 0.0)
 
-    override fun draw(ctx: HudDrawContext) {
+    override fun draw(ctx: IHudDrawContext) {
         if (enabled?.execute(ctx) ?: true) this.elements.forEach { it.draw(ctx) }
     }
 

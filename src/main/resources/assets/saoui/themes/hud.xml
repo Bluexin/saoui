@@ -322,5 +322,27 @@
                 </children>
             </value>
         </entry>
+        <entry>
+            <key>JUMP_BAR</key>
+            <value name="vanilla horse jump bar">
+                <x>scaledwidth / 2 - 91</x>
+                <y>scaledheight - 29</y>
+                <children>
+                    <glRectangle name="bg">
+                        <texture>minecraft:textures/gui/icons.png</texture>
+                        <srcY>84</srcY>
+                        <w>182</w>
+                        <h>5</h>
+                    </glRectangle>
+                    <glRectangle name="fill">
+                        <enabled>horsejump > 0</enabled>
+                        <texture>minecraft:textures/gui/icons.png</texture>
+                        <srcY>89</srcY>
+                        <w>182 * horsejump</w>
+                        <h>5</h>
+                    </glRectangle>
+                </children>
+            </value>
+        </entry>
     </parts>
 </bl:hud>

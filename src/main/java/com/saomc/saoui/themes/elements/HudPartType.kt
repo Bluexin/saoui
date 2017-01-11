@@ -20,5 +20,14 @@ enum class HudPartType {
     /**
      * Key for the HudPart rendering the XP box on-screen.
      */
-    EXPERIENCE
+    EXPERIENCE,
+
+    /**
+     * Key for the HudPart rendering the cross-hair.
+     */
+    CROSS_HAIR,
+
+    ARMOR,
+
+    JUMP_BAR
 }

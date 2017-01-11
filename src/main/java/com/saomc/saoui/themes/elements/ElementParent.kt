@@ -1,6 +1,6 @@
 package com.saomc.saoui.themes.elements
 
-import com.saomc.saoui.themes.util.HudDrawContext
+import com.saomc.saoui.api.themes.IHudDrawContext
 
 /**
  * Part of saoui by Bluexin.
@@ -8,11 +8,11 @@ import com.saomc.saoui.themes.util.HudDrawContext
  * @author Bluexin
  */
 interface ElementParent {
-    fun getX(ctx: HudDrawContext): Double
+    fun getX(ctx: IHudDrawContext): Double
 
-    fun getY(ctx: HudDrawContext): Double
+    fun getY(ctx: IHudDrawContext): Double
 
-    fun getZ(ctx: HudDrawContext): Double
+    fun getZ(ctx: IHudDrawContext): Double
 
     val name: String
 }

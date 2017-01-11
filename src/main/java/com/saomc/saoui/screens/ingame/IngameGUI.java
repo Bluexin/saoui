@@ -46,6 +46,7 @@ public class IngameGUI extends GuiIngameForge {
     private int offsetUsername;
     private GuiOverlayDebugForge debugOverlay;
 
+    @Deprecated // use getContext() instead of directly calling this
     private HudDrawContext ctx;
 
     public IngameGUI(Minecraft mc) {
@@ -64,6 +65,9 @@ public class IngameGUI extends GuiIngameForge {
         eventParent = new RenderGameOverlayEvent(partialTicks, res);
         int width = res.getScaledWidth();
         int height = res.getScaledHeight();
+        getContext().setTime(partialTicks);
+        getContext().setScaledResolution(res);
+        getContext().setZ(zLevel);
 
         GLCore.glBlend(true);
         super.renderGameOverlay(partialTicks);
@@ -82,8 +86,10 @@ public class IngameGUI extends GuiIngameForge {
     @Override
     protected void renderCrosshairs(float partialTicks) {
         if (pre(CROSSHAIRS)) return;
-        if (OptionCore.CROSS_HAIR.isEnabled() && !(mc.currentScreen instanceof IngameMenuGUI || mc.currentScreen instanceof DeathScreen))
+        if (OptionCore.CROSS_HAIR.isEnabled() && !(mc.currentScreen instanceof IngameMenuGUI || mc.currentScreen instanceof DeathScreen)) {
             super.renderCrosshairs(partialTicks);
+            ThemeLoader.HUD.draw(HudPartType.CROSS_HAIR, getContext()); // TODO: rework
+        }
         post(CROSSHAIRS);
     }
 
@@ -92,7 +98,7 @@ public class IngameGUI extends GuiIngameForge {
         if (OptionCore.VANILLA_UI.isEnabled()) super.renderArmor(width, height);
         else {
             if (replaceEvent(ARMOR)) return;
-            // Nothing happens here
+            ThemeLoader.HUD.draw(HudPartType.ARMOR, getContext());
             post(ARMOR);
         }
     }
@@ -102,17 +108,7 @@ public class IngameGUI extends GuiIngameForge {
         if (replaceEvent(HOTBAR)) return;
         if (mc.playerController.isSpectator()) this.spectatorGui.renderTooltip(res, partialTicks);
         else if (OptionCore.DEFAULT_HOTBAR.isEnabled()) super.renderHotbar(res, partialTicks);
-        else {
-            GLCore.glBlend(true);
-            GLCore.tryBlendFuncSeparate(770, 771, 1, 0);
-
-            HudDrawContext ctx = getContext();
-            ctx.setTime(partialTicks);
-            ctx.setZ(zLevel);
-            ctx.setPartialTicks(partialTicks);
-            ctx.setScaledResolution(res);
-            ThemeLoader.HUD.get(HudPartType.HOTBAR).draw(ctx);
-        }
+        else ThemeLoader.HUD.draw(HudPartType.HOTBAR, getContext());
 
         post(HOTBAR);
     }
@@ -160,13 +156,7 @@ public class IngameGUI extends GuiIngameForge {
             int stepTwo = (int) (healthWidth / 3.0F * 2.0F - 3);
             int stepThree = healthWidth - 3;
 
-            GLCore.glAlphaTest(true);
-            GLCore.glBlend(true);
-
-            HudDrawContext ctx = getContext();
-            ctx.setZ(zLevel);
-
-            ThemeLoader.HUD.get(HudPartType.HEALTH_BOX).draw(ctx);
+            ThemeLoader.HUD.draw(HudPartType.HEALTH_BOX, getContext());
 
             mc.mcProfiler.endSection();
             post(HEALTH);
@@ -259,6 +249,8 @@ public class IngameGUI extends GuiIngameForge {
         final int foodValue = (int) (StaticPlayerHelper.getHungerFract(mc, mc.player, ctx.getPartialTicks()) * healthWidth);
         int h = foodValue < 12 ? 12 - foodValue : 0;
         int o = healthHeight;
+        GLCore.glAlphaTest(true);
+        GLCore.glBlend(true);
         GLCore.glColorRGBA(0x8EE1E8);
         for (int i = 0; i < foodValue; i++) {
             GLCore.glTexturedRect(offsetUsername + i + 4, 9, zLevel, h, 240, 1, o);
@@ -296,7 +288,7 @@ public class IngameGUI extends GuiIngameForge {
             if (!OptionCore.FORCE_HUD.isEnabled() && !this.mc.playerController.shouldDrawHUD()) return;
             mc.mcProfiler.startSection("expLevel");
 
-            ThemeLoader.HUD.get(HudPartType.EXPERIENCE).draw(getContext());
+            ThemeLoader.HUD.draw(HudPartType.EXPERIENCE, getContext());
 
             mc.mcProfiler.endSection();
             post(EXPERIENCE);
@@ -309,7 +301,7 @@ public class IngameGUI extends GuiIngameForge {
         else {
             if (replaceEvent(JUMPBAR)) return;
             renderExperience(width, height);
-            super.renderJumpBar(width, height);
+            ThemeLoader.HUD.draw(HudPartType.JUMP_BAR, getContext());
             // Nothing happens here (not implemented yet)
             post(JUMPBAR);
         }
@@ -406,6 +398,7 @@ public class IngameGUI extends GuiIngameForge {
         MinecraftForge.EVENT_BUS.post(new RenderGameOverlayEvent.Post(eventParent, type));
     }
 
+    @SuppressWarnings("deprecation")
     private HudDrawContext getContext() {
         if (ctx == null) this.ctx = new HudDrawContext(mc.player, mc, itemRenderer);
         return ctx;
