@@ -59,19 +59,21 @@
                     </glRectangle>
                     <elementGroup name="hp bg and text">
                         <enabled>!isEnabled(REMOVE_HPXP)</enabled>
+                        <x>usernamewidth + 132</x>
+                        <y>12</y>
                         <children>
                             <glString name="hp text">
-                                <text>format("%.0f / %.0f", ceil(hp), ceil(maxHp))</text>
-                                <x>usernamewidth + 137</x>
-                                <y>20</y>
-                                <!--TODO: alt absorb pos (and absorb in general)-->
+                                <text>absorption > 0? format(isEnabled(ALT_ABSORB_POS)? "(+%3$.0f) %1$.0f / %2$.0f":
+                                    "%1$.0f (+%3$.0f) / %2$.0f", ceil(hp), ceil(maxHp), ceil(absorption)):
+                                    format("%1$.0f / %2$.0f", ceil(hp), ceil(maxHp))
+                                </text>
+                                <x>5</x>
+                                <y>8</y>
                             </glString>
                             <elementGroup name="hp bg">
                                 <enabled>true</enabled>
                                 <children>
                                     <glRectangle>
-                                        <x>usernamewidth + 132</x>
-                                        <y>12</y>
                                         <srcX>60</srcX>
                                         <srcY>15</srcY>
                                         <w>5</w>
@@ -79,21 +81,23 @@
                                         <texture>saoui:textures/guiEDT.png</texture>
                                     </glRectangle>
                                     <glRectangle>
-                                        <x>usernamewidth + 137</x>
-                                        <y>12</y>
+                                        <x>5</x>
                                         <srcX>66</srcX>
                                         <srcY>15</srcY>
-                                        <w>strWidth(format("%.0f / %.0f", ceil(hp), ceil(maxHp)))</w>
+                                        <w>strWidth(absorption > 0? format(isEnabled(ALT_ABSORB_POS)? "(+%3$.0f) %1$.0f
+                                            / %2$.0f": "%1$.0f (+%3$.0f) / %2$.0f", ceil(hp), ceil(maxHp),
+                                            ceil(absorption)): format("%1$.0f / %2$.0f", ceil(hp), ceil(maxHp)))
+                                        </w>
                                         <h>13</h>
                                         <srcW>5</srcW>
                                         <srcH>13</srcH>
                                         <texture>saoui:textures/guiEDT.png</texture>
                                     </glRectangle>
                                     <glRectangle>
-                                        <x>usernamewidth + 137 + strWidth(format("%.0f / %.0f", ceil(hp),
-                                            ceil(maxHp)))
+                                        <x>5 + strWidth(absorption > 0? format(isEnabled(ALT_ABSORB_POS)? "(+%3$.0f)
+                                            %1$.0f / %2$.0f": "%1$.0f (+%3$.0f) / %2$.0f", ceil(hp), ceil(maxHp),
+                                            ceil(absorption)): format("%1$.0f / %2$.0f", ceil(hp), ceil(maxHp)))
                                         </x>
-                                        <y>12</y>
                                         <srcX>70</srcX>
                                         <srcY>15</srcY>
                                         <w>5</w>
