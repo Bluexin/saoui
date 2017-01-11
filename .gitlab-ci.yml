@@ -14,14 +14,14 @@ before_script:
 build:
   variables:
     NAME: "Builds stalker"
-    MESSAGE: "$CI_PROJECT_NAME build $CI_BUILD_ID successful: $(git log -1 --pretty=%B)"
+    MESSAGE: "Project $CI_PROJECT_NAME (branch $CI_BUILD_REF_NAME) build successful: "
     IMG: "https://cdn.discordapp.com/icons/131019825681006592/9df46a9d968c06e8eb264c590cc23a43.jpg"
   script:
     - chmod +x gradlew
     - ./gradlew setupCIWorkspace build uploadArchives
     - mkdir artifacts
     - cp build/libs/* artifacts/
-    - curl --data "content=$MESSAGE&username=$NAME&avatar_url=$IMG" $DISCORD_HOOK
+    - curl --data "content=$MESSAGE$(git log -1 --pretty=%B)&username=$NAME&avatar_url=$IMG" $DISCORD_HOOK
   artifacts:
     paths:
     - artifacts/
