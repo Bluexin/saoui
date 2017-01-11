@@ -73,4 +73,10 @@ public interface IHudDrawContext {
      * @return width in pixels of the provided string with current fontrenderer
      */
     int strWidth(String s);
+
+    /**
+     * @return the current absorption amount the player has
+     */
+    float absorption();
+
 }

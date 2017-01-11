@@ -19,7 +19,7 @@ public abstract class ExpressionAdapter<T extends CompiledExpressionWrapper> ext
     @Override
     public T unmarshal(String v) throws Exception {
         try {
-            return wrap(Evaluator.compile(v, LibHelper.LIB, getType()));
+            return wrap(Evaluator.compile(v.replace('\n', ' '), LibHelper.LIB, getType()));
         } catch (CompilationException ce) {
             StringBuilder sb = new StringBuilder("An error occurred during theme loading. See more info below.\n")
                     .append("–––COMPILATION ERROR :\n")
