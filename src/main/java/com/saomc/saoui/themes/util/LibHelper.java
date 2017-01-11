@@ -7,6 +7,7 @@ import com.saomc.saoui.screens.ingame.HealthStep;
 import com.saomc.saoui.themes.elements.ElementParent;
 import gnu.jel.CompilationException;
 import gnu.jel.Library;
+import net.minecraft.client.resources.I18n;
 
 /**
  * Part of saoui by Bluexin.
@@ -21,7 +22,7 @@ public final class LibHelper {
                 Math.class,
                 HealthStep.class,
                 OptionCore.class,
-                String.class
+                I18n.class
         };
         Class[] dynLib = new Class[]{
                 IHudDrawContext.class,

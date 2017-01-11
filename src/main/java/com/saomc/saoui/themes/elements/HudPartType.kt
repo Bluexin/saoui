@@ -15,5 +15,10 @@ enum class HudPartType {
     /**
      * Key for the HudPart rendering the hotbar parts
      */
-    HOTBAR
+    HOTBAR,
+
+    /**
+     * Key for the HudPart rendering the XP box on-screen.
+     */
+    EXPERIENCE
 }

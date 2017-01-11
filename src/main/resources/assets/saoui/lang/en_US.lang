@@ -120,8 +120,8 @@ optionCompatInv=Compact Inventory
 optionTextShadow = Text Shadow
 
 # Display
-displayLvShort=LV
-displayLvLong=Level
+displayLvShort=LV %1$d
+displayLvLong=Level %1$d
 displayXpShort=XP
 displayXpLong=Experience
 displayHpLong=Health

@@ -24,6 +24,7 @@
                     <xs:restriction base="xs:string">
                         <xs:enumeration value="HEALTH_BOX"/>
                         <xs:enumeration value="HOTBAR"/>
+                        <xs:enumeration value="EXPERIENCE"/>
                     </xs:restriction>
                 </xs:simpleType>
             </xs:element>

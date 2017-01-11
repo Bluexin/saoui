@@ -79,4 +79,14 @@ public interface IHudDrawContext {
      */
     float absorption();
 
+    /**
+     * @return the current experience level of the player
+     */
+    int level();
+
+    /**
+     * @return the current experience percent of the player (scale of 1)
+     */
+    float experience();
+
 }

@@ -1,8 +1,10 @@
 package com.saomc.saoui.themes.util;
 
+import com.saomc.saoui.api.info.IPlayerStatsProvider;
 import com.saomc.saoui.api.themes.IHudDrawContext;
 import com.saomc.saoui.screens.ingame.HealthStep;
 import com.saomc.saoui.social.StaticPlayerHelper;
+import com.saomc.saoui.util.PlayerStats;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.RenderItem;
@@ -23,6 +25,7 @@ public class HudDrawContext implements IHudDrawContext {
     private final RenderItem itemRenderer;
     private final Minecraft mc;
     private final double usernameWidth;
+    private final IPlayerStatsProvider stats;
     private HealthStep healthStep;
     private double z;
     private float time;
@@ -36,6 +39,7 @@ public class HudDrawContext implements IHudDrawContext {
         this.mc = mc;
         this.player = player;
         this.itemRenderer = itemRenderer;
+        this.stats = PlayerStats.instance().getStats();
 
         this.usernameWidth = (1 + (mc.fontRendererObj.getStringWidth(username) + 4) / 5) * 5;
     }
@@ -137,5 +141,15 @@ public class HudDrawContext implements IHudDrawContext {
     @Override
     public float absorption() {
         return player.getAbsorptionAmount();
+    }
+
+    @Override
+    public int level() {
+        return stats.getLevel(player);
+    }
+
+    @Override
+    public float experience() {
+        return stats.getExpPct(player);
     }
 }

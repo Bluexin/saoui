@@ -71,7 +71,6 @@
                                 <y>8</y>
                             </glString>
                             <elementGroup name="hp bg">
-                                <enabled>true</enabled>
                                 <children>
                                     <glRectangle>
                                         <srcX>60</srcX>
@@ -269,6 +268,55 @@
                                 <itemYoffset>2</itemYoffset>
                                 <hand>LEFT</hand>
                             </glHotbarItem>
+                        </children>
+                    </elementGroup>
+                </children>
+            </value>
+        </entry>
+        <entry>
+            <key>EXPERIENCE</key>
+            <value name="exp">
+                <enabled>!isEnabled(REMOVE_HPXP)</enabled>
+                <x>usernamewidth + 144 + strWidth(absorption > 0? format(isEnabled(ALT_ABSORB_POS)? "(+%3$.0f)
+                    %1$.0f / %2$.0f": "%1$.0f (+%3$.0f) / %2$.0f", ceil(hp), ceil(maxHp),
+                    ceil(absorption)): format("%1$.0f / %2$.0f", ceil(hp), ceil(maxHp)))
+                </x>
+                <y>14</y>
+                <children>
+                    <glString name="exp string">
+                        <x>5</x>
+                        <y>8</y>
+                        <text>format("displayLvShort", level)</text>
+                    </glString>
+                    <elementGroup name="exp bg">
+                        <children>
+                            <glRectangle>
+                                <srcX>65</srcX>
+                                <srcY>15</srcY>
+                                <w>5</w>
+                                <h>13</h>
+                                <srcW>2</srcW>
+                                <texture>saoui:textures/guiEDT.png</texture>
+                            </glRectangle>
+                            <glRectangle>
+                                <x>5</x>
+                                <srcX>66</srcX>
+                                <srcY>15</srcY>
+                                <w>strWidth(format("displayLvShort", level))</w>
+                                <h>13</h>
+                                <srcW>5</srcW>
+                                <srcH>13</srcH>
+                                <texture>saoui:textures/guiEDT.png</texture>
+                            </glRectangle>
+                            <glRectangle>
+                                <x>5 + strWidth(format("displayLvShort", level))</x>
+                                <srcX>78</srcX>
+                                <srcY>15</srcY>
+                                <srcW>3</srcW>
+                                <w>5</w>
+                                <h>13</h>
+                                <texture>saoui:textures/guiEDT.png</texture>
+                            </glRectangle>
                         </children>
                     </elementGroup>
                 </children>

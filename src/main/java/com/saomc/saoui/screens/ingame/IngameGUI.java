@@ -11,7 +11,6 @@ import com.saomc.saoui.social.party.PartyHelper;
 import com.saomc.saoui.themes.ThemeLoader;
 import com.saomc.saoui.themes.elements.HudPartType;
 import com.saomc.saoui.themes.util.HudDrawContext;
-import com.saomc.saoui.util.PlayerStats;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -31,6 +30,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
@@ -41,22 +41,9 @@ import static net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType
 @SideOnly(Side.CLIENT)
 public class IngameGUI extends GuiIngameForge {
 
-    private final int HPXP_OFFSET_ORIG_R = 3; // Used to fine-tune UI elements positioning
-    private final int HPXP_OFFSET_ORIG_D = 1;
-    private final int HPXP_OFFSET_ALO_R = 0;
-    private final int HPXP_OFFSET_ALO_D = 6;
     private FontRenderer fontRenderer;
     private RenderGameOverlayEvent eventParent;
-    private String username;
-    private int maxNameWidth;
-    private int usernameBoxes;
     private int offsetUsername;
-    private int width;
-    private int height;
-    private ScaledResolution res = null;
-    @Deprecated // see if we can get around not using this one anymore, will reduce amount of calculations
-    private float time;
-    private int healthBoxes;
     private GuiOverlayDebugForge debugOverlay;
 
     private HudDrawContext ctx;
@@ -69,16 +56,14 @@ public class IngameGUI extends GuiIngameForge {
     @Override
     public void renderGameOverlay(float partialTicks) {
         fontRenderer = mc.fontRendererObj;
-        username = mc.player.getDisplayNameString();
-        maxNameWidth = fontRenderer.getStringWidth(username);
-        usernameBoxes = 1 + (maxNameWidth + 4) / 5;
+        String username = mc.player.getDisplayNameString();
+        int maxNameWidth = fontRenderer.getStringWidth(username);
+        int usernameBoxes = 1 + (maxNameWidth + 4) / 5;
         offsetUsername = 18 + usernameBoxes * 5;
         ScaledResolution res = new ScaledResolution(mc);
         eventParent = new RenderGameOverlayEvent(partialTicks, res);
-        width = res.getScaledWidth();
-        height = res.getScaledHeight();
-
-        time = partialTicks;
+        int width = res.getScaledWidth();
+        int height = res.getScaledHeight();
 
         GLCore.glBlend(true);
         super.renderGameOverlay(partialTicks);
@@ -121,8 +106,8 @@ public class IngameGUI extends GuiIngameForge {
             GLCore.glBlend(true);
             GLCore.tryBlendFuncSeparate(770, 771, 1, 0);
 
-            if (ctx == null) this.ctx = new HudDrawContext(mc.player, mc, itemRenderer);
-            ctx.setTime(time);
+            HudDrawContext ctx = getContext();
+            ctx.setTime(partialTicks);
             ctx.setZ(zLevel);
             ctx.setPartialTicks(partialTicks);
             ctx.setScaledResolution(res);
@@ -178,8 +163,7 @@ public class IngameGUI extends GuiIngameForge {
             GLCore.glAlphaTest(true);
             GLCore.glBlend(true);
 
-            if (ctx == null) this.ctx = new HudDrawContext(mc.player, mc, itemRenderer);
-            ctx.setTime(time);
+            HudDrawContext ctx = getContext();
             ctx.setZ(zLevel);
 
             ThemeLoader.HUD.get(HudPartType.HEALTH_BOX).draw(ctx);
@@ -188,42 +172,6 @@ public class IngameGUI extends GuiIngameForge {
             post(HEALTH);
 
             renderFood(healthWidth, healthHeight, offsetUsername, stepOne, stepTwo, stepThree);
-
-            if (!OptionCore.REMOVE_HPXP.isEnabled()) {
-                String absorb;
-                if (mc.player.getAbsorptionAmount() > 0) {
-                    absorb = OptionCore.ALT_ABSORB_POS.isEnabled() ? "" : " ";
-                    absorb += "(+" + (int) Math.ceil(mc.player.getAbsorptionAmount());
-                    absorb += ')';
-                    absorb += OptionCore.ALT_ABSORB_POS.isEnabled() ? ' ' : "";
-                } else absorb = "";
-
-                final String healthStr = String.valueOf((OptionCore.ALT_ABSORB_POS.isEnabled() ? absorb : "") + (int) Math.ceil(StaticPlayerHelper.getHealth(mc, mc.player, time))) + (OptionCore.ALT_ABSORB_POS.isEnabled() ? "" : absorb) + " / " + String.valueOf((int) Math.ceil(StaticPlayerHelper.getMaxHealth(mc.player)));
-                final int healthStrWidth = fontRenderer.getStringWidth(healthStr);
-
-//                final int absStart = healthStr.indexOf('(');
-                String[] strs;
-//                if (absStart >= 0) strs = new String[]{
-//                        healthStr.substring(0, absStart),
-//                        healthStr.substring(absStart, healthStr.indexOf(')') + 1),
-//                        healthStr.substring(healthStr.indexOf(')') + 1)
-//                };
-                /*else */
-                strs = new String[]{"", "", healthStr};
-
-                healthBoxes = healthStrWidth;
-
-//                final int offsetR = OptionCore.SAO_UI.isEnabled() ? HPXP_OFFSET_ORIG_R : HPXP_OFFSET_ALO_R;
-//                final int offsetD = OptionCore.SAO_UI.isEnabled() ? HPXP_OFFSET_ORIG_D : HPXP_OFFSET_ALO_D;
-//                GLCore.glColor(1, 1, 1, 1);
-//                GLCore.glTexturedRect(offsetUsername + 113 + offsetR, 13 + offsetD, zLevel, 60, 15, 5, 13);
-//                GLCore.glTexturedRect(offsetUsername + 118 + offsetR, 13 + offsetD, zLevel, healthBoxes * 5, 13, 66, 15, 5, 13);
-//                GLCore.glTexturedRect(offsetUsername + 118 + offsetR + healthBoxes * 5, 13 + +offsetD, zLevel, 70, 15, 5, 13);
-
-//                GLCore.glString(strs[0], offsetUsername + 118 + offsetR, 16 + offsetD, 0xFFFFFFFF, true);
-//                GLCore.glString(strs[1], offsetUsername + 118 + offsetR + fontRenderer.getStringWidth(strs[0]), 16 + offsetD, 0xFF55FFFF, true);
-//                GLCore.glString(strs[2], offsetUsername + 118 + offsetR + fontRenderer.getStringWidth(strs[0] + strs[1]), 16 + offsetD, 0xFFFFFFFF, true);*/
-            }
 
             GLCore.glColor(1.0F, 1.0F, 1.0F, 1.0F);
 
@@ -271,8 +219,8 @@ public class IngameGUI extends GuiIngameForge {
                     final int hpWidth = 97;
                     final int hpHeight = 3;
 
-                    final int hpValue = (int) (StaticPlayerHelper.getHealth(mc, player, time) / StaticPlayerHelper.getMaxHealth(player) * hpWidth);
-                    HealthStep.getStep(mc, player, time).glColor();
+                    final int hpValue = (int) (StaticPlayerHelper.getHealth(mc, player, ctx.getPartialTicks()) / StaticPlayerHelper.getMaxHealth(player) * hpWidth);
+                    HealthStep.getStep(mc, player, ctx.getPartialTicks()).glColor();
 
                     int hp = hpHeight;
                     for (int j = 0; j < hpValue; j++) {
@@ -307,7 +255,8 @@ public class IngameGUI extends GuiIngameForge {
     private void renderFood(int healthWidth, int healthHeight, int offsetUsername, int stepOne, int stepTwo, int stepThree) {
         if (replaceEvent(FOOD)) return;
         mc.mcProfiler.startSection("food");
-        final int foodValue = (int) (StaticPlayerHelper.getHungerFract(mc, mc.player, time) * healthWidth);
+        HudDrawContext ctx = getContext();
+        final int foodValue = (int) (StaticPlayerHelper.getHungerFract(mc, mc.player, ctx.getPartialTicks()) * healthWidth);
         int h = foodValue < 12 ? 12 - foodValue : 0;
         int o = healthHeight;
         GLCore.glColorRGBA(0x8EE1E8);
@@ -343,24 +292,11 @@ public class IngameGUI extends GuiIngameForge {
     protected void renderExperience(int width, int height) {
         if (OptionCore.VANILLA_UI.isEnabled()) super.renderExperience(width, height);
         else {
-            if (OptionCore.REMOVE_HPXP.isEnabled() || pre(EXPERIENCE)) return;
+            if (pre(EXPERIENCE)) return;
             if (!OptionCore.FORCE_HUD.isEnabled() && !this.mc.playerController.shouldDrawHUD()) return;
             mc.mcProfiler.startSection("expLevel");
 
-            final int offsetR = OptionCore.SAO_UI.isEnabled() ? HPXP_OFFSET_ORIG_R : HPXP_OFFSET_ALO_R;
-            final int offsetD = OptionCore.SAO_UI.isEnabled() ? HPXP_OFFSET_ORIG_D : HPXP_OFFSET_ALO_D;
-            final int offsetHealth = offsetUsername + 113 + healthBoxes + 10 + offsetR;
-            final String levelStr = I18n.format("displayLvShort") + ": " + String.valueOf(PlayerStats.instance().getStats().getLevel(mc.player));
-            final int levelStrWidth = fontRenderer.getStringWidth(levelStr);
-            final int levelBoxes = (levelStrWidth + 4) / 5;
-
-            GLCore.glAlphaTest(true);
-            GLCore.glBlend(true);
-            GLCore.glBindTexture(OptionCore.SAO_UI.isEnabled() ? StringNames.gui : StringNames.guiCustom);
-            GLCore.glTexturedRect(offsetHealth, 13 + offsetD, zLevel, 5, 13, 66, 15, 2, 13);
-            GLCore.glTexturedRect(offsetHealth + 5, 13 + offsetD, zLevel, levelBoxes * 5, 13, 66, 15, 5, 13);
-            GLCore.glTexturedRect(offsetHealth + (1 + levelBoxes) * 5, 13 + offsetD, zLevel, 5, 13, 78, 15, 3, 13);
-            GLCore.glString(levelStr, offsetHealth + 5, 16 + offsetD, 0xFFFFFFFF, true);
+            ThemeLoader.HUD.get(HudPartType.EXPERIENCE).draw(getContext());
 
             mc.mcProfiler.endSection();
             post(EXPERIENCE);
@@ -470,6 +406,11 @@ public class IngameGUI extends GuiIngameForge {
         MinecraftForge.EVENT_BUS.post(new RenderGameOverlayEvent.Post(eventParent, type));
     }
 
+    private HudDrawContext getContext() {
+        if (ctx == null) this.ctx = new HudDrawContext(mc.player, mc, itemRenderer);
+        return ctx;
+    }
+
     private class GuiOverlayDebugForge extends GuiOverlayDebug {
         private GuiOverlayDebugForge(Minecraft mc) {
             super(mc);
@@ -480,7 +421,7 @@ public class IngameGUI extends GuiIngameForge {
         }
 
         @Override
-        protected void renderDebugInfoRight(ScaledResolution res) {
+        protected void renderDebugInfoRight(@NotNull ScaledResolution res) {
         }
 
         private List<String> getLeft() {
