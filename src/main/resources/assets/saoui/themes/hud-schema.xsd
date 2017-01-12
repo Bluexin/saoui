@@ -105,6 +105,7 @@
         <xs:complexContent>
             <xs:extension base="Element">
                 <xs:all>
+                    <xs:element name="texture" default="" minOccurs="0" type="xs:anyURI"/>
                     <xs:element name="children">
                         <xs:complexType>
                             <xs:sequence maxOccurs="unbounded" minOccurs="0">

@@ -37,7 +37,7 @@ open class GLRectangle : Element() {
 
         GLCore.glBlend(true)
         GLCore.glColorRGBA(this.rgba?.execute(ctx) ?: 0xFFFFFFFF.toInt())
-        GLCore.glBindTexture(this.rl)
+        if (this.rl != null) GLCore.glBindTexture(this.rl)
         GLCore.glTexturedRect(x, y, z, w?.execute(ctx) ?: 0.0, h?.execute(ctx) ?: 0.0, srcX?.execute(ctx) ?: 0.0, srcY?.execute(ctx) ?: 0.0, srcW?.execute(ctx) ?: w?.execute(ctx) ?: 0.0, srcH?.execute(ctx) ?: h?.execute(ctx) ?: 0.0)
     }
 

@@ -8,24 +8,22 @@
                 <y>2.0</y>
                 <children>
                     <elementGroup name="background">
+                        <texture>saoui:textures/guiEDT.png</texture>
                         <children>
                             <glRectangle>
                                 <h>15.0</h>
-                                <texture>saoui:textures/guiEDT.png</texture>
                                 <w>16.0</w>
                             </glRectangle>
                             <glRectangle>
                                 <h>15.0</h>
                                 <srcW>5.0</srcW>
                                 <srcX>16.0</srcX>
-                                <texture>saoui:textures/guiEDT.png</texture>
                                 <w>usernamewidth</w>
                                 <x>16.0</x>
                             </glRectangle>
                             <glRectangle>
                                 <h>15.0</h>
                                 <srcX>21.0</srcX>
-                                <texture>saoui:textures/guiEDT.png</texture>
                                 <w>234.0</w>
                                 <x>16.0 + usernamewidth</x>
                             </glRectangle>
@@ -38,6 +36,7 @@
                         <y>1.0</y>
                     </glString>
                     <glRectangle name="health bar">
+                        <texture>saoui:textures/guiEDT.png</texture>
                         <h>9.0</h>
                         <rgba>
                             healthStep == VERY_LOW? 0xBD0000FF:
@@ -52,7 +51,6 @@
                         <srcH>9.0</srcH>
                         <srcW>215.0 * hpPct</srcW>
                         <srcY>188.0</srcY>
-                        <texture>saoui:textures/guiEDT.png</texture>
                         <w>215.0 * hpPct</w>
                         <x>18.0 + usernamewidth</x>
                         <y>3.0</y>
@@ -63,45 +61,43 @@
                         <y>12</y>
                         <children>
                             <glString name="hp text">
-                                <text>absorption > 0? format(isEnabled(ALT_ABSORB_POS)? "(+%3$.0f) %1$.0f / %2$.0f":
-                                    "%1$.0f (+%3$.0f) / %2$.0f", ceil(hp), ceil(maxHp), ceil(absorption)):
-                                    format("%1$.0f / %2$.0f", ceil(hp), ceil(maxHp))
+                                <text>absorption > 0? format(isEnabled(ALT_ABSORB_POS)? "formatHealthAbsorbAlt":
+                                    "formatHealthAbsorb", ceil(hp), ceil(maxHp), ceil(absorption)):
+                                    format("formatHealth", ceil(hp), ceil(maxHp))
                                 </text>
                                 <x>5</x>
                                 <y>8</y>
                             </glString>
                             <elementGroup name="hp bg">
+                                <texture>saoui:textures/guiEDT.png</texture>
                                 <children>
                                     <glRectangle>
                                         <srcX>60</srcX>
                                         <srcY>15</srcY>
                                         <w>5</w>
                                         <h>13</h>
-                                        <texture>saoui:textures/guiEDT.png</texture>
                                     </glRectangle>
                                     <glRectangle>
                                         <x>5</x>
                                         <srcX>66</srcX>
                                         <srcY>15</srcY>
-                                        <w>strWidth(absorption > 0? format(isEnabled(ALT_ABSORB_POS)? "(+%3$.0f) %1$.0f
-                                            / %2$.0f": "%1$.0f (+%3$.0f) / %2$.0f", ceil(hp), ceil(maxHp),
-                                            ceil(absorption)): format("%1$.0f / %2$.0f", ceil(hp), ceil(maxHp)))
+                                        <w>strWidth(absorption > 0? format(isEnabled(ALT_ABSORB_POS)?
+                                            "formatHealthAbsorbAlt": "formatHealthAbsorb", ceil(hp), ceil(maxHp),
+                                            ceil(absorption)): format("formatHealth", ceil(hp), ceil(maxHp)))
                                         </w>
                                         <h>13</h>
                                         <srcW>5</srcW>
                                         <srcH>13</srcH>
-                                        <texture>saoui:textures/guiEDT.png</texture>
                                     </glRectangle>
                                     <glRectangle>
-                                        <x>5 + strWidth(absorption > 0? format(isEnabled(ALT_ABSORB_POS)? "(+%3$.0f)
-                                            %1$.0f / %2$.0f": "%1$.0f (+%3$.0f) / %2$.0f", ceil(hp), ceil(maxHp),
-                                            ceil(absorption)): format("%1$.0f / %2$.0f", ceil(hp), ceil(maxHp)))
+                                        <x>5 + strWidth(absorption > 0? format(isEnabled(ALT_ABSORB_POS)?
+                                            "formatHealthAbsorbAlt": "formatHealthAbsorb", ceil(hp), ceil(maxHp),
+                                            ceil(absorption)): format("formatHealth", ceil(hp), ceil(maxHp)))
                                         </x>
                                         <srcX>70</srcX>
                                         <srcY>15</srcY>
                                         <w>5</w>
                                         <h>13</h>
-                                        <texture>saoui:textures/guiEDT.png</texture>
                                     </glRectangle>
                                 </children>
                             </elementGroup>
@@ -124,12 +120,12 @@
                                 <srcH>20.0</srcH>
                                 <srcW>20.0</srcW>
                                 <srcY>25.0</srcY>
-                                <texture>saoui:textures/guiEDT.png</texture>
                                 <w>20.0</w>
                                 <y>-99</y>
                                 <slot>0</slot>
                                 <itemXoffset>2</itemXoffset>
                                 <itemYoffset>2</itemYoffset>
+                                <texture>saoui:textures/guiEDT.png</texture>
                             </glHotbarItem>
                             <glHotbarItem>
                                 <h>20.0</h>
@@ -137,13 +133,13 @@
                                 <srcH>20.0</srcH>
                                 <srcW>20.0</srcW>
                                 <srcY>25.0</srcY>
-                                <texture>saoui:textures/guiEDT.png</texture>
                                 <w>20.0</w>
                                 <y>-77</y>
                                 <z>0.0</z>
                                 <slot>1</slot>
                                 <itemXoffset>2</itemXoffset>
                                 <itemYoffset>2</itemYoffset>
+                                <texture>saoui:textures/guiEDT.png</texture>
                             </glHotbarItem>
                             <glHotbarItem>
                                 <h>20.0</h>
@@ -151,12 +147,12 @@
                                 <srcH>20.0</srcH>
                                 <srcW>20.0</srcW>
                                 <srcY>25.0</srcY>
-                                <texture>saoui:textures/guiEDT.png</texture>
                                 <w>20.0</w>
                                 <y>-55</y>
                                 <slot>2</slot>
                                 <itemXoffset>2</itemXoffset>
                                 <itemYoffset>2</itemYoffset>
+                                <texture>saoui:textures/guiEDT.png</texture>
                             </glHotbarItem>
                             <glHotbarItem>
                                 <h>20.0</h>
@@ -164,12 +160,12 @@
                                 <srcH>20.0</srcH>
                                 <srcW>20.0</srcW>
                                 <srcY>25.0</srcY>
-                                <texture>saoui:textures/guiEDT.png</texture>
                                 <w>20.0</w>
                                 <y>-33</y>
                                 <slot>3</slot>
                                 <itemXoffset>2</itemXoffset>
                                 <itemYoffset>2</itemYoffset>
+                                <texture>saoui:textures/guiEDT.png</texture>
                             </glHotbarItem>
                             <glHotbarItem>
                                 <h>20.0</h>
@@ -177,12 +173,12 @@
                                 <srcH>20.0</srcH>
                                 <srcW>20.0</srcW>
                                 <srcY>25.0</srcY>
-                                <texture>saoui:textures/guiEDT.png</texture>
                                 <w>20.0</w>
                                 <y>-11</y>
                                 <slot>4</slot>
                                 <itemXoffset>2</itemXoffset>
                                 <itemYoffset>2</itemYoffset>
+                                <texture>saoui:textures/guiEDT.png</texture>
                             </glHotbarItem>
                             <glHotbarItem>
                                 <h>20.0</h>
@@ -190,12 +186,12 @@
                                 <srcH>20.0</srcH>
                                 <srcW>20.0</srcW>
                                 <srcY>25.0</srcY>
-                                <texture>saoui:textures/guiEDT.png</texture>
                                 <w>20.0</w>
                                 <y>11</y>
                                 <slot>5</slot>
                                 <itemXoffset>2</itemXoffset>
                                 <itemYoffset>2</itemYoffset>
+                                <texture>saoui:textures/guiEDT.png</texture>
                             </glHotbarItem>
                             <glHotbarItem>
                                 <h>20.0</h>
@@ -203,12 +199,12 @@
                                 <srcH>20.0</srcH>
                                 <srcW>20.0</srcW>
                                 <srcY>25.0</srcY>
-                                <texture>saoui:textures/guiEDT.png</texture>
                                 <w>20.0</w>
                                 <y>33</y>
                                 <slot>6</slot>
                                 <itemXoffset>2</itemXoffset>
                                 <itemYoffset>2</itemYoffset>
+                                <texture>saoui:textures/guiEDT.png</texture>
                             </glHotbarItem>
                             <glHotbarItem>
                                 <h>20.0</h>
@@ -216,12 +212,12 @@
                                 <srcH>20.0</srcH>
                                 <srcW>20.0</srcW>
                                 <srcY>25.0</srcY>
-                                <texture>saoui:textures/guiEDT.png</texture>
                                 <w>20.0</w>
                                 <y>55</y>
                                 <slot>7</slot>
                                 <itemXoffset>2</itemXoffset>
                                 <itemYoffset>2</itemYoffset>
+                                <texture>saoui:textures/guiEDT.png</texture>
                             </glHotbarItem>
                             <glHotbarItem>
                                 <h>20.0</h>
@@ -229,12 +225,12 @@
                                 <srcH>20.0</srcH>
                                 <srcW>20.0</srcW>
                                 <srcY>25.0</srcY>
-                                <texture>saoui:textures/guiEDT.png</texture>
                                 <w>20.0</w>
                                 <y>77</y>
                                 <slot>8</slot>
                                 <itemXoffset>2</itemXoffset>
                                 <itemYoffset>2</itemYoffset>
+                                <texture>saoui:textures/guiEDT.png</texture>
                             </glHotbarItem>
                         </children>
                     </elementGroup>
@@ -246,13 +242,13 @@
                                 <srcH>20.0</srcH>
                                 <srcW>20.0</srcW>
                                 <srcY>25.0</srcY>
-                                <texture>saoui:textures/guiEDT.png</texture>
                                 <w>20.0</w>
                                 <y>121</y>
                                 <slot>0</slot>
                                 <itemXoffset>2</itemXoffset>
                                 <itemYoffset>2</itemYoffset>
                                 <hand>RIGHT</hand>
+                                <texture>saoui:textures/guiEDT.png</texture>
                             </glHotbarItem>
                             <glHotbarItem>
                                 <h>20.0</h>
@@ -260,13 +256,13 @@
                                 <srcH>20.0</srcH>
                                 <srcW>20.0</srcW>
                                 <srcY>25.0</srcY>
-                                <texture>saoui:textures/guiEDT.png</texture>
                                 <w>20.0</w>
                                 <y>121</y>
                                 <slot>0</slot>
                                 <itemXoffset>2</itemXoffset>
                                 <itemYoffset>2</itemYoffset>
                                 <hand>LEFT</hand>
+                                <texture>saoui:textures/guiEDT.png</texture>
                             </glHotbarItem>
                         </children>
                     </elementGroup>
@@ -277,9 +273,9 @@
             <key>EXPERIENCE</key>
             <value name="exp">
                 <enabled>!isEnabled(REMOVE_HPXP)</enabled>
-                <x>usernamewidth + 144 + strWidth(absorption > 0? format(isEnabled(ALT_ABSORB_POS)? "(+%3$.0f)
-                    %1$.0f / %2$.0f": "%1$.0f (+%3$.0f) / %2$.0f", ceil(hp), ceil(maxHp),
-                    ceil(absorption)): format("%1$.0f / %2$.0f", ceil(hp), ceil(maxHp)))
+                <x>usernamewidth + 144 + strWidth(absorption > 0? format(isEnabled(ALT_ABSORB_POS)?
+                    "formatHealthAbsorbAlt": "formatHealthAbsorb", ceil(hp), ceil(maxHp),
+                    ceil(absorption)): format("formatHealth", ceil(hp), ceil(maxHp)))
                 </x>
                 <y>14</y>
                 <children>
@@ -289,6 +285,7 @@
                         <text>format("displayLvShort", level)</text>
                     </glString>
                     <elementGroup name="exp bg">
+                        <texture>saoui:textures/guiEDT.png</texture>
                         <children>
                             <glRectangle>
                                 <srcX>65</srcX>
@@ -296,7 +293,6 @@
                                 <w>5</w>
                                 <h>13</h>
                                 <srcW>2</srcW>
-                                <texture>saoui:textures/guiEDT.png</texture>
                             </glRectangle>
                             <glRectangle>
                                 <x>5</x>
@@ -306,7 +302,6 @@
                                 <h>13</h>
                                 <srcW>5</srcW>
                                 <srcH>13</srcH>
-                                <texture>saoui:textures/guiEDT.png</texture>
                             </glRectangle>
                             <glRectangle>
                                 <x>5 + strWidth(format("displayLvShort", level))</x>
@@ -315,7 +310,6 @@
                                 <srcW>3</srcW>
                                 <w>5</w>
                                 <h>13</h>
-                                <texture>saoui:textures/guiEDT.png</texture>
                             </glRectangle>
                         </children>
                     </elementGroup>
@@ -327,16 +321,15 @@
             <value name="vanilla horse jump bar">
                 <x>scaledwidth / 2 - 91</x>
                 <y>scaledheight - 29</y>
+                <texture>minecraft:textures/gui/icons.png</texture>
                 <children>
                     <glRectangle name="bg">
-                        <texture>minecraft:textures/gui/icons.png</texture>
                         <srcY>84</srcY>
                         <w>182</w>
                         <h>5</h>
                     </glRectangle>
                     <glRectangle name="fill">
                         <enabled>horsejump > 0</enabled>
-                        <texture>minecraft:textures/gui/icons.png</texture>
                         <srcY>89</srcY>
                         <w>182 * horsejump</w>
                         <h>5</h>

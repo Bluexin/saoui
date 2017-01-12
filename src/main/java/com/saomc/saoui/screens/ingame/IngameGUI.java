@@ -56,6 +56,7 @@ public class IngameGUI extends GuiIngameForge {
 
     @Override
     public void renderGameOverlay(float partialTicks) {
+        mc.mcProfiler.startSection("setup");
         fontRenderer = mc.fontRendererObj;
         String username = mc.player.getDisplayNameString();
         int maxNameWidth = fontRenderer.getStringWidth(username);
@@ -68,8 +69,9 @@ public class IngameGUI extends GuiIngameForge {
         getContext().setTime(partialTicks);
         getContext().setScaledResolution(res);
         getContext().setZ(zLevel);
-
         GLCore.glBlend(true);
+        mc.mcProfiler.endSection();
+
         super.renderGameOverlay(partialTicks);
 
         if (OptionCore.FORCE_HUD.isEnabled() && !this.mc.playerController.shouldDrawHUD() && this.mc.getRenderViewEntity() instanceof EntityPlayer) {
@@ -172,68 +174,68 @@ public class IngameGUI extends GuiIngameForge {
 
             GLCore.glBindTexture(OptionCore.SAO_UI.isEnabled() ? StringNames.gui : StringNames.guiCustom);
 
-            for (int i = 0; i < effects.size(); i++) {
-                effects.get(i).glDraw(offsetForEffects + i * 11, 2, zLevel);
-            }
+            for (int i = 0; i < effects.size(); i++) effects.get(i).glDraw(offsetForEffects + i * 11, 2, zLevel);
 
             mc.mcProfiler.endSection();
 
-            if (PartyHelper.instance().hasParty()) {
-                mc.mcProfiler.startSection("party");
-
-                GLCore.glAlphaTest(true);
-                GLCore.glBlend(true);
-
-                int index = 0;
-                final int baseY = 35;
-                final int h = 15;
-                for (final EntityPlayer player : PartyHelper.instance().listMembers()) {
-                    if (player == mc.player) continue;
-
-                    GLCore.glBindTexture(OptionCore.SAO_UI.isEnabled() ? StringNames.gui : StringNames.guiCustom);
-
-                    GLCore.glTexturedRect(2, baseY + index * h, zLevel, 85, 15, 10, 13);
-                    GLCore.glTexturedRect(13, baseY + index * h, zLevel, 80, 15, 5, 13);
-
-                    String playerName = player.getDisplayNameString();
-                    if (playerName.length() > 5) playerName = playerName.substring(0, 5);
-
-                    final int nameBoxes = 29 / 5 + 1;
-
-                    GLCore.glTexturedRect(18, baseY + index * h, zLevel, nameBoxes * 5, 13, 65, 15, 5, 13);
-
-                    int offset = 18 + nameBoxes * 5;
-
-                    GLCore.glTexturedRect(offset, baseY + index * h, zLevel, 40, 28, 100, 13);
-
-                    final int hpWidth = 97;
-                    final int hpHeight = 3;
-
-                    final int hpValue = (int) (StaticPlayerHelper.getHealth(mc, player, ctx.getPartialTicks()) / StaticPlayerHelper.getMaxHealth(player) * hpWidth);
-                    HealthStep.getStep(mc, player, ctx.getPartialTicks()).glColor();
-
-                    int hp = hpHeight;
-                    for (int j = 0; j < hpValue; j++) {
-                        GLCore.glTexturedRect(offset + 1 + j, baseY + 5 + index * h, zLevel, (hpHeight - hp), 15, 1, hp);
-
-                        if (j >= hpValue - hp) {
-                            hp--;
-                            if (hp <= 0) break;
-                        }
-                    }
-
-                    offset += 100;
-
-                    GLCore.glColor(1.0F, 1.0F, 1.0F, 1.0F);
-                    GLCore.glTexturedRect(offset, baseY + index * h, zLevel, 70, 15, 5, 13);
-                    GLCore.glString(playerName, 18, baseY + 1 + index * h + (13 - fontRenderer.FONT_HEIGHT) / 2, 0xFFFFFFFF);
-
-                    index++;
-                }
-
-                mc.mcProfiler.endSection();
-            }
+            if (PartyHelper.instance().hasParty()) renderParty();
         }
+    }
+
+    private void renderParty() {
+        mc.mcProfiler.startSection("party");
+
+        GLCore.glAlphaTest(true);
+        GLCore.glBlend(true);
+
+        int index = 0;
+        final int baseY = 35;
+        final int h = 15;
+        for (final EntityPlayer player : PartyHelper.instance().listMembers()) {
+            if (player == mc.player) continue;
+
+            GLCore.glBindTexture(OptionCore.SAO_UI.isEnabled() ? StringNames.gui : StringNames.guiCustom);
+
+            GLCore.glTexturedRect(2, baseY + index * h, zLevel, 85, 15, 10, 13);
+            GLCore.glTexturedRect(13, baseY + index * h, zLevel, 80, 15, 5, 13);
+
+            String playerName = player.getDisplayNameString();
+            if (playerName.length() > 5) playerName = playerName.substring(0, 5);
+
+            final int nameBoxes = 29 / 5 + 1;
+
+            GLCore.glTexturedRect(18, baseY + index * h, zLevel, nameBoxes * 5, 13, 65, 15, 5, 13);
+
+            int offset = 18 + nameBoxes * 5;
+
+            GLCore.glTexturedRect(offset, baseY + index * h, zLevel, 40, 28, 100, 13);
+
+            final int hpWidth = 97;
+            final int hpHeight = 3;
+
+            final int hpValue = (int) (StaticPlayerHelper.getHealth(mc, player, ctx.getPartialTicks()) / StaticPlayerHelper.getMaxHealth(player) * hpWidth);
+            HealthStep.getStep(mc, player, ctx.getPartialTicks()).glColor();
+
+            int hp = hpHeight;
+            for (int j = 0; j < hpValue; j++) {
+                GLCore.glTexturedRect(offset + 1 + j, baseY + 5 + index * h, zLevel, (hpHeight - hp), 15, 1, hp);
+
+                if (j >= hpValue - hp) {
+                    hp--;
+                    if (hp <= 0) break;
+                }
+            }
+
+            offset += 100;
+
+            GLCore.glColor(1.0F, 1.0F, 1.0F, 1.0F);
+            GLCore.glTexturedRect(offset, baseY + index * h, zLevel, 70, 15, 5, 13);
+            GLCore.glString(playerName, 18, baseY + 1 + index * h + (13 - fontRenderer.FONT_HEIGHT) / 2, 0xFFFFFFFF);
+
+            index++;
+        }
+
+        mc.mcProfiler.endSection();
     }
 
     @Override
@@ -312,6 +314,7 @@ public class IngameGUI extends GuiIngameForge {
         if (OptionCore.VANILLA_UI.isEnabled()) super.renderHealthMount(width, height);
         else {
             EntityPlayer player = (EntityPlayer) mc.getRenderViewEntity();
+            if (player == null) return;
             Entity tmp = player.getRidingEntity();
             if (!(tmp instanceof EntityLivingBase)) return;
 

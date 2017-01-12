@@ -1,3 +1,5 @@
+#PARSE_ESCAPES
+#(this command allows for proper evaluations as defined by String.format(), not a simplified version)
 
 # Social
 guiFriendRequestTitle=Friend Request
@@ -131,6 +133,9 @@ displayResLong=Resistance
 displaySpdLong=Speed
 displayJmpLong=Jump Strength
 displayName=Name
+formatHealth=%1$.0f / %2$.0f
+formatHealthAbsorb=%1$.0f (+%3$.0f) / %2$.0f
+formatHealthAbsorbAlt=(+%3$.0f) %1$.0f / %2$.0f
 
 # PT
 ptLeave=You left your party.
