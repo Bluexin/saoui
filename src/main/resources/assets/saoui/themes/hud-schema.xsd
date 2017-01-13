@@ -39,10 +39,10 @@
         <xs:complexContent>
             <xs:attribute name="name" default="anonymous" type="xs:string"/>
             <xs:all>
-                <xs:element name="x" default="0" minOccurs="0" type="xs:string"/>
-                <xs:element name="y" default="0" minOccurs="0" type="xs:string"/>
-                <xs:element name="z" default="0" minOccurs="0" type="xs:string"/>
-                <xs:element name="enabled" default="true" minOccurs="0" type="xs:string"/>
+                <xs:element name="x" default="0" minOccurs="0" type="CachedExpression"/>
+                <xs:element name="y" default="0" minOccurs="0" type="CachedExpression"/>
+                <xs:element name="z" default="0" minOccurs="0" type="CachedExpression"/>
+                <xs:element name="enabled" default="true" minOccurs="0" type="CachedExpression"/>
             </xs:all>
         </xs:complexContent>
     </xs:complexType>
@@ -57,13 +57,13 @@
         <xs:complexContent>
             <xs:extension base="Element">
                 <xs:all>
-                    <xs:element name="rgba" default="0xFFFFFFFF" minOccurs="0" type="xs:string"/>
-                    <xs:element name="srcX" default="0" minOccurs="0" type="xs:string"/>
-                    <xs:element name="srcY" default="0" minOccurs="0" type="xs:string"/>
-                    <xs:element name="w" default="0" minOccurs="0" type="xs:string"/>
-                    <xs:element name="h" default="0" minOccurs="0" type="xs:string"/>
-                    <xs:element name="srcW" default="0" minOccurs="0" type="xs:string"/>
-                    <xs:element name="srcH" default="0" minOccurs="0" type="xs:string"/>
+                    <xs:element name="rgba" default="0xFFFFFFFF" minOccurs="0" type="CachedExpression"/>
+                    <xs:element name="srcX" default="0" minOccurs="0" type="CachedExpression"/>
+                    <xs:element name="srcY" default="0" minOccurs="0" type="CachedExpression"/>
+                    <xs:element name="w" default="0" minOccurs="0" type="CachedExpression"/>
+                    <xs:element name="h" default="0" minOccurs="0" type="CachedExpression"/>
+                    <xs:element name="srcW" default="0" minOccurs="0" type="CachedExpression"/>
+                    <xs:element name="srcH" default="0" minOccurs="0" type="CachedExpression"/>
                     <xs:element name="texture" default="" minOccurs="0" type="xs:anyURI"/>
                 </xs:all>
             </xs:extension>
@@ -74,7 +74,7 @@
         <xs:complexContent>
             <xs:extension base="GLRectangle">
                 <xs:all>
-                    <xs:element name="text" type="xs:string"/>
+                    <xs:element name="text" type="CachedExpression"/>
                     <xs:element name="shadow" default="true" minOccurs="0" type="xs:boolean"/>
                 </xs:all>
             </xs:extension>
@@ -85,10 +85,10 @@
         <xs:complexContent>
             <xs:extension base="GLRectangle">
                 <xs:all>
-                    <xs:element name="slot" type="xs:string"/>
-                    <xs:element name="itemXoffset" default="0" minOccurs="0" type="xs:string"/>
-                    <xs:element name="itemYoffset" default="0" minOccurs="0" type="xs:string"/>
-                    <xs:element name="hand" default="null" minOccurs="0" type="xs:string">
+                    <xs:element name="slot" type="CachedExpression"/>
+                    <xs:element name="itemXoffset" default="0" minOccurs="0" type="CachedExpression"/>
+                    <xs:element name="itemYoffset" default="0" minOccurs="0" type="CachedExpression"/>
+                    <xs:element name="hand" default="null" minOccurs="0" type="CachedExpression">
                         <xs:simpleType>
                             <xs:restriction base="xs:string">
                                 <xs:enumeration value="LEFT"/>
@@ -116,6 +116,23 @@
                 </xs:all>
             </xs:extension>
         </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="CachedExpression">
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="cache" default="DEFAULT">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:enumeration value="DEFAULT"/>
+                            <xs:enumeration value="STATIC"/>
+                            <xs:enumeration value="SIZE_CHANGE"/>
+                            <xs:enumeration value="NONE"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+            </xs:extension>
+        </xs:simpleContent>
     </xs:complexType>
 
 </xs:schema>

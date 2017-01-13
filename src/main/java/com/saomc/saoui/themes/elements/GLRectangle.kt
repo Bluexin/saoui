@@ -2,8 +2,8 @@ package com.saomc.saoui.themes.elements
 
 import com.saomc.saoui.GLCore
 import com.saomc.saoui.api.themes.IHudDrawContext
-import com.saomc.saoui.themes.util.DoubleExpressionWrapper
-import com.saomc.saoui.themes.util.IntExpressionWrapper
+import com.saomc.saoui.themes.util.CDouble
+import com.saomc.saoui.themes.util.CInt
 import net.minecraft.util.ResourceLocation
 import javax.xml.bind.annotation.XmlRootElement
 import javax.xml.bind.annotation.XmlSeeAlso
@@ -17,28 +17,28 @@ import javax.xml.bind.annotation.XmlSeeAlso
 @XmlSeeAlso(GLString::class, GLHotbarItem::class)
 @XmlRootElement
 open class GLRectangle : Element() {
-    protected var rgba: IntExpressionWrapper? = null
-    protected var srcX: DoubleExpressionWrapper? = null
-    protected var srcY: DoubleExpressionWrapper? = null
-    protected var w: DoubleExpressionWrapper? = null
-    protected var h: DoubleExpressionWrapper? = null
-    protected var srcW: DoubleExpressionWrapper? = null
-    protected var srcH: DoubleExpressionWrapper? = null
+    protected var rgba: CInt? = null
+    protected var srcX: CDouble? = null
+    protected var srcY: CDouble? = null
+    protected var w: CDouble? = null
+    protected var h: CDouble? = null
+    protected var srcW: CDouble? = null
+    protected var srcH: CDouble? = null
     protected var rl: ResourceLocation? = null
     private val texture: String? = null
 
     override fun draw(ctx: IHudDrawContext) {
-        if (!(enabled?.execute(ctx) ?: true)) return
+        if (!(enabled?.invoke(ctx) ?: true)) return
 
         val p: ElementParent? = this.parent.get()
-        val x = (this.x?.execute(ctx) ?: 0.0) + (p?.getX(ctx) ?: 0.0)
-        val y = (this.y?.execute(ctx) ?: 0.0) + (p?.getY(ctx) ?: 0.0)
-        val z = (this.z?.execute(ctx) ?: 0.0) + (p?.getZ(ctx) ?: 0.0) + ctx.z
+        val x = (this.x?.invoke(ctx) ?: 0.0) + (p?.getX(ctx) ?: 0.0)
+        val y = (this.y?.invoke(ctx) ?: 0.0) + (p?.getY(ctx) ?: 0.0)
+        val z = (this.z?.invoke(ctx) ?: 0.0) + (p?.getZ(ctx) ?: 0.0) + ctx.z
 
         GLCore.glBlend(true)
-        GLCore.glColorRGBA(this.rgba?.execute(ctx) ?: 0xFFFFFFFF.toInt())
+        GLCore.glColorRGBA(this.rgba?.invoke(ctx) ?: 0xFFFFFFFF.toInt())
         if (this.rl != null) GLCore.glBindTexture(this.rl)
-        GLCore.glTexturedRect(x, y, z, w?.execute(ctx) ?: 0.0, h?.execute(ctx) ?: 0.0, srcX?.execute(ctx) ?: 0.0, srcY?.execute(ctx) ?: 0.0, srcW?.execute(ctx) ?: w?.execute(ctx) ?: 0.0, srcH?.execute(ctx) ?: h?.execute(ctx) ?: 0.0)
+        GLCore.glTexturedRect(x, y, z, w?.invoke(ctx) ?: 0.0, h?.invoke(ctx) ?: 0.0, srcX?.invoke(ctx) ?: 0.0, srcY?.invoke(ctx) ?: 0.0, srcW?.invoke(ctx) ?: w?.invoke(ctx) ?: 0.0, srcH?.invoke(ctx) ?: h?.invoke(ctx) ?: 0.0)
     }
 
     override fun setup(parent: ElementParent): Boolean {

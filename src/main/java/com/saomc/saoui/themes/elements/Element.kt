@@ -1,8 +1,8 @@
 package com.saomc.saoui.themes.elements
 
 import com.saomc.saoui.api.themes.IHudDrawContext
-import com.saomc.saoui.themes.util.BooleanExpressionWrapper
-import com.saomc.saoui.themes.util.DoubleExpressionWrapper
+import com.saomc.saoui.themes.util.CBoolean
+import com.saomc.saoui.themes.util.CDouble
 import com.saomc.saoui.util.LogCore
 import java.lang.ref.WeakReference
 import javax.annotation.OverridingMethodsMustInvokeSuper
@@ -14,7 +14,6 @@ import javax.xml.bind.annotation.XmlSeeAlso
  *
  * @author Bluexin
  */
-//@XmlTransient //Prevents the mapping of load JavaBean property/type to XML representation
 @XmlSeeAlso(GLRectangle::class, ElementGroup::class) //Instructs JAXB to also bind other classes when binding this class
 abstract class Element {
 
@@ -25,19 +24,19 @@ abstract class Element {
     /**
      * X position.
      */
-    protected var x: DoubleExpressionWrapper? = null
+    protected var x: CDouble? = null
     /**
      * Y position.
      */
-    protected var y: DoubleExpressionWrapper? = null
+    protected var y: CDouble? = null
     /**
      * Z position.
      */
-    protected var z: DoubleExpressionWrapper? = null
+    protected var z: CDouble? = null
     /**
      * Whether this element should be enabled.
      */
-    protected var enabled: BooleanExpressionWrapper? = null
+    protected var enabled: CBoolean? = null
     /**
      * Parent element for this element.
      */

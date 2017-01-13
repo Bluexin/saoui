@@ -110,7 +110,11 @@ public class IngameGUI extends GuiIngameForge {
         if (replaceEvent(HOTBAR)) return;
         if (mc.playerController.isSpectator()) this.spectatorGui.renderTooltip(res, partialTicks);
         else if (OptionCore.DEFAULT_HOTBAR.isEnabled()) super.renderHotbar(res, partialTicks);
-        else ThemeLoader.HUD.draw(HudPartType.HOTBAR, getContext());
+        else {
+            mc.mcProfiler.startSection("hotbar");
+            ThemeLoader.HUD.draw(HudPartType.HOTBAR, getContext());
+            mc.mcProfiler.endSection();
+        }
 
         post(HOTBAR);
     }
@@ -150,6 +154,9 @@ public class IngameGUI extends GuiIngameForge {
         else {
             if (replaceEvent(HEALTH)) return;
             mc.mcProfiler.startSection("health");
+            ThemeLoader.HUD.draw(HudPartType.HEALTH_BOX, getContext());
+            mc.mcProfiler.endSection();
+            post(HEALTH);
 
             final int healthBarWidth = 234;
             final int healthWidth = 216;
@@ -157,11 +164,6 @@ public class IngameGUI extends GuiIngameForge {
             int stepOne = (int) (healthWidth / 3.0F - 3);
             int stepTwo = (int) (healthWidth / 3.0F * 2.0F - 3);
             int stepThree = healthWidth - 3;
-
-            ThemeLoader.HUD.draw(HudPartType.HEALTH_BOX, getContext());
-
-            mc.mcProfiler.endSection();
-            post(HEALTH);
 
             renderFood(healthWidth, healthHeight, offsetUsername, stepOne, stepTwo, stepThree);
 
@@ -303,8 +305,11 @@ public class IngameGUI extends GuiIngameForge {
         else {
             if (replaceEvent(JUMPBAR)) return;
             renderExperience(width, height);
+
+            mc.mcProfiler.startSection("jumpBar");
             ThemeLoader.HUD.draw(HudPartType.JUMP_BAR, getContext());
-            // Nothing happens here (not implemented yet)
+            mc.mcProfiler.endSection();
+
             post(JUMPBAR);
         }
     }

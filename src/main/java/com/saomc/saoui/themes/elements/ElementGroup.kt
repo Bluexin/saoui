@@ -7,6 +7,7 @@ import net.minecraft.util.ResourceLocation
 import javax.xml.bind.annotation.XmlElementRef
 import javax.xml.bind.annotation.XmlElementWrapper
 import javax.xml.bind.annotation.XmlRootElement
+import javax.xml.bind.annotation.XmlTransient
 
 /**
  * Part of saoui by Bluexin.
@@ -22,15 +23,37 @@ open class ElementGroup : Element(), ElementParent { // TODO: make elementGroups
     protected var rl: ResourceLocation? = null
     private val texture: String? = null
 
-    override fun getX(ctx: IHudDrawContext) = (parent.get()?.getX(ctx) ?: 0.0) + (this.x?.execute(ctx) ?: 0.0)
+    @XmlTransient protected var cachedX = 0.0
+    @XmlTransient protected var cachedY = 0.0
+    @XmlTransient protected var cachedZ = 0.0
+    @XmlTransient protected var latestTicks = -1.0F
 
-    override fun getY(ctx: IHudDrawContext) = (parent.get()?.getY(ctx) ?: 0.0) + (this.y?.execute(ctx) ?: 0.0)
+    /**
+     * Returns true if the element should update it's position. Can be extremely useful in huge groups
+     */
+    protected fun checkUpdate(ctx: IHudDrawContext) = if (latestTicks == ctx.partialTicks) false else {
+        latestTicks = ctx.partialTicks; true
+    }
 
-    override fun getZ(ctx: IHudDrawContext) = (parent.get()?.getZ(ctx) ?: 0.0) + (this.z?.execute(ctx) ?: 0.0)
+
+    override fun getX(ctx: IHudDrawContext): Double {
+        updateCache(ctx)
+        return cachedX
+    }
+
+    override fun getY(ctx: IHudDrawContext): Double {
+        updateCache(ctx)
+        return cachedY
+    }
+
+    override fun getZ(ctx: IHudDrawContext): Double {
+        updateCache(ctx)
+        return cachedZ
+    }
 
     override fun draw(ctx: IHudDrawContext) {
         if (this.rl != null) GLCore.glBindTexture(this.rl)
-        if (enabled?.execute(ctx) ?: true) this.elements.forEach { it.draw(ctx) }
+        if (enabled?.invoke(ctx) ?: true) this.elements.forEach { it.draw(ctx) }
     }
 
     override fun setup(parent: ElementParent): Boolean {
@@ -40,5 +63,13 @@ open class ElementGroup : Element(), ElementParent { // TODO: make elementGroups
         this.elements.forEach { if (it.name == Element.DEFAULT_NAME) ++anonymous; it.setup(this) }
         if (anonymous > 0) LogCore.logInfo("Set up $anonymous anonymous elements in $name.")
         return res
+    }
+
+    private fun updateCache(ctx: IHudDrawContext) {
+        if (checkUpdate(ctx)) {
+            cachedX = (parent.get()?.getX(ctx) ?: 0.0) + (this.x?.invoke(ctx) ?: 0.0)
+            cachedY = (parent.get()?.getY(ctx) ?: 0.0) + (this.y?.invoke(ctx) ?: 0.0)
+            cachedZ = (parent.get()?.getZ(ctx) ?: 0.0) + (this.z?.invoke(ctx) ?: 0.0)
+        }
     }
 }

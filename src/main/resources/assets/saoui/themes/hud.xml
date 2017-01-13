@@ -4,40 +4,40 @@
         <entry>
             <key>HEALTH_BOX</key>
             <value name="health box">
-                <x>2.0</x>
-                <y>2.0</y>
+                <x cache="STATIC">2.0</x>
+                <y cache="STATIC">2.0</y>
                 <children>
                     <elementGroup name="background">
                         <texture>saoui:textures/guiEDT.png</texture>
                         <children>
                             <glRectangle>
-                                <h>15.0</h>
-                                <w>16.0</w>
+                                <h cache="STATIC">15.0</h>
+                                <w cache="STATIC">16.0</w>
                             </glRectangle>
                             <glRectangle>
-                                <h>15.0</h>
-                                <srcW>5.0</srcW>
-                                <srcX>16.0</srcX>
+                                <h cache="STATIC">15.0</h>
+                                <srcW cache="STATIC">5.0</srcW>
+                                <srcX cache="STATIC">16.0</srcX>
                                 <w>usernamewidth</w>
-                                <x>16.0</x>
+                                <x cache="STATIC">16.0</x>
                             </glRectangle>
                             <glRectangle>
-                                <h>15.0</h>
-                                <srcX>21.0</srcX>
-                                <w>234.0</w>
+                                <h cache="STATIC">15.0</h>
+                                <srcX cache="STATIC">21.0</srcX>
+                                <w cache="STATIC">234.0</w>
                                 <x>16.0 + usernamewidth</x>
                             </glRectangle>
                         </children>
                     </elementGroup>
                     <glString name="username">
                         <text>username</text>
-                        <h>15.0</h>
-                        <x>16.0</x>
-                        <y>1.0</y>
+                        <h cache="STATIC">15.0</h>
+                        <x cache="STATIC">16.0</x>
+                        <y cache="STATIC">1.0</y>
                     </glString>
                     <glRectangle name="health bar">
                         <texture>saoui:textures/guiEDT.png</texture>
-                        <h>9.0</h>
+                        <h cache="STATIC">9.0</h>
                         <rgba>
                             healthStep == VERY_LOW? 0xBD0000FF:
                             healthStep == LOW? 0xF40000FF:
@@ -48,56 +48,56 @@
                             healthStep == CREATIVE? 0xB32DE3FF:
                             0xFFFFFFFF
                         </rgba>
-                        <srcH>9.0</srcH>
+                        <srcH cache="STATIC">9.0</srcH>
                         <srcW>215.0 * hpPct</srcW>
-                        <srcY>188.0</srcY>
+                        <srcY cache="STATIC">188.0</srcY>
                         <w>215.0 * hpPct</w>
                         <x>18.0 + usernamewidth</x>
-                        <y>3.0</y>
+                        <y cache="STATIC">3.0</y>
                     </glRectangle>
                     <elementGroup name="hp bg and text">
                         <enabled>!isEnabled(REMOVE_HPXP)</enabled>
                         <x>usernamewidth + 132</x>
-                        <y>12</y>
+                        <y cache="STATIC">12</y>
                         <children>
                             <glString name="hp text">
                                 <text>absorption > 0? format(isEnabled(ALT_ABSORB_POS)? "formatHealthAbsorbAlt":
                                     "formatHealthAbsorb", ceil(hp), ceil(maxHp), ceil(absorption)):
                                     format("formatHealth", ceil(hp), ceil(maxHp))
                                 </text>
-                                <x>5</x>
-                                <y>8</y>
+                                <x cache="STATIC">5</x>
+                                <y cache="STATIC">8</y>
                             </glString>
                             <elementGroup name="hp bg">
                                 <texture>saoui:textures/guiEDT.png</texture>
                                 <children>
                                     <glRectangle>
-                                        <srcX>60</srcX>
-                                        <srcY>15</srcY>
-                                        <w>5</w>
-                                        <h>13</h>
+                                        <srcX cache="STATIC">60</srcX>
+                                        <srcY cache="STATIC">15</srcY>
+                                        <w cache="STATIC">5</w>
+                                        <h cache="STATIC">13</h>
                                     </glRectangle>
                                     <glRectangle>
-                                        <x>5</x>
-                                        <srcX>66</srcX>
-                                        <srcY>15</srcY>
+                                        <x cache="STATIC">5</x>
+                                        <srcX cache="STATIC">66</srcX>
+                                        <srcY cache="STATIC">15</srcY>
                                         <w>strWidth(absorption > 0? format(isEnabled(ALT_ABSORB_POS)?
                                             "formatHealthAbsorbAlt": "formatHealthAbsorb", ceil(hp), ceil(maxHp),
                                             ceil(absorption)): format("formatHealth", ceil(hp), ceil(maxHp)))
                                         </w>
-                                        <h>13</h>
-                                        <srcW>5</srcW>
-                                        <srcH>13</srcH>
+                                        <h cache="STATIC">13</h>
+                                        <srcW cache="STATIC">5</srcW>
+                                        <srcH cache="STATIC">13</srcH>
                                     </glRectangle>
                                     <glRectangle>
                                         <x>5 + strWidth(absorption > 0? format(isEnabled(ALT_ABSORB_POS)?
                                             "formatHealthAbsorbAlt": "formatHealthAbsorb", ceil(hp), ceil(maxHp),
                                             ceil(absorption)): format("formatHealth", ceil(hp), ceil(maxHp)))
                                         </x>
-                                        <srcX>70</srcX>
-                                        <srcY>15</srcY>
-                                        <w>5</w>
-                                        <h>13</h>
+                                        <srcX cache="STATIC">70</srcX>
+                                        <srcY cache="STATIC">15</srcY>
+                                        <w cache="STATIC">5</w>
+                                        <h cache="STATIC">13</h>
                                     </glRectangle>
                                 </children>
                             </elementGroup>
@@ -109,127 +109,127 @@
         <entry>
             <key>HOTBAR</key>
             <value name="hotbar">
-                <x>scaledwidth - 24</x>
-                <y>scaledheight / 2.0</y>
+                <x cache="SIZE_CHANGE">scaledwidth - 24</x>
+                <y cache="SIZE_CHANGE">scaledheight / 2.0</y>
                 <children>
                     <elementGroup name="main inventory">
                         <children>
                             <glHotbarItem>
-                                <h>20.0</h>
+                                <h cache="STATIC">20.0</h>
                                 <rgba>0 == selectedslot ? 0xFFBA66FF : 0xCDCDCDAA</rgba>
-                                <srcH>20.0</srcH>
-                                <srcW>20.0</srcW>
-                                <srcY>25.0</srcY>
-                                <w>20.0</w>
-                                <y>-99</y>
-                                <slot>0</slot>
-                                <itemXoffset>2</itemXoffset>
-                                <itemYoffset>2</itemYoffset>
+                                <srcH cache="STATIC">20.0</srcH>
+                                <srcW cache="STATIC">20.0</srcW>
+                                <srcY cache="STATIC">25.0</srcY>
+                                <w cache="STATIC">20.0</w>
+                                <y cache="STATIC">-99</y>
+                                <slot cache="STATIC">0</slot>
+                                <itemXoffset cache="STATIC">2</itemXoffset>
+                                <itemYoffset cache="STATIC">2</itemYoffset>
                                 <texture>saoui:textures/guiEDT.png</texture>
                             </glHotbarItem>
                             <glHotbarItem>
-                                <h>20.0</h>
+                                <h cache="STATIC">20.0</h>
                                 <rgba>1 == selectedslot ? 0xFFBA66FF : 0xCDCDCDAA</rgba>
-                                <srcH>20.0</srcH>
-                                <srcW>20.0</srcW>
-                                <srcY>25.0</srcY>
-                                <w>20.0</w>
-                                <y>-77</y>
+                                <srcH cache="STATIC">20.0</srcH>
+                                <srcW cache="STATIC">20.0</srcW>
+                                <srcY cache="STATIC">25.0</srcY>
+                                <w cache="STATIC">20.0</w>
+                                <y cache="STATIC">-77</y>
                                 <z>0.0</z>
-                                <slot>1</slot>
-                                <itemXoffset>2</itemXoffset>
-                                <itemYoffset>2</itemYoffset>
+                                <slot cache="STATIC">1</slot>
+                                <itemXoffset cache="STATIC">2</itemXoffset>
+                                <itemYoffset cache="STATIC">2</itemYoffset>
                                 <texture>saoui:textures/guiEDT.png</texture>
                             </glHotbarItem>
                             <glHotbarItem>
-                                <h>20.0</h>
+                                <h cache="STATIC">20.0</h>
                                 <rgba>2 == selectedslot ? 0xFFBA66FF : 0xCDCDCDAA</rgba>
-                                <srcH>20.0</srcH>
-                                <srcW>20.0</srcW>
-                                <srcY>25.0</srcY>
-                                <w>20.0</w>
-                                <y>-55</y>
-                                <slot>2</slot>
-                                <itemXoffset>2</itemXoffset>
-                                <itemYoffset>2</itemYoffset>
+                                <srcH cache="STATIC">20.0</srcH>
+                                <srcW cache="STATIC">20.0</srcW>
+                                <srcY cache="STATIC">25.0</srcY>
+                                <w cache="STATIC">20.0</w>
+                                <y cache="STATIC">-55</y>
+                                <slot cache="STATIC">2</slot>
+                                <itemXoffset cache="STATIC">2</itemXoffset>
+                                <itemYoffset cache="STATIC">2</itemYoffset>
                                 <texture>saoui:textures/guiEDT.png</texture>
                             </glHotbarItem>
                             <glHotbarItem>
-                                <h>20.0</h>
+                                <h cache="STATIC">20.0</h>
                                 <rgba>3 == selectedslot ? 0xFFBA66FF : 0xCDCDCDAA</rgba>
-                                <srcH>20.0</srcH>
-                                <srcW>20.0</srcW>
-                                <srcY>25.0</srcY>
-                                <w>20.0</w>
-                                <y>-33</y>
-                                <slot>3</slot>
-                                <itemXoffset>2</itemXoffset>
-                                <itemYoffset>2</itemYoffset>
+                                <srcH cache="STATIC">20.0</srcH>
+                                <srcW cache="STATIC">20.0</srcW>
+                                <srcY cache="STATIC">25.0</srcY>
+                                <w cache="STATIC">20.0</w>
+                                <y cache="STATIC">-33</y>
+                                <slot cache="STATIC">3</slot>
+                                <itemXoffset cache="STATIC">2</itemXoffset>
+                                <itemYoffset cache="STATIC">2</itemYoffset>
                                 <texture>saoui:textures/guiEDT.png</texture>
                             </glHotbarItem>
                             <glHotbarItem>
-                                <h>20.0</h>
+                                <h cache="STATIC">20.0</h>
                                 <rgba>4 == selectedslot ? 0xFFBA66FF : 0xCDCDCDAA</rgba>
-                                <srcH>20.0</srcH>
-                                <srcW>20.0</srcW>
-                                <srcY>25.0</srcY>
-                                <w>20.0</w>
-                                <y>-11</y>
-                                <slot>4</slot>
-                                <itemXoffset>2</itemXoffset>
-                                <itemYoffset>2</itemYoffset>
+                                <srcH cache="STATIC">20.0</srcH>
+                                <srcW cache="STATIC">20.0</srcW>
+                                <srcY cache="STATIC">25.0</srcY>
+                                <w cache="STATIC">20.0</w>
+                                <y cache="STATIC">-11</y>
+                                <slot cache="STATIC">4</slot>
+                                <itemXoffset cache="STATIC">2</itemXoffset>
+                                <itemYoffset cache="STATIC">2</itemYoffset>
                                 <texture>saoui:textures/guiEDT.png</texture>
                             </glHotbarItem>
                             <glHotbarItem>
-                                <h>20.0</h>
+                                <h cache="STATIC">20.0</h>
                                 <rgba>5 == selectedslot ? 0xFFBA66FF : 0xCDCDCDAA</rgba>
-                                <srcH>20.0</srcH>
-                                <srcW>20.0</srcW>
-                                <srcY>25.0</srcY>
-                                <w>20.0</w>
-                                <y>11</y>
-                                <slot>5</slot>
-                                <itemXoffset>2</itemXoffset>
-                                <itemYoffset>2</itemYoffset>
+                                <srcH cache="STATIC">20.0</srcH>
+                                <srcW cache="STATIC">20.0</srcW>
+                                <srcY cache="STATIC">25.0</srcY>
+                                <w cache="STATIC">20.0</w>
+                                <y cache="STATIC">11</y>
+                                <slot cache="STATIC">5</slot>
+                                <itemXoffset cache="STATIC">2</itemXoffset>
+                                <itemYoffset cache="STATIC">2</itemYoffset>
                                 <texture>saoui:textures/guiEDT.png</texture>
                             </glHotbarItem>
                             <glHotbarItem>
-                                <h>20.0</h>
+                                <h cache="STATIC">20.0</h>
                                 <rgba>6 == selectedslot ? 0xFFBA66FF : 0xCDCDCDAA</rgba>
-                                <srcH>20.0</srcH>
-                                <srcW>20.0</srcW>
-                                <srcY>25.0</srcY>
-                                <w>20.0</w>
-                                <y>33</y>
-                                <slot>6</slot>
-                                <itemXoffset>2</itemXoffset>
-                                <itemYoffset>2</itemYoffset>
+                                <srcH cache="STATIC">20.0</srcH>
+                                <srcW cache="STATIC">20.0</srcW>
+                                <srcY cache="STATIC">25.0</srcY>
+                                <w cache="STATIC">20.0</w>
+                                <y cache="STATIC">33</y>
+                                <slot cache="STATIC">6</slot>
+                                <itemXoffset cache="STATIC">2</itemXoffset>
+                                <itemYoffset cache="STATIC">2</itemYoffset>
                                 <texture>saoui:textures/guiEDT.png</texture>
                             </glHotbarItem>
                             <glHotbarItem>
-                                <h>20.0</h>
+                                <h cache="STATIC">20.0</h>
                                 <rgba>7 == selectedslot ? 0xFFBA66FF : 0xCDCDCDAA</rgba>
-                                <srcH>20.0</srcH>
-                                <srcW>20.0</srcW>
-                                <srcY>25.0</srcY>
-                                <w>20.0</w>
-                                <y>55</y>
-                                <slot>7</slot>
-                                <itemXoffset>2</itemXoffset>
-                                <itemYoffset>2</itemYoffset>
+                                <srcH cache="STATIC">20.0</srcH>
+                                <srcW cache="STATIC">20.0</srcW>
+                                <srcY cache="STATIC">25.0</srcY>
+                                <w cache="STATIC">20.0</w>
+                                <y cache="STATIC">55</y>
+                                <slot cache="STATIC">7</slot>
+                                <itemXoffset cache="STATIC">2</itemXoffset>
+                                <itemYoffset cache="STATIC">2</itemYoffset>
                                 <texture>saoui:textures/guiEDT.png</texture>
                             </glHotbarItem>
                             <glHotbarItem>
-                                <h>20.0</h>
+                                <h cache="STATIC">20.0</h>
                                 <rgba>8 == selectedslot ? 0xFFBA66FF : 0xCDCDCDAA</rgba>
-                                <srcH>20.0</srcH>
-                                <srcW>20.0</srcW>
-                                <srcY>25.0</srcY>
-                                <w>20.0</w>
-                                <y>77</y>
-                                <slot>8</slot>
-                                <itemXoffset>2</itemXoffset>
-                                <itemYoffset>2</itemYoffset>
+                                <srcH cache="STATIC">20.0</srcH>
+                                <srcW cache="STATIC">20.0</srcW>
+                                <srcY cache="STATIC">25.0</srcY>
+                                <w cache="STATIC">20.0</w>
+                                <y cache="STATIC">77</y>
+                                <slot cache="STATIC">8</slot>
+                                <itemXoffset cache="STATIC">2</itemXoffset>
+                                <itemYoffset cache="STATIC">2</itemYoffset>
                                 <texture>saoui:textures/guiEDT.png</texture>
                             </glHotbarItem>
                         </children>
@@ -237,31 +237,31 @@
                     <elementGroup name="offhand">
                         <children>
                             <glHotbarItem>
-                                <h>20.0</h>
+                                <h cache="STATIC">20.0</h>
                                 <rgba>offhandEmpty(0) ? 0xCDCDCDAA : 0xFFBA66FF</rgba>
-                                <srcH>20.0</srcH>
-                                <srcW>20.0</srcW>
-                                <srcY>25.0</srcY>
-                                <w>20.0</w>
-                                <y>121</y>
-                                <slot>0</slot>
-                                <itemXoffset>2</itemXoffset>
-                                <itemYoffset>2</itemYoffset>
-                                <hand>RIGHT</hand>
+                                <srcH cache="STATIC">20.0</srcH>
+                                <srcW cache="STATIC">20.0</srcW>
+                                <srcY cache="STATIC">25.0</srcY>
+                                <w cache="STATIC">20.0</w>
+                                <y cache="STATIC">121</y>
+                                <slot cache="STATIC">0</slot>
+                                <itemXoffset cache="STATIC">2</itemXoffset>
+                                <itemYoffset cache="STATIC">2</itemYoffset>
+                                <hand cache="STATIC">RIGHT</hand>
                                 <texture>saoui:textures/guiEDT.png</texture>
                             </glHotbarItem>
                             <glHotbarItem>
-                                <h>20.0</h>
+                                <h cache="STATIC">20.0</h>
                                 <rgba>offhandEmpty(0) ? 0xCDCDCDAA : 0xFFBA66FF</rgba>
-                                <srcH>20.0</srcH>
-                                <srcW>20.0</srcW>
-                                <srcY>25.0</srcY>
-                                <w>20.0</w>
-                                <y>121</y>
-                                <slot>0</slot>
-                                <itemXoffset>2</itemXoffset>
-                                <itemYoffset>2</itemYoffset>
-                                <hand>LEFT</hand>
+                                <srcH cache="STATIC">20.0</srcH>
+                                <srcW cache="STATIC">20.0</srcW>
+                                <srcY cache="STATIC">25.0</srcY>
+                                <w cache="STATIC">20.0</w>
+                                <y cache="STATIC">121</y>
+                                <slot cache="STATIC">0</slot>
+                                <itemXoffset cache="STATIC">2</itemXoffset>
+                                <itemYoffset cache="STATIC">2</itemYoffset>
+                                <hand cache="STATIC">LEFT</hand>
                                 <texture>saoui:textures/guiEDT.png</texture>
                             </glHotbarItem>
                         </children>
@@ -277,39 +277,39 @@
                     "formatHealthAbsorbAlt": "formatHealthAbsorb", ceil(hp), ceil(maxHp),
                     ceil(absorption)): format("formatHealth", ceil(hp), ceil(maxHp)))
                 </x>
-                <y>14</y>
+                <y cache="STATIC">14</y>
                 <children>
                     <glString name="exp string">
-                        <x>5</x>
-                        <y>8</y>
+                        <x cache="STATIC">5</x>
+                        <y cache="STATIC">8</y>
                         <text>format("displayLvShort", level)</text>
                     </glString>
                     <elementGroup name="exp bg">
                         <texture>saoui:textures/guiEDT.png</texture>
                         <children>
                             <glRectangle>
-                                <srcX>65</srcX>
-                                <srcY>15</srcY>
-                                <w>5</w>
-                                <h>13</h>
-                                <srcW>2</srcW>
+                                <srcX cache="STATIC">65</srcX>
+                                <srcY cache="STATIC">15</srcY>
+                                <w cache="STATIC">5</w>
+                                <h cache="STATIC">13</h>
+                                <srcW cache="STATIC">2</srcW>
                             </glRectangle>
                             <glRectangle>
-                                <x>5</x>
-                                <srcX>66</srcX>
-                                <srcY>15</srcY>
+                                <x cache="STATIC">5</x>
+                                <srcX cache="STATIC">66</srcX>
+                                <srcY cache="STATIC">15</srcY>
                                 <w>strWidth(format("displayLvShort", level))</w>
-                                <h>13</h>
-                                <srcW>5</srcW>
-                                <srcH>13</srcH>
+                                <h cache="STATIC">13</h>
+                                <srcW cache="STATIC">5</srcW>
+                                <srcH cache="STATIC">13</srcH>
                             </glRectangle>
                             <glRectangle>
                                 <x>5 + strWidth(format("displayLvShort", level))</x>
-                                <srcX>78</srcX>
-                                <srcY>15</srcY>
-                                <srcW>3</srcW>
-                                <w>5</w>
-                                <h>13</h>
+                                <srcX cache="STATIC">78</srcX>
+                                <srcY cache="STATIC">15</srcY>
+                                <srcW cache="STATIC">3</srcW>
+                                <w cache="STATIC">5</w>
+                                <h cache="STATIC">13</h>
                             </glRectangle>
                         </children>
                     </elementGroup>
@@ -319,20 +319,20 @@
         <entry>
             <key>JUMP_BAR</key>
             <value name="vanilla horse jump bar">
-                <x>scaledwidth / 2 - 91</x>
-                <y>scaledheight - 29</y>
+                <x cache="SIZE_CHANGE">scaledwidth / 2 - 91</x>
+                <y cache="SIZE_CHANGE">scaledheight - 29</y>
                 <texture>minecraft:textures/gui/icons.png</texture>
                 <children>
                     <glRectangle name="bg">
-                        <srcY>84</srcY>
-                        <w>182</w>
-                        <h>5</h>
+                        <srcY cache="STATIC">84</srcY>
+                        <w cache="STATIC">182</w>
+                        <h cache="STATIC">5</h>
                     </glRectangle>
                     <glRectangle name="fill">
                         <enabled>horsejump > 0</enabled>
-                        <srcY>89</srcY>
+                        <srcY cache="STATIC">89</srcY>
                         <w>182 * horsejump</w>
-                        <h>5</h>
+                        <h cache="STATIC">5</h>
                     </glRectangle>
                 </children>
             </value>

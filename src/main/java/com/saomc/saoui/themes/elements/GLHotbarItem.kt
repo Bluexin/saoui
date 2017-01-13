@@ -2,7 +2,7 @@ package com.saomc.saoui.themes.elements
 
 import com.saomc.saoui.GLCore
 import com.saomc.saoui.api.themes.IHudDrawContext
-import com.saomc.saoui.themes.util.IntExpressionWrapper
+import com.saomc.saoui.themes.util.CInt
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.renderer.RenderHelper
 import net.minecraft.entity.player.EntityPlayer
@@ -18,9 +18,9 @@ import javax.xml.bind.annotation.XmlRootElement
 @XmlRootElement
 open class GLHotbarItem constructor() : GLRectangle() {
 
-    protected lateinit var slot: IntExpressionWrapper
-    protected lateinit var itemXoffset: IntExpressionWrapper
-    protected lateinit var itemYoffset: IntExpressionWrapper
+    protected lateinit var slot: CInt
+    protected lateinit var itemXoffset: CInt
+    protected lateinit var itemYoffset: CInt
     protected var hand: EnumHandSide? = null
 
     /*
@@ -45,14 +45,14 @@ open class GLHotbarItem constructor() : GLRectangle() {
     }
 
     override fun draw(ctx: IHudDrawContext) {
-        if (!(enabled?.execute(ctx) ?: true)) return
+        if (!(enabled?.invoke(ctx) ?: true)) return
         super.draw(ctx)
 
         val p: ElementParent? = this.parent.get()
         val it: ItemStack?
 
-        if (hand == null) it = ctx.player.inventory.mainInventory[slot.execute(ctx)]
-        else if (hand == ctx.player.primaryHand.opposite()) it = ctx.player.inventory.offHandInventory[slot.execute(ctx)]
+        if (hand == null) it = ctx.player.inventory.mainInventory[slot.invoke(ctx)]
+        else if (hand == ctx.player.primaryHand.opposite()) it = ctx.player.inventory.offHandInventory[slot.invoke(ctx)]
         else return
         if (it == null) return
 
@@ -61,8 +61,8 @@ open class GLHotbarItem constructor() : GLRectangle() {
         RenderHelper.enableGUIStandardItemLighting()
 
         renderHotbarItem(
-                (x?.execute(ctx)?.toInt() ?: 0) + itemXoffset.execute(ctx) + (p?.getX(ctx)?.toInt() ?: 0),
-                (y?.execute(ctx)?.toInt() ?: 0) + itemYoffset.execute(ctx) + (p?.getY(ctx)?.toInt() ?: 0),
+                (x?.invoke(ctx)?.toInt() ?: 0) + itemXoffset.invoke(ctx) + (p?.getX(ctx)?.toInt() ?: 0),
+                (y?.invoke(ctx)?.toInt() ?: 0) + itemYoffset.invoke(ctx) + (p?.getY(ctx)?.toInt() ?: 0),
                 ctx.partialTicks, ctx.player, it, ctx)
 
         GLCore.glRescaleNormal(false)

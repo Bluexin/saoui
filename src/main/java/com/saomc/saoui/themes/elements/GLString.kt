@@ -2,7 +2,7 @@ package com.saomc.saoui.themes.elements
 
 import com.saomc.saoui.GLCore
 import com.saomc.saoui.api.themes.IHudDrawContext
-import com.saomc.saoui.themes.util.StringExpressionWrapper
+import com.saomc.saoui.themes.util.CString
 import javax.xml.bind.annotation.XmlRootElement
 
 /**
@@ -13,15 +13,15 @@ import javax.xml.bind.annotation.XmlRootElement
 @XmlRootElement
 open class GLString : GLRectangle() {
 
-    protected lateinit var text: StringExpressionWrapper
+    protected lateinit var text: CString
     private val shadow = true
 
     override fun draw(ctx: IHudDrawContext) {
-        if (!(enabled?.execute(ctx) ?: true)) return
+        if (!(enabled?.invoke(ctx) ?: true)) return
         val p = this.parent.get()
-        val x = (this.x?.execute(ctx) ?: 0.0) + (p?.getX(ctx) ?: 0.0)
-        val y = (this.y?.execute(ctx) ?: 0.0) + (p?.getY(ctx) ?: 0.0) + ((this.h?.execute(ctx) ?: 0.0) - ctx.fontRenderer.FONT_HEIGHT) / 2.0
+        val x = (this.x?.invoke(ctx) ?: 0.0) + (p?.getX(ctx) ?: 0.0)
+        val y = (this.y?.invoke(ctx) ?: 0.0) + (p?.getY(ctx) ?: 0.0) + ((this.h?.invoke(ctx) ?: 0.0) - ctx.fontRenderer.FONT_HEIGHT) / 2.0
 
-        GLCore.glString(ctx.fontRenderer, this.text.execute(ctx), x.toInt(), y.toInt(), rgba?.execute(ctx) ?: 0xFFFFFFFF.toInt(), shadow)
+        GLCore.glString(ctx.fontRenderer, this.text.invoke(ctx), x.toInt(), y.toInt(), rgba?.invoke(ctx) ?: 0xFFFFFFFF.toInt(), shadow)
     }
 }
