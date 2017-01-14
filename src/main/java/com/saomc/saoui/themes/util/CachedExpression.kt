@@ -31,6 +31,8 @@ class StaticCachedExpression<out T>(expression: CompiledExpressionWrapper<T>) : 
     override val cache: T by lazy { expression.invoke(stub) }
 
     object stub : IHudDrawContext {
+        override fun setI(i: Int) = Unit
+        override fun i() = 0
         override fun username() = null
         override fun usernamewidth() = 0.0
         override fun hpPct() = 0.0

@@ -103,4 +103,8 @@ public interface IHudDrawContext {
     float getPartialTicks();
 
     float horsejump();
+
+    void setI(int i);
+
+    int i();
 }

@@ -34,6 +34,7 @@ public class HudDrawContext implements IHudDrawContext {
     private float maxHp;
     private ScaledResolution scaledResolution;
     private float partialTicks;
+    private int i;
 
     public HudDrawContext(EntityPlayer player, Minecraft mc, RenderItem itemRenderer) {
         this.username = player.getDisplayNameString();
@@ -164,5 +165,19 @@ public class HudDrawContext implements IHudDrawContext {
     @Override
     public float horsejump() {
         return ((EntityPlayerSP) player).getHorseJumpPower();
+    }
+
+    public int getI() {
+        return i;
+    }
+
+    @Override
+    public void setI(int i) {
+        this.i = i;
+    }
+
+    @Override
+    public int i() {
+        return getI();
     }
 }

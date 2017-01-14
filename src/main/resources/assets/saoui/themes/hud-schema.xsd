@@ -1,7 +1,8 @@
 <?xml version='1.0'?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
            elementFormDefault="unqualified"
-           targetNamespace="http://www.bluexin.be/com/saomc/saoui/hud-schema">
+           targetNamespace="http://www.bluexin.be/com/saomc/saoui/hud-schema"
+           xmlns="http://www.bluexin.be/com/saomc/saoui/hud-schema">
 
     <xs:element name="hud">
         <xs:annotation>
@@ -49,6 +50,13 @@
         </xs:all>
     </xs:complexType>
 
+    <xs:element name="element" type="Element"/>
+    <xs:element name="glRectangle" substitutionGroup="element" type="GLRectangle"/>
+    <xs:element name="glString" substitutionGroup="element" type="GLString"/>
+    <xs:element name="glHotbarItem" substitutionGroup="element" type="GLHotbarItem"/>
+    <xs:element name="elementGroup" substitutionGroup="element" type="ElementGroup"/>
+    <xs:element name="repetitionGroup" substitutionGroup="element" type="RepetitionGroup"/>
+
     <xs:complexType name="Element" abstract="true">
         <xs:annotation>
             <xs:documentation>
@@ -56,44 +64,36 @@
                 Contains all common info for more specific elements.
             </xs:documentation>
         </xs:annotation>
-        <xs:complexContent>
-            <xs:attribute name="name" default="anonymous" type="xs:string"/>
-            <xs:all>
-                <xs:element name="x" default="0" minOccurs="0" type="CachedExpression">
-                    <xs:annotation>
-                        <xs:documentation>X position on screen (should resolve to a double).</xs:documentation>
-                    </xs:annotation>
-                </xs:element>
-                <xs:element name="y" default="0" minOccurs="0" type="CachedExpression">
-                    <xs:annotation>
-                        <xs:documentation>Y position on screen (should resolve to a double).</xs:documentation>
-                    </xs:annotation>
-                </xs:element>
-                <xs:element name="z" default="0" minOccurs="0" type="CachedExpression">
-                    <xs:annotation>
-                        <xs:documentation>
-                            Z position on screen (should resolve to a double).
-                            This changes which elements are rendered over each other.
-                        </xs:documentation>
-                    </xs:annotation>
-                </xs:element>
-                <xs:element name="enabled" default="true" minOccurs="0" type="CachedExpression">
-                    <xs:annotation>
-                        <xs:documentation>Whether this element should be rendered or not (should resolve to a boolean,
-                            true/false).
-                        </xs:documentation>
-                    </xs:annotation>
-                </xs:element>
-            </xs:all>
-        </xs:complexContent>
+        <xs:all>
+            <xs:element name="x" default="0" minOccurs="0" type="CachedExpression">
+                <xs:annotation>
+                    <xs:documentation>X position on screen (should resolve to a double).</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="y" default="0" minOccurs="0" type="CachedExpression">
+                <xs:annotation>
+                    <xs:documentation>Y position on screen (should resolve to a double).</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="z" default="0" minOccurs="0" type="CachedExpression">
+                <xs:annotation>
+                    <xs:documentation>
+                        Z position on screen (should resolve to a double).
+                        This changes which elements are rendered over each other.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="enabled" default="true" minOccurs="0" type="CachedExpression">
+                <xs:annotation>
+                    <xs:documentation>Whether this element should be rendered or not (should resolve to a
+                        boolean,
+                        true/false).
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:all>
+        <xs:attribute name="name" default="anonymous" type="xs:string"/>
     </xs:complexType>
-
-    <xs:element name="element" type="Element"/>
-    <xs:element name="glRectangle" substitutionGroup="element" type="GLRectangle"/>
-    <xs:element name="glString" substitutionGroup="element" type="GLString"/>
-    <xs:element name="glHotbarItem" substitutionGroup="element" type="GLHotbarItem"/>
-    <xs:element name="elementGroup" substitutionGroup="element" type="ElementGroup"/>
-    <xs:element name="repetitionGroup" substitutionGroup="element" type="RepetitionGroup"/>
 
     <xs:complexType name="GLRectangle">
         <xs:annotation>
@@ -230,7 +230,7 @@
                             </xs:documentation>
                         </xs:annotation>
                     </xs:element>
-                    <xs:element name="hand" default="null" minOccurs="0" type="CachedExpression">
+                    <xs:element name="hand" minOccurs="0">
                         <xs:annotation>
                             <xs:documentation>
                                 Offhand this slot should render.
@@ -239,12 +239,14 @@
                                 make complex expressions that resolve to these.
                             </xs:documentation>
                         </xs:annotation>
-                        <xs:simpleType>
-                            <xs:restriction base="xs:string">
-                                <xs:enumeration value="LEFT"/>
-                                <xs:enumeration value="RIGHT"/>
-                            </xs:restriction>
-                        </xs:simpleType>
+                        <xs:complexType>
+                            <xs:complexContent>
+                                <xs:restriction base="CachedExpression">
+                                    <xs:enumeration value="LEFT"/>
+                                    <xs:enumeration value="RIGHT"/>
+                                </xs:restriction>
+                            </xs:complexContent>
+                        </xs:complexType>
                     </xs:element>
                 </xs:all>
             </xs:extension>
@@ -262,20 +264,18 @@
                 Also includes all value declarations from Element.
             </xs:documentation>
         </xs:annotation>
-        <xs:complexContent>
-            <xs:extension base="Element">
-                <xs:all>
-                    <xs:element name="texture" default="" minOccurs="0" type="xs:anyURI"/>
-                    <xs:element name="children">
-                        <xs:complexType>
-                            <xs:sequence maxOccurs="unbounded" minOccurs="0">
-                                <xs:element ref="element"/>
-                            </xs:sequence>
-                        </xs:complexType>
-                    </xs:element>
-                </xs:all>
-            </xs:extension>
-        </xs:complexContent>
+        <xs:extension base="Element">
+            <xs:all>
+                <xs:element name="texture" default="" minOccurs="0" type="xs:anyURI"/>
+                <xs:element name="children">
+                    <xs:complexType>
+                        <xs:sequence maxOccurs="unbounded" minOccurs="0">
+                            <xs:element ref="element"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:all>
+        </xs:extension>
     </xs:complexType>
 
     <xs:complexType name="CachedExpression">
@@ -315,8 +315,10 @@
                             <xs:enumeration value="NONE">
                                 <xs:annotation>
                                     <xs:documentation>
-                                        Values will not be cached (unrecommended -- in most cases DEFAULT is better. Use
-                                        with precaution).
+                                        Values will not be cached.
+                                        Recommended only inside of RepetitionGroups where you use the 'i' variable,
+                                        otherwise it's unrecommended -- in most cases DEFAULT is better. Use with
+                                        precaution.
                                     </xs:documentation>
                                 </xs:annotation>
                             </xs:enumeration>
@@ -341,5 +343,4 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-
 </xs:schema>

@@ -4,10 +4,7 @@ import com.saomc.saoui.GLCore
 import com.saomc.saoui.api.themes.IHudDrawContext
 import com.saomc.saoui.util.LogCore
 import net.minecraft.util.ResourceLocation
-import javax.xml.bind.annotation.XmlElementRef
-import javax.xml.bind.annotation.XmlElementWrapper
-import javax.xml.bind.annotation.XmlRootElement
-import javax.xml.bind.annotation.XmlTransient
+import javax.xml.bind.annotation.*
 
 /**
  * Part of saoui by Bluexin.
@@ -15,6 +12,7 @@ import javax.xml.bind.annotation.XmlTransient
  * @author Bluexin
  */
 @XmlRootElement
+@XmlSeeAlso(RepetitionGroup::class)
 open class ElementGroup : Element(), ElementParent { // TODO: make elementGroups with a texture for less RL instantiation and binding on children
 
     @XmlElementWrapper(name = "children")

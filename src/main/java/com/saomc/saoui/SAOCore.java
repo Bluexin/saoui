@@ -44,11 +44,7 @@ public class SAOCore {
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) throws Exception {
-//        try {
-            ThemeLoader.load();
-//        } catch (JAXBException e) {
-//            e.printStackTrace();
-//        }
+        ThemeLoader.load();
 
         MinecraftForge.EVENT_BUS.register(new EventCore());
         ConfigHandler.preInit(event);
