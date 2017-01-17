@@ -1,34 +1,32 @@
 package com.saomc.saoui.themes.elements
 
 import com.saomc.saoui.GLCore
-import com.saomc.saoui.themes.util.ExpressionAdapter
-import com.saomc.saoui.themes.util.IntExpressionWrapper
+import com.saomc.saoui.api.themes.IHudDrawContext
+import com.saomc.saoui.themes.util.CInt
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.renderer.RenderHelper
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.ItemStack
 import net.minecraft.util.EnumHandSide
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter
+import javax.xml.bind.annotation.XmlRootElement
 
 /**
  * Part of saoui by Bluexin.
 
  * @author Bluexin
  */
-open class GLHotbarItem protected constructor() : GLRectangle() {
+@XmlRootElement
+open class GLHotbarItem constructor() : GLRectangle() {
 
-    @XmlJavaTypeAdapter(ExpressionAdapter.IntExpressionAdapter::class)
-    protected lateinit var slot: IntExpressionWrapper
-    @XmlJavaTypeAdapter(ExpressionAdapter.IntExpressionAdapter::class)
-    protected lateinit var itemXoffset: IntExpressionWrapper
-    @XmlJavaTypeAdapter(ExpressionAdapter.IntExpressionAdapter::class)
-    protected lateinit var itemYoffset: IntExpressionWrapper
+    protected lateinit var slot: CInt
+    protected lateinit var itemXoffset: CInt
+    protected lateinit var itemYoffset: CInt
     protected var hand: EnumHandSide? = null
 
     /*
     From net.minecraft.client.gui.GuiIngame
      */
-    private fun renderHotbarItem(x: Int, y: Int, partialTicks: Float, player: EntityPlayer, stack: ItemStack, ctx: HudDrawContext) {
+    private fun renderHotbarItem(x: Int, y: Int, partialTicks: Float, player: EntityPlayer, stack: ItemStack, ctx: IHudDrawContext) {
         val f = stack.animationsToGo.toFloat() - partialTicks
 
         if (f > 0.0f) {
@@ -43,26 +41,28 @@ open class GLHotbarItem protected constructor() : GLRectangle() {
 
         if (f > 0.0f) GlStateManager.popMatrix()
 
-        ctx.itemRenderer.renderItemOverlays(ctx.mc.fontRendererObj, stack, x, y)
+        ctx.itemRenderer.renderItemOverlays(ctx.fontRenderer, stack, x, y)
     }
 
-    override fun draw(ctx: HudDrawContext) {
+    override fun draw(ctx: IHudDrawContext) {
+        if (!(enabled?.invoke(ctx) ?: true)) return
         super.draw(ctx)
 
-        val p = this.parent.get()
-        val it: ItemStack
+        val p: ElementParent? = this.parent.get()
+        val it: ItemStack?
 
-        if (hand == null) it = ctx.player.inventory.mainInventory[slot.execute(ctx)]
-        else if (hand == ctx.player.primaryHand.opposite()) it = ctx.player.inventory.offHandInventory[slot.execute(ctx)]
+        if (hand == null) it = ctx.player.inventory.mainInventory[slot.invoke(ctx)]
+        else if (hand == ctx.player.primaryHand.opposite()) it = ctx.player.inventory.offHandInventory[slot.invoke(ctx)]
         else return
+        if (it == null) return
 
         GLCore.glBlend(false)
         GLCore.glRescaleNormal(true)
         RenderHelper.enableGUIStandardItemLighting()
 
         renderHotbarItem(
-                x.execute(ctx).toInt() + itemXoffset.execute(ctx) + (p?.getX(ctx) ?: 0.0).toInt(),
-                y.execute(ctx).toInt() + itemYoffset.execute(ctx) + (p?.getY(ctx) ?: 0.0).toInt(),
+                (x?.invoke(ctx)?.toInt() ?: 0) + itemXoffset.invoke(ctx) + (p?.getX(ctx)?.toInt() ?: 0),
+                (y?.invoke(ctx)?.toInt() ?: 0) + itemYoffset.invoke(ctx) + (p?.getY(ctx)?.toInt() ?: 0),
                 ctx.partialTicks, ctx.player, it, ctx)
 
         GLCore.glRescaleNormal(false)

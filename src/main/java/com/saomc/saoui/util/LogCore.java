@@ -6,6 +6,10 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.Writer;
+
 public class LogCore {
 
     private static Logger logger = LogManager.getLogger(SAOCore.MODID);
@@ -30,5 +34,11 @@ public class LogCore {
         if (OptionCore.DEBUG_MODE.isEnabled()) // visible in main console
             logger.info(msg);
         else logger.debug(msg); // fml log
+    }
+
+    public static void log(Throwable e) {
+        Writer w = new StringWriter();
+        e.printStackTrace(new PrintWriter(w));
+        logFatal(w.toString());
     }
 }

@@ -3,16 +3,17 @@ package com.saomc.saoui.screens.window;
 import com.saomc.saoui.GLCore;
 import com.saomc.saoui.api.screens.Actions;
 import com.saomc.saoui.api.screens.GuiSelection;
+import com.saomc.saoui.api.screens.ParentElement;
 import com.saomc.saoui.colorstates.CursorStatus;
+import com.saomc.saoui.config.OptionCore;
 import com.saomc.saoui.elements.Element;
 import com.saomc.saoui.elements.ElementController;
 import com.saomc.saoui.elements.ElementDispatcher;
-import com.saomc.saoui.api.screens.ParentElement;
 import com.saomc.saoui.elements.defaultelements.DefaultElements;
 import com.saomc.saoui.resources.StringNames;
+import com.saomc.saoui.themes.ThemeLoader;
 import com.saomc.saoui.util.ColorUtil;
 import com.saomc.saoui.util.LogCore;
-import com.saomc.saoui.config.OptionCore;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -21,6 +22,7 @@ import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Cursor;
 import org.lwjgl.input.Mouse;
 
+import javax.xml.bind.JAXBException;
 import java.io.IOException;
 import java.util.ConcurrentModificationException;
 
@@ -194,6 +196,12 @@ public abstract class ScreenGUI extends GuiScreen implements ParentElement {
 
     private void backgroundClicked(int cursorX, int cursorY, int button) {
         LogCore.logDebug("Background Clicked");
+
+        try {
+            ThemeLoader.load();
+        } catch (JAXBException e) {
+            e.printStackTrace();
+        }
     }
 
     private void mouseWheel(int cursorX, int cursorY, int delta) {
