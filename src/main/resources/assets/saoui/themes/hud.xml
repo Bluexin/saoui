@@ -114,7 +114,6 @@
                 <children>
                     <repetitionGroup name="main inventory">
                         <amount cache="STATIC">9</amount>
-                        <x cache="STATIC">-50</x>
                         <children>
                             <glHotbarItem>
                                 <h cache="STATIC">20.0</h>
