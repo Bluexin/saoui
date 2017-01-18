@@ -1,7 +1,9 @@
 package be.bluexin.saouintw;
 
+import be.bluexin.saomclib.packets.PacketPipeline;
 import be.bluexin.saouintw.communication.Communicator;
-import be.bluexin.saouintw.packets.PacketPipeline;
+import be.bluexin.saouintw.packets.client.ReceiveCommand;
+import be.bluexin.saouintw.packets.server.SendCommand;
 import be.bluexin.saouintw.proxy.CommonProxy;
 import com.saomc.saoui.SAOCore;
 import com.saomc.saoui.api.entity.rendering.RenderCapability;
@@ -27,6 +29,11 @@ public class SaouiNtw {
     @SidedProxy(clientSide = "be.bluexin.saouintw.proxy.ClientProxy", serverSide = "be.bluexin.saouintw.proxy.CommonProxy")
     public static CommonProxy proxy; // Yeah I know people don' like hardcoded stuff. I don't care.
 
+    private static void initPackets() {
+        PacketPipeline.INSTANCE.registerMessage(ReceiveCommand.class, ReceiveCommand.Handler.class);
+        PacketPipeline.INSTANCE.registerMessage(SendCommand.class, SendCommand.Handler.class);
+    }
+
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent e) {
         MinecraftForge.EVENT_BUS.register(new EventHandler());
@@ -35,7 +42,7 @@ public class SaouiNtw {
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent e) {
-        PacketPipeline.init();
+        initPackets();
     }
 
     @NetworkCheckHandler

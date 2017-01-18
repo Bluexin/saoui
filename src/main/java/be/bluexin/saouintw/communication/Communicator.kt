@@ -1,6 +1,6 @@
 package be.bluexin.saouintw.communication
 
-import be.bluexin.saouintw.packets.PacketPipeline
+import be.bluexin.saomclib.packets.PacketPipeline
 import be.bluexin.saouintw.packets.server.SendCommand
 import net.minecraft.client.Minecraft
 import net.minecraft.entity.player.EntityPlayer
@@ -14,7 +14,7 @@ object Communicator {
 
     var supportsPackets: Boolean = false
 
-    fun send(cmd: CommandType, target: EntityPlayer, vararg args: String) = if (supportsPackets)
-        PacketPipeline.sendToServer(SendCommand(cmd, target, *args))
-    else Command(cmd, target, *args).send(Minecraft.getMinecraft())
+    fun send(cmd: CommandType, target: EntityPlayer, vararg args: String) =
+            if (supportsPackets) PacketPipeline.sendToServer(SendCommand(cmd, target, *args))
+            else Command(cmd, target, *args).send(Minecraft.getMinecraft())
 }
