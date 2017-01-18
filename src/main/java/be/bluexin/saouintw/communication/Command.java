@@ -1,4 +1,4 @@
-package com.saomc.saoui.communication;
+package be.bluexin.saouintw.communication;
 
 import com.saomc.saoui.config.OptionCore;
 import net.minecraft.client.Minecraft;

@@ -1,4 +1,4 @@
-package com.saomc.saoui.communication
+package be.bluexin.saouintw.communication
 
 import be.bluexin.saouintw.packets.PacketPipeline
 import be.bluexin.saouintw.packets.server.SendCommand

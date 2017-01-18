@@ -1,9 +1,9 @@
 package be.bluexin.saouintw.packets.server;
 
+import be.bluexin.saouintw.communication.CommandType;
 import be.bluexin.saouintw.packets.AbstractServerPacketHandler;
 import be.bluexin.saouintw.packets.PacketPipeline;
 import be.bluexin.saouintw.packets.client.ReceiveCommand;
-import com.saomc.saoui.communication.CommandType;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;

@@ -1,10 +1,10 @@
 package be.bluexin.saouintw;
 
+import be.bluexin.saouintw.communication.Communicator;
 import be.bluexin.saouintw.packets.PacketPipeline;
 import be.bluexin.saouintw.proxy.CommonProxy;
 import com.saomc.saoui.SAOCore;
 import com.saomc.saoui.api.entity.rendering.RenderCapability;
-import com.saomc.saoui.communication.Communicator;
 import com.saomc.saoui.util.LogCore;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
@@ -21,7 +21,7 @@ import java.util.Map;
  *
  * @author Bluexin
  */
-@Mod(modid = SAOCore.MODID + "ntw", name = SAOCore.NAME + " networking", version = SAOCore.VERSION)
+@Mod(modid = SAOCore.MODID + "ntw", name = SAOCore.NAME + " networking", version = SAOCore.VERSION, acceptableSaveVersions = "*")
 public class SaouiNtw {
 
     @SidedProxy(clientSide = "be.bluexin.saouintw.proxy.ClientProxy", serverSide = "be.bluexin.saouintw.proxy.CommonProxy")

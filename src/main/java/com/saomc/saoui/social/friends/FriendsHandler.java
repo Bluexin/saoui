@@ -1,7 +1,7 @@
 package com.saomc.saoui.social.friends;
 
-import com.saomc.saoui.communication.CommandType;
-import com.saomc.saoui.communication.Communicator;
+import be.bluexin.saouintw.communication.CommandType;
+import be.bluexin.saouintw.communication.Communicator;
 import com.saomc.saoui.config.ConfigHandler;
 import com.saomc.saoui.social.StaticPlayerHelper;
 import net.minecraft.client.Minecraft;

@@ -1,16 +1,11 @@
 package com.saomc.saoui.events;
 
+import be.bluexin.saouintw.communication.Command;
 import com.saomc.saoui.SoundCore;
-import com.saomc.saoui.communication.Command;
 import com.saomc.saoui.elements.ElementBuilder;
-import com.saomc.saoui.elements.defaultelements.DefaultElements;
-import com.saomc.saoui.screens.menu.IngameMenuGUI;
 import net.minecraft.client.multiplayer.GuiConnecting;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
-import net.minecraftforge.client.event.GuiOpenEvent;
-import net.minecraftforge.client.event.GuiScreenEvent;
-import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 

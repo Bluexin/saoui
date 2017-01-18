@@ -34,9 +34,18 @@ minecraft {
     mappings = "stable_29"
 }
 
-reobf{
-    jar{
-        extraLines "PK: gnu/jel saoui/shade/gnu/jel"
+repositories {
+    mavenCentral()
+    maven {
+        url = "http://maven.bluexin.be/repository/releases/"
+    }
+}
+
+reobf {
+    jar {
+        extraLines += ["PK: gnu/jel saoui/shade/gnu/jel"]
+        extraLines += ["PK: kotlin be/bluexin/saomclib/shade/kotlin"]
+        extraLines += ["PK: org/jetbrains/annotations be/bluexin/saomclib/shade/annotations"]
     }
 }
 
@@ -47,41 +56,44 @@ configurations {
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile("be.bluexin:saomc-lib:1.10.2-1.0:deobf")
     shade files('lib/jel-2_1_1/lib/jel.jar')
 }
 
-processResources
-        {
-            // this will ensure that this task is redone when the versions change.
-            inputs.property "version", project.version
-            inputs.property "mcversion", project.minecraft.version
+processResources {
+    // this will ensure that this task is redone when the versions change.
+    inputs.property "version", project.version
+    inputs.property "mcversion", project.minecraft.version
 
-            // replace stuff in mcmod.info, nothing else
-            from(sourceSets.main.resources.srcDirs) {
-                include 'mcmod.info'
+    // replace stuff in mcmod.info, nothing else
+    from(sourceSets.main.resources.srcDirs) {
+        include 'mcmod.info'
 
-                // replace version and mcversion
-                expand 'version': project.version, 'mcversion': project.minecraft.version
-            }
+        // replace version and mcversion
+        expand 'version': project.version, 'mcversion': project.minecraft.version
+    }
 
-            // copy everything else, thats not the mcmod.info
-            from(sourceSets.main.resources.srcDirs) {
-                exclude 'mcmod.info'
-            }
-        }
+    // copy everything else, thats not the mcmod.info
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'mcmod.info'
+    }
+}
 
 idea { module { inheritOutputDirs = true } }
 
 uploadArchives {
-//    if (System.hasProperty('REPO_PWD')) {
+    if (System.hasProperty('REPO_PWD') != null) {
         repositories.mavenDeployer {
-            repository(url: "http://maven.bluexin.be/repository/snapshots/") {
+            repository(url: "http://maven.bluexin.be/repository/" + (((String) project.version).contains("SNAPSHOT")? "snapshots": "releases") + "/") {
                 authentication(userName: "CI", password: System.getenv('REPO_PWD'))
             }
-//            repository(url: 'file://G:\\saoui\\build\\mvn')
         }
-//    } else println("No password set up!")
-    
+    } else {
+        println("No password set up! Uploading to local.")
+        repositories.mavenDeployer {
+            repository(url: 'file://G:/saoui/build/mvn')
+        }
+    }
 }
 
 task sourceJar(type: Jar, dependsOn: "sourceMainJava", overwrite: true) {
@@ -90,11 +102,13 @@ task sourceJar(type: Jar, dependsOn: "sourceMainJava", overwrite: true) {
     classifier = 'sources'
 }
 
+task deobfJar(type: Jar) {
+    from sourceSets.main.output
+    classifier = 'deobf'
+}
+
 artifacts {
     archives sourceJar
-}
-repositories {
-    mavenCentral()
 }
 
 jar {

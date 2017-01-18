@@ -1,7 +1,7 @@
 package be.bluexin.saouintw.packets.client;
 
+import be.bluexin.saouintw.communication.CommandType;
 import be.bluexin.saouintw.packets.AbstractClientPacketHandler;
-import com.saomc.saoui.communication.CommandType;
 import com.saomc.saoui.social.StaticPlayerHelper;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;

@@ -1,8 +1,8 @@
 package com.saomc.saoui.social.party;
 
+import be.bluexin.saouintw.communication.CommandType;
+import be.bluexin.saouintw.communication.Communicator;
 import com.saomc.saoui.api.social.party.IParty;
-import com.saomc.saoui.communication.CommandType;
-import com.saomc.saoui.communication.Communicator;
 import com.saomc.saoui.screens.menu.Categories;
 import com.saomc.saoui.social.StaticPlayerHelper;
 import net.minecraft.client.Minecraft;
