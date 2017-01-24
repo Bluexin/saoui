@@ -180,7 +180,7 @@ public class IngameGUI extends GuiIngameForge {
 
             mc.mcProfiler.endSection();
 
-            if (PartyHelper.instance().hasParty()) renderParty();
+//            if (PartyHelper.instance().hasParty()) renderParty();
         }
     }
 
