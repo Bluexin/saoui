@@ -56,7 +56,7 @@ configurations {
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    compile("be.bluexin:saomc-lib:1.10.2-1.0:deobf")
+    compile("be.bluexin:saomc-lib:1.10.2-1.0.3:deobf")
     shade files('lib/jel-2_1_1/lib/jel.jar')
 }
 
@@ -98,7 +98,6 @@ uploadArchives {
 
 task sourceJar(type: Jar, dependsOn: "sourceMainJava", overwrite: true) {
     from "build/sources/main/java"
-    from "build/resources/main"
     classifier = 'sources'
 }
 
@@ -109,6 +108,7 @@ task deobfJar(type: Jar) {
 
 artifacts {
     archives sourceJar
+    archives deobfJar
 }
 
 jar {
@@ -117,5 +117,11 @@ jar {
             exclude 'META-INF', 'META-INF/**'
         }
     }
+}
+
+task apiArtifact(type: Jar, dependsOn: compileJava) {
+    from sourceSets.main.output
+    include "com/saomc/saoui/api/**"
+    classifier = 'api'
 }
 

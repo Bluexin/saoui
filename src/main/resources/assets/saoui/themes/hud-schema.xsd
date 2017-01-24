@@ -43,6 +43,7 @@
                         <xs:enumeration value="CROSS_HAIR"/>
                         <xs:enumeration value="ARMOR"/>
                         <xs:enumeration value="JUMP_BAR"/>
+                        <xs:enumeration value="AM2BARS"/>
                     </xs:restriction>
                 </xs:simpleType>
             </xs:element>

@@ -29,5 +29,7 @@ enum class HudPartType {
 
     ARMOR,
 
-    JUMP_BAR
+    JUMP_BAR,
+
+    AM2BARS
 }
