@@ -57,7 +57,7 @@ configurations {
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile("be.bluexin:saomc-lib:1.10.2-1.0.3:deobf")
-    shade files('lib/jel-2_1_1/lib/jel.jar')
+    shade files('lib/jel-2_1_1/lib/jel_g_homebaked.jar')
 }
 
 processResources {
@@ -125,3 +125,6 @@ task apiArtifact(type: Jar, dependsOn: compileJava) {
     classifier = 'api'
 }
 
+tasks.withType(Copy) {
+    includeEmptyDirs = false
+}
