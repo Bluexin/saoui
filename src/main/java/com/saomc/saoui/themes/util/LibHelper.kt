@@ -8,6 +8,7 @@ import com.saomc.saoui.themes.elements.ElementParent
 import gnu.jel.CompilationException
 import gnu.jel.Library
 import net.minecraft.client.resources.I18n
+import net.minecraft.launchwrapper.LaunchClassLoader
 
 /**
  * Part of saoui by Bluexin.
@@ -27,6 +28,15 @@ object LibHelper {
             LIB.markStateDependent("random", null)
         } catch (e: CompilationException) {
             e.printStackTrace()
+        }
+    }
+
+    val obfuscated: Boolean by lazy {
+        try {
+            val bytes = (LibHelper::class.java.classLoader as LaunchClassLoader).getClassBytes("net.minecraft.world.World")
+            bytes == null
+        } catch (e: Exception) {
+            true
         }
     }
 }

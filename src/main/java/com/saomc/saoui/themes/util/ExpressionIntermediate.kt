@@ -14,5 +14,8 @@ class ExpressionIntermediate {
 
     @XmlValue
     val expression = "" // Will get replaced by the loading
-        get() = field.replace('\n', ' ')
+        get() {
+            if (LibHelper.obfuscated) field = field.replace("format(", "func_135052_a(")
+            return field.replace('\n', ' ')
+        }
 }

@@ -131,10 +131,11 @@
                         </children>
                     </repetitionGroup>
                     <elementGroup name="offhand">
+                        <enabled>!offhandEmpty(0)</enabled>
                         <children>
                             <glHotbarItem>
                                 <h cache="STATIC">20.0</h>
-                                <rgba>offhandEmpty(0) ? 0xCDCDCDAA : 0xFFBA66FF</rgba>
+                                <rgba cache="STATIC">0xFFBA66FF</rgba>
                                 <srcH cache="STATIC">20.0</srcH>
                                 <srcW cache="STATIC">20.0</srcW>
                                 <srcY cache="STATIC">25.0</srcY>
@@ -148,7 +149,7 @@
                             </glHotbarItem>
                             <glHotbarItem>
                                 <h cache="STATIC">20.0</h>
-                                <rgba>offhandEmpty(0) ? 0xCDCDCDAA : 0xFFBA66FF</rgba>
+                                <rgba cache="STATIC">0xFFBA66FF</rgba>
                                 <srcH cache="STATIC">20.0</srcH>
                                 <srcW cache="STATIC">20.0</srcW>
                                 <srcY cache="STATIC">25.0</srcY>
