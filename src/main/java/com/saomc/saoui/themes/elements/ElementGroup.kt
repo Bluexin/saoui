@@ -13,7 +13,7 @@ import javax.xml.bind.annotation.*
  */
 @XmlRootElement
 @XmlSeeAlso(RepetitionGroup::class)
-open class ElementGroup : Element(), ElementParent { // TODO: make elementGroups with a texture for less RL instantiation and binding on children
+open class ElementGroup : Element(), ElementParent {
 
     @XmlElementWrapper(name = "children")
     @XmlElementRef(type = Element::class)

@@ -69,6 +69,7 @@ public class IngameGUI extends GuiIngameForge {
         getContext().setTime(partialTicks);
         getContext().setScaledResolution(res);
         getContext().setZ(zLevel);
+        getContext().setPlayer(mc.player);
         GLCore.glBlend(true);
         mc.mcProfiler.endSection();
 

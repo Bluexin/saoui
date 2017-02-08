@@ -23,11 +23,11 @@ public class HudDrawContext implements IHudDrawContext {
     Feel free to add anything you'd need here.
      */
     private final String username;
-    private final EntityPlayer player;
     private final RenderItem itemRenderer;
     private final Minecraft mc;
     private final double usernameWidth;
     private final IPlayerStatsProvider stats;
+    private EntityPlayer player;
     private HealthStep healthStep;
     private double z;
     private float hp;
@@ -102,6 +102,10 @@ public class HudDrawContext implements IHudDrawContext {
     @Override
     public EntityPlayer getPlayer() {
         return player;
+    }
+
+    public void setPlayer(EntityPlayer player) {
+        this.player = player;
     }
 
     @Override
