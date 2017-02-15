@@ -89,9 +89,9 @@ public class IngameGUI extends GuiIngameForge {
     @Override
     protected void renderCrosshairs(float partialTicks) {
         if (pre(CROSSHAIRS)) return;
+        ThemeLoader.HUD.draw(HudPartType.CROSS_HAIR, getContext()); // TODO: rework
         if (OptionCore.CROSS_HAIR.isEnabled() && !(mc.currentScreen instanceof IngameMenuGUI || mc.currentScreen instanceof DeathScreen)) {
             super.renderCrosshairs(partialTicks);
-            ThemeLoader.HUD.draw(HudPartType.CROSS_HAIR, getContext()); // TODO: rework
         }
         post(CROSSHAIRS);
     }

@@ -234,5 +234,19 @@
                 </children>
             </value>
         </entry>
+        <entry>
+            <key>CROSS_HAIR</key>
+            <value name="crosshair">
+                <texture>saoui:textures/guiEDT.png</texture>
+                <children>
+                    <glRectangle name="dot">
+                        <h cache="STATIC">1.0</h>
+                        <w cache="STATIC">1.0</w>
+                        <x cache="SIZE_CHANGE">scaledwidth / 2.0</x>
+                        <y cache="SIZE_CHANGE">scaledheight / 2.0</y>
+                    </glRectangle>
+                </children>
+            </value>
+        </entry>
     </parts>
 </bl:hud>

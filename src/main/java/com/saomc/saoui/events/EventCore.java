@@ -2,6 +2,7 @@ package com.saomc.saoui.events;
 
 import com.saomc.saoui.effects.RenderDispatcher;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.settings.GameSettings;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
@@ -13,6 +14,7 @@ import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 /**
  * This is the core for all event handlers, listening to events then passing on to the other events that need it.
  */
+@SuppressWarnings("ALL")
 public class EventCore {
 
     static final Minecraft mc = Minecraft.getMinecraft();
@@ -48,6 +50,13 @@ public class EventCore {
     @SubscribeEvent
     public void renderEntityListener(RenderLivingEvent.Post e) {
         RenderHandler.renderEntity(e);
+    }
+
+    @SubscribeEvent
+    public void renderEntityListener(RenderLivingEvent.Pre e) {
+        if (e.getEntity().getDistanceSqToEntity(mc.player) >
+                Math.pow(mc.gameSettings.getOptionFloatValue(GameSettings.Options.RENDER_DISTANCE) * 16, 2))
+            e.setCanceled(true);
     }
 
     @SubscribeEvent
