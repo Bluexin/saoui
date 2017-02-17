@@ -1,12 +1,12 @@
 package com.saomc.saoui.events;
 
 import com.saomc.saoui.SoundCore;
+import com.saomc.saoui.config.OptionCore;
+import com.saomc.saoui.neo.screens.IngameMenuGUI;
 import com.saomc.saoui.renders.StaticRenderer;
 import com.saomc.saoui.screens.death.DeathScreen;
 import com.saomc.saoui.screens.ingame.IngameGUI;
-import com.saomc.saoui.screens.menu.IngameMenuGUI;
 import com.saomc.saoui.screens.menu.StartupGUI;
-import com.saomc.saoui.config.OptionCore;
 import net.minecraft.client.gui.GuiGameOver;
 import net.minecraft.client.gui.GuiIngameMenu;
 import net.minecraft.client.gui.GuiMainMenu;
@@ -58,14 +58,14 @@ class RenderHandler {
 
         if (e.getGui() instanceof GuiIngameMenu) {
             if (!(EventCore.mc.currentScreen instanceof IngameMenuGUI)) {
-                e.setGui(new IngameMenuGUI(null));
+                e.setGui(new IngameMenuGUI());
             }
         }
         if (e.getGui() instanceof GuiInventory && !OptionCore.DEFAULT_INVENTORY.isEnabled()) {
             if (EventCore.mc.playerController.isInCreativeMode())
                 e.setGui(new GuiContainerCreative(EventCore.mc.player));
             else if (!(EventCore.mc.currentScreen instanceof IngameMenuGUI))
-                e.setGui(new IngameMenuGUI((GuiInventory) EventCore.mc.currentScreen));
+                e.setGui(new IngameMenuGUI(/*(GuiInventory) EventCore.mc.currentScreen*/));
             else e.setCanceled(true);
         }
         if (e.getGui() instanceof GuiGameOver && (!OptionCore.DEFAULT_DEATH_SCREEN.isEnabled())) {

@@ -3,10 +3,7 @@ package com.saomc.saoui.events;
 import com.saomc.saoui.effects.RenderDispatcher;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.GameSettings;
-import net.minecraftforge.client.event.GuiScreenEvent;
-import net.minecraftforge.client.event.RenderLivingEvent;
-import net.minecraftforge.client.event.RenderPlayerEvent;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
+import net.minecraftforge.client.event.*;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
@@ -67,5 +64,11 @@ public class EventCore {
     @SubscribeEvent
     public void guiListener(GuiScreenEvent e) {
         RenderHandler.checkingameGUI();
+    }
+
+    @SubscribeEvent
+    public void guiOpenListener(GuiOpenEvent e) {
+        RenderHandler.guiInstance(e);
+        RenderHandler.mainMenuGUI(e);
     }
 }
