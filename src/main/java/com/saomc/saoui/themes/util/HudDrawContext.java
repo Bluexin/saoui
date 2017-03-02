@@ -76,7 +76,7 @@ public class HudDrawContext implements IHudDrawContext {
 
     @Override
     public double hpPct() {
-        return hp / maxHp;
+        return Math.min(hp / maxHp, 1.0);
     }
 
     @Override

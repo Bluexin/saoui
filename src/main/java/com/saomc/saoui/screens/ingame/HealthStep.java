@@ -28,30 +28,21 @@ public enum HealthStep { // Could be loaded from file. Currently the HPBar loads
     }
 
     public static HealthStep getStep(Minecraft mc, EntityLivingBase entity, float time) {
-        if (entity instanceof EntityPlayer && (((EntityPlayer) entity).capabilities.isCreativeMode || ((EntityPlayer) entity).isSpectator()))
-            return CREATIVE;
-        final float value = StaticPlayerHelper.getHealth(mc, entity, time) / StaticPlayerHelper.getMaxHealth(entity);
-        HealthStep step = first();
-
-        while ((value > step.getLimit()) && (step.ordinal() + 1 < values().length)) step = next(step);
-
-        return step;
+        return entity instanceof EntityPlayer && (((EntityPlayer) entity).capabilities.isCreativeMode || ((EntityPlayer) entity).isSpectator()) ? CREATIVE : getStep(StaticPlayerHelper.getHealth(mc, entity, time) / StaticPlayerHelper.getMaxHealth(entity));
     }
 
     public static HealthStep getStep(double health) {
         HealthStep step = first();
-
-        while ((health > step.getLimit()) && (step.ordinal() + 1 < values().length)) step = next(step);
-
-        return step;
+        while ((health > step.getLimit()) && (step.ordinal() + 1 < values().length)) step = step.next();
+        return step == CREATIVE ? GOOD : step;
     }
 
     private static HealthStep first() {
         return values()[0];
     }
 
-    private static HealthStep next(HealthStep step) {
-        return values()[step.ordinal() + 1];
+    private HealthStep next() {
+        return values()[ordinal() + 1];
     }
 
     private float getLimit() {
