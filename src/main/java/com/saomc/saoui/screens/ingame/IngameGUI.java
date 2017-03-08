@@ -257,7 +257,7 @@ public class IngameGUI extends GuiIngameForge {
         GLCore.glAlphaTest(true);
         GLCore.glBlend(true);
         GLCore.glColorRGBA(0x8EE1E8);
-        for (int i = 0; i < foodValue; i++) {
+        /*for (int i = 0; i < foodValue; i++) {
             GLCore.glTexturedRect(offsetUsername + i + 4, 9, zLevel, h, 240, 1, o);
             if (foodValue < healthWidth && i >= foodValue - 3) o--;
 
@@ -269,7 +269,7 @@ public class IngameGUI extends GuiIngameForge {
 
                 if (h > 12) break;
             }
-        }
+        }*/
 
         if (foodValue >= stepTwo && foodValue < stepThree)
             GLCore.glTexturedRect(offsetUsername + foodValue, 9, zLevel, 11, 249, 7, 4);

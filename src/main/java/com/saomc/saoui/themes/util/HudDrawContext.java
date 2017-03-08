@@ -11,6 +11,8 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * Part of saoui by Bluexin.
@@ -18,6 +20,7 @@ import net.minecraft.entity.player.EntityPlayer;
  *
  * @author Bluexin
  */
+@SideOnly(Side.CLIENT)
 public class HudDrawContext implements IHudDrawContext {
     /*
     Feel free to add anything you'd need here.
@@ -93,9 +96,9 @@ public class HudDrawContext implements IHudDrawContext {
      * Aka partialTicks
      */
     public void setTime(float time) {
-        this.hp = StaticPlayerHelper.getHealth(mc, mc.player, time);
-        this.maxHp = StaticPlayerHelper.getMaxHealth(mc.player);
-        healthStep = HealthStep.getStep(hpPct());
+        this.hp = StaticPlayerHelper.getHealth(mc, player, time);
+        this.maxHp = StaticPlayerHelper.getMaxHealth(player);
+        healthStep = HealthStep.getStep(player, hpPct());
         partialTicks = time;
     }
 
