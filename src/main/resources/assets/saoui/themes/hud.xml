@@ -109,58 +109,121 @@
         <entry>
             <key>HOTBAR</key>
             <value name="hotbar">
-                <x cache="SIZE_CHANGE">scaledwidth - 24</x>
-                <y cache="SIZE_CHANGE">scaledheight / 2.0</y>
                 <children>
-                    <repetitionGroup name="main inventory">
-                        <amount cache="STATIC">9</amount>
+                    <elementGroup name="vertical">
+                        <enabled>isEnabled(VER_HOTBAR)</enabled>
+                        <x cache="SIZE_CHANGE">scaledwidth - 24</x>
+                        <y cache="SIZE_CHANGE">scaledheight / 2.0</y>
                         <children>
-                            <glHotbarItem>
-                                <h cache="STATIC">20.0</h>
-                                <rgba cache="NONE">i == selectedslot ? 0xFFBA66FF : 0xCDCDCDAA</rgba>
-                                <srcH cache="STATIC">20.0</srcH>
-                                <srcW cache="STATIC">20.0</srcW>
-                                <srcY cache="STATIC">25.0</srcY>
-                                <w cache="STATIC">20.0</w>
-                                <y cache="NONE">-99 + 22 * i</y>
-                                <slot cache="NONE">i</slot>
-                                <itemXoffset cache="STATIC">2</itemXoffset>
-                                <itemYoffset cache="STATIC">2</itemYoffset>
-                                <texture>saoui:textures/guiEDT.png</texture>
-                            </glHotbarItem>
+                            <repetitionGroup name="main inventory">
+                                <amount cache="STATIC">9</amount>
+                                <children>
+                                    <glHotbarItem>
+                                        <h cache="STATIC">20.0</h>
+                                        <rgba cache="NONE">i == selectedslot ? 0xFFBA66FF : 0xCDCDCDAA</rgba>
+                                        <srcH cache="STATIC">20.0</srcH>
+                                        <srcW cache="STATIC">20.0</srcW>
+                                        <srcY cache="STATIC">25.0</srcY>
+                                        <w cache="STATIC">20.0</w>
+                                        <y cache="NONE">-99 + 22 * i</y>
+                                        <slot cache="NONE">i</slot>
+                                        <itemXoffset cache="STATIC">2</itemXoffset>
+                                        <itemYoffset cache="STATIC">2</itemYoffset>
+                                        <texture>saoui:textures/guiEDT.png</texture>
+                                    </glHotbarItem>
+                                </children>
+                            </repetitionGroup>
+                            <elementGroup name="offhand">
+                                <enabled>!offhandEmpty(0)</enabled>
+                                <children>
+                                    <glHotbarItem>
+                                        <h cache="STATIC">20.0</h>
+                                        <rgba cache="STATIC">0xFFBA66FF</rgba>
+                                        <srcH cache="STATIC">20.0</srcH>
+                                        <srcW cache="STATIC">20.0</srcW>
+                                        <srcY cache="STATIC">25.0</srcY>
+                                        <w cache="STATIC">20.0</w>
+                                        <y cache="STATIC">121</y>
+                                        <slot cache="STATIC">0</slot>
+                                        <itemXoffset cache="STATIC">2</itemXoffset>
+                                        <itemYoffset cache="STATIC">2</itemYoffset>
+                                        <hand cache="STATIC">RIGHT</hand>
+                                        <texture>saoui:textures/guiEDT.png</texture>
+                                    </glHotbarItem>
+                                    <glHotbarItem>
+                                        <h cache="STATIC">20.0</h>
+                                        <rgba cache="STATIC">0xFFBA66FF</rgba>
+                                        <srcH cache="STATIC">20.0</srcH>
+                                        <srcW cache="STATIC">20.0</srcW>
+                                        <srcY cache="STATIC">25.0</srcY>
+                                        <w cache="STATIC">20.0</w>
+                                        <y cache="STATIC">121</y>
+                                        <slot cache="STATIC">0</slot>
+                                        <itemXoffset cache="STATIC">2</itemXoffset>
+                                        <itemYoffset cache="STATIC">2</itemYoffset>
+                                        <hand cache="STATIC">LEFT</hand>
+                                        <texture>saoui:textures/guiEDT.png</texture>
+                                    </glHotbarItem>
+                                </children>
+                            </elementGroup>
                         </children>
-                    </repetitionGroup>
-                    <elementGroup name="offhand">
-                        <enabled>!offhandEmpty(0)</enabled>
+                    </elementGroup>
+                    <elementGroup name="horizontal">
+                        <enabled>isEnabled(HOR_HOTBAR)</enabled>
+                        <x cache="SIZE_CHANGE">scaledwidth / 2 - 92</x>
+                        <y cache="SIZE_CHANGE">scaledheight - 23</y>
                         <children>
-                            <glHotbarItem>
-                                <h cache="STATIC">20.0</h>
-                                <rgba cache="STATIC">0xFFBA66FF</rgba>
-                                <srcH cache="STATIC">20.0</srcH>
-                                <srcW cache="STATIC">20.0</srcW>
-                                <srcY cache="STATIC">25.0</srcY>
-                                <w cache="STATIC">20.0</w>
-                                <y cache="STATIC">121</y>
-                                <slot cache="STATIC">0</slot>
-                                <itemXoffset cache="STATIC">2</itemXoffset>
-                                <itemYoffset cache="STATIC">2</itemYoffset>
-                                <hand cache="STATIC">RIGHT</hand>
-                                <texture>saoui:textures/guiEDT.png</texture>
-                            </glHotbarItem>
-                            <glHotbarItem>
-                                <h cache="STATIC">20.0</h>
-                                <rgba cache="STATIC">0xFFBA66FF</rgba>
-                                <srcH cache="STATIC">20.0</srcH>
-                                <srcW cache="STATIC">20.0</srcW>
-                                <srcY cache="STATIC">25.0</srcY>
-                                <w cache="STATIC">20.0</w>
-                                <y cache="STATIC">121</y>
-                                <slot cache="STATIC">0</slot>
-                                <itemXoffset cache="STATIC">2</itemXoffset>
-                                <itemYoffset cache="STATIC">2</itemYoffset>
-                                <hand cache="STATIC">LEFT</hand>
-                                <texture>saoui:textures/guiEDT.png</texture>
-                            </glHotbarItem>
+                            <repetitionGroup name="main inventory">
+                                <amount cache="STATIC">9</amount>
+                                <children>
+                                    <glHotbarItem>
+                                        <h cache="STATIC">20.0</h>
+                                        <rgba cache="NONE">i == selectedslot ? 0xFFBA66FF : 0xCDCDCDAA</rgba>
+                                        <srcH cache="STATIC">20.0</srcH>
+                                        <srcW cache="STATIC">20.0</srcW>
+                                        <srcY cache="STATIC">25.0</srcY>
+                                        <w cache="STATIC">20.0</w>
+                                        <x cache="NONE">20 * i</x>
+                                        <slot cache="NONE">i</slot>
+                                        <itemXoffset cache="STATIC">2</itemXoffset>
+                                        <itemYoffset cache="STATIC">2</itemYoffset>
+                                        <texture>saoui:textures/guiEDT.png</texture>
+                                    </glHotbarItem>
+                                </children>
+                            </repetitionGroup>
+                            <elementGroup name="offhand">
+                                <enabled>!offhandEmpty(0)</enabled>
+                                <children>
+                                    <glHotbarItem>
+                                        <h cache="STATIC">20.0</h>
+                                        <rgba cache="STATIC">0xFFBA66FF</rgba>
+                                        <srcH cache="STATIC">20.0</srcH>
+                                        <srcW cache="STATIC">20.0</srcW>
+                                        <srcY cache="STATIC">25.0</srcY>
+                                        <w cache="STATIC">20.0</w>
+                                        <x cache="STATIC">183</x>
+                                        <slot cache="STATIC">0</slot>
+                                        <itemXoffset cache="STATIC">2</itemXoffset>
+                                        <itemYoffset cache="STATIC">2</itemYoffset>
+                                        <hand cache="STATIC">RIGHT</hand>
+                                        <texture>saoui:textures/guiEDT.png</texture>
+                                    </glHotbarItem>
+                                    <glHotbarItem>
+                                        <h cache="STATIC">20.0</h>
+                                        <rgba cache="STATIC">0xFFBA66FF</rgba>
+                                        <srcH cache="STATIC">20.0</srcH>
+                                        <srcW cache="STATIC">20.0</srcW>
+                                        <srcY cache="STATIC">25.0</srcY>
+                                        <w cache="STATIC">20.0</w>
+                                        <x cache="STATIC">-28</x>
+                                        <slot cache="STATIC">0</slot>
+                                        <itemXoffset cache="STATIC">2</itemXoffset>
+                                        <itemYoffset cache="STATIC">2</itemYoffset>
+                                        <hand cache="STATIC">LEFT</hand>
+                                        <texture>saoui:textures/guiEDT.png</texture>
+                                    </glHotbarItem>
+                                </children>
+                            </elementGroup>
                         </children>
                     </elementGroup>
                 </children>

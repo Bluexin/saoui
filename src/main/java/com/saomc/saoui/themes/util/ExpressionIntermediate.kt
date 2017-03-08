@@ -16,6 +16,7 @@ class ExpressionIntermediate {
     val expression = "" // Will get replaced by the loading
         get() {
             if (LibHelper.obfuscated) field = field.replace("format(", "func_135052_a(")
-            return field.replace('\n', ' ')
+            field = field.replace('\n', ' ')
+            return field
         }
 }
