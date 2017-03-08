@@ -1,17 +1,14 @@
 package com.saomc.saoui.neo.screens
 
+import be.bluexin.saomclib.profile
 import com.saomc.saoui.GLCore
-import com.saomc.saoui.api.screens.Actions
 import com.saomc.saoui.colorstates.CursorStatus
 import com.saomc.saoui.config.OptionCore
-import com.saomc.saoui.elements.ElementController
-import com.saomc.saoui.elements.ElementDispatcher
 import com.saomc.saoui.resources.StringNames
-import com.saomc.saoui.themes.elements.MenuElementParent
+import com.saomc.saoui.themes.elements.menus.MenuElementParent
 import com.saomc.saoui.themes.elements.menus.PlaceholderElement
 import com.saomc.saoui.util.ColorUtil
 import com.saomc.saoui.util.LogCore
-import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiScreen
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
@@ -133,26 +130,6 @@ abstract class ScreenGUI : GuiScreen(), MenuElementParent {
     override fun mouseReleased(cursorX: Int, cursorY: Int, button: Int) {
         super.mouseReleased(cursorX, cursorY, button)
         mouseDown = mouseDown and (0x1 shl button).inv()
-
-        var found = false
-
-        try {
-            for (elementController in ElementDispatcher.getElements())
-                if (found)
-                    break
-                else
-                    for (element in elementController.elements)
-                        if (element.isOpen && element.mouseReleased(mc, cursorX, cursorY, button) || element.isFocus && elementController.mouseOver(cursorX, cursorY, button) && element.mouseReleased(mc, cursorX, cursorY, button)) {
-                            ElementController.actionPerformed(element, Actions.LEFT_RELEASED, button)
-                            found = true
-                            break
-                        }
-
-        } catch (e: ConcurrentModificationException) {
-            //Do Nothing
-            LogCore.logWarn("mouseClicked ended unexpectedly")
-        }
-
     }
 
     private fun backgroundClicked(cursorX: Int, cursorY: Int, button: Int) {
@@ -188,13 +165,6 @@ abstract class ScreenGUI : GuiScreen(), MenuElementParent {
     private fun showCursor() {
         if (cursorHidden) toggleHideCursor()
     }
-
-    private inline fun profile(mc: Minecraft, key: String, body: () -> Unit) {
-//        throw UnsupportedOperationException("change with saomclibs helpers once updated") //To change body of created functions use File | Settings | File Templates.
-        mc.mcProfiler.startSection(key)
-        body.invoke()
-        mc.mcProfiler.endSection()
-    } // TODO: replace with saomclib's
 
     override fun getX() =
             if (OptionCore.CURSOR_TOGGLE.isEnabled) if (lockCursor) 0 else (width / 2 - mouseX) / 2

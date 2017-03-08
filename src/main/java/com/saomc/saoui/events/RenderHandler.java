@@ -54,6 +54,7 @@ class RenderHandler {
     }
 
     static void guiInstance(GuiOpenEvent e) {
+        if (!OptionCore.BUGGY_MENU.isEnabled()) return;
         if (OptionCore.DEBUG_MODE.isEnabled()) System.out.print(e.getGui() + " called GuiOpenEvent \n");
 
         if (e.getGui() instanceof GuiIngameMenu) {
@@ -111,8 +112,7 @@ class RenderHandler {
                 if (StartupGUI.shouldShow()) {
                     e.setGui(new StartupGUI());
                     menuGUI = false;
-                } //else if (e.getGui() instanceof GuiMainMenu)
-        //e.setGui(new MainMenuGUI());
+                } //else e.setGui(new MainMenuGUI());
     }
 
 }

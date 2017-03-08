@@ -1,7 +1,6 @@
 package com.saomc.saoui.themes.elements.menus
 
 import com.saomc.saoui.api.themes.IHudDrawContext
-import com.saomc.saoui.themes.elements.MenuElementParent
 import com.saomc.saoui.themes.util.CBoolean
 import com.saomc.saoui.themes.util.CInt
 import com.saomc.saoui.util.LogCore

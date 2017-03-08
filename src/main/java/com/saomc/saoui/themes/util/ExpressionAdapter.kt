@@ -32,6 +32,11 @@ abstract class ExpressionAdapter<T> : XmlAdapter<ExpressionIntermediate, CValue<
         sb.append('\n').append(w)
         LogCore.logFatal(sb.toString())
         null
+    } catch (e: Exception) {
+        val w = StringWriter()
+        e.printStackTrace(PrintWriter(w))
+        LogCore.logFatal("An error occurred while compiling '${v.expression}'.\n$w")
+        null
     }
 
     @Throws(Exception::class)

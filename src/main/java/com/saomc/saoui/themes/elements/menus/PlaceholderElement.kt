@@ -1,6 +1,5 @@
 package com.saomc.saoui.themes.elements.menus
 
-import com.saomc.saoui.themes.elements.MenuElementParent
 import com.saomc.saoui.util.IconCore
 import net.minecraft.client.Minecraft
 

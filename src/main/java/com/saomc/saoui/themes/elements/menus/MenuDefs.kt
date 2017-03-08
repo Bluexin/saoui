@@ -1,7 +1,6 @@
 package com.saomc.saoui.themes.elements.menus
 
 import com.saomc.saoui.api.themes.IHudDrawContext
-import com.saomc.saoui.themes.elements.MenuElementParent
 import java.util.*
 import javax.xml.bind.annotation.XmlRootElement
 
