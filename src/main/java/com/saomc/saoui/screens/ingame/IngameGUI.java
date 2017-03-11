@@ -1,5 +1,7 @@
 package com.saomc.saoui.screens.ingame;
 
+import be.bluexin.saomclib.capabilities.PartyCapability;
+import be.bluexin.saomclib.party.IParty;
 import com.saomc.saoui.GLCore;
 import com.saomc.saoui.config.OptionCore;
 import com.saomc.saoui.effects.StatusEffects;
@@ -7,7 +9,6 @@ import com.saomc.saoui.neo.screens.IngameMenuGUI;
 import com.saomc.saoui.resources.StringNames;
 import com.saomc.saoui.screens.death.DeathScreen;
 import com.saomc.saoui.social.StaticPlayerHelper;
-import com.saomc.saoui.social.party.PartyHelper;
 import com.saomc.saoui.themes.ThemeLoader;
 import com.saomc.saoui.themes.elements.HudPartType;
 import com.saomc.saoui.themes.util.HudDrawContext;
@@ -181,11 +182,14 @@ public class IngameGUI extends GuiIngameForge {
 
             mc.mcProfiler.endSection();
 
-//            if (PartyHelper.instance().hasParty()) renderParty();
+            renderParty();
         }
     }
 
     private void renderParty() {
+        IParty pt = mc.player.getCapability(PartyCapability.CAP_INSTANCE, null).getParty();
+        if (pt == null || !pt.isParty()) return;
+
         mc.mcProfiler.startSection("party");
 
         GLCore.glAlphaTest(true);
@@ -194,13 +198,13 @@ public class IngameGUI extends GuiIngameForge {
         int index = 0;
         final int baseY = 35;
         final int h = 15;
-        for (final EntityPlayer player : PartyHelper.instance().listMembers()) {
+        for (final EntityPlayer player : pt.getMembers()) {
             if (player == mc.player) continue;
 
             GLCore.glBindTexture(OptionCore.SAO_UI.isEnabled() ? StringNames.gui : StringNames.guiCustom);
 
-            GLCore.glTexturedRect(2, baseY + index * h, zLevel, 85, 15, 10, 13);
-            GLCore.glTexturedRect(13, baseY + index * h, zLevel, 80, 15, 5, 13);
+            GLCore.glTexturedRect(3, baseY + index * h, zLevel, 86, 15, 10, 13);
+            GLCore.glTexturedRect(14, baseY + index * h, zLevel, 81, 15, 4, 13);
 
             String playerName = player.getDisplayNameString();
             if (playerName.length() > 5) playerName = playerName.substring(0, 5);
@@ -213,21 +217,13 @@ public class IngameGUI extends GuiIngameForge {
 
             GLCore.glTexturedRect(offset, baseY + index * h, zLevel, 40, 28, 100, 13);
 
-            final int hpWidth = 97;
+            final int hpWidth = 98;
             final int hpHeight = 3;
 
-            final int hpValue = (int) (StaticPlayerHelper.getHealth(mc, player, ctx.getPartialTicks()) / StaticPlayerHelper.getMaxHealth(player) * hpWidth);
+            final int hpValue = (int) (StaticPlayerHelper.getHealth(mc, player, ctx.getPartialTicks()) / StaticPlayerHelper.getMaxHealth(player) * hpWidth) + 1;
             HealthStep.getStep(mc, player, ctx.getPartialTicks()).glColor();
 
-            int hp = hpHeight;
-            for (int j = 0; j < hpValue; j++) {
-                GLCore.glTexturedRect(offset + 1 + j, baseY + 5 + index * h, zLevel, (hpHeight - hp), 15, 1, hp);
-
-                if (j >= hpValue - hp) {
-                    hp--;
-                    if (hp <= 0) break;
-                }
-            }
+            GLCore.glTexturedRect(offset + 1, baseY + 5 + index * h, zLevel, 117, 197, hpValue, hpHeight);
 
             offset += 100;
 

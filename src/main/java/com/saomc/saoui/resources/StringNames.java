@@ -8,7 +8,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public final class StringNames {
 
-    public static final ResourceLocation gui = new ResourceLocation(SAOCore.MODID, "textures/gui.png");
+    public static final ResourceLocation gui = new ResourceLocation(SAOCore.MODID, "textures/guiEDT.png");
     public static final ResourceLocation guiCustom = new ResourceLocation(SAOCore.MODID, "textures/guiCustom.png");
     public static final ResourceLocation slot = new ResourceLocation(SAOCore.MODID, "textures/slot.png");
     public static final ResourceLocation icons = new ResourceLocation(SAOCore.MODID, "textures/icons.png");

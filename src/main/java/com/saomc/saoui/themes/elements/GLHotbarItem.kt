@@ -45,7 +45,7 @@ open class GLHotbarItem constructor() : GLRectangle() {
     }
 
     override fun draw(ctx: IHudDrawContext) {
-        if (!(enabled?.invoke(ctx) ?: true) || hand == ctx.player.primaryHand.opposite()) return
+        if (!(enabled?.invoke(ctx) ?: true) || hand == ctx.player.primaryHand) return
         super.draw(ctx)
 
         val p: ElementParent? = this.parent.get()
