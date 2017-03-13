@@ -248,8 +248,8 @@ public class IngameGUI extends GuiIngameForge {
         mc.mcProfiler.startSection("food");
         HudDrawContext ctx = getContext();
         final int foodValue = (int) (StaticPlayerHelper.getHungerFract(mc, mc.player, ctx.getPartialTicks()) * healthWidth);
-        int h = foodValue < 12 ? 12 - foodValue : 0;
-        int o = healthHeight;
+//        int h = foodValue < 12 ? 12 - foodValue : 0;
+//        int o = healthHeight;
         GLCore.glAlphaTest(true);
         GLCore.glBlend(true);
         GLCore.glColorRGBA(0x8EE1E8);
