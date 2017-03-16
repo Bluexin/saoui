@@ -1,20 +1,19 @@
 package com.saomc.saoui;
 
 import com.saomc.saoui.util.ColorUtil;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.settings.GameSettings;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
 
 @SideOnly(Side.CLIENT)
 public final class GLCore {
@@ -39,11 +38,11 @@ public final class GLCore {
     }
 
     public static void glColor(float red, float green, float blue) {
-        GlStateManager.color(red, green, blue);
+        GL11.glColor3f(red, green, blue);
     }
 
     public static void glColor(float red, float green, float blue, float alpha) {
-        GlStateManager.color(red, green, blue, alpha);
+        GL11.glColor4f(red, green, blue, alpha);
     }
 
     public static void glColorRGBA(ColorUtil color) {
@@ -125,12 +124,12 @@ public final class GLCore {
     public static void glTexturedRect(double x, double y, double z, double width, double height, double srcX, double srcY, double srcWidth, double srcHeight) {
         float f = 0.00390625F;
         float f1 = 0.00390625F;
-        Tessellator tessellator = Tessellator.getInstance();
-        tessellator.getBuffer().begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-        tessellator.getBuffer().pos(x, (y + height), z).tex((double) ((float) (srcX) * f), (double) ((float) (srcY + srcHeight) * f1)).endVertex();
-        tessellator.getBuffer().pos(x + width, y + height, z).tex((double) ((float) (srcX + srcWidth) * f), (double) ((float) (srcY + srcHeight) * f1)).endVertex();
-        tessellator.getBuffer().pos(x + width, y, z).tex((double) ((float) (srcX + srcWidth) * f), (double) ((float) (srcY) * f1)).endVertex();
-        tessellator.getBuffer().pos(x, y, z).tex((double) ((float) (srcX) * f), (double) ((float) (srcY) * f1)).endVertex();
+        Tessellator tessellator = Tessellator.instance;
+        tessellator.startDrawingQuads();
+        tessellator.addVertexWithUV(x, (y + height), z, (double) ((float) (srcX) * f), (double) ((float) (srcY + srcHeight) * f1));
+        tessellator.addVertexWithUV(x + width, y + height, z, (double) ((float) (srcX + srcWidth) * f), (double) ((float) (srcY + srcHeight) * f1));
+        tessellator.addVertexWithUV(x + width, y, z, (double) ((float) (srcX + srcWidth) * f), (double) ((float) (srcY) * f1));
+        tessellator.addVertexWithUV(x, y, z, (double) ((float) (srcX) * f), (double) ((float) (srcY) * f1));
         tessellator.draw();
     }
 
@@ -147,68 +146,69 @@ public final class GLCore {
     }
 
     public static void addVertex(double x, double y, double z) {
-        Tessellator.getInstance().getBuffer().pos(x, y, z).endVertex();
+        Tessellator.instance.addVertex(x, y, z);
     }
 
     public static void addVertex(double x, double y, double z, double srcX, double srcY) {
-        Tessellator.getInstance().getBuffer().pos(x, y, z).tex(srcX, srcY).endVertex();
+        Tessellator.instance.addVertexWithUV(x, y, z, srcX, srcY);
     }
 
     public static void addVertex(double x, double y, double z, double srcX, double srcY, float red, float green, float blue, float alpha) {
-        Tessellator.getInstance().getBuffer().pos(x, y, z).tex(srcX, srcY).color(red, green, blue, alpha).endVertex();
+        glColor(red, green, blue, alpha);
+        Tessellator.instance.addVertexWithUV(x, y, z, srcX, srcY);
     }
 
     public static void begin() {
-        begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
+        Tessellator.instance.startDrawingQuads();
     }
 
-    public static void begin(int glMode, VertexFormat format) {
-        Tessellator.getInstance().getBuffer().begin(glMode, format);
+    public static void begin(int glMode) {
+        Tessellator.instance.startDrawing(glMode);
     }
 
     public static void draw() {
-        Tessellator.getInstance().draw();
+        Tessellator.instance.draw();
     }
 
     public static void glRect(int x, int y, int width, int height) {
-        Tessellator tessellator = Tessellator.getInstance();
-        tessellator.getBuffer().begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
-        tessellator.getBuffer().pos((double) (x), (double) (y + height), 0.0D);
-        tessellator.getBuffer().pos((double) (x + width), (double) (y + height), 0.0D);
-        tessellator.getBuffer().pos((double) (x + width), (double) (y), 0.0D);
-        tessellator.getBuffer().pos((double) (x), (double) (y), 0.0D);
+        Tessellator tessellator = Tessellator.instance;
+        tessellator.startDrawingQuads();
+        tessellator.addVertex((double) (x), (double) (y + height), 0.0D);
+        tessellator.addVertex((double) (x + width), (double) (y + height), 0.0D);
+        tessellator.addVertex((double) (x + width), (double) (y), 0.0D);
+        tessellator.addVertex((double) (x), (double) (y), 0.0D);
         tessellator.draw();
     }
 
     public static void glAlphaTest(boolean flag) {
-        if (flag) GlStateManager.enableAlpha();
-        else GlStateManager.disableAlpha();
+        if (flag) GL11.glEnable(GL11.GL_ALPHA_TEST);
+        else GL11.glDisable(GL11.GL_ALPHA_TEST);
     }
 
     public static void alphaFunc(int src, int dst) {
-        GlStateManager.alphaFunc(src, dst);
+        GL11.glAlphaFunc(src, dst);
     }
 
     public static void glBlend(boolean flag) {
-        if (flag) GlStateManager.enableBlend();
-        else GlStateManager.disableBlend();
+        if (flag) GL11.glEnable(GL11.GL_BLEND);
+        else GL11.glDisable(GL11.GL_BLEND);
     }
 
     public static void blendFunc(int src, int dst) {
-        GlStateManager.blendFunc(src, dst);
+        GL11.glBlendFunc(src, dst);
     }
 
     public static void tryBlendFuncSeparate(int a, int b, int c, int d) {
-        GlStateManager.tryBlendFuncSeparate(a, b, c, d);
+        OpenGlHelper.glBlendFunc(a, b, c, d);
     }
 
     public static void depthMask(boolean flag) {
-        GlStateManager.depthMask(flag);
+        GL11.glDepthMask(flag);
     }
 
     public static void glDepthTest(boolean flag) {
-        if (flag) GlStateManager.enableDepth();
-        else GlStateManager.disableDepth();
+        if (flag) GL11.glEnable(GL11.GL_DEPTH_TEST);
+        else GL11.glDisable(GL11.GL_DEPTH_TEST);
     }
 
     public static void glDepthFunc(int flag) {
@@ -216,8 +216,8 @@ public final class GLCore {
     }
 
     public static void glRescaleNormal(boolean flag) {
-        if (flag) GlStateManager.enableRescaleNormal();
-        else GlStateManager.disableRescaleNormal();
+        if (flag) GL11.glEnable(GL12.GL_RESCALE_NORMAL);
+        else GL11.glDisable(GL12.GL_RESCALE_NORMAL);
     }
 
     public static void glTexture2D(boolean flag) {
@@ -226,12 +226,12 @@ public final class GLCore {
     }
 
     public static void glCullFace(boolean flag) {
-        if (flag) GlStateManager.enableCull();
-        else GlStateManager.disableCull();
+        if (flag) GL11.glEnable(GL11.GL_CULL_FACE);
+        else GL11.glDisable(GL11.GL_CULL_FACE);
     }
 
     public static void glTranslatef(float x, float y, float z) {
-        GlStateManager.translate(x, y, z);
+        GL11.glTranslatef(x, y, z);
     }
 
     public static void glNormal3f(float x, float y, float z) {
@@ -239,16 +239,16 @@ public final class GLCore {
     }
 
     public static void glRotatef(float angle, float x, float y, float z) {
-        GlStateManager.rotate(angle, x, y, z);
+        GL11.glRotatef(angle, x, y, z);
     }
 
     public static void glScalef(float x, float y, float z) {
-        GlStateManager.scale(x, y, z);
+        GL11.glScalef(x, y, z);
     }
 
     public static void lighting(boolean flag) {
-        if (flag) GlStateManager.enableLighting();
-        else GlStateManager.disableLighting();
+        if (flag) GL11.glEnable(GL11.GL_LIGHTING);
+        else GL11.glDisable(GL11.GL_LIGHTING);
     }
 
     public static void glStartUI(Minecraft mc) {
@@ -259,10 +259,12 @@ public final class GLCore {
         mc.mcProfiler.endSection();
     }
 
-    public static void start() { GlStateManager.pushMatrix(); }
+    public static void start() {
+        GL11.glPushMatrix();
+    }
 
     public static void end() {
-        GlStateManager.popMatrix();
+        GL11.glPopMatrix();
     }
 
 
@@ -276,6 +278,6 @@ public final class GLCore {
         double d3 = Math.max(x1, x2);
         double d4 = Math.max(y1, y2);
         double d5 = Math.max(z1, z2);
-        return new AxisAlignedBB(d0, d1, d2, d3, d4, d5);
+        return AxisAlignedBB.getBoundingBox(d0, d1, d2, d3, d4, d5);
     }
 }

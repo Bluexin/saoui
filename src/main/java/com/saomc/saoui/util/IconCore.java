@@ -4,8 +4,8 @@ import com.saomc.saoui.GLCore;
 import com.saomc.saoui.api.screens.IIcon;
 import com.saomc.saoui.config.OptionCore;
 import com.saomc.saoui.resources.StringNames;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public enum IconCore implements IIcon {

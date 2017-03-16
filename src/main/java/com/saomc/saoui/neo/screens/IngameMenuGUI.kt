@@ -3,8 +3,8 @@ package com.saomc.saoui.neo.screens
 import com.saomc.saoui.SoundCore
 import com.saomc.saoui.themes.elements.menus.PlaceholderElement
 import com.saomc.saoui.util.IconCore
-import net.minecraftforge.fml.relauncher.Side
-import net.minecraftforge.fml.relauncher.SideOnly
+import cpw.mods.fml.relauncher.Side
+import cpw.mods.fml.relauncher.SideOnly
 
 /**
  * Part of saoui by Bluexin.

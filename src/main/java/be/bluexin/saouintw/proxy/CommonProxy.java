@@ -1,7 +1,7 @@
 package be.bluexin.saouintw.proxy;
 
+import cpw.mods.fml.common.network.simpleimpl.MessageContext;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 /**
  * Part of saouintw, the networking mod for the SAO UI

@@ -1,16 +1,19 @@
 package com.saomc.saoui.effects;
 
 import com.saomc.saoui.GLCore;
-import com.saomc.saoui.resources.StringNames;
 import com.saomc.saoui.config.OptionCore;
+import com.saomc.saoui.resources.StringNames;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.MobEffects;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.potion.Potion;
+import net.minecraft.potion.PotionEffect;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 @SideOnly(Side.CLIENT)
 public enum StatusEffects {
@@ -51,30 +54,30 @@ public enum StatusEffects {
     public static List<StatusEffects> getEffects(EntityLivingBase entity) {
         final List<StatusEffects> effects = new ArrayList<>();
 
-        entity.getActivePotionEffects().stream().filter(potionEffect0 -> potionEffect0 != null).forEach(potionEffect0 -> {
+        ((Collection<PotionEffect>) entity.getActivePotionEffects()).stream().filter(Objects::nonNull).forEach(potionEffect0 -> {
 
-            if (potionEffect0.getPotion() == MobEffects.SLOWNESS && potionEffect0.getAmplifier() > 5)
+            if (potionEffect0.getPotionID() == Potion.moveSlowdown.id && potionEffect0.getAmplifier() > 5)
                 effects.add(PARALYZED);
-            else if (potionEffect0.getPotion() == MobEffects.POISON) effects.add(POISONED);
-            else if (potionEffect0.getPotion() == MobEffects.HUNGER) effects.add(ROTTEN);
-            else if (potionEffect0.getPotion() == MobEffects.NAUSEA) effects.add(ILL);
-            else if (potionEffect0.getPotion() == MobEffects.WEAKNESS) effects.add(WEAK);
-            else if (potionEffect0.getPotion() == MobEffects.WITHER) effects.add(CURSED);
-            else if (potionEffect0.getPotion() == MobEffects.BLINDNESS) effects.add(BLIND);
-            else if (potionEffect0.getPotion() == MobEffects.SATURATION) effects.add(SATURATION);
-            else if (potionEffect0.getPotion() == MobEffects.SPEED) effects.add(SPEED_BOOST);
-            else if (potionEffect0.getPotion() == MobEffects.WATER_BREATHING) effects.add(WATER_BREATH);
-            else if (potionEffect0.getPotion() == MobEffects.STRENGTH) effects.add(STRENGTH);
-            else if (potionEffect0.getPotion() == MobEffects.ABSORPTION) effects.add(ABSORPTION);
-            else if (potionEffect0.getPotion() == MobEffects.FIRE_RESISTANCE) effects.add(FIRE_RES);
-            else if (potionEffect0.getPotion() == MobEffects.HASTE) effects.add(HASTE);
-            else if (potionEffect0.getPotion() == MobEffects.HEALTH_BOOST) effects.add(HEALTH_BOOST);
-            else if (potionEffect0.getPotion() == MobEffects.INSTANT_HEALTH) effects.add(INST_HEALTH);
-            else if (potionEffect0.getPotion() == MobEffects.INVISIBILITY) effects.add(INVISIBILITY);
-            else if (potionEffect0.getPotion() == MobEffects.JUMP_BOOST) effects.add(JUMP_BOOST);
-            else if (potionEffect0.getPotion() == MobEffects.NIGHT_VISION) effects.add(NIGHT_VISION);
-            else if (potionEffect0.getPotion() == MobEffects.REGENERATION) effects.add(REGEN);
-            else if (potionEffect0.getPotion() == MobEffects.RESISTANCE) effects.add(RESIST);
+            else if (potionEffect0.getPotionID() == Potion.poison.id) effects.add(POISONED);
+            else if (potionEffect0.getPotionID() == Potion.hunger.id) effects.add(ROTTEN);
+            else if (potionEffect0.getPotionID() == Potion.confusion.id) effects.add(ILL);
+            else if (potionEffect0.getPotionID() == Potion.weakness.id) effects.add(WEAK);
+            else if (potionEffect0.getPotionID() == Potion.wither.id) effects.add(CURSED);
+            else if (potionEffect0.getPotionID() == Potion.blindness.id) effects.add(BLIND);
+            else if (potionEffect0.getPotionID() == Potion.saturation.id) effects.add(SATURATION);
+            else if (potionEffect0.getPotionID() == Potion.moveSpeed.id) effects.add(SPEED_BOOST);
+            else if (potionEffect0.getPotionID() == Potion.waterBreathing.id) effects.add(WATER_BREATH);
+            else if (potionEffect0.getPotionID() == Potion.damageBoost.id) effects.add(STRENGTH);
+            else if (potionEffect0.getPotionID() == Potion.absorption.id) effects.add(ABSORPTION);
+            else if (potionEffect0.getPotionID() == Potion.fireResistance.id) effects.add(FIRE_RES);
+            else if (potionEffect0.getPotionID() == Potion.digSpeed.id) effects.add(HASTE);
+            else if (potionEffect0.getPotionID() == Potion.healthBoost.id) effects.add(HEALTH_BOOST);
+            else if (potionEffect0.getPotionID() == Potion.heal.id) effects.add(INST_HEALTH);
+            else if (potionEffect0.getPotionID() == Potion.invisibility.id) effects.add(INVISIBILITY);
+            else if (potionEffect0.getPotionID() == Potion.jump.id) effects.add(JUMP_BOOST);
+            else if (potionEffect0.getPotionID() == Potion.nightVision.id) effects.add(NIGHT_VISION);
+            else if (potionEffect0.getPotionID() == Potion.regeneration.id) effects.add(REGEN);
+            else if (potionEffect0.getPotionID() == Potion.resistance.id) effects.add(RESIST);
         });
 
         if (entity instanceof EntityPlayer) {

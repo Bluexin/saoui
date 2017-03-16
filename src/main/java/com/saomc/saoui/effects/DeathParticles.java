@@ -2,22 +2,21 @@ package com.saomc.saoui.effects;
 
 import com.saomc.saoui.GLCore;
 import com.saomc.saoui.resources.StringNames;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.particle.Particle;
+import net.minecraft.client.particle.EntityFX;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.VertexBuffer;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.ArrayDeque;
 import java.util.Queue;
 
 
+@SuppressWarnings("EntityConstructor")
 @SideOnly(Side.CLIENT)
-public class DeathParticles extends Particle {
+public class DeathParticles extends EntityFX {
 
     public static Queue<DeathParticles> queuedRenders = new ArrayDeque<>();
 
@@ -67,7 +66,7 @@ public class DeathParticles extends Particle {
     }
 
     @Override
-    public void renderParticle(VertexBuffer worldrender, Entity entity, float time, float x, float y, float z, float f0, float f1) {
+    public void renderParticle(Tessellator tess, float time, float x, float y, float z, float f0, float f1) {
         this.time = time;
         this.particleX = x;
         this.particleY = y;
@@ -108,8 +107,8 @@ public class DeathParticles extends Particle {
         x4 = (this.particleX - f0) * scale;
         y4 = -this.particleY * scale;
         z4 = (this.particleZ - f1) * scale;
-        EnumFacing e = Minecraft.getMinecraft().player.getHorizontalFacing();
-        boolean q = e.equals(EnumFacing.NORTH) || e.equals(EnumFacing.SOUTH);
+        int e = MathHelper.floor_double((double) (this.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3;
+        boolean q = e == 2 || e == 0;
         final double a = (q ? rotationY < 1.5F && rotationY > 0.5F ? rotationY - 1.0F : rotationY + 1.0F : rotationY) * Math.PI;
         final double cos = Math.cos(a);
         final double sin = Math.sin(a);
@@ -138,10 +137,10 @@ public class DeathParticles extends Particle {
         this.prevPosY = this.posY;
         this.prevPosZ = this.posZ;
 
-        if (this.particleAge++ >= this.particleMaxAge) this.isExpired = true;
+        if (this.particleAge++ >= this.particleMaxAge) this.setDead();
 
         this.motionY += 0.004D;
-        this.move(this.motionX, this.motionY, this.motionZ);
+        this.moveEntity(this.motionX, this.motionY, this.motionZ);
         this.motionX *= 0.8999999761581421D;
         this.motionY *= 0.8999999761581421D;
         this.motionZ *= 0.8999999761581421D;

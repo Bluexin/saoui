@@ -4,10 +4,10 @@ import com.saomc.saoui.SoundCore;
 import com.saomc.saoui.api.events.ElementAction;
 import com.saomc.saoui.api.screens.Actions;
 import com.saomc.saoui.api.screens.ElementType;
+import com.saomc.saoui.config.OptionCore;
 import com.saomc.saoui.elements.ElementBuilder;
 import com.saomc.saoui.screens.menu.IngameMenuGUI;
 import com.saomc.saoui.util.LogCore;
-import com.saomc.saoui.config.OptionCore;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiIngameMenu;
 import net.minecraft.client.gui.GuiMainMenu;
@@ -76,7 +76,7 @@ public class ElementHandler {
     private static void logoutButton(){
         if (mc.currentScreen != null && mc.currentScreen instanceof IngameMenuGUI) {
             mc.currentScreen.onGuiClosed();
-            mc.world.sendQuittingDisconnectingPacket();
+            mc.theWorld.sendQuittingDisconnectingPacket();
 
             mc.loadWorld(null);
             mc.displayGuiScreen(new GuiMainMenu());

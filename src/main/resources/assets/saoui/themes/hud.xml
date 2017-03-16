@@ -62,8 +62,8 @@
                         <children>
                             <glString name="hp text">
                                 <text>absorption > 0? format(isEnabled(ALT_ABSORB_POS)? "formatHealthAbsorbAlt":
-                                    "formatHealthAbsorb", ceil(hp), ceil(maxHp), ceil(absorption)):
-                                    format("formatHealth", ceil(hp), ceil(maxHp))
+                                    "formatHealthAbsorb", (int) ceil(hp), (int) ceil(maxHp), ceil(absorption)):
+                                    format("formatHealth", (int) ceil(hp), (int) ceil(maxHp))
                                 </text>
                                 <x cache="STATIC">5</x>
                                 <y cache="STATIC">8</y>
@@ -82,8 +82,10 @@
                                         <srcX cache="STATIC">66</srcX>
                                         <srcY cache="STATIC">15</srcY>
                                         <w>strWidth(absorption > 0? format(isEnabled(ALT_ABSORB_POS)?
-                                            "formatHealthAbsorbAlt": "formatHealthAbsorb", ceil(hp), ceil(maxHp),
-                                            ceil(absorption)): format("formatHealth", ceil(hp), ceil(maxHp)))
+                                            "formatHealthAbsorbAlt": "formatHealthAbsorb", (int) ceil(hp), (int)
+                                            ceil(maxHp),
+                                            ceil(absorption)): format("formatHealth", (int) ceil(hp), (int)
+                                            ceil(maxHp)))
                                         </w>
                                         <h cache="STATIC">13</h>
                                         <srcW cache="STATIC">5</srcW>
@@ -91,8 +93,10 @@
                                     </glRectangle>
                                     <glRectangle>
                                         <x>5 + strWidth(absorption > 0? format(isEnabled(ALT_ABSORB_POS)?
-                                            "formatHealthAbsorbAlt": "formatHealthAbsorb", ceil(hp), ceil(maxHp),
-                                            ceil(absorption)): format("formatHealth", ceil(hp), ceil(maxHp)))
+                                            "formatHealthAbsorbAlt": "formatHealthAbsorb", (int) ceil(hp), (int)
+                                            ceil(maxHp),
+                                            ceil(absorption)): format("formatHealth", (int) ceil(hp), (int)
+                                            ceil(maxHp)))
                                         </x>
                                         <srcX cache="STATIC">70</srcX>
                                         <srcY cache="STATIC">15</srcY>
@@ -234,8 +238,8 @@
             <value name="exp">
                 <enabled>!isEnabled(REMOVE_HPXP)</enabled>
                 <x>usernamewidth + 144 + strWidth(absorption > 0? format(isEnabled(ALT_ABSORB_POS)?
-                    "formatHealthAbsorbAlt": "formatHealthAbsorb", ceil(hp), ceil(maxHp),
-                    ceil(absorption)): format("formatHealth", ceil(hp), ceil(maxHp)))
+                    "formatHealthAbsorbAlt": "formatHealthAbsorb", (int) ceil(hp), (int) ceil(maxHp),
+                    ceil(absorption)): format("formatHealth", (int) ceil(hp), (int) ceil(maxHp)))
                 </x>
                 <y cache="STATIC">14</y>
                 <children>

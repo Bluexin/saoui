@@ -9,9 +9,9 @@ import com.saomc.saoui.themes.elements.menus.MenuElementParent
 import com.saomc.saoui.themes.elements.menus.PlaceholderElement
 import com.saomc.saoui.util.ColorUtil
 import com.saomc.saoui.util.LogCore
+import cpw.mods.fml.relauncher.Side
+import cpw.mods.fml.relauncher.SideOnly
 import net.minecraft.client.gui.GuiScreen
-import net.minecraftforge.fml.relauncher.Side
-import net.minecraftforge.fml.relauncher.SideOnly
 import org.lwjgl.BufferUtils
 import org.lwjgl.input.Cursor
 import org.lwjgl.input.Mouse
@@ -47,8 +47,8 @@ abstract class ScreenGUI : GuiScreen(), MenuElementParent {
     @OverridingMethodsMustInvokeSuper
     override fun initGui() {
         if (CURSOR_STATUS != CursorStatus.DEFAULT) hideCursor()
-        rotationYaw = mc.player?.rotationYaw ?: 0.0F
-        rotationPitch = mc.player?.rotationPitch ?: 0.0F
+        rotationYaw = mc.thePlayer?.rotationYaw ?: 0.0F
+        rotationPitch = mc.thePlayer?.rotationPitch ?: 0.0F
         elements.forEach { it.init(this) }
 
         super.initGui()
@@ -64,8 +64,8 @@ abstract class ScreenGUI : GuiScreen(), MenuElementParent {
     }
 
     override fun updateScreen() {
-        mc.player?.rotationYaw = rotationYaw - getX() * ROTATION_FACTOR
-        mc.player?.rotationPitch = rotationPitch - getY() * ROTATION_FACTOR
+        mc.thePlayer?.rotationYaw = rotationYaw - getX() * ROTATION_FACTOR
+        mc.thePlayer?.rotationPitch = rotationPitch - getY() * ROTATION_FACTOR
     }
 
     override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {

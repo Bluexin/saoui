@@ -3,11 +3,10 @@ package com.saomc.saoui.themes.elements
 import com.saomc.saoui.GLCore
 import com.saomc.saoui.api.themes.IHudDrawContext
 import com.saomc.saoui.themes.util.CInt
-import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.renderer.RenderHelper
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.ItemStack
-import net.minecraft.util.EnumHandSide
+import org.lwjgl.opengl.GL11
 import javax.xml.bind.annotation.XmlRootElement
 
 /**
@@ -21,7 +20,6 @@ open class GLHotbarItem constructor() : GLRectangle() {
     protected lateinit var slot: CInt
     protected lateinit var itemXoffset: CInt
     protected lateinit var itemYoffset: CInt
-    protected var hand: EnumHandSide? = null
 
     /*
     From net.minecraft.client.gui.GuiIngame
@@ -30,30 +28,26 @@ open class GLHotbarItem constructor() : GLRectangle() {
         val f = stack.animationsToGo.toFloat() - partialTicks
 
         if (f > 0.0f) {
-            GlStateManager.pushMatrix()
+            GL11.glPushMatrix()
             val f1 = 1.0f + f / 5.0f
-            GlStateManager.translate((x + 8).toFloat(), (y + 12).toFloat(), 0.0f)
-            GlStateManager.scale(1.0f / f1, (f1 + 1.0f) / 2.0f, 1.0f)
-            GlStateManager.translate((-(x + 8)).toFloat(), (-(y + 12)).toFloat(), 0.0f)
+            GL11.glTranslatef((x + 8).toFloat(), (y + 12).toFloat(), 0.0f)
+            GL11.glScalef(1.0f / f1, (f1 + 1.0f) / 2.0f, 1.0f)
+            GL11.glTranslatef((-(x + 8)).toFloat(), (-(y + 12)).toFloat(), 0.0f)
         }
 
-        ctx.itemRenderer.renderItemAndEffectIntoGUI(player, stack, x, y)
+        ctx.itemRenderer.renderItemAndEffectIntoGUI(ctx.fontRenderer, ctx.mc.textureManager, stack, x, y)
 
-        if (f > 0.0f) GlStateManager.popMatrix()
+        if (f > 0.0f) GL11.glPopMatrix()
 
-        ctx.itemRenderer.renderItemOverlays(ctx.fontRenderer, stack, x, y)
+        ctx.itemRenderer.renderItemOverlayIntoGUI(ctx.fontRenderer, ctx.mc.textureManager, stack, x, y)
     }
 
     override fun draw(ctx: IHudDrawContext) {
-        if (!(enabled?.invoke(ctx) ?: true) || hand == ctx.player.primaryHand) return
+        if (!(enabled?.invoke(ctx) ?: true)) return
         super.draw(ctx)
 
         val p: ElementParent? = this.parent.get()
-        val it: ItemStack?
-
-        if (hand == null) it = ctx.player.inventory.mainInventory[slot.invoke(ctx)]
-        else it = ctx.player.inventory.offHandInventory[slot.invoke(ctx)]
-        if (it == null) return
+        val it = ctx.player.inventory.mainInventory[slot.invoke(ctx)] ?: return
 
         GLCore.glBlend(false)
         GLCore.glRescaleNormal(true)

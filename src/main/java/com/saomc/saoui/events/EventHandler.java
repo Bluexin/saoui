@@ -3,11 +3,11 @@ package com.saomc.saoui.events;
 import be.bluexin.saouintw.communication.Command;
 import com.saomc.saoui.SoundCore;
 import com.saomc.saoui.elements.ElementBuilder;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.multiplayer.GuiConnecting;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import static com.saomc.saoui.events.EventCore.mc;
 
@@ -18,12 +18,12 @@ public class EventHandler {
     public static boolean IS_SNEAKING = false;
 
     static void nameNotification(ClientChatReceivedEvent e) {
-        if (!(mc.currentScreen instanceof GuiConnecting) && e.getMessage().getUnformattedText().contains(mc.player.getDisplayNameString()))
+        if (!(mc.currentScreen instanceof GuiConnecting) && e.message.getUnformattedText().contains(mc.thePlayer.getDisplayName()))
             SoundCore.play(mc, SoundCore.MESSAGE);
     }
 
     static void abilityCheck() {
-        if (mc.player == null) {
+        if (mc.thePlayer == null) {
             IS_SPRINTING = false;
             IS_SNEAKING = false;
         } else if (mc.inGameHasFocus) {
@@ -33,7 +33,7 @@ public class EventHandler {
     }
 
     static void chatCommand(ClientChatReceivedEvent evt) {
-        if (!(mc.currentScreen instanceof GuiConnecting) && Command.processCommand(evt.getMessage().getUnformattedText()))
+        if (!(mc.currentScreen instanceof GuiConnecting) && Command.processCommand(evt.message.getUnformattedText()))
             evt.setCanceled(true);// TODO: add pm feature and PT chat
     }
 

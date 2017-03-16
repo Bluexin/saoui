@@ -1,7 +1,7 @@
 package com.saomc.saoui.api.events;
 
 import com.saomc.saoui.api.screens.IElementBuilder;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import cpw.mods.fml.common.eventhandler.Event;
 
 /**
  * Created by Tencao on 04/08/2016.

@@ -6,12 +6,12 @@ import com.saomc.saoui.events.EventCore;
 import com.saomc.saoui.themes.ThemeLoader;
 import com.saomc.saoui.util.DefaultStatsProvider;
 import com.saomc.saoui.util.PlayerStats;
+import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
-@Mod(modid = SAOCore.MODID, name = SAOCore.NAME, version = SAOCore.VERSION, clientSideOnly = true, dependencies = SAOCore.DEPS, acceptableSaveVersions = "*", canBeDeactivated = true)
+@Mod(modid = SAOCore.MODID, name = SAOCore.NAME, version = SAOCore.VERSION, dependencies = SAOCore.DEPS, acceptableSaveVersions = "*", canBeDeactivated = true)
 public class SAOCore {
     public static final String MODID = "saoui";
     public static final String NAME = "Sword Art Online UI";

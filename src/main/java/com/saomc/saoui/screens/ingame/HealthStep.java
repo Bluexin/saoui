@@ -2,11 +2,11 @@ package com.saomc.saoui.screens.ingame;
 
 import com.saomc.saoui.GLCore;
 import com.saomc.saoui.social.StaticPlayerHelper;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public enum HealthStep { // Could be loaded from file. Currently the HPBar loads it's own colors.
@@ -32,7 +32,7 @@ public enum HealthStep { // Could be loaded from file. Currently the HPBar loads
     }
 
     public static HealthStep getStep(EntityLivingBase entity, double health) {
-        return entity instanceof EntityPlayer && (((EntityPlayer) entity).capabilities.isCreativeMode || ((EntityPlayer) entity).isSpectator()) ? CREATIVE : getStep(health);
+        return entity instanceof EntityPlayer && ((EntityPlayer) entity).capabilities.isCreativeMode ? CREATIVE : getStep(health);
     }
 
     public static HealthStep getStep(double health) {

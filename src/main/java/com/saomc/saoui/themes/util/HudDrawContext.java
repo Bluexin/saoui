@@ -5,14 +5,14 @@ import com.saomc.saoui.api.themes.IHudDrawContext;
 import com.saomc.saoui.screens.ingame.HealthStep;
 import com.saomc.saoui.social.StaticPlayerHelper;
 import com.saomc.saoui.util.PlayerStats;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.RenderItem;
+import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * Part of saoui by Bluexin.
@@ -40,7 +40,7 @@ public class HudDrawContext implements IHudDrawContext {
     private int i;
 
     public HudDrawContext(EntityPlayer player, Minecraft mc, RenderItem itemRenderer) {
-        this.username = player.getDisplayNameString();
+        this.username = player.getDisplayName();
         this.mc = mc;
         this.player = player;
         this.itemRenderer = itemRenderer;
@@ -54,6 +54,7 @@ public class HudDrawContext implements IHudDrawContext {
         return username;
     }
 
+    @Override
     public Minecraft getMc() {
         return mc;
     }
@@ -146,7 +147,7 @@ public class HudDrawContext implements IHudDrawContext {
 
     @Override
     public boolean offhandEmpty(int slot) {
-        return slot >= 0 && player.inventory.offHandInventory.length > slot && player.inventory.offHandInventory[slot] == null;
+        return false;
     }
 
     @Override

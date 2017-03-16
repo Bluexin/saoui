@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * Part of SAOUI
@@ -24,15 +25,15 @@ public class StaticPlayerHelper {
 
     public static List<EntityPlayer> listOnlinePlayers(Minecraft mc, double range) {
         //noinspection ConstantConditions -> how could 'p' be null?
-        return mc.world.getPlayers(EntityPlayer.class, p -> mc.player.getDistanceToEntity(p) <= range);
+        return listOnlinePlayers(mc).stream().filter(p -> mc.thePlayer.getDistanceToEntity(p) <= range).collect(Collectors.toList());
     }
 
     private static List<EntityPlayer> listOnlinePlayers(Minecraft mc) {
-        return mc.world.playerEntities;
+        return mc.theWorld.playerEntities;
     }
 
     public static EntityPlayer findOnlinePlayer(Minecraft mc, String username) {
-        return mc.world.getPlayerEntityByName(username);
+        return mc.theWorld.getPlayerEntityByName(username);
     }
 
     private static boolean[] isOnline(Minecraft mc, String[] names) { // TODO: update a boolean[] upon player join server? (/!\ client-side)
@@ -52,11 +53,11 @@ public class StaticPlayerHelper {
     }
 
     public static String getName(EntityPlayer player) {
-        return player == null ? "" : player.getDisplayNameString();
+        return player == null ? "" : player.getDisplayName();
     }
 
     public static String getName(Minecraft mc) {
-        return getName(mc.player);
+        return getName(mc.thePlayer);
     }
 
     public static String unformatName(String name) {
@@ -159,6 +160,6 @@ public class StaticPlayerHelper {
     }
 
     public static EntityPlayer thePlayer() {
-        return Minecraft.getMinecraft().player;
+        return Minecraft.getMinecraft().thePlayer;
     }
 }

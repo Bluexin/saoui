@@ -4,14 +4,11 @@ import com.saomc.saoui.GLCore;
 import com.saomc.saoui.api.screens.GuiSelection;
 import com.saomc.saoui.colorstates.CursorStatus;
 import com.saomc.saoui.screens.window.ScreenGUI;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.multiplayer.WorldClient;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
-import java.io.IOException;
 
 @SideOnly(Side.CLIENT)
 public class DeathScreen extends ScreenGUI {
@@ -64,17 +61,17 @@ public class DeathScreen extends ScreenGUI {
     }*/
 
     @Override
-    protected void keyTyped(char typedChar, int keyCode) throws IOException {
+    protected void keyTyped(char typedChar, int keyCode) {
 
     }
 
     public void confirmClicked(boolean result, int id) {
         if (result) {
-            mc.world.sendQuittingDisconnectingPacket();
+            mc.theWorld.sendQuittingDisconnectingPacket();
             mc.loadWorld(null);
             mc.displayGuiScreen(new GuiMainMenu());
         } else {
-            mc.player.respawnPlayer();
+            mc.thePlayer.respawnPlayer();
             mc.displayGuiScreen(null);
         }
     }

@@ -3,11 +3,10 @@ package com.saomc.saoui.screens.menu;
 import com.saomc.saoui.SoundCore;
 import com.saomc.saoui.api.screens.GuiSelection;
 import com.saomc.saoui.elements.ElementBuilder;
-import com.saomc.saoui.elements.defaultelements.DefaultElements;
 import com.saomc.saoui.screens.window.ScreenGUI;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.gui.inventory.GuiInventory;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class IngameMenuGUI extends ScreenGUI {

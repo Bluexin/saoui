@@ -1,8 +1,10 @@
 package com.saomc.saoui.api.themes;
 
 import com.saomc.saoui.screens.ingame.HealthStep;
+import kotlin.Deprecated;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.RenderItem;
+import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.entity.player.EntityPlayer;
 
 /**
@@ -67,6 +69,7 @@ public interface IHudDrawContext {
      * @param slot offhand slot to query
      * @return whether the specified offhand slot is empty
      */
+    @Deprecated(message = "Unused in 1.7.10")
     boolean offhandEmpty(int slot);
 
     /**
@@ -107,4 +110,6 @@ public interface IHudDrawContext {
     void setI(int i);
 
     int i();
+
+    Minecraft getMc();
 }

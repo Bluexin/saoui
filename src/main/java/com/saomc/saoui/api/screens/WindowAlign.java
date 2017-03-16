@@ -1,7 +1,7 @@
 package com.saomc.saoui.api.screens;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public enum WindowAlign {
@@ -24,20 +24,20 @@ public enum WindowAlign {
         positioner = pos;
     }
 
-    public int getPos(int pos, ParentElement parentElement, boolean relative, int size) {
-        return positioner.getPos(pos, parentElement, relative, size);
-    }
-
-    private interface SAOPositioner {
-        int getPos(int pos, ParentElement parentElement, boolean relative, int width);
-    }
-
     private static int getX(int pos, ParentElement parentElement, boolean relative) {
         return relative ? pos : pos + (parentElement != null ? parentElement.getX(relative) : 0);
     }
 
     private static int getY(int pos, ParentElement parentElement, boolean relative) {
         return relative ? pos : pos + (parentElement != null ? parentElement.getY(relative) : 0);
+    }
+
+    public int getPos(int pos, ParentElement parentElement, boolean relative, int size) {
+        return positioner.getPos(pos, parentElement, relative, size);
+    }
+
+    private interface SAOPositioner {
+        int getPos(int pos, ParentElement parentElement, boolean relative, int width);
     }
 
 }

@@ -7,18 +7,19 @@ import com.saomc.saoui.renders.StaticRenderer;
 import com.saomc.saoui.screens.death.DeathScreen;
 import com.saomc.saoui.screens.ingame.IngameGUI;
 import com.saomc.saoui.screens.menu.StartupGUI;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.gui.GuiGameOver;
 import net.minecraft.client.gui.GuiIngameMenu;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.GuiOptions;
 import net.minecraft.client.gui.inventory.GuiContainerCreative;
 import net.minecraft.client.gui.inventory.GuiInventory;
+import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,26 +56,26 @@ class RenderHandler {
 
     static void guiInstance(GuiOpenEvent e) {
         if (!OptionCore.BUGGY_MENU.isEnabled()) return;
-        if (OptionCore.DEBUG_MODE.isEnabled()) System.out.print(e.getGui() + " called GuiOpenEvent \n");
+        if (OptionCore.DEBUG_MODE.isEnabled()) System.out.print(e.gui + " called GuiOpenEvent \n");
 
-        if (e.getGui() instanceof GuiIngameMenu) {
+        if (e.gui instanceof GuiIngameMenu) {
             if (!(EventCore.mc.currentScreen instanceof IngameMenuGUI)) {
-                e.setGui(new IngameMenuGUI());
+                e.gui = new IngameMenuGUI();
             }
         }
-        if (e.getGui() instanceof GuiInventory && !OptionCore.DEFAULT_INVENTORY.isEnabled()) {
+        if (e.gui instanceof GuiInventory && !OptionCore.DEFAULT_INVENTORY.isEnabled()) {
             if (EventCore.mc.playerController.isInCreativeMode())
-                e.setGui(new GuiContainerCreative(EventCore.mc.player));
+                e.gui = new GuiContainerCreative(EventCore.mc.thePlayer);
             else if (!(EventCore.mc.currentScreen instanceof IngameMenuGUI))
-                e.setGui(new IngameMenuGUI(/*(GuiInventory) EventCore.mc.currentScreen*/));
+                e.gui = new IngameMenuGUI(/*(GuiInventory) EventCore.mc.currentScreen*/);
             else e.setCanceled(true);
         }
-        if (e.getGui() instanceof GuiGameOver && (!OptionCore.DEFAULT_DEATH_SCREEN.isEnabled())) {
-            if (!(e.getGui() instanceof DeathScreen)) {
-                e.setGui(new DeathScreen());
+        if (e.gui instanceof GuiGameOver && (!OptionCore.DEFAULT_DEATH_SCREEN.isEnabled())) {
+            if (!(e.gui instanceof DeathScreen)) {
+                e.gui = new DeathScreen();
             }
         }
-        if (e.getGui() instanceof IngameMenuGUI)
+        if (e.gui instanceof IngameMenuGUI)
             if (EventCore.mc.currentScreen instanceof GuiOptions) {
                 e.setCanceled(true);
                 EventCore.mc.currentScreen.onGuiClosed();
@@ -84,7 +85,7 @@ class RenderHandler {
     }
 
     static void deathCheck() {
-        if (EventCore.mc.currentScreen instanceof DeathScreen && EventCore.mc.player.getHealth() > 0.0F) {
+        if (EventCore.mc.currentScreen instanceof DeathScreen && EventCore.mc.thePlayer.getHealth() > 0.0F) {
             EventCore.mc.currentScreen.onGuiClosed();
             EventCore.mc.setIngameFocus();
         }
@@ -92,27 +93,27 @@ class RenderHandler {
 
     static void renderPlayer(RenderPlayerEvent.Post e) {
         if (!OptionCore.UI_ONLY.isEnabled()) {
-            if (e.getEntityPlayer() != null) {
-                StaticRenderer.render(e.getRenderer().getRenderManager(), e.getEntityPlayer(), e.getEntityPlayer().posX, e.getEntityPlayer().posY, e.getEntityPlayer().posZ);
+            if (e.entityPlayer != null) {
+                StaticRenderer.render(RenderManager.instance, e.entityPlayer, e.entityPlayer.posX, e.entityPlayer.posY, e.entityPlayer.posZ);
             }
         }
     }
 
     static void renderEntity(RenderLivingEvent.Post e) {
         if (!OptionCore.UI_ONLY.isEnabled()) {
-            if (e.getEntity() != EventCore.mc.player) {
-                StaticRenderer.render(e.getRenderer().getRenderManager(), e.getEntity(), e.getX(), e.getY(), e.getZ());
+            if (e.entity != EventCore.mc.thePlayer) {
+                StaticRenderer.render(RenderManager.instance, e.entity, e.x, e.y, e.z);
             }
         }
     }
 
     static void mainMenuGUI(GuiOpenEvent e) {
         if (menuGUI)
-            if (e.getGui() instanceof GuiMainMenu)
+            if (e.gui instanceof GuiMainMenu)
                 if (StartupGUI.shouldShow()) {
-                    e.setGui(new StartupGUI());
+                    e.gui = new StartupGUI();
                     menuGUI = false;
-                } //else e.setGui(new MainMenuGUI());
+                } //else e.gui = new MainMenuGUI());
     }
 
 }

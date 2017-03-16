@@ -1,5 +1,7 @@
 package com.saomc.saoui.api.entity.rendering;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.IEntityOwnable;
@@ -7,8 +9,6 @@ import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.entity.passive.EntityWolf;
 import net.minecraft.entity.passive.IAnimals;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.lang.ref.WeakReference;
 import java.util.Objects;
@@ -41,12 +41,12 @@ public class MobColorStateHandler implements IColorStateHandler {
         if (this.cached != null) return cached;
         EntityLivingBase entity = theEnt.get();
         if (entity == null) return cached = INVALID;
-        if (!entity.isNonBoss()) return cached = BOSS;
+//        if (!entity.isNonBoss()) return cached = BOSS;
         if (entity instanceof EntityWolf && ((EntityWolf) entity).isAngry()) return KILLER;
         if (entity instanceof EntityTameable && ((EntityTameable) entity).isTamed())
-            return Objects.equals(((EntityTameable) entity).getOwner(), Minecraft.getMinecraft().player) ? INNOCENT : VIOLENT;
+            return Objects.equals(((EntityTameable) entity).getOwner(), Minecraft.getMinecraft().thePlayer) ? INNOCENT : VIOLENT;
         if (entity instanceof IMob)
-            return entity.canEntityBeSeen(Minecraft.getMinecraft().player) ? KILLER : VIOLENT;
+            return entity.canEntityBeSeen(Minecraft.getMinecraft().thePlayer) ? KILLER : VIOLENT;
         if (entity instanceof IAnimals) return cached = INNOCENT;
         if (entity instanceof IEntityOwnable) return cached = VIOLENT;
         return cached = INVALID;

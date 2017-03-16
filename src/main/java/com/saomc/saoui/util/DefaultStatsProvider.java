@@ -8,7 +8,6 @@ import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.passive.EntityHorse;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.EntityEquipmentSlot;
 
 import java.text.DecimalFormat;
 import java.util.Collection;
@@ -27,14 +26,14 @@ public class DefaultStatsProvider implements IPlayerStatsProvider {
     @Override
     public String getStatsString(EntityPlayer player) {
         final StringBuilder builder = new StringBuilder();
-        EntityLivingBase mount = (EntityLivingBase) player.getRidingEntity();
+        EntityLivingBase mount = (EntityLivingBase) player.ridingEntity;
 
         if (player.isRiding() && OptionCore.MOUNT_STAT_VIEW.isEnabled()) {
-            final String name = mount.getName();
+            final String name = mount.getCommandSenderName();
             final double maxHealth = attr(mount.getMaxHealth());
             double health = attr(mount.getHealth());
             final double resistance = attr(mount.getTotalArmorValue());
-            final double speed = attr(mount.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getAttributeValue());
+            final double speed = attr(mount.getEntityAttribute(SharedMonsterAttributes.movementSpeed).getAttributeValue());
             final double jump;
             DecimalFormat df3 = new DecimalFormat("0.000");
             DecimalFormat df1 = new DecimalFormat("0.0");
@@ -59,26 +58,19 @@ public class DefaultStatsProvider implements IPlayerStatsProvider {
 
             final float health = attr(player.getHealth());
 
-            final float maxHealth = attr(player.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).getAttributeValue());
-            final float attackDamage = attr(player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue());
+            final float maxHealth = attr(player.getEntityAttribute(SharedMonsterAttributes.maxHealth).getAttributeValue());
+            final float attackDamage = attr(player.getEntityAttribute(SharedMonsterAttributes.attackDamage).getAttributeValue());
             // final float movementSpeed = attr(player.getEntityAttribute(SharedMonsterAttributes.movementSpeed).getAttributeValue());
             // final float knocbackResistance = attr(player.getEntityAttribute(SharedMonsterAttributes.knockbackResistance).getAttributeValue());
 
             float itemDamage = 0.0F;
 
-            if (player.getHeldItemMainhand() != null) {
-                final Collection<?> itemAttackMain = player.getHeldItemMainhand().getAttributeModifiers(EntityEquipmentSlot.MAINHAND).get(SharedMonsterAttributes.ATTACK_DAMAGE.getName());
+            if (player.getHeldItem() != null) {
+                final Collection<?> itemAttackMain = player.getHeldItem().getAttributeModifiers().get(SharedMonsterAttributes.attackDamage.getAttributeUnlocalizedName());
 
                 itemDamage += itemAttackMain.stream().filter(value -> value instanceof AttributeModifier).map(value -> (AttributeModifier) value)
                         .filter(mod -> mod.getName().equals("Weapon modifier")).mapToDouble(AttributeModifier::getAmount).sum();
             }
-            if (player.getHeldItemOffhand() != null) {
-                final Collection<?> itemAttackOff = player.getHeldItemOffhand().getAttributeModifiers(EntityEquipmentSlot.OFFHAND).get(SharedMonsterAttributes.ATTACK_DAMAGE.getName());
-
-                itemDamage += itemAttackOff.stream().filter(value -> value instanceof AttributeModifier).map(value -> (AttributeModifier) value)
-                        .filter(mod -> mod.getName().equals("Weapon modifier")).mapToDouble(AttributeModifier::getAmount).sum();
-            }
-
 
             final float strength = attr(attackDamage + itemDamage);
             final float agility = attr(player.getAIMoveSpeed()) * 10;

@@ -4,12 +4,15 @@ import com.google.common.collect.LinkedHashMultimap;
 import com.saomc.saoui.api.screens.GuiSelection;
 import com.saomc.saoui.api.screens.ParentElement;
 import com.saomc.saoui.util.LogCore;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import jdk.nashorn.internal.objects.annotations.Getter;
 import jdk.nashorn.internal.objects.annotations.Setter;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Sends the elements to the correct classes to be rendered
@@ -18,8 +21,8 @@ import java.util.*;
  */
 public class ElementDispatcher {
 
-    private static ElementDispatcher ref;
     private static final List<ElementController> menuElements = new ArrayList<>();
+    private static ElementDispatcher ref;
 
     private ElementDispatcher() {
         // nill
@@ -36,6 +39,30 @@ public class ElementDispatcher {
             // Only return one instance
             ref = new ElementDispatcher();
         return ref;
+    }
+
+    public static void close() {
+        menuElements.forEach(ElementController::close);
+        menuElements.clear();
+    }
+
+    public static void check() {
+        menuElements.stream().filter(controller -> controller.elements.isEmpty()).forEach(controller -> menuElements.remove(controller));
+    }
+
+    @Getter
+    public static boolean isEmpty() {
+        return menuElements.isEmpty();
+    }
+
+    @Setter
+    public static void clear() {
+        menuElements.clear();
+    }
+
+    @Getter
+    public static List<ElementController> getElements() {
+        return menuElements;
     }
 
     public void dispatch(ParentElement parent, GuiSelection gui) {
@@ -65,29 +92,5 @@ public class ElementDispatcher {
                 }
         }
         LogCore.logDebug("Dispatched");
-    }
-
-    public static void close(){
-        menuElements.forEach(ElementController::close);
-        menuElements.clear();
-    }
-
-    public static void check(){
-        menuElements.stream().filter(controller -> controller.elements.isEmpty()).forEach(controller -> menuElements.remove(controller));
-    }
-
-    @Getter
-    public static boolean isEmpty(){
-        return menuElements.isEmpty();
-    }
-
-    @Setter
-    public static void clear(){
-        menuElements.clear();
-    }
-
-    @Getter
-    public static List<ElementController> getElements(){
-        return menuElements;
     }
 }

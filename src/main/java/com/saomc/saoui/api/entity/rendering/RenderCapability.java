@@ -1,68 +1,42 @@
 package com.saomc.saoui.api.entity.rendering;
 
+import be.bluexin.saomclib.capabilities.AbstractCapability;
+import be.bluexin.saomclib.capabilities.AbstractEntityCapability;
+import be.bluexin.saomclib.capabilities.Key;
 import com.saomc.saoui.SAOCore;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
-import net.minecraftforge.common.capabilities.CapabilityManager;
-import net.minecraftforge.common.capabilities.ICapabilitySerializable;
-import net.minecraftforge.event.AttachCapabilitiesEvent;
-
-import java.lang.ref.WeakReference;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Part of saoui
  * <p>
- * This {@link Capability} contains info for the SAOUI about color states, the amount of HP bars to render, etc.
+ * This {@link net.minecraftforge.common.IExtendedEntityProperties} contains info for the SAOUI about color states, the amount of HP bars to render, etc.
  * It also contains info like custom offsets for hp bars to fix some renders (lookin at ya chicken).
  *
  * @author Bluexin
  */
-public class RenderCapability {
+public class RenderCapability extends AbstractEntityCapability {
 
-    /**
-     * Unique instance for the capability (for registering).
-     * Use {@link net.minecraft.entity.Entity#hasCapability(Capability, EnumFacing)} to know if an entity has this capability
-     * and {@link net.minecraft.entity.Entity#getCapability(Capability, EnumFacing)} to get the actual capability instance.
-     */
-    @CapabilityInject(RenderCapability.class)
-    public static final Capability<RenderCapability> RENDER_CAPABILITY = null;
-
+    @Key
     private static final ResourceLocation KEY = new ResourceLocation(SAOCore.MODID, "renders");
 
     /**
      * Where this capability is getting it's customization settings from.
      */
-    public final ICustomizationProvider customizationProvider;
+    public ICustomizationProvider customizationProvider;
 
     /**
      * Where this capability is getting it's Color State data from.
      */
-    public final IColorStateHandler colorStateHandler;
+    public IColorStateHandler colorStateHandler;
 
-    /**
-     * The entity this capability refers to.
-     */
-    private final WeakReference<EntityLivingBase> theEnt;
+    public RenderCapability() {
 
-    private RenderCapability(EntityLivingBase ent) {
-        this.theEnt = new WeakReference<>(ent);
-        this.customizationProvider = getProvider(ent);
-        this.colorStateHandler = getColorState(ent);
-    }
-
-    /**
-     * Register capability to registry.
-     * This should only be called by the SAOUI!
-     */
-    public static void registerCapability() {
-        CapabilityManager.INSTANCE.register(RenderCapability.class, new RenderCapability.Storage(), RenderCapability.class);
     }
 
     private static ICustomizationProvider getProvider(EntityLivingBase ent) {
@@ -74,39 +48,6 @@ public class RenderCapability {
     }
 
     /**
-     * Adds the capability to the entity the event refers to.
-     * Will be called automatically by the SAOUI for all entities.
-     *
-     * @param event the event to add the capability to
-     */
-    @SuppressWarnings("ConstantConditions")
-    public static void register(final AttachCapabilitiesEvent<Entity> event) {
-        event.addCapability(KEY, new ICapabilitySerializable<NBTBase>() {
-            final RenderCapability inst = new RenderCapability((EntityLivingBase) event.getObject());
-
-            @Override
-            public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-                return capability == RENDER_CAPABILITY;
-            }
-
-            @Override
-            public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-                return capability == RENDER_CAPABILITY ? RENDER_CAPABILITY.<T>cast(inst) : null;
-            }
-
-            @Override
-            public NBTBase serializeNBT() {
-                return RENDER_CAPABILITY.getStorage().writeNBT(RENDER_CAPABILITY, this.inst, null);
-            }
-
-            @Override
-            public void deserializeNBT(NBTBase nbt) {
-                RENDER_CAPABILITY.getStorage().readNBT(RENDER_CAPABILITY, this.inst, null, nbt);
-            }
-        });
-    }
-
-    /**
      * Gets the capability for an entity.
      *
      * @param ent the entity to get the capability for
@@ -114,7 +55,7 @@ public class RenderCapability {
      */
     public static RenderCapability get(EntityLivingBase ent) {
         //noinspection ConstantConditions
-        return ent.getCapability(RENDER_CAPABILITY, null);
+        return (RenderCapability) ent.getExtendedProperties(KEY.toString());
     }
 
     /**
@@ -127,28 +68,26 @@ public class RenderCapability {
 //        PacketPipeline.sendTo(new SyncExtStats(player), (EntityPlayerMP) player);
     }
 
-    private static class Storage implements Capability.IStorage<RenderCapability> {
-        private Storage() {
-        }
+    @NotNull
+    @Override
+    public AbstractCapability setup(Entity ent) {
+        this.customizationProvider = getProvider((EntityLivingBase) ent);
+        this.colorStateHandler = getColorState((EntityLivingBase) ent);
+        return super.setup(ent);
+    }
 
-        @Override
-        public NBTBase writeNBT(Capability<RenderCapability> capability, RenderCapability instance, EnumFacing side) {
-            NBTTagCompound tag = new NBTTagCompound();
-            instance.customizationProvider.save(tag);
-            instance.colorStateHandler.save(tag);
-            return tag;
-        }
+    @Override
+    public void saveNBTData(NBTTagCompound compound) {
+        NBTTagCompound tag = new NBTTagCompound();
+        customizationProvider.save(tag);
+        colorStateHandler.save(tag);
+        compound.setTag(KEY.toString(), tag);
+    }
 
-        @Override
-        public void readNBT(Capability<RenderCapability> capability, RenderCapability instance, EnumFacing side, NBTBase nbt) {
-            instance.customizationProvider.load((NBTTagCompound) nbt);
-            instance.colorStateHandler.load((NBTTagCompound) nbt);
-
-//            EntityLivingBase entitylivingbase = instance.theEnt.get();
-
-            /*if (entitylivingbase != null && !entitylivingbase.worldObj.isRemote)
-                RenderCapability.syncClient((EntityPlayer) instance.theEnt.get());*/
-
-        }
+    @Override
+    public void loadNBTData(NBTTagCompound compound) {
+        NBTBase tag = compound.getTag(KEY.toString());
+        customizationProvider.load((NBTTagCompound) tag);
+        colorStateHandler.load((NBTTagCompound) tag);
     }
 }

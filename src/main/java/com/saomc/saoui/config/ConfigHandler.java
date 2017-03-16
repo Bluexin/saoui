@@ -1,8 +1,8 @@
 package com.saomc.saoui.config;
 
 import com.saomc.saoui.SAOCore;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
 import java.io.File;
 import java.util.stream.Stream;

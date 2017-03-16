@@ -4,10 +4,9 @@ import com.saomc.saoui.api.screens.Actions;
 import com.saomc.saoui.api.screens.ElementType;
 import com.saomc.saoui.api.screens.GuiSelection;
 import com.saomc.saoui.api.screens.ParentElement;
+import cpw.mods.fml.common.eventhandler.Event;
 import jdk.nashorn.internal.objects.annotations.Getter;
-import net.minecraftforge.fml.common.eventhandler.Event;
 
-import javax.annotation.CheckForNull;
 import javax.annotation.Nullable;
 
 /**

@@ -2,12 +2,12 @@ package com.saomc.saoui.elements;
 
 import com.google.common.collect.LinkedHashMultimap;
 import com.saomc.saoui.api.screens.*;
-import com.saomc.saoui.util.LogCore;
 import com.saomc.saoui.config.OptionCore;
+import com.saomc.saoui.util.LogCore;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.inventory.IInventory;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -276,13 +276,13 @@ public class ElementBuilder implements IElementBuilder {
      */
     @Override
     public void addInventory(String parent, GuiSelection gui, ItemFilter itemFilter) {
-        if (Minecraft.getMinecraft().player == null)
+        if (Minecraft.getMinecraft().thePlayer == null)
             LogCore.logFatal("WARNING - Attempted to addInventory before world load \n" +
                     "Parent - " + parent + "\n" +
                     "Gui - " + gui + "\n" +
                     "Inventory - Players Inventory");
         else if (elementList.get(parent.toLowerCase()).stream().noneMatch(element -> element.getElementType() == ElementType.INVENTORY && element.getItemFilter() == itemFilter && element.getGui() == gui)){
-            elementList.put(parent.toLowerCase(), new Element(parent.toLowerCase(), gui, itemFilter, Minecraft.getMinecraft().player.inventory));
+            elementList.put(parent.toLowerCase(), new Element(parent.toLowerCase(), gui, itemFilter, Minecraft.getMinecraft().thePlayer.inventory));
             LogCore.logDebug("Element added, name - ItemList   parent - " + parent + "   type - Items");
         } else LogCore.logWarn("Warning, attempted to add the same element twice \n " +
                 "Element name - ItemList\n" +
@@ -302,11 +302,11 @@ public class ElementBuilder implements IElementBuilder {
      */
     @Override
     public void addInventory(String parent, GuiSelection gui, ItemFilter itemFilter, IInventory inventory) {
-        if (Minecraft.getMinecraft().player == null)
+        if (Minecraft.getMinecraft().thePlayer == null)
             LogCore.logFatal("WARNING - Attempted to addInventory before world load \n" +
                     "Parent - " + parent + "\n" +
                     "Gui - " + gui + "\n" +
-                    "Inventory - " + inventory.getName());
+                    "Inventory - " + inventory.getInventoryName());
         else if (elementList.get(parent.toLowerCase()).stream().noneMatch(element -> element.getElementType() == ElementType.INVENTORY && element.getItemFilter() == itemFilter && element.getInventory() == inventory && element.getGui() == gui)){
             elementList.put(parent.toLowerCase(), new Element(parent.toLowerCase(), gui, itemFilter, inventory));
             LogCore.logDebug("Element added, name - ItemList   parent - " + parent + "   type - Items");

@@ -14,16 +14,15 @@ import com.saomc.saoui.resources.StringNames;
 import com.saomc.saoui.themes.ThemeLoader;
 import com.saomc.saoui.util.ColorUtil;
 import com.saomc.saoui.util.LogCore;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Cursor;
 import org.lwjgl.input.Mouse;
 
 import javax.xml.bind.JAXBException;
-import java.io.IOException;
 import java.util.ConcurrentModificationException;
 
 @SideOnly(Side.CLIENT)
@@ -65,9 +64,9 @@ public abstract class ScreenGUI extends GuiScreen implements ParentElement {
     }
 
     protected void init() {
-        if (mc.player != null) {
-            rotationYaw = new float[]{mc.player.rotationYaw};
-            rotationPitch = new float[]{mc.player.rotationPitch};
+        if (mc.thePlayer != null) {
+            rotationYaw = new float[]{mc.thePlayer.rotationYaw};
+            rotationPitch = new float[]{mc.thePlayer.rotationPitch};
         }
     }
 
@@ -104,9 +103,9 @@ public abstract class ScreenGUI extends GuiScreen implements ParentElement {
         mouseX = cursorX;
         mouseY = cursorY;
 
-        if (mc.player != null) {
-            mc.player.rotationYaw = rotationYaw[0] - getCursorX() * ROTATION_FACTOR;
-            mc.player.rotationPitch = rotationPitch[0] - getCursorY() * ROTATION_FACTOR;
+        if (mc.thePlayer != null) {
+            mc.thePlayer.rotationYaw = rotationYaw[0] - getCursorX() * ROTATION_FACTOR;
+            mc.thePlayer.rotationPitch = rotationPitch[0] - getCursorY() * ROTATION_FACTOR;
         }
 
 //        super.drawScreen(cursorX, cursorY, partialTicks); -> we might not want this to be called. Shouldn't have any effect ("empty" call)
@@ -146,7 +145,7 @@ public abstract class ScreenGUI extends GuiScreen implements ParentElement {
 
 
     @Override
-        protected void keyTyped(char ch, int key) throws IOException {
+    protected void keyTyped(char ch, int key) {
         if (OptionCore.CURSOR_TOGGLE.isEnabled() && isCtrlKeyDown()) lockCursor = !lockCursor;
         super.keyTyped(ch, key);
 
@@ -157,14 +156,14 @@ public abstract class ScreenGUI extends GuiScreen implements ParentElement {
     }
 
     @Override
-    protected void mouseClicked(int cursorX, int cursorY, int button) throws IOException {
+    protected void mouseClicked(int cursorX, int cursorY, int button) {
         super.mouseClicked(cursorX, cursorY, button);
         mouseDown |= (0x1 << button);
 
         try {
             if (ElementDispatcher.getElements().stream().noneMatch(controller -> controller.mousePressed(mc, cursorX, cursorY, button)))
                 backgroundClicked(cursorX, cursorY, button);
-        } catch (ConcurrentModificationException e){
+        } catch (ConcurrentModificationException e) {
             //Do Nothing
             LogCore.logDebug("mouseClicked ended unexpectedly");
         }
@@ -181,14 +180,14 @@ public abstract class ScreenGUI extends GuiScreen implements ParentElement {
             for (ElementController elementController : ElementDispatcher.getElements())
                 if (found) break;
                 else for (Element element : elementController.elements)
-                    if (element.isOpen() && element.mouseReleased(mc, cursorX, cursorY, button)||
+                    if (element.isOpen() && element.mouseReleased(mc, cursorX, cursorY, button) ||
                             element.isFocus() && elementController.mouseOver(cursorX, cursorY, button) && element.mouseReleased(mc, cursorX, cursorY, button)) {
                         ElementController.actionPerformed(element, Actions.LEFT_RELEASED, button);
                         found = true;
                         break;
                     }
 
-        } catch (ConcurrentModificationException e){
+        } catch (ConcurrentModificationException e) {
             //Do Nothing
             LogCore.logWarn("mouseClicked ended unexpectedly");
         }
@@ -209,14 +208,14 @@ public abstract class ScreenGUI extends GuiScreen implements ParentElement {
 
         try {
             ElementDispatcher.getElements().stream().anyMatch(e -> e.mouseWheel(mc, cursorX, cursorY, delta));
-        } catch (ConcurrentModificationException e){
+        } catch (ConcurrentModificationException e) {
             //Do Nothing
             LogCore.logWarn("mouseWheel ended unexpectedly");
         }
     }
 
     @Override
-    public void handleMouseInput() throws IOException {
+    public void handleMouseInput() {
         super.handleMouseInput();
 
         if (Mouse.hasWheel()) {

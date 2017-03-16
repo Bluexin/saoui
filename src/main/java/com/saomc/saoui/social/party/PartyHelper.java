@@ -9,7 +9,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.ChatComponentTranslation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +44,7 @@ public class PartyHelper {
             final GuiScreen keepScreen = mc.currentScreen;
             final boolean ingameFocus = mc.inGameHasFocus;
 
-            final String text = I18n.format("party.invitation.text", target.getDisplayNameString());
+            final String text = I18n.format("party.invitation.text", target.getDisplayName());
 /*
             mc.displayGuiScreen(WindowView.viewConfirm(ConfigHandler._PARTY_INVITATION_TITLE, text, (element, action, data) -> {
                 final Categories id = element.ID();
@@ -80,7 +80,7 @@ public class PartyHelper {
     }
 
     private boolean isLeader(String username) {
-        return username.equals(party.getLeader().getDisplayNameString()); // TODO: check with text formatters, not sure how this would work out
+        return username.equals(party.getLeader().getDisplayName()); // TODO: check with text formatters, not sure how this would work out
     }
 
     private boolean isLeader(EntityPlayer player) {
@@ -90,10 +90,10 @@ public class PartyHelper {
     private void addPlayer(EntityPlayer player) {
         if (this.party.addMember(player)) {
             final Minecraft mc = Minecraft.getMinecraft();
-            mc.player.sendMessage(new TextComponentTranslation("ptJoin", player.getDisplayName()));
-            if (this.party.getLeader().equals(mc.player)) {
-                party.getMembers().stream().filter(pl -> !pl.equals(mc.player)).forEach(member -> Communicator.INSTANCE.send(CommandType.UPDATE_PARTY, member, '+' + player.getDisplayNameString()));
-                party.getMembers().stream().filter(pl -> !pl.equals(mc.player)).forEach(member -> Communicator.INSTANCE.send(CommandType.UPDATE_PARTY, player, '+' + member.getDisplayNameString()));
+            mc.thePlayer.addChatComponentMessage(new ChatComponentTranslation("ptJoin", player.getDisplayName()));
+            if (this.party.getLeader().equals(mc.thePlayer)) {
+                party.getMembers().stream().filter(pl -> !pl.equals(mc.thePlayer)).forEach(member -> Communicator.INSTANCE.send(CommandType.UPDATE_PARTY, member, '+' + player.getDisplayName()));
+                party.getMembers().stream().filter(pl -> !pl.equals(mc.thePlayer)).forEach(member -> Communicator.INSTANCE.send(CommandType.UPDATE_PARTY, player, '+' + member.getDisplayName()));
             }
         }
     }
@@ -101,9 +101,9 @@ public class PartyHelper {
     private void removePlayer(EntityPlayer player) { // TODO: kick member
         if (this.party.removeMember(player)) {
             final Minecraft mc = Minecraft.getMinecraft();
-            mc.player.sendMessage(new TextComponentTranslation("ptLeft", player.getDisplayName()));
-            if (this.party.getLeader().equals(mc.player))
-                party.getMembers().stream().filter(pl -> pl.equals(mc.player)).forEach(member -> Communicator.INSTANCE.send(CommandType.UPDATE_PARTY, member, '-' + player.getDisplayNameString()));
+            mc.thePlayer.addChatComponentMessage(new ChatComponentTranslation("ptLeft", player.getDisplayName()));
+            if (this.party.getLeader().equals(mc.thePlayer))
+                party.getMembers().stream().filter(pl -> pl.equals(mc.thePlayer)).forEach(member -> Communicator.INSTANCE.send(CommandType.UPDATE_PARTY, member, '-' + player.getDisplayName()));
         }
     }
 
@@ -121,25 +121,25 @@ public class PartyHelper {
         if (!party.isInParty(player)) {
             invited.add(player);
             final Minecraft mc = Minecraft.getMinecraft();
-            Communicator.INSTANCE.send(CommandType.INVITE_TO_PARTY, player, hasParty() ? party.getLeader().getDisplayNameString() : StaticPlayerHelper.getName(mc));
+            Communicator.INSTANCE.send(CommandType.INVITE_TO_PARTY, player, hasParty() ? party.getLeader().getDisplayName() : StaticPlayerHelper.getName(mc));
         }
     }
 
     public void sendDissolve(Minecraft mc) {
         if (hasParty()) {
-            if (party.getLeader().equals(mc.player)) {
-                party.getMembers().stream().filter(pl -> pl.equals(mc.player)).forEach(member -> Communicator.INSTANCE.send(CommandType.DISSOLVE_PARTY, member));
-                mc.player.sendMessage(new TextComponentTranslation("ptDissolve"));
+            if (party.getLeader().equals(mc.thePlayer)) {
+                party.getMembers().stream().filter(pl -> pl.equals(mc.thePlayer)).forEach(member -> Communicator.INSTANCE.send(CommandType.DISSOLVE_PARTY, member));
+                mc.thePlayer.addChatComponentMessage(new ChatComponentTranslation("ptDissolve"));
             } else {
                 Communicator.INSTANCE.send(CommandType.DISSOLVE_PARTY, party.getLeader()); // aka leave PT
-                mc.player.sendMessage(new TextComponentTranslation("ptLeave"));
+                mc.thePlayer.addChatComponentMessage(new ChatComponentTranslation("ptLeave"));
             }
         }
     }
 
     public void receiveDissolve(EntityPlayer player) {
         final Minecraft mc = Minecraft.getMinecraft();
-        if (party.getLeader().equals(mc.player)) removePlayer(player);
+        if (party.getLeader().equals(mc.thePlayer)) removePlayer(player);
         else if (isLeader(player)) {/*
             final Window window = SAOCore.getWindow(mc);
 
@@ -152,7 +152,7 @@ public class PartyHelper {
 
     public void receiveConfirmation(EntityPlayer player, String... args) { // Keeping args for later (will be needed for auth/PT UUID system)
         final Minecraft mc = Minecraft.getMinecraft();
-        if (party.getLeader().equals(mc.player) && !party.isInParty(player) && invited.contains(player)) {
+        if (party.getLeader().equals(mc.thePlayer) && !party.isInParty(player) && invited.contains(player)) {
             addPlayer(player);
             invited.remove(player);
         } else Communicator.INSTANCE.send(CommandType.DISSOLVE_PARTY, player);

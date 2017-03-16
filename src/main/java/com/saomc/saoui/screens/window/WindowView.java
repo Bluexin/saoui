@@ -3,14 +3,14 @@ package com.saomc.saoui.screens.window;
 import com.saomc.saoui.GLCore;
 import com.saomc.saoui.api.screens.ParentElement;
 import com.saomc.saoui.api.screens.WindowAlign;
+import com.saomc.saoui.config.OptionCore;
 import com.saomc.saoui.resources.StringNames;
 import com.saomc.saoui.util.ColorUtil;
 import com.saomc.saoui.util.LogCore;
-import com.saomc.saoui.config.OptionCore;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,6 +55,51 @@ public class WindowView extends Gui{
 
     }
 
+    private static String[] toLines(String text, int width) {
+        if (width <= 0) return text.split("\n");
+        else {
+            final String[] rawLines = text.split("\n");
+
+            if (rawLines.length <= 0) return rawLines;
+
+            final List<String> lines = new ArrayList<>();
+
+            String cut = "";
+            String line = rawLines[0];
+            int rawIndex = 0;
+
+            while (line != null) {
+                int size = GLCore.glStringWidth(line);
+
+                while (size > width - 16) {
+                    final int lastIndex = line.lastIndexOf(' ');
+
+                    if (lastIndex != -1) {
+                        cut = line.substring(lastIndex + 1) + " " + cut;
+                        line = line.substring(0, lastIndex);
+
+                        if (rawIndex + 1 < rawLines.length) {
+                            rawLines[rawIndex + 1] = cut + rawLines[rawIndex + 1];
+                            cut = "";
+                        }
+                    } else break;
+
+                    size = GLCore.glStringWidth(line);
+                }
+
+                if (!line.matches(" *")) lines.add(line);
+
+                if (cut.length() > 0) {
+                    line = cut;
+                    cut = "";
+                } else if (++rawIndex < rawLines.length) line = rawLines[rawIndex];
+                else line = null;
+            }
+
+            return lines.toArray(new String[lines.size()]);
+        }
+    }
+
     public void updateScreen(){
         LogCore.logInfo("Updating");
         int w = lines.length > 0 ? Stream.of(lines).mapToInt(GLCore::glStringWidth).max().getAsInt() + 16 : 0;
@@ -64,7 +109,6 @@ public class WindowView extends Gui{
         if (linesHeight > height) height = linesHeight;
 
     }
-
 
     public void drawScreen(int mouseX, int mouseY, float partialTicks){
         //drawDefaultBackground();
@@ -109,52 +153,6 @@ public class WindowView extends Gui{
 
         for (int i = 0; i < lines.length; i++)
             GLCore.glString(lines[i], left + 8, top + 8 + i * (GLCore.glStringHeight() + 1), ColorUtil.DEFAULT_FONT_COLOR.multiplyAlpha(1.0F));
-    }
-
-
-    private static String[] toLines(String text, int width) {
-        if (width <= 0) return text.split("\n");
-        else {
-            final String[] rawLines = text.split("\n");
-
-            if (rawLines.length <= 0) return rawLines;
-
-            final List<String> lines = new ArrayList<>();
-
-            String cut = "";
-            String line = rawLines[0];
-            int rawIndex = 0;
-
-            while (line != null) {
-                int size = GLCore.glStringWidth(line);
-
-                while (size > width - 16) {
-                    final int lastIndex = line.lastIndexOf(' ');
-
-                    if (lastIndex != -1) {
-                        cut = line.substring(lastIndex + 1) + " " + cut;
-                        line = line.substring(0, lastIndex);
-
-                        if (rawIndex + 1 < rawLines.length) {
-                            rawLines[rawIndex + 1] = cut + rawLines[rawIndex + 1];
-                            cut = "";
-                        }
-                    } else break;
-
-                    size = GLCore.glStringWidth(line);
-                }
-
-                if (!line.matches(" *")) lines.add(line);
-
-                if (cut.length() > 0) {
-                    line = cut;
-                    cut = "";
-                } else if (++rawIndex < rawLines.length) line = rawLines[rawIndex];
-                else line = null;
-            }
-
-            return lines.toArray(new String[lines.size()]);
-        }
     }
 
     public int getY(boolean relative) {

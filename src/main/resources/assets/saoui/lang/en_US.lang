@@ -1,5 +1,5 @@
 #PARSE_ESCAPES
-#(this command allows for proper evaluations as defined by String.format(), not a simplified version)
+#(this command allows for proper evaluations as defined by String.format(), not a simplified version) -> not working on 1.7.10!
 
 # Social
 guiFriendRequestTitle=Friend Request

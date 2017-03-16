@@ -1,8 +1,8 @@
 package com.saomc.saoui.elements;
 
 import com.saomc.saoui.api.screens.*;
-import com.saomc.saoui.util.LogCore;
 import com.saomc.saoui.config.OptionCore;
+import com.saomc.saoui.util.LogCore;
 import jdk.nashorn.internal.objects.annotations.Getter;
 import jdk.nashorn.internal.objects.annotations.Setter;
 import net.minecraft.client.Minecraft;
@@ -301,16 +301,6 @@ public class Element implements ParentElement {
     }
 
     /**
-     * Gets the height of the element
-     *
-     * @return Returns the elements height
-     */
-    @Getter
-    public int getHeight() {
-        return this.height;
-    }
-
-    /**
      * Gets the width of the element
      *
      * @param width The width you wish to set
@@ -318,6 +308,16 @@ public class Element implements ParentElement {
     @Setter
     public void setWidth(int width) {
         this.width = width;
+    }
+
+    /**
+     * Gets the height of the element
+     *
+     * @return Returns the elements height
+     */
+    @Getter
+    public int getHeight() {
+        return this.height;
     }
 
     /**
@@ -392,17 +392,6 @@ public class Element implements ParentElement {
     }
 
     /**
-     * Sets the parent element
-     *
-     * @param parentElement The Parent Element
-     */
-    @Setter
-    public void setParentElement(ParentElement parentElement){
-        this.parentElement = parentElement;
-    }
-
-
-    /**
      * Gets the parent element
      *
      * @return Returns the set Parent Element
@@ -411,6 +400,16 @@ public class Element implements ParentElement {
     @Nullable
     public ParentElement getParentElement(){
         return this.parentElement;
+    }
+
+    /**
+     * Sets the parent element
+     *
+     * @param parentElement The Parent Element
+     */
+    @Setter
+    public void setParentElement(ParentElement parentElement) {
+        this.parentElement = parentElement;
     }
 
     @Getter
@@ -521,7 +520,6 @@ public class Element implements ParentElement {
         else {
             ItemStack mainStack = this.inventory.getStackInSlot(this.slots.get(0));
             return this.item == stack.getItem()
-                    && mainStack.getItemDamage() == stack.getItemDamage()
                     && mainStack.getDisplayName().equals(stack.getDisplayName())
                     && mainStack.getMetadata() == stack.getMetadata()
                     && mainStack.getEnchantmentTagList() == stack.getEnchantmentTagList();

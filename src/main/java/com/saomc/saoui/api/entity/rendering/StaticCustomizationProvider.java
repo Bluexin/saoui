@@ -104,6 +104,7 @@ public class StaticCustomizationProvider implements ICustomizationProvider {
      */
     @Override
     public void load(NBTTagCompound tag) {
+        if (tag == null) return;
         NBTTagCompound atag = tag.getCompoundTag(KEY);
         this.xOffset = atag.getDouble("xOffset");
         this.yOffset = atag.getDouble("yOffset");

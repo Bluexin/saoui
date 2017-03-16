@@ -6,8 +6,8 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.EnumChatFormatting;
+import org.lwjgl.opengl.GL11;
 
 import java.util.List;
 
@@ -71,11 +71,11 @@ public class StartupGUI extends GuiScreen {
 
     @Override
     public void drawScreen(int par1, int par2, float par3) {
-        GlStateManager.disableTexture2D();
-        GlStateManager.enableTexture2D();
+        GL11.glDisable(GL11.GL_TEXTURE_2D);
+        GL11.glEnable(GL11.GL_TEXTURE_2D);
 
         drawDefaultBackground();
-        drawCenteredString(this.fontRendererObj, TextFormatting.YELLOW + "NOTICE" + TextFormatting.RESET, this.width / 2, this.height / 2 - 100, 0xFFFFFF);
+        drawCenteredString(this.fontRendererObj, EnumChatFormatting.YELLOW + "NOTICE" + EnumChatFormatting.RESET, this.width / 2, this.height / 2 - 100, 0xFFFFFF);
 
         if (isDev())
             handleGuiText(getDevText(), fontRendererObj, this, this.width, this.height);
@@ -90,7 +90,7 @@ public class StartupGUI extends GuiScreen {
         if (isDev())
             switch (button.id) {
                 case 0: {
-                    buttonList.forEach(b -> b.enabled = false);
+                    ((List<GuiButton>) buttonList).forEach(b -> b.enabled = false);
                     this.mc.displayGuiScreen(null);
                     break;
                 }

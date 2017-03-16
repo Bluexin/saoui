@@ -1,12 +1,12 @@
 package com.saomc.saoui.events;
 
 import com.saomc.saoui.effects.RenderDispatcher;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.TickEvent;
+import cpw.mods.fml.common.network.FMLNetworkEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraftforge.client.event.*;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
-import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 
 /**
  * This is the core for all event handlers, listening to events then passing on to the other events that need it.
@@ -51,7 +51,7 @@ public class EventCore {
 
     @SubscribeEvent
     public void renderEntityListener(RenderLivingEvent.Pre e) {
-        if (e.getEntity().getDistanceSqToEntity(mc.player) >
+        if (e.entity.getDistanceSqToEntity(mc.thePlayer) >
                 Math.pow(mc.gameSettings.getOptionFloatValue(GameSettings.Options.RENDER_DISTANCE) * 16, 2))
             e.setCanceled(true);
     }

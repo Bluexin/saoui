@@ -3,13 +3,13 @@ package com.saomc.saoui.screens.inventory;
 import baubles.api.BaublesApi;
 import baubles.api.IBauble;
 import com.saomc.saoui.api.screens.ItemFilter;
+import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.BlockPumpkin;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.*;
-import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public enum InventoryCore implements ItemFilter{ // Todo: support for TConstruct
@@ -17,7 +17,7 @@ public enum InventoryCore implements ItemFilter{ // Todo: support for TConstruct
     EQUIPMENT((stack, state) -> {
         final Item item = stack.getItem();
 
-        return (item instanceof ItemArmor) || ((item instanceof ItemBlock) && (((ItemBlock) item).block instanceof BlockPumpkin));
+        return (item instanceof ItemArmor) || ((item instanceof ItemBlock) && (((ItemBlock) item).blockInstance instanceof BlockPumpkin));
     }),
 
     WEAPONS((stack, state) -> stack.getItem() instanceof ItemSword),

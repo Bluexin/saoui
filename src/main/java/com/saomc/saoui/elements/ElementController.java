@@ -5,17 +5,14 @@ import com.saomc.saoui.api.events.ElementAction;
 import com.saomc.saoui.api.screens.Actions;
 import com.saomc.saoui.api.screens.ElementType;
 import com.saomc.saoui.api.screens.ParentElement;
+import com.saomc.saoui.config.OptionCore;
 import com.saomc.saoui.resources.StringNames;
 import com.saomc.saoui.util.ColorUtil;
 import com.saomc.saoui.util.LogCore;
-import com.saomc.saoui.config.OptionCore;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.RenderItem;
-import net.minecraft.client.renderer.block.model.ModelManager;
-import net.minecraft.client.renderer.color.ItemColors;
+import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -32,14 +29,14 @@ import java.util.List;
  */
 public class ElementController {
     private static final ResourceLocation RES_ITEM_GLINT = new ResourceLocation("textures/misc/enchanted_item_glint.png");
+    //private boolean dragging;
+    public final List<Element> elements;
+    public ColorUtil bgColor, disabledMask;
+    public List<Element> items;
     private float scrolledValue;
     private int scrollValue;
     private ParentElement parent;
-    public ColorUtil bgColor, disabledMask;
     private int lastDragY, dragY;
-    //private boolean dragging;
-    public final List<Element> elements;
-    public List<Element> items;
     private Element parentElement;
     private boolean isVisible;
     private boolean isFocus;
@@ -52,9 +49,7 @@ public class ElementController {
     private String lastScrollElementCache;
 
     private TextureManager textureManager = Minecraft.getMinecraft().getTextureManager();
-    private ModelManager modelManager = Minecraft.getMinecraft().getRenderItem().getItemModelMesher().getModelManager();
-    private ItemColors itemColors = Minecraft.getMinecraft().getItemColors();
-    private RenderItem itemRender = new RenderItem(textureManager, modelManager, itemColors);
+    private RenderItem itemRender = new RenderItem();
 
     public ElementController(ParentElement gui){
         this.scrollValue = 0;
@@ -64,6 +59,17 @@ public class ElementController {
         //this.dragging = false;
         bgColor = ColorUtil.DEFAULT_COLOR;
         disabledMask = ColorUtil.DISABLED_MASK;
+    }
+
+    /**
+     * This fires the action event for the element
+     *
+     * @param element The element sending the event
+     * @param action  The action that triggered the event
+     * @param data    Button ID
+     */
+    public static void actionPerformed(Element element, Actions action, int data) {
+        MinecraftForge.EVENT_BUS.post(new ElementAction(element.getCaption(), element.getCategory(), element.getParent(), action, data, element.getGui(), element.isOpen(), !element.isFocus(), element.getElementType(), element.getParentElement()));
     }
 
     public void update (Minecraft mc){
@@ -398,7 +404,7 @@ public class ElementController {
                 GLCore.glTexturedRect(left + iconOffset, top + iconOffset, 140, 25, 16, 16);
 
                 RenderHelper.enableGUIStandardItemLighting();
-                itemRender.renderItemIntoGUI(element.getItemStack(), left + iconOffset, top + iconOffset);
+                itemRender.renderItemIntoGUI(mc.fontRendererObj, mc.getTextureManager(), element.getItemStack(), left + iconOffset, top + iconOffset);
                 RenderHelper.disableStandardItemLighting();
 
                 if (element.getItemStack().isItemEnchanted()) renderEffectSlot(mc, left, top, element);
@@ -440,7 +446,7 @@ public class ElementController {
                 f4 = -1.0F;
             }
 
-            GLCore.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
+            GLCore.begin();
             GLCore.addVertex((double)(x), (double)(y + height), (double)itemRender.zLevel, (double)((f2 + (float)height * f4) * f), (double)((f3 + (float)height) * f1));
             GLCore.addVertex((double)(x + width), (double)(y + height), (double)itemRender.zLevel, (double)((f2 + (float)width + (float)height * f4) * f), (double)((f3 + (float)height) * f1));
             GLCore.addVertex((double)(x + width), (double)(y), (double)itemRender.zLevel, (double)((f2 + (float)width) * f), (double)((f3 + 0.0F) * f1));
@@ -772,28 +778,15 @@ public class ElementController {
         return false;
     }
 
-    public boolean mouseOver(int cursorX, int cursorY, int flag){
-        if (isFocus && elements.stream().anyMatch(e -> e.mouseOver(cursorX, cursorY, flag))){
-            /*
-            if (dragging) {
-                dragY += scroll(cursorY - lastDragY);
-                lastDragY = cursorY;
-            }
+    public boolean mouseOver(int cursorX, int cursorY, int flag) {
+        /*
+        if (dragging) {
+            dragY += scroll(cursorY - lastDragY);
+            lastDragY = cursorY;
+        }
 
-            dragging = false;*/
-            return true;
-        } else return false;
-    }
-
-    /**
-     * This fires the action event for the element
-     *
-     * @param element The element sending the event
-     * @param action The action that triggered the event
-     * @param data Button ID
-     */
-    public static void actionPerformed(Element element, Actions action, int data) {
-        MinecraftForge.EVENT_BUS.post(new ElementAction(element.getCaption(), element.getCategory(), element.getParent(), action, data, element.getGui(), element.isOpen(), !element.isFocus(), element.getElementType(), element.getParentElement()));
+        dragging = false;*/
+        return isFocus && elements.stream().anyMatch(e -> e.mouseOver(cursorX, cursorY, flag));
     }
 
     /**
