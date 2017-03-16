@@ -3,6 +3,7 @@ package com.saomc.saoui.screens.ingame;
 import be.bluexin.saomclib.capabilities.PartyCapability;
 import be.bluexin.saomclib.party.IParty;
 import com.saomc.saoui.GLCore;
+import com.saomc.saoui.config.ConfigHandler;
 import com.saomc.saoui.config.OptionCore;
 import com.saomc.saoui.effects.StatusEffects;
 import com.saomc.saoui.neo.screens.IngameMenuGUI;
@@ -188,7 +189,7 @@ public class IngameGUI extends GuiIngameForge {
 
     private void renderParty() {
         IParty pt = mc.player.getCapability(PartyCapability.CAP_INSTANCE, null).getParty();
-        if (pt == null || !pt.isParty()) return;
+        if ((pt == null || !pt.isParty()) && ConfigHandler.debugFakePT == 0) return;
 
         mc.mcProfiler.startSection("party");
 
@@ -198,8 +199,10 @@ public class IngameGUI extends GuiIngameForge {
         int index = 0;
         final int baseY = 35;
         final int h = 15;
-        for (final EntityPlayer player : pt.getMembers()) {
-            if (player == mc.player) continue;
+        List<EntityPlayer> members = pt == null ? new ArrayList<>(ConfigHandler.debugFakePT) : pt.getMembers();
+        for (int i = 0; i < ConfigHandler.debugFakePT; i++) members.add(mc.player);
+        for (final EntityPlayer player : members) {
+            if (player == mc.player && ConfigHandler.debugFakePT == 0) continue;
 
             GLCore.glBindTexture(OptionCore.SAO_UI.isEnabled() ? StringNames.gui : StringNames.guiCustom);
 

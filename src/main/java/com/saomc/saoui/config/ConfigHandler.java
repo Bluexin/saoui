@@ -16,6 +16,7 @@ public class ConfigHandler {
     public static String _LAST_UPDATE;
     public static boolean _IGNORE_UPATE;
     public static boolean DEBUG = false;
+    public static int debugFakePT;
     private static Configuration config;
     private static File saoConfDir;
 
@@ -42,6 +43,8 @@ public class ConfigHandler {
                 o.enable();
             else o.disable();
         });
+
+        debugFakePT = config.getInt("debugFakePT", Configuration.CATEGORY_GENERAL, 0, 0, 10, "Amount of fake party members, 0 to disable.");
 
         config.save();
     }
