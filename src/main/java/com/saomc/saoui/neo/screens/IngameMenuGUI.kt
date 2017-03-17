@@ -1,6 +1,7 @@
 package com.saomc.saoui.neo.screens
 
 import com.saomc.saoui.SoundCore
+import com.saomc.saoui.themes.ThemeLoader
 import com.saomc.saoui.themes.elements.menus.PlaceholderElement
 import com.saomc.saoui.util.IconCore
 import net.minecraftforge.fml.relauncher.Side
@@ -25,6 +26,12 @@ class IngameMenuGUI(override val name: String = "In-game menu GUI") : ScreenGUI(
         }
 
         super.drawScreen(mouseX, mouseY, partialTicks)
+    }
+
+    override fun mouseReleased(cursorX: Int, cursorY: Int, button: Int) {
+        super.mouseReleased(cursorX, cursorY, button)
+
+        ThemeLoader.load()
     }
 
     override fun initGui() {
