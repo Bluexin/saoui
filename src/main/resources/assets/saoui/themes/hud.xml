@@ -335,6 +335,7 @@
             <value name="party">
                 <children>
                     <repetitionGroup name="member">
+                        <x cache="STATIC">2</x>
                         <y cache="STATIC">35</y>
                         <texture>saoui:textures/guiEDT.png</texture>
                         <amount>ptSize</amount>
@@ -342,7 +343,6 @@
                             <elementGroup name="bg">
                                 <children>
                                     <glRectangle>
-                                        <x cache="STATIC">3</x>
                                         <y cache="NONE">15 * i</y>
                                         <srcX cache="STATIC">86</srcX>
                                         <srcY cache="STATIC">15</srcY>
@@ -350,7 +350,7 @@
                                         <h cache="STATIC">13</h>
                                     </glRectangle>
                                     <glRectangle>
-                                        <x cache="STATIC">14</x>
+                                        <x cache="STATIC">10</x>
                                         <y cache="NONE">15 * i</y>
                                         <srcX cache="STATIC">81</srcX>
                                         <srcY cache="STATIC">15</srcY>
@@ -358,7 +358,7 @@
                                         <h cache="STATIC">13</h>
                                     </glRectangle>
                                     <glRectangle>
-                                        <x cache="STATIC">18</x>
+                                        <x cache="STATIC">14</x>
                                         <y cache="NONE">15 * i</y>
                                         <srcX cache="STATIC">65</srcX>
                                         <srcW cache="STATIC">5</srcW>
@@ -367,7 +367,7 @@
                                         <h cache="STATIC">13</h>
                                     </glRectangle>
                                     <glRectangle>
-                                        <x cache="STATIC">48</x>
+                                        <x cache="STATIC">44</x>
                                         <y cache="NONE">15 * i</y>
                                         <srcX cache="STATIC">40</srcX>
                                         <srcY cache="STATIC">28</srcY>
@@ -375,7 +375,7 @@
                                         <h cache="STATIC">13</h>
                                     </glRectangle>
                                     <glRectangle>
-                                        <x cache="STATIC">148</x>
+                                        <x cache="STATIC">144</x>
                                         <y cache="NONE">15 * i</y>
                                         <srcX cache="STATIC">70</srcX>
                                         <srcY cache="STATIC">15</srcY>
@@ -400,15 +400,14 @@
                                 <srcY cache="STATIC">197</srcY>
                                 <w cache="NONE">98.0 * ptHpPct(i) + 1</w>
                                 <h cache="STATIC">3.0</h>
-                                <x cache="STATIC">49</x>
+                                <x cache="STATIC">45</x>
                                 <y cache="NONE">15 * i + 5</y>
                             </glRectangle>
                             <glString name="pName">
                                 <text>ptName(i).length > 5? ptName(i).substring(0, 5): ptName(i)</text>
-                                <x cache="STATIC">18</x>
+                                <x cache="STATIC">13</x>
                                 <y cache="NONE">15 * i + 8</y>
                                 <rgba>0xFFFFFFFF</rgba>
-                                <shadow>false</shadow>
                             </glString>
                         </children>
                     </repetitionGroup>

@@ -4,6 +4,7 @@ import com.saomc.saoui.SoundCore
 import com.saomc.saoui.themes.ThemeLoader
 import com.saomc.saoui.themes.elements.menus.PlaceholderElement
 import com.saomc.saoui.util.IconCore
+import net.minecraft.client.gui.GuiOptions
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
 
@@ -31,7 +32,10 @@ class IngameMenuGUI(override val name: String = "In-game menu GUI") : ScreenGUI(
     override fun mouseReleased(cursorX: Int, cursorY: Int, button: Int) {
         super.mouseReleased(cursorX, cursorY, button)
 
-        ThemeLoader.load()
+        when (button) { // 0 = left click, 1 = right click, 2 = middle click, 3 = back
+            2 -> ThemeLoader.load()
+            1 -> this.mc.displayGuiScreen(GuiOptions(this, this.mc.gameSettings))
+        }
     }
 
     override fun initGui() {
