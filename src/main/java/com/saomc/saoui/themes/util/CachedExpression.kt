@@ -1,6 +1,7 @@
 package com.saomc.saoui.themes.util
 
 import com.saomc.saoui.api.themes.IHudDrawContext
+import com.saomc.saoui.screens.ingame.HealthStep
 
 /**
  * Part of saoui by Bluexin.
@@ -32,6 +33,12 @@ class StaticCachedExpression<out T>(expression: CompiledExpressionWrapper<T>) : 
 
     object stub : IHudDrawContext {
         override fun getMc() = throw IllegalStateException("This is a stub!")
+        override fun ptHealthStep(index: Int) = HealthStep.CREATIVE
+        override fun ptName(index: Int) = ""
+        override fun ptHp(index: Int) = 0f
+        override fun ptMaxHp(index: Int) = 0f
+        override fun ptHpPct(index: Int) = 0f
+        override fun ptSize() = 0
         override fun setI(i: Int) = Unit
         override fun i() = 0
         override fun username() = null

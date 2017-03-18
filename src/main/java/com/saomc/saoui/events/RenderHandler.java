@@ -9,7 +9,6 @@ import com.saomc.saoui.screens.ingame.IngameGUI;
 import com.saomc.saoui.screens.menu.StartupGUI;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.client.gui.GuiGameOver;
 import net.minecraft.client.gui.GuiIngameMenu;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.GuiOptions;
@@ -70,11 +69,11 @@ class RenderHandler {
                 e.gui = new IngameMenuGUI(/*(GuiInventory) EventCore.mc.currentScreen*/);
             else e.setCanceled(true);
         }
-        if (e.gui instanceof GuiGameOver && (!OptionCore.DEFAULT_DEATH_SCREEN.isEnabled())) {
+        /*if (e.gui instanceof GuiGameOver && (!OptionCore.DEFAULT_DEATH_SCREEN.isEnabled())) {
             if (!(e.gui instanceof DeathScreen)) {
                 e.gui = new DeathScreen();
             }
-        }
+        }*/
         if (e.gui instanceof IngameMenuGUI)
             if (EventCore.mc.currentScreen instanceof GuiOptions) {
                 e.setCanceled(true);

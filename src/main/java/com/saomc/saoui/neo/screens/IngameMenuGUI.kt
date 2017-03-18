@@ -1,10 +1,12 @@
 package com.saomc.saoui.neo.screens
 
 import com.saomc.saoui.SoundCore
+import com.saomc.saoui.themes.ThemeLoader
 import com.saomc.saoui.themes.elements.menus.PlaceholderElement
 import com.saomc.saoui.util.IconCore
 import cpw.mods.fml.relauncher.Side
 import cpw.mods.fml.relauncher.SideOnly
+import net.minecraft.client.gui.GuiOptions
 
 /**
  * Part of saoui by Bluexin.
@@ -25,6 +27,15 @@ class IngameMenuGUI(override val name: String = "In-game menu GUI") : ScreenGUI(
         }
 
         super.drawScreen(mouseX, mouseY, partialTicks)
+    }
+
+    override fun mouseReleased(cursorX: Int, cursorY: Int, button: Int) {
+        super.mouseReleased(cursorX, cursorY, button)
+
+        when (button) { // 0 = left click, 1 = right click, 2 = middle click, 3 = back
+            2 -> ThemeLoader.load()
+            1 -> this.mc.displayGuiScreen(GuiOptions(this, this.mc.gameSettings))
+        }
     }
 
     override fun initGui() {

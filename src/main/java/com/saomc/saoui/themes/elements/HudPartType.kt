@@ -27,9 +27,23 @@ enum class HudPartType {
      */
     CROSS_HAIR,
 
+    /**
+     * Key for the HudPart rendering the armor.
+     */
     ARMOR,
 
+    /**
+     * Key for the HudPart rendering the horse jump bar.
+     */
     JUMP_BAR,
 
-    AM2BARS
+    /**
+     * Key for the HudPart rendering the am2 bars (not in use!).
+     */
+    AM2BARS,
+
+    /**
+     * Key for the HudPart rendering the party.
+     */
+    PARTY
 }

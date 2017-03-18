@@ -3,6 +3,7 @@ package com.saomc.saoui.screens.ingame;
 import be.bluexin.saomclib.capabilities.PartyCapability;
 import be.bluexin.saomclib.party.IParty;
 import com.saomc.saoui.GLCore;
+import com.saomc.saoui.config.ConfigHandler;
 import com.saomc.saoui.config.OptionCore;
 import com.saomc.saoui.effects.StatusEffects;
 import com.saomc.saoui.neo.screens.IngameMenuGUI;
@@ -187,51 +188,18 @@ public class IngameGUI extends GuiIngameForge {
 
     private void renderParty() {
         IParty pt = ((PartyCapability) mc.thePlayer.getExtendedProperties(PartyCapability.Companion.getKEY().toString())).getParty();
-        if (pt == null || !pt.isParty()) return;
+        if ((pt == null || !pt.isParty()) && ConfigHandler.debugFakePT == 0) return;
 
         mc.mcProfiler.startSection("party");
 
         GLCore.glAlphaTest(true);
         GLCore.glBlend(true);
 
-        int index = 0;
-        final int baseY = 35;
-        final int h = 15;
-        for (final EntityPlayer player : pt.getMembers()) {
-            if (player == mc.thePlayer) continue;
-
-            GLCore.glBindTexture(OptionCore.SAO_UI.isEnabled() ? StringNames.gui : StringNames.guiCustom);
-
-            GLCore.glTexturedRect(3, baseY + index * h, zLevel, 86, 15, 10, 13);
-            GLCore.glTexturedRect(14, baseY + index * h, zLevel, 81, 15, 4, 13);
-
-            String playerName = player.getDisplayName();
-            if (playerName.length() > 5) playerName = playerName.substring(0, 5);
-
-            final int nameBoxes = 29 / 5 + 1;
-
-            GLCore.glTexturedRect(18, baseY + index * h, zLevel, nameBoxes * 5, 13, 65, 15, 5, 13);
-
-            int offset = 18 + nameBoxes * 5;
-
-            GLCore.glTexturedRect(offset, baseY + index * h, zLevel, 40, 28, 100, 13);
-
-            final int hpWidth = 98;
-            final int hpHeight = 3;
-
-            final int hpValue = (int) (StaticPlayerHelper.getHealth(mc, player, ctx.getPartialTicks()) / StaticPlayerHelper.getMaxHealth(player) * hpWidth) + 1;
-            HealthStep.getStep(mc, player, ctx.getPartialTicks()).glColor();
-
-            GLCore.glTexturedRect(offset + 1, baseY + 5 + index * h, zLevel, 117, 197, hpValue, hpHeight);
-
-            offset += 100;
-
-            GLCore.glColor(1.0F, 1.0F, 1.0F, 1.0F);
-            GLCore.glTexturedRect(offset, baseY + index * h, zLevel, 70, 15, 5, 13);
-            GLCore.glString(playerName, 18, baseY + 1 + index * h + (13 - fontRenderer.FONT_HEIGHT) / 2, 0xFFFFFFFF);
-
-            index++;
-        }
+        List<EntityPlayer> members = pt == null ? new ArrayList<>(ConfigHandler.debugFakePT) : pt.getMembers();
+        members.removeIf(p -> p == mc.thePlayer);
+        for (int i = 0; i < ConfigHandler.debugFakePT; i++) members.add(mc.thePlayer);
+        getContext().setPt(members);
+        ThemeLoader.HUD.draw(HudPartType.PARTY, getContext());
 
         mc.mcProfiler.endSection();
     }

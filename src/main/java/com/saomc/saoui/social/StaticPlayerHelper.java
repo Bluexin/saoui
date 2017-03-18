@@ -73,7 +73,7 @@ public class StaticPlayerHelper {
         return name;
     }
 
-    public static float getHealth(final Minecraft mc, final Entity entity, final float time) {
+    public static float getHealth(final Minecraft mc, final Entity entity, final float time) { // FIXME: this seems to break if called many times in a single render frame
         if (OptionCore.SMOOTH_HEALTH.isEnabled()) {
             final float healthReal;
             final UUID uuid = entity.getUniqueID();

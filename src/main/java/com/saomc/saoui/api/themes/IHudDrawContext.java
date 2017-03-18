@@ -111,5 +111,17 @@ public interface IHudDrawContext {
 
     int i();
 
+    String ptName(int index);
+
+    float ptHp(int index);
+
+    float ptMaxHp(int index);
+
+    float ptHpPct(int index);
+
+    int ptSize();
+
+    HealthStep ptHealthStep(int index);
+
     Minecraft getMc();
 }
