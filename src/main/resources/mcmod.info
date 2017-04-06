@@ -2,15 +2,16 @@
   {
     "modid": "saoui",
     "name": "Sword Art Online UI",
-    "description": "A Design-Mod for playing SAO in Minecraft.. (continuation by Bluexin)",
+    "description": "A Design-Mod for playing SAO in Minecraft. (Continuation by Bluexin)",
     "version": "${version}",
     "mcversion": "${mcversion}",
+    "url": "https://mods.curse.com/mc-mods/minecraft/240583-sao-ui",
     "updateUrl": "",
     "authorList": [
       "TheJackiMonster",
       "Bluexin"
     ],
-    "credits": "TheJackiMonster for the original mod, Justice~ for new textures",
+    "credits": "TheJackiMonster for the original mod, Justice~ for new textures, Bluexin for continuing the project",
     "logoFile": "assets/saoui/textures/logo.png",
     "screenshots": [],
     "dependencies": []

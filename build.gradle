@@ -1,7 +1,7 @@
 buildscript {
     ext.kotlin_version = '1.0.5'
     repositories {
-        jcenter()
+        mavenCentral()
         maven {
             name = "forge"
             url = "http://files.minecraftforge.net/maven"
@@ -34,9 +34,9 @@ configFile.withReader {
 group = "com.saomc" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "saoui"
 
-sourceCompatibility = targetCompatibility = "1.6" // Need this here so eclipse task generates correctly.
+sourceCompatibility = targetCompatibility = "1.8" // Need this here so eclipse task generates correctly.
 compileJava {
-    sourceCompatibility = targetCompatibility = "1.6"
+    sourceCompatibility = targetCompatibility = "1.8"
 }
 
 version = "${project.config.mod_version}." + (System.getenv("BUILD_NUMBER") ?: "1")
