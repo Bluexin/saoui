@@ -13,7 +13,6 @@ import com.saomc.saoui.social.StaticPlayerHelper;
 import com.saomc.saoui.themes.ThemeLoader;
 import com.saomc.saoui.themes.elements.HudPartType;
 import com.saomc.saoui.themes.util.HudDrawContext;
-import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiOverlayDebug;
@@ -24,7 +23,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.StringUtils;
-import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.client.GuiIngameForge;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
@@ -127,28 +125,27 @@ public class IngameGUI extends GuiIngameForge {
         if (OptionCore.VANILLA_UI.isEnabled()) super.renderAir(width, height);
         else {
             if (replaceEvent(AIR)) return;
-            mc.mcProfiler.startSection("air");
-            EntityPlayer player = (EntityPlayer) this.mc.getRenderViewEntity();
-            GLCore.glBlend(true);
-            int left = width / 2 + 91;
-            int top = height - right_height;
-
-            if (player.isInsideOfMaterial(Material.WATER)) {
-                int air = player.getAir();
-                int full = MathHelper.ceil((double) (air - 2) * 10.0D / 300.0D);
-                int partial = MathHelper.ceil((double) air * 10.0D / 300.0D) - full;
-
-                for (int i = 0; i < full + partial; ++i) {
-                    drawTexturedModalRect(left - i * 8 - 9, top, (i < full ? 16 : 25), 18, 9, 9);
-                }
-                right_height += 10;
-            }
-
-            GLCore.glBlend(false);
-            mc.mcProfiler.endSection();
-            // Linked to renderHealth
             post(AIR);
         }
+    }
+
+    @Override
+    protected void renderAttackIndicator(float p_184045_1_, ScaledResolution p_184045_2_) {
+        if (OptionCore.VANILLA_UI.isEnabled()) super.renderAttackIndicator(p_184045_1_, p_184045_2_);
+        // todo: implement
+    }
+
+    @Override
+    protected void renderPotionEffects(ScaledResolution resolution) {
+        if (OptionCore.VANILLA_UI.isEnabled()) super.renderPotionEffects(resolution);
+        // todo: move effects to here?
+    }
+
+    @Override
+    protected void renderPotionIcons(ScaledResolution resolution) {
+        if (pre(POTION_ICONS)) return;
+        this.renderPotionEffects(resolution);
+        post(POTION_ICONS);
     }
 
     @Override

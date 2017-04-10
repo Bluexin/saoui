@@ -1,7 +1,6 @@
 package com.saomc.saoui.neo.screens
 
 import com.saomc.saoui.SoundCore
-import com.saomc.saoui.themes.ThemeLoader
 import com.saomc.saoui.themes.elements.menus.PlaceholderElement
 import com.saomc.saoui.util.IconCore
 import net.minecraft.client.gui.GuiOptions
@@ -33,7 +32,6 @@ class IngameMenuGUI(override val name: String = "In-game menu GUI") : ScreenGUI(
         super.mouseReleased(cursorX, cursorY, button)
 
         when (button) { // 0 = left click, 1 = right click, 2 = middle click, 3 = back
-            2 -> ThemeLoader.load()
             1 -> this.mc.displayGuiScreen(GuiOptions(this, this.mc.gameSettings))
         }
     }

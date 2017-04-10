@@ -27,12 +27,12 @@ public enum OptionCore implements IOption {
     DEFAULT_INVENTORY(I18n.format("optionDefaultInv"), true, false, UI, false),
     DEFAULT_DEATH_SCREEN(I18n.format("optionDefaultDeath"), false, false, UI, false),
     DEFAULT_DEBUG(I18n.format("optionDefaultDebug"), false, false, UI, false),
-    FORCE_HUD(I18n.format("optionForceHud"), false, false, UI, false),
+    FORCE_HUD(I18n.format("optionForceHud"), true, false, UI, false),
     LOGOUT(I18n.format("optionLogout"), false, false, UI, false),
     GUI_PAUSE(I18n.format("optionGuiPause"), true, false, UI, false),
     // Themes
     @Deprecated // TODO: way to load other xml-defined themes
-    VANILLA_UI(I18n.format("optionDefaultUI"), false, false, THEME, true),
+            VANILLA_UI(I18n.format("optionDefaultUI"), false, false, THEME, true),
     @Deprecated // TODO: way to load other xml-defined themes
             ALO_UI(I18n.format("optionALOUI"), false, false, THEME, true),
     @Deprecated // TODO: way to load other xml-defined themes
@@ -115,6 +115,7 @@ public enum OptionCore implements IOption {
 
     /**
      * This will flip the enabled state of the option and return the new value
+     *
      * @return Returns the newly set value
      */
     @Setter
@@ -182,7 +183,7 @@ public enum OptionCore implements IOption {
 
     /**
      * @return Returns the Option name in String format
-     *
+     * <p>
      * Deprecated:
      * @see OptionCore#toString()
      */

@@ -6,11 +6,16 @@ import com.saomc.saoui.events.EventCore;
 import com.saomc.saoui.themes.ThemeLoader;
 import com.saomc.saoui.util.DefaultStatsProvider;
 import com.saomc.saoui.util.PlayerStats;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
+import javax.xml.bind.JAXBException;
+
+@SuppressWarnings("MethodCallSideOnly")
 @Mod(modid = SAOCore.MODID, name = SAOCore.NAME, version = SAOCore.VERSION, clientSideOnly = true, dependencies = SAOCore.DEPS, acceptableSaveVersions = "*", canBeDeactivated = true)
 public class SAOCore {
     public static final String MODID = "saoui";
@@ -25,10 +30,16 @@ public class SAOCore {
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) throws Exception {
-        ThemeLoader.load();
-
         MinecraftForge.EVENT_BUS.register(new EventCore());
         ConfigHandler.preInit(event);
+
+        ((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(resourceManager -> {
+            try {
+                ThemeLoader.load();
+            } catch (JAXBException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     @Mod.EventHandler

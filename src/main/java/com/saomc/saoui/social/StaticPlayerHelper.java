@@ -92,23 +92,23 @@ public class StaticPlayerHelper {
 
                     if (value <= 0) healthSmooth.remove(uuid);
 
-                    return healthValue * value;
+                    return Math.max(0.0f, healthValue * value);
                 } else if (Math.round(healthValue * 10) != Math.round(healthReal * 10))
                     healthValue = healthValue + (healthReal - healthValue) * (gameTimeDelay(mc, time) * HEALTH_ANIMATION_FACTOR);
                 else healthValue = healthReal;
 
                 healthSmooth.put(uuid, healthValue);
-                return healthValue;
+                return Math.max(0.0f, healthValue);
             } else {
                 healthSmooth.put(uuid, healthReal);
-                return healthReal;
+                return Math.max(0.0f, healthReal);
             }
         } else
-            return (entity instanceof EntityLivingBase ? ((EntityLivingBase) entity).getHealth() : (entity.isDead ? 0F : 1F));
+            return (entity instanceof EntityLivingBase ? Math.max(0.0f, ((EntityLivingBase) entity).getHealth()) : (entity.isDead ? 0F : 1F));
     }
 
     public static float getMaxHealth(final Entity entity) {
-        return entity instanceof EntityLivingBase ? ((EntityLivingBase) entity).getMaxHealth() : 1F;
+        return entity instanceof EntityLivingBase ? Math.max(0.0000001f, ((EntityLivingBase) entity).getMaxHealth()) : 1F;
     }
 
     public static float getHungerFract(final Minecraft mc, final Entity entity, final float time) {

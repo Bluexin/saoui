@@ -17,6 +17,7 @@ import java.io.InputStream;
  *
  * @author Bluexin
  */
+@SuppressWarnings("MethodCallSideOnly")
 public class ThemeLoader {
 
     //TODO: tests
