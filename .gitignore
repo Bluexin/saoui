@@ -12,7 +12,6 @@ gradle-app.setting
 .classpath
 .project
 bin
-*.launch
 
 # intellij
 out
