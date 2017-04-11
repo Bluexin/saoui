@@ -3,7 +3,6 @@ package com.saomc.saoui.themes.elements.menus
 import com.saomc.saoui.GLCore
 import com.saomc.saoui.api.themes.IHudDrawContext
 import com.saomc.saoui.themes.elements.Element
-import com.saomc.saoui.themes.elements.MenuElementParent
 import com.saomc.saoui.themes.elements.RepetitionGroup
 import com.saomc.saoui.util.LogCore
 import net.minecraft.util.ResourceLocation

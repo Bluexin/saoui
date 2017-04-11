@@ -11,6 +11,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
 
+@Deprecated // For the time being
 public class UpdateChecker extends Thread {
 
     private static final String curseURL = "http://minecraft.curseforge.com/projects/sao-ui/files";

@@ -64,7 +64,9 @@ public enum OptionCore implements IOption {
     COMPACT_INVENTORY(I18n.format("optionCompatInv"), false, false, MISC, false),
     TEXT_SHADOW(I18n.format("optionTextShadow"), true, false, MISC, false),
     //Debug
-    DISABLE_TICKS(I18n.format("optionDisableTicks"), false, false, MISC, false);
+    DISABLE_TICKS(I18n.format("optionDisableTicks"), false, false, MISC, false),
+    BUGGY_MENU(I18n.format("optionEnableMenus"), false, false, MISC, false),
+    NOTICE(I18n.format("optionNotice"), true, false, MISC, false);
 
     private final String name;
     private final boolean isCategory;

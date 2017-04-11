@@ -25,7 +25,7 @@ public enum ColorState {
      * Red.
      * Used for mobs targeting you, and criminal players by default.
      */
-    KILLER(0xBD0000FF),
+    KILLER(0xB91111FF),
 
     /**
      * Red.

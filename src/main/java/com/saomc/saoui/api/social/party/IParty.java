@@ -1,6 +1,8 @@
 package com.saomc.saoui.api.social.party;
 
 import com.saomc.saoui.api.events.EventInitParty;
+import kotlin.Deprecated;
+import kotlin.ReplaceWith;
 import net.minecraft.entity.player.EntityPlayer;
 
 import java.util.List;
@@ -15,6 +17,7 @@ import java.util.List;
  *
  * @author Bluexin
  */
+@Deprecated(message = "Deprecated in favor of saomclib implementation", replaceWith = @ReplaceWith(expression = "IParty", imports = "be.bluexin.saomclib.party.IParty"))
 public interface IParty {
 
     /**

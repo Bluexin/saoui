@@ -7,7 +7,6 @@ import com.saomc.saoui.renders.StaticRenderer;
 import com.saomc.saoui.screens.death.DeathScreen;
 import com.saomc.saoui.screens.ingame.IngameGUI;
 import com.saomc.saoui.screens.menu.StartupGUI;
-import net.minecraft.client.gui.GuiGameOver;
 import net.minecraft.client.gui.GuiIngameMenu;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.GuiOptions;
@@ -54,6 +53,7 @@ class RenderHandler {
     }
 
     static void guiInstance(GuiOpenEvent e) {
+        if (!OptionCore.BUGGY_MENU.isEnabled()) return;
         if (OptionCore.DEBUG_MODE.isEnabled()) System.out.print(e.getGui() + " called GuiOpenEvent \n");
 
         if (e.getGui() instanceof GuiIngameMenu) {
@@ -68,11 +68,11 @@ class RenderHandler {
                 e.setGui(new IngameMenuGUI(/*(GuiInventory) EventCore.mc.currentScreen*/));
             else e.setCanceled(true);
         }
-        if (e.getGui() instanceof GuiGameOver && (!OptionCore.DEFAULT_DEATH_SCREEN.isEnabled())) {
+        /*if (e.getGui() instanceof GuiGameOver && (!OptionCore.DEFAULT_DEATH_SCREEN.isEnabled())) {
             if (!(e.getGui() instanceof DeathScreen)) {
                 e.setGui(new DeathScreen());
             }
-        }
+        }*/
         if (e.getGui() instanceof IngameMenuGUI)
             if (EventCore.mc.currentScreen instanceof GuiOptions) {
                 e.setCanceled(true);
@@ -111,8 +111,7 @@ class RenderHandler {
                 if (StartupGUI.shouldShow()) {
                     e.setGui(new StartupGUI());
                     menuGUI = false;
-                } //else if (e.getGui() instanceof GuiMainMenu)
-        //e.setGui(new MainMenuGUI());
+                } //else e.setGui(new MainMenuGUI());
     }
 
 }

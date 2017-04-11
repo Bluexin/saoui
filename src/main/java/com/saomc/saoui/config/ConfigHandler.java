@@ -16,9 +16,11 @@ public class ConfigHandler {
     public static String _LAST_UPDATE;
     public static boolean _IGNORE_UPATE;
     public static boolean DEBUG = false;
+    public static int debugFakePT;
     private static Configuration config;
     private static File saoConfDir;
 
+    @SuppressWarnings("MethodCallSideOnly")
     public static void preInit(FMLPreInitializationEvent event) {
         config = new Configuration(new File(saoConfDir = confDir(event.getModConfigurationDirectory()), "main.cfg"));
         config.load();
@@ -28,10 +30,13 @@ public class ConfigHandler {
         _LAST_UPDATE = config.get(Configuration.CATEGORY_GENERAL, "lastUpdate", "nothing").getString();
         _IGNORE_UPATE = config.get(Configuration.CATEGORY_GENERAL, "ignoreUpdate", false).getBoolean();
 
-        Stream.of(OptionCore.values()).filter(OptionCore::isCategory).forEach(c -> Stream.of(OptionCore.values()).filter(o -> o.getCategory() == c).forEach(o -> {
-            if (config.get(c.name().toLowerCase(), o.name().toLowerCase(), o.isEnabled()).getBoolean()) o.enable();
-            else o.disable();
-        }));
+        Stream.of(OptionCore.values()).filter(OptionCore::isCategory)
+                .forEach(c -> Stream.of(OptionCore.values()).filter(o -> o.getCategory() == c)
+                        .forEach(o -> {
+                            if (config.get(c.name().toLowerCase(), o.name().toLowerCase(), o.isEnabled()).getBoolean())
+                                o.enable();
+                            else o.disable();
+                        }));
 
         Stream.of(OptionCore.values()).filter(o -> !o.isCategory() && o.getCategory() == null).forEach(o -> {
             if (config.get(Configuration.CATEGORY_GENERAL, o.name().toLowerCase(), o.isEnabled()).getBoolean())
@@ -39,9 +44,12 @@ public class ConfigHandler {
             else o.disable();
         });
 
+        debugFakePT = config.getInt("debugFakePT", Configuration.CATEGORY_GENERAL, 0, 0, 10, "Amount of fake party members, 0 to disable.");
+
         config.save();
     }
 
+    @SuppressWarnings("MethodCallSideOnly")
     public static void setOption(OptionCore option) {
         config.get(Configuration.CATEGORY_GENERAL, "option." + option.name().toLowerCase(), option.isEnabled()).set(option.isEnabled());
         saveAllOptions();

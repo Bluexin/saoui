@@ -1,8 +1,7 @@
 package com.saomc.saoui.screens.menu;
 
 import com.saomc.saoui.SAOCore;
-import com.saomc.saoui.config.ConfigHandler;
-import com.saomc.saoui.util.UpdateChecker;
+import com.saomc.saoui.config.OptionCore;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
@@ -15,11 +14,11 @@ import java.util.List;
 public class StartupGUI extends GuiScreen {
 
     private static boolean isDev() {
-        return SAOCore.VERSION.contains("Dev");
+        return SAOCore.VERSION.toLowerCase().contains("dev") && OptionCore.NOTICE.isEnabled();
     }
 
     private static boolean hasUpdate() {
-        return UpdateChecker.hasUpdate();
+        return false; //UpdateChecker.hasUpdate();
     }
 
     public static boolean shouldShow() {
@@ -80,8 +79,8 @@ public class StartupGUI extends GuiScreen {
 
         if (isDev())
             handleGuiText(getDevText(), fontRendererObj, this, this.width, this.height);
-        else if (hasUpdate())
-            handleGuiText(UpdateChecker.fetchChangeLog(), fontRendererObj, this, this.width, this.height);
+//        else if (hasUpdate())
+//            handleGuiText(UpdateChecker.fetchChangeLog(), fontRendererObj, this, this.width, this.height);
 
         super.drawScreen(par1, par2, par3);
     }
@@ -96,7 +95,7 @@ public class StartupGUI extends GuiScreen {
                     break;
                 }
             }
-        else if (UpdateChecker.hasUpdate())
+        /*else if (UpdateChecker.hasUpdate())
             switch (button.id) {
                 case 0: {
                     buttonList.forEach(b -> b.enabled = false);
@@ -109,7 +108,7 @@ public class StartupGUI extends GuiScreen {
                     this.mc.displayGuiScreen(null);
                     break;
                 }
-            }
+            }*/
     }
 
     @Override

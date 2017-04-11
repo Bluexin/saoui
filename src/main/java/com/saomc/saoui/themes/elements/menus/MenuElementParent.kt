@@ -1,4 +1,4 @@
-package com.saomc.saoui.themes.elements
+package com.saomc.saoui.themes.elements.menus
 
 /**
  * Part of saoui by Bluexin.
