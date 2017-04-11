@@ -1,11 +1,14 @@
 package be.bluexin.saouintw;
 
-import be.bluexin.saouintw.packets.PacketPipeline;
-import be.bluexin.saouintw.proxy.CommonProxy;
+import java.util.Map;
+
 import com.saomc.saoui.SAOCore;
 import com.saomc.saoui.api.entity.rendering.RenderCapability;
 import com.saomc.saoui.communication.Communicator;
 import com.saomc.saoui.util.LogCore;
+
+import be.bluexin.saouintw.packets.PacketPipeline;
+import be.bluexin.saouintw.proxy.CommonProxy;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -13,8 +16,6 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkCheckHandler;
 import net.minecraftforge.fml.relauncher.Side;
-
-import java.util.Map;
 
 /**
  * Part of saouintw, the networking mod for the SAO UI

@@ -17,27 +17,36 @@ buildscript {
     }
 }
 
-apply plugin: "maven"
-apply plugin: 'kotlin'
 apply plugin: 'net.minecraftforge.gradle.forge'
+apply plugin: 'kotlin'
+apply plugin: 'maven'
 
-version = "1.10.2-1.6.1-SNAPSHOT"
+// Define properties file
+ext.configFile = file "build.properties"
+
+configFile.withReader {
+    // Load config.  It shall from now be referenced as simply config or project.config
+    def prop = new Properties()
+    prop.load(it)
+    project.ext.config = new ConfigSlurper().parse prop
+}
+
 group = "com.saomc" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "saoui"
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
-
-minecraft {
-    version = "1.10.2-12.18.3.2185"
-    runDir = "run"
-    mappings = "stable_29"
+sourceCompatibility = targetCompatibility = "1.8" // Need this here so eclipse task generates correctly.
+compileJava {
+    sourceCompatibility = targetCompatibility = "1.8"
 }
 
-reobf{
-    jar{
-        extraLines "PK: gnu/jel saoui/shade/gnu/jel"
-    }
+version = "${project.config.mod_version}." + (System.getenv("BUILD_NUMBER") ?: "1")
+
+minecraft {
+    version = config.mc_version + "-" + config.forge_version
+    mappings = config.mappings
+    runDir = "run"
+    replace '${mod_version}', project.config.mod_version
+    makeObfSourceJar = false
 }
 
 configurations {
@@ -48,29 +57,81 @@ configurations {
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     shade files('lib/jel-2_1_1/lib/jel.jar')
+
 }
 
-processResources
-        {
-            // this will ensure that this task is redone when the versions change.
-            inputs.property "version", project.version
-            inputs.property "mcversion", project.minecraft.version
+processResources {
+    // this will ensure that this task is redone when the versions change.
+    inputs.property "version", project.version
+    inputs.property "mcversion", project.minecraft.version
 
-            // replace stuff in mcmod.info, nothing else
-            from(sourceSets.main.resources.srcDirs) {
-                include 'mcmod.info'
+    // replace stuff in mcmod.info, nothing else
+    from(sourceSets.main.resources.srcDirs) {
+        include 'mcmod.info'
+                
+        // replace version and mcversion
+        expand 'version':project.version, 'mcversion':project.minecraft.version
+    }
+        
+    // copy everything else except the mcmod.info
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'mcmod.info'
+    }
+}
 
-                // replace version and mcversion
-                expand 'version': project.version, 'mcversion': project.minecraft.version
-            }
+reobf {
+    jar {
+        extraLines "PK: gnu/jel saoui/shade/gnu/jel"
+    }
+}
 
-            // copy everything else, thats not the mcmod.info
-            from(sourceSets.main.resources.srcDirs) {
-                exclude 'mcmod.info'
-            }
+jar {
+    for (dep in configurations.shade) {
+        from(project.zipTree(dep)) {
+            exclude 'META-INF', 'META-INF/**'
         }
+    }
+    classifier = 'universal'
+}
+
+task deobfJar(type: Jar) {
+    from sourceSets.main.output
+    classifier = 'deobf'
+}
+
+task srcJar(type: Jar) {
+    from sourceSets.main.allSource
+    classifier = 'sources'
+}
+
+task signJar(type: SignJar, dependsOn: reobfJar) {
+    onlyIf { // Skip the task if our secret data isn't available
+        project.hasProperty('keyStore')
+    }
+
+    if (project.hasProperty('keyStore')) {
+        keyStore = project.keyStore // This needs to be a path to the keystore file
+        alias = project.keyStoreAlias
+        storePass = project.keyStorePass
+        keyPass = project.keyStoreKeyPass
+        inputFile = jar.archivePath
+        outputFile = jar.archivePath
+    }
+}
+
+build.dependsOn signJar
+
+// Tell the artifact system about our extra jars
+artifacts {
+    archives deobfJar
+    archives srcJar
+}
 
 idea { module { inheritOutputDirs = true } }
+
+repositories {
+    mavenCentral()
+}
 
 uploadArchives {
 //    if (System.hasProperty('REPO_PWD')) {
@@ -83,25 +144,3 @@ uploadArchives {
 //    } else println("No password set up!")
     
 }
-
-task sourceJar(type: Jar, dependsOn: "sourceMainJava", overwrite: true) {
-    from "build/sources/main/java"
-    from "build/resources/main"
-    classifier = 'sources'
-}
-
-artifacts {
-    archives sourceJar
-}
-repositories {
-    mavenCentral()
-}
-
-jar {
-    for (dep in configurations.shade) {
-        from(project.zipTree(dep)) {
-            exclude 'META-INF', 'META-INF/**'
-        }
-    }
-}
-
