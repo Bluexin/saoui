@@ -56,7 +56,7 @@ configurations {
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    compile("be.bluexin:saomc-lib:1.10.2-1.0.5b:deobf")
+    compile "be.bluexin:saomc-lib:1.10.2-1.0.5b:deobf"
     shade files('lib/jel-2_1_1/lib/jel_g_homebaked.jar')
 }
 
@@ -82,7 +82,7 @@ processResources {
 idea { module { inheritOutputDirs = true } }
 
 uploadArchives {
-    if (System.hasProperty('REPO_PWD') != null) {
+    if (System.getenv('REPO_PWD') != null) {
         repositories.mavenDeployer {
             repository(url: "http://maven.bluexin.be/repository/" + (((String) project.version).contains("SNAPSHOT")? "snapshots": "releases") + "/") {
                 authentication(userName: "CI", password: System.getenv('REPO_PWD'))
