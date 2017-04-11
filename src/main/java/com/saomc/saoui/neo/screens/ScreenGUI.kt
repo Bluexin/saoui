@@ -64,8 +64,8 @@ abstract class ScreenGUI : GuiScreen(), MenuElementParent {
     }
 
     override fun updateScreen() {
-        mc.player?.rotationYaw = rotationYaw - getX() * ROTATION_FACTOR
-        mc.player?.rotationPitch = rotationPitch - getY() * ROTATION_FACTOR
+        mc.player?.rotationYaw = rotationYaw// - parentX * ROTATION_FACTOR
+        mc.player?.rotationPitch = rotationPitch// - parentY * ROTATION_FACTOR
     }
 
     override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
@@ -152,7 +152,7 @@ abstract class ScreenGUI : GuiScreen(), MenuElementParent {
         }
     }
 
-    override fun doesGuiPauseGame() = OptionCore.GUI_PAUSE.isEnabled
+    override fun doesGuiPauseGame() = false//OptionCore.GUI_PAUSE.isEnabled
 
     override fun onGuiClosed() {
         showCursor()
@@ -166,13 +166,13 @@ abstract class ScreenGUI : GuiScreen(), MenuElementParent {
         if (cursorHidden) toggleHideCursor()
     }
 
-    override fun getX() =
-            if (OptionCore.CURSOR_TOGGLE.isEnabled) if (lockCursor) 0 else (width / 2 - mouseX) / 2
-            else if (GuiScreen.isCtrlKeyDown()) 0 else (width / 2 - mouseX) / 2
+    override val parentX: Int
+        get() = if (OptionCore.CURSOR_TOGGLE.isEnabled) if (lockCursor) 0 else -mouseX / 2
+        else if (GuiScreen.isCtrlKeyDown()) 0 else -mouseX / 2
 
-    override fun getY() =
-            if (OptionCore.CURSOR_TOGGLE.isEnabled) if (lockCursor) 0 else (height / 2 - mouseY) / 2
-            else if (GuiScreen.isCtrlKeyDown()) 0 else (height / 2 - mouseY) / 2
+    override val parentY: Int
+        get() = if (OptionCore.CURSOR_TOGGLE.isEnabled) if (lockCursor) 0 else -mouseY / 2
+        else if (GuiScreen.isCtrlKeyDown()) 0 else -mouseY / 2
 
-    override fun getZ() = 0
+    override val parentZ = 0
 }

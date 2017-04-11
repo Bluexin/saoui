@@ -19,4 +19,8 @@ public interface IIcon {
      */
     void glDraw(int x, int y);
 
+    default void glDrawUnsafe(int x, int y) {
+        this.glDraw(x, y);
+    }
+
 }

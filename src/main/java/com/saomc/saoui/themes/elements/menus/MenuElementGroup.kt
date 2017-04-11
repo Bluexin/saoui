@@ -36,17 +36,20 @@ open class MenuElementGroup : MenuElement(), MenuElementParent {
     }
 
 
-    override fun getX(): Int {
+    override val parentX: Int
+        get() {
 //        updateCache(ctx)
         return cachedX
     }
 
-    override fun getY(): Int {
+    override val parentY: Int
+        get() {
 //        updateCache(ctx)
-        return cachedY
-    }
+            return cachedY
+        }
 
-    override fun getZ(): Int {
+    override val parentZ: Int
+        get() {
 //        updateCache(ctx)
         return cachedZ
     }
@@ -67,9 +70,9 @@ open class MenuElementGroup : MenuElement(), MenuElementParent {
 
     private fun updateCache(ctx: IHudDrawContext) {
         if (checkUpdate(ctx)) {
-            cachedX = (parent.get()?.getX() ?: 0) + (this.x?.invoke(ctx) ?: 0)
-            cachedY = (parent.get()?.getY() ?: 0) + (this.y?.invoke(ctx) ?: 0)
-            cachedZ = (parent.get()?.getZ() ?: 0) + (this.z?.invoke(ctx) ?: 0)
+            cachedX = (parent.get()?.parentX ?: 0) + (this.x?.invoke(ctx) ?: 0)
+            cachedY = (parent.get()?.parentY ?: 0) + (this.y?.invoke(ctx) ?: 0)
+            cachedZ = (parent.get()?.parentZ ?: 0) + (this.z?.invoke(ctx) ?: 0)
         }
     }
 }

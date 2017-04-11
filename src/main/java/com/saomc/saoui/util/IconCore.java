@@ -54,11 +54,17 @@ public enum IconCore implements IIcon {
     @Override
     public final void glDraw(int x, int y) {
         if (index() >= 0) {
+            GLCore.glColor(1f, 1f, 1f, 1f);
             GLCore.glBlend(true);
             GLCore.glBindTexture(OptionCore.SAO_UI.isEnabled() ? StringNames.icons : StringNames.iconsCustom);
             GLCore.glTexturedRect(x, y, getSrcX(), getSrcY(), SRC_SIZE, SRC_SIZE);
             GLCore.glBlend(false);
         }
+    }
+
+    @Override
+    public void glDrawUnsafe(int x, int y) {
+        GLCore.glTexturedRect(x, y, getSrcX(), getSrcY(), SRC_SIZE, SRC_SIZE);
     }
 
 }

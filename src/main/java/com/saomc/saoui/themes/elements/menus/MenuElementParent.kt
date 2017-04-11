@@ -6,11 +6,11 @@ package com.saomc.saoui.themes.elements.menus
  * @author Bluexin
  */
 interface MenuElementParent {
-    fun getX(): Int
+    val parentX: Int
 
-    fun getY(): Int
+    val parentY: Int
 
-    fun getZ(): Int
+    val parentZ: Int
 
     val name: String
 }

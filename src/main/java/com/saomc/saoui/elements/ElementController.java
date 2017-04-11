@@ -5,10 +5,10 @@ import com.saomc.saoui.api.events.ElementAction;
 import com.saomc.saoui.api.screens.Actions;
 import com.saomc.saoui.api.screens.ElementType;
 import com.saomc.saoui.api.screens.ParentElement;
+import com.saomc.saoui.config.OptionCore;
 import com.saomc.saoui.resources.StringNames;
 import com.saomc.saoui.util.ColorUtil;
 import com.saomc.saoui.util.LogCore;
-import com.saomc.saoui.config.OptionCore;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.RenderItem;
@@ -27,19 +27,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
  * Created by Tencao on 23/08/2016.
  */
+@SuppressWarnings("ALL")
 public class ElementController {
     private static final ResourceLocation RES_ITEM_GLINT = new ResourceLocation("textures/misc/enchanted_item_glint.png");
+    //private boolean dragging;
+    public final List<Element> elements;
+    public ColorUtil bgColor, disabledMask;
+    public List<Element> items;
     private float scrolledValue;
     private int scrollValue;
     private ParentElement parent;
-    public ColorUtil bgColor, disabledMask;
     private int lastDragY, dragY;
-    //private boolean dragging;
-    public final List<Element> elements;
-    public List<Element> items;
     private Element parentElement;
     private boolean isVisible;
     private boolean isFocus;
@@ -56,7 +56,7 @@ public class ElementController {
     private ItemColors itemColors = Minecraft.getMinecraft().getItemColors();
     private RenderItem itemRender = new RenderItem(textureManager, modelManager, itemColors);
 
-    public ElementController(ParentElement gui){
+    public ElementController(ParentElement gui) {
         this.scrollValue = 0;
         this.parent = gui;
         this.elements = new ArrayList<>();
@@ -66,7 +66,18 @@ public class ElementController {
         disabledMask = ColorUtil.DISABLED_MASK;
     }
 
-    public void update (Minecraft mc){
+    /**
+     * This fires the action event for the element
+     *
+     * @param element The element sending the event
+     * @param action  The action that triggered the event
+     * @param data    Button ID
+     */
+    public static void actionPerformed(Element element, Actions action, int data) {
+        MinecraftForge.EVENT_BUS.post(new ElementAction(element.getCaption(), element.getCategory(), element.getParent(), action, data, element.getGui(), element.isOpen(), !element.isFocus(), element.getElementType(), element.getParentElement()));
+    }
+
+    public void update(Minecraft mc) {
         //This part is the initial setting up of the list.
         if (parentElement == null && !elements.isEmpty() && elements.get(0).getParent() != null && !elements.get(0).getParent().equals("none"))
             parentElement = ElementBuilder.getInstance().getElementParent(elements.get(0).getParent(), elements.get(0).getGui());
@@ -149,7 +160,7 @@ public class ElementController {
                 element.setY(getY(true) + 24 * elements.indexOf(element));
             }
         //This part will auto disable all elements if it's parent is disabled (Not open)
-        if (!element.isEnabled()){
+        if (!element.isEnabled()) {
             element.setOpen(false);
             element.setHighlight(false);
         }
@@ -222,7 +233,7 @@ public class ElementController {
             if (elements.get(i).isEnabled()) {
                 if (elements.get(i).getElementType() == ElementType.MENU)
                     drawMenu(mc, cursorX, cursorY, elements.get(i));
-                 else if (elements.get(i).getElementType() == ElementType.SLOT || elements.get(i).getElementType() == ElementType.OPTION)
+                else if (elements.get(i).getElementType() == ElementType.SLOT || elements.get(i).getElementType() == ElementType.OPTION)
                     drawSlot(mc, cursorX, cursorY, elements.get(i));
             }
         if (elements.get(0).isEnabled() && !items.isEmpty())
@@ -338,16 +349,18 @@ public class ElementController {
             GLCore.glBindTexture(StringNames.slot);
             if (hoverState == 2) {
                 GLCore.glColor(1.0F, 1.0F, 1.0F);
-                GLCore.glTexturedRect(left, top, element.getWidth(), element.getHeight(), 0, 21, 100 - 16, 20 -2);
+                GLCore.glTexturedRect(left, top, element.getWidth(), element.getHeight(), 0, 21, 100 - 16, 20 - 2);
                 if (element.getCategory().equals("logout") && element.getParent().equals("settings"))
                     renderHighlightText(OptionCore.LOGOUT.isEnabled() ? element.getCaption() : " ", left + iconOffset * 2 + 16 + 4, top + captionOffset, ColorUtil.multiplyAlpha(color1, element.getVisibility()));
-                else renderHighlightText(element.getCaption(), left + iconOffset * 2 + 16 + 4, top + captionOffset, ColorUtil.multiplyAlpha(color1, element.getVisibility()));
+                else
+                    renderHighlightText(element.getCaption(), left + iconOffset * 2 + 16 + 4, top + captionOffset, ColorUtil.multiplyAlpha(color1, element.getVisibility()));
             } else {
                 GLCore.glColorRGBA(ColorUtil.multiplyAlpha(color0, element.getVisibility()));
                 GLCore.glTexturedRect(left, top, element.getWidth(), element.getHeight(), 0, 1, 100 - 16, 20 - 2);
                 if (element.getCategory().equals("logout") && element.getParent().equals("settings"))
-                    GLCore.glString(OptionCore.LOGOUT.isEnabled() ? element.getCaption() : " ", left + iconOffset * 2 + 16 + 4, top + captionOffset, ColorUtil.multiplyAlpha(color0, element.getVisibility()),  OptionCore.TEXT_SHADOW.isEnabled());
-                else GLCore.glString(element.getCaption().length() < 50 ? element.getCaption() : element.getCaption().substring(0, 50), left + iconOffset * 2 + 16 + 4, top + captionOffset, ColorUtil.multiplyAlpha(color0, element.getVisibility()),  OptionCore.TEXT_SHADOW.isEnabled());
+                    GLCore.glString(OptionCore.LOGOUT.isEnabled() ? element.getCaption() : " ", left + iconOffset * 2 + 16 + 4, top + captionOffset, ColorUtil.multiplyAlpha(color0, element.getVisibility()), OptionCore.TEXT_SHADOW.isEnabled());
+                else
+                    GLCore.glString(element.getCaption().length() < 50 ? element.getCaption() : element.getCaption().substring(0, 50), left + iconOffset * 2 + 16 + 4, top + captionOffset, ColorUtil.multiplyAlpha(color0, element.getVisibility()), OptionCore.TEXT_SHADOW.isEnabled());
             }
             GLCore.glBindTexture(OptionCore.SAO_UI.isEnabled() ? StringNames.gui : StringNames.guiCustom);
 
@@ -363,10 +376,10 @@ public class ElementController {
         }
     }
 
-    private void drawItem(Minecraft mc, int cursorX, int cursorY, Element element){
+    private void drawItem(Minecraft mc, int cursorX, int cursorY, Element element) {
         if (element.mouseOver(cursorX, cursorY, -1)) mouseMoved(mc, cursorX, cursorY);
 
-        if (element.getVisibility() > 0){
+        if (element.getVisibility() > 0) {
             final int hoverState = element.hoverState(cursorX, cursorY);
             final int color0 = getColor(hoverState, true);
             final int color1 = getColor(hoverState, false);
@@ -412,7 +425,7 @@ public class ElementController {
 
     }
 
-    private void renderEffectSlot(Minecraft mc, int x, int y, Element element){
+    private void renderEffectSlot(Minecraft mc, int x, int y, Element element) {
         GLCore.glDepthFunc(GL11.GL_EQUAL);
         GLCore.depthMask(false);
         mc.getTextureManager().bindTexture(RES_ITEM_GLINT);
@@ -425,26 +438,24 @@ public class ElementController {
         GLCore.glDepthFunc(GL11.GL_LEQUAL);
     }
 
-    private void renderGlintSlot(int x, int y, int width, int height){
-        for (int j1 = 0; j1 < 2; ++j1)
-        {
+    private void renderGlintSlot(int x, int y, int width, int height) {
+        for (int j1 = 0; j1 < 2; ++j1) {
             GLCore.tryBlendFuncSeparate(772, 1, 0, 0);
             float f = 0.00390625F;
             float f1 = 0.00390625F;
-            float f2 = (float)(Minecraft.getSystemTime() % (long)(3000 + j1 * 1873)) / (3000.0F + (float)(j1 * 1873)) * 256.0F;
+            float f2 = (float) (Minecraft.getSystemTime() % (long) (3000 + j1 * 1873)) / (3000.0F + (float) (j1 * 1873)) * 256.0F;
             float f3 = 0.0F;
             float f4 = 4.0F;
 
-            if (j1 == 1)
-            {
+            if (j1 == 1) {
                 f4 = -1.0F;
             }
 
             GLCore.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
-            GLCore.addVertex((double)(x), (double)(y + height), (double)itemRender.zLevel, (double)((f2 + (float)height * f4) * f), (double)((f3 + (float)height) * f1));
-            GLCore.addVertex((double)(x + width), (double)(y + height), (double)itemRender.zLevel, (double)((f2 + (float)width + (float)height * f4) * f), (double)((f3 + (float)height) * f1));
-            GLCore.addVertex((double)(x + width), (double)(y), (double)itemRender.zLevel, (double)((f2 + (float)width) * f), (double)((f3 + 0.0F) * f1));
-            GLCore.addVertex((double)(x), (double)(y), (double)itemRender.zLevel, (double)((f2 + 0.0F) * f), (double)((f3 + 0.0F) * f1));
+            GLCore.addVertex((double) (x), (double) (y + height), (double) itemRender.zLevel, (double) ((f2 + (float) height * f4) * f), (double) ((f3 + (float) height) * f1));
+            GLCore.addVertex((double) (x + width), (double) (y + height), (double) itemRender.zLevel, (double) ((f2 + (float) width + (float) height * f4) * f), (double) ((f3 + (float) height) * f1));
+            GLCore.addVertex((double) (x + width), (double) (y), (double) itemRender.zLevel, (double) ((f2 + (float) width) * f), (double) ((f3 + 0.0F) * f1));
+            GLCore.addVertex((double) (x), (double) (y), (double) itemRender.zLevel, (double) ((f2 + 0.0F) * f), (double) ((f3 + 0.0F) * f1));
             GLCore.draw();
         }
     }
@@ -457,12 +468,12 @@ public class ElementController {
      * changed in order to properly reset the scrolling
      *
      * @param string Display name
-     * @param x X coord to render
-     * @param y Y coord to render
-     * @param argb Color code
+     * @param x      X coord to render
+     * @param y      Y coord to render
+     * @param argb   Color code
      */
-    private void renderHighlightText(String string, int x, int y, int argb){
-        if (lastScrollElementCache != null && !lastScrollElementCache.equals(string)){
+    private void renderHighlightText(String string, int x, int y, int argb) {
+        if (lastScrollElementCache != null && !lastScrollElementCache.equals(string)) {
             lastScrollElementCache = string;
             scrollTextX = 0;
         }
@@ -483,6 +494,7 @@ public class ElementController {
 
     /**
      * Gets the element lists specific to this ElementController
+     *
      * @return Returns the group of elements
      */
     public List<Element> getElements() {
@@ -491,6 +503,7 @@ public class ElementController {
 
     /**
      * Get a specific element within the list
+     *
      * @param index The index position in the list to pull from
      * @return Returns the element
      */
@@ -498,7 +511,7 @@ public class ElementController {
         return elements.get(index);
     }
 
-    protected int getElementOffset(int index){
+    protected int getElementOffset(int index) {
         return elements.stream().limit(index).mapToInt(e -> ElementOffset(e, true)).sum();
     }
 
@@ -506,12 +519,12 @@ public class ElementController {
         return elements.stream().skip(index).mapToInt(e -> ElementOffset(e, false)).sum();
     }
 
-    int ElementOffset(Element element, boolean normal){
+    int ElementOffset(Element element, boolean normal) {
         int height = element.getHeight();
         return normal ? height + 1 : height - 1;
     }
 
-    protected int getItemOffset(int index){
+    protected int getItemOffset(int index) {
         return items.stream().limit(index).mapToInt(e -> ElementOffset(e, true)).sum();
     }
 
@@ -530,7 +543,8 @@ public class ElementController {
             if (getElementOffset(0) - scrolledValue > -getElementOffset(2)) { // elements can be added above
                 if (a >= getElementOffset(8)) {
                     a = Math.round(getElementOffset(0) - getReverseElementOffset(index) - scrolledValue);
-                    if (a > getElementOffset(8) - scrolledValue) a = Math.round(getElementOffset(0) - getReverseElementOffset(index) - getElementOffset(elements.size()) - scrolledValue);
+                    if (a > getElementOffset(8) - scrolledValue)
+                        a = Math.round(getElementOffset(0) - getReverseElementOffset(index) - getElementOffset(elements.size()) - scrolledValue);
                 }
             } else if (getElementOffset(elements.size()) - scrolledValue < getElementOffset(6) && index < elements.size() - 8) { // elements can be added below
                 a = Math.round(getElementOffset(elements.size()) + getElementOffset(index) - scrolledValue);
@@ -547,7 +561,8 @@ public class ElementController {
             if (getItemOffset(0) - scrolledValue > -getItemOffset(2)) { // elements can be added above
                 if (a >= getItemOffset(8)) {
                     a = Math.round(getItemOffset(0) - getReverseItemOffset(index) - scrolledValue);
-                    if (a > getItemOffset(8) - scrolledValue) a = Math.round(getItemOffset(0) - getReverseItemOffset(index) - getItemOffset(items.size()) - scrolledValue);
+                    if (a > getItemOffset(8) - scrolledValue)
+                        a = Math.round(getItemOffset(0) - getReverseItemOffset(index) - getItemOffset(items.size()) - scrolledValue);
                 }
             } else if (getItemOffset(items.size()) - scrolledValue < getItemOffset(6) && index < items.size() - 8) { // elements can be added below
                 a = Math.round(getItemOffset(items.size()) + getItemOffset(index) - scrolledValue);
@@ -558,14 +573,13 @@ public class ElementController {
     }
 
     public boolean keyTyped(Minecraft mc, char ch, int key) {
-        if (!elements.isEmpty() && isFocus){
+        if (!elements.isEmpty() && isFocus) {
             keyAction(mc, ch, key);
             return true;
-        }
-        else return false;
+        } else return false;
     }
 
-    private void keyAction(Minecraft mc, char ch, int key){
+    private void keyAction(Minecraft mc, char ch, int key) {
         //This is an easy way to check if any element is already highlighted or not, saves repeated searching
         //TODO - Add scrolling to key pressed
         boolean listHighlight = elements.stream().anyMatch(Element::isHighlight);
@@ -579,8 +593,7 @@ public class ElementController {
                         if (elements.size() - 1 >= i + 1) {
                             elements.get(i + 1).setHighlight(true);
                             if (elements.get(i + 1).getVisibility() < 1.0F) scroll(-20);
-                        }
-                        else {
+                        } else {
                             elements.get(0).setHighlight(true);
                             if (elements.get(0).getVisibility() < 1.0F) scroll(-20);
                         }
@@ -600,8 +613,7 @@ public class ElementController {
                         if (i == 0) {
                             elements.get(elements.size() - 1).setHighlight(true);
                             if (elements.get(elements.size() - 1).getVisibility() < 1.0F) scroll(20);
-                        }
-                        else {
+                        } else {
                             elements.get(i - 1).setHighlight(true);
                             if (elements.get(i - 1).getVisibility() < 1.0F) scroll(20);
                         }
@@ -633,7 +645,7 @@ public class ElementController {
     /**
      * This is used to add list dragging
      *
-     * @param mc The minecraft instance
+     * @param mc      The minecraft instance
      * @param cursorX The mouse cursors X position
      * @param cursorY The mouse cursors Y position
      */
@@ -648,10 +660,10 @@ public class ElementController {
      * This checks the mouse clicked action
      * Used to control element clicking
      *
-     * @param mc The minecraft instance
+     * @param mc      The minecraft instance
      * @param cursorX The mouse cursors X position
      * @param cursorY The mouse cursors Y position
-     * @param button The button ID
+     * @param button  The button ID
      * @return Return true if the mouse pressed action was fired
      */
     public boolean mousePressed(Minecraft mc, int cursorX, int cursorY, int button) {
@@ -683,10 +695,10 @@ public class ElementController {
      * This checks the mouse released action
      * Used to control element clicking
      *
-     * @param mc The minecraft instance
+     * @param mc      The minecraft instance
      * @param cursorX The mouse cursors X position
      * @param cursorY The mouse cursors Y position
-     * @param button The button ID
+     * @param button  The button ID
      * @return Return true if the mouse released action was fired
      */
     public boolean mouseReleased(Minecraft mc, int cursorX, int cursorY, int button) {
@@ -711,10 +723,10 @@ public class ElementController {
      * This checks the element specific
      * part of the mouse released check
      *
-     * @param mc The minecraft instance
+     * @param mc      The minecraft instance
      * @param cursorX The mouse cursors X position
      * @param cursorY The mouse cursors Y position
-     * @param button The button ID
+     * @param button  The button ID
      * @return Return true if the mouse released action was fired
      */
     private boolean mouseElementReleased(Minecraft mc, int cursorX, int cursorY, int button) {
@@ -736,10 +748,10 @@ public class ElementController {
      * This is the mouse wheel action for the list
      * Used to add or control scrolling
      *
-     * @param mc The minecraft instance
+     * @param mc      The minecraft instance
      * @param cursorX The mouse cursors X position
      * @param cursorY The mouse cursors Y position
-     * @param delta The mouse movement speed
+     * @param delta   The mouse movement speed
      * @return Return true if the mouse wheel action was fired
      */
     public boolean mouseWheel(Minecraft mc, int cursorX, int cursorY, int delta) {
@@ -751,10 +763,10 @@ public class ElementController {
      * This fires the element specific part of the
      * mouse wheel check
      *
-     * @param mc The minecraft instance
+     * @param mc      The minecraft instance
      * @param cursorX The mouse cursors X position
      * @param cursorY The mouse cursors Y position
-     * @param delta The mouse movement speed
+     * @param delta   The mouse movement speed
      * @return Return true if the mouse wheel action was fired
      */
     private boolean mouseElementWheel(Minecraft mc, int cursorX, int cursorY, int delta) {
@@ -772,8 +784,8 @@ public class ElementController {
         return false;
     }
 
-    public boolean mouseOver(int cursorX, int cursorY, int flag){
-        if (isFocus && elements.stream().anyMatch(e -> e.mouseOver(cursorX, cursorY, flag))){
+    public boolean mouseOver(int cursorX, int cursorY, int flag) {
+        if (isFocus && elements.stream().anyMatch(e -> e.mouseOver(cursorX, cursorY, flag))) {
             /*
             if (dragging) {
                 dragY += scroll(cursorY - lastDragY);
@@ -786,33 +798,24 @@ public class ElementController {
     }
 
     /**
-     * This fires the action event for the element
-     *
-     * @param element The element sending the event
-     * @param action The action that triggered the event
-     * @param data Button ID
-     */
-    public static void actionPerformed(Element element, Actions action, int data) {
-        MinecraftForge.EVENT_BUS.post(new ElementAction(element.getCaption(), element.getCategory(), element.getParent(), action, data, element.getGui(), element.isOpen(), !element.isFocus(), element.getElementType(), element.getParentElement()));
-    }
-
-    /**
      * This is used to cleanly close the Lists
      * Should only really be used when leaving
      * the server or single player world
      */
-    public void close(){
+    public void close() {
         elements.clear();
     }
 
     /**
      * This retrieves the scroll value when scrolling
+     *
      * @param delta
      * @return Returns scroll value
      */
     private int scroll(int delta) {
         final int value = scrollValue;
-        if (elements.size() <= 9) scrollValue = Math.min(Math.max(scrollValue - delta, 0), getElementOffset(elements.size()) - getListSize());
+        if (elements.size() <= 9)
+            scrollValue = Math.min(Math.max(scrollValue - delta, 0), getElementOffset(elements.size()) - getListSize());
         else {
             scrollValue -= delta;
             scrollValue %= getElementOffset(elements.size());
@@ -822,16 +825,18 @@ public class ElementController {
 
     /**
      * This gets the Lists Y coord relative to the screen
+     *
      * @param relative True for the actual Y, False for Y relative to the parent GUI
      * @return Returns the Y value
      */
     public int getListY(boolean relative) {
-        int value =  relative ? y : y + (parent != null ? parent.getY(relative) : 0);
+        int value = relative ? y : y + (parent != null ? parent.getY(relative) : 0);
         return value - (relative ? 0 : height / 2);
     }
 
     /**
      * This gets the Y coord relative to the screen
+     *
      * @param relative True for the actual Y, False for Y relative to the parent GUI
      * @return Returns the Y value
      */
@@ -841,6 +846,7 @@ public class ElementController {
 
     /**
      * This gets the X coord relative to the screen
+     *
      * @param relative True for the actual X, False for X relative to the parent GUI
      * @return Returns the X value
      */

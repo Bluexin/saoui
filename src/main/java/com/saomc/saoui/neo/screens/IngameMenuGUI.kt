@@ -20,7 +20,7 @@ class IngameMenuGUI(override val name: String = "In-game menu GUI") : ScreenGUI(
     private var playedSound = false
 
     override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
-        if (!playedSound) {
+        if (!playedSound) { // This trickery is used to circumvent the stupid shit in Minecraft#displayInGameMenu()
             SoundCore.play(mc, SoundCore.ORB_DROPDOWN)
             playedSound = true
         }
@@ -38,17 +38,21 @@ class IngameMenuGUI(override val name: String = "In-game menu GUI") : ScreenGUI(
 
     override fun initGui() {
         elements.addAll(listOf(
-                PlaceholderElement(10, 10, IconCore.ACCESSORY),
-                PlaceholderElement(10, 40, IconCore.ARMOR)
+                PlaceholderElement(0, 0, IconCore.ACCESSORY),
+                PlaceholderElement(0, 24, IconCore.ARMOR)
         ))
-        flowY = -height
+//        flowY = -height
+
+//        SoundCore.play(mc, SoundCore.ORB_DROPDOWN)
 
         super.initGui()
     }
 
-    override fun getX() = super.getX() + width * 2 / 5 + flowX / 2
+    override val parentX: Int
+        get() = super.parentX + width * 2 / 5// + flowX / 2
 
-    override fun getY() = super.getY() + flowY
+    override val parentY: Int
+        get() = super.parentY + flowY
 
     override fun updateScreen() {
         super.updateScreen()

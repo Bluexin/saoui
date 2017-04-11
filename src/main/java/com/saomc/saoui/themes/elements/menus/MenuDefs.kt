@@ -11,11 +11,9 @@ import javax.xml.bind.annotation.XmlRootElement
  */
 @XmlRootElement(namespace = "http://www.bluexin.be/com/saomc/saoui/hud-schema")
 open class MenuDefs protected constructor(override val name: String = "MenuDefs") : MenuElementParent {
-    override fun getX() = 0
-
-    override fun getY() = 0
-
-    override fun getZ() = 0
+    override val parentX: Int = 0
+    override val parentY: Int = 0
+    override val parentZ: Int = 0
 
     private val parts = HashMap<MenuDefEnum, MenuElementGroup>()
 
