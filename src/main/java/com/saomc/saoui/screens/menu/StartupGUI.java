@@ -75,10 +75,10 @@ public class StartupGUI extends GuiScreen {
         GlStateManager.enableTexture2D();
 
         drawDefaultBackground();
-        drawCenteredString(this.fontRendererObj, TextFormatting.YELLOW + "NOTICE" + TextFormatting.RESET, this.width / 2, this.height / 2 - 100, 0xFFFFFF);
+        drawCenteredString(this.fontRenderer, TextFormatting.YELLOW + "NOTICE" + TextFormatting.RESET, this.width / 2, this.height / 2 - 100, 0xFFFFFF);
 
         if (isDev())
-            handleGuiText(getDevText(), fontRendererObj, this, this.width, this.height);
+            handleGuiText(getDevText(), fontRenderer, this, this.width, this.height);
 //        else if (hasUpdate())
 //            handleGuiText(UpdateChecker.fetchChangeLog(), fontRendererObj, this, this.width, this.height);
 

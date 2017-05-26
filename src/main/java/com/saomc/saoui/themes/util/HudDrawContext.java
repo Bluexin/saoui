@@ -12,6 +12,7 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -51,7 +52,7 @@ public class HudDrawContext implements IHudDrawContext {
         this.itemRenderer = itemRenderer;
         this.stats = PlayerStats.instance().getStats();
 
-        this.usernameWidth = (1 + (mc.fontRendererObj.getStringWidth(username) + 4) / 5) * 5;
+        this.usernameWidth = (1 + (mc.fontRenderer.getStringWidth(username) + 4) / 5) * 5;
     }
 
     public void setPt(List<EntityPlayer> pt) {
@@ -78,7 +79,7 @@ public class HudDrawContext implements IHudDrawContext {
 
     @Override
     public FontRenderer getFontRenderer() {
-        return mc.fontRendererObj;
+        return mc.fontRenderer;
     }
 
     @Override
@@ -156,12 +157,12 @@ public class HudDrawContext implements IHudDrawContext {
 
     @Override
     public boolean offhandEmpty(int slot) {
-        return slot >= 0 && player.inventory.offHandInventory.length > slot && player.inventory.offHandInventory[slot] == null;
+        return player.inventory.offHandInventory.get(0) == ItemStack.EMPTY;
     }
 
     @Override
     public int strWidth(String s) {
-        return mc.fontRendererObj.getStringWidth(s);
+        return mc.fontRenderer.getStringWidth(s);
     }
 
     @Override

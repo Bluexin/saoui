@@ -148,7 +148,7 @@ public class DeathParticles extends Particle {
         this.rotationY += this.speedRotationY;
         this.rotationY = this.rotationY % 2.0F;
 
-        if (this.isCollided) {
+        if (this.onGround) {
             this.motionX *= 0.699999988079071D;
             this.motionZ *= 0.699999988079071D;
         }
