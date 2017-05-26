@@ -482,7 +482,7 @@ public class Element implements ParentElement {
         int total = 0;
         for (int slot : this.slots) {
             if (this.inventory.getStackInSlot(slot) != null && this.inventory.getStackInSlot(slot).getItem() == item)
-                total += this.inventory.getStackInSlot(slot).stackSize;
+                total += this.inventory.getStackInSlot(slot).getMaxStackSize();
             else this.slots.remove(slot);
         }
 

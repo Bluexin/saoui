@@ -57,7 +57,7 @@ public class IngameGUI extends GuiIngameForge {
     @Override
     public void renderGameOverlay(float partialTicks) {
         mc.mcProfiler.startSection("setup");
-        fontRenderer = mc.fontRendererObj;
+        fontRenderer = mc.fontRenderer;
         String username = mc.player.getDisplayNameString();
         int maxNameWidth = fontRenderer.getStringWidth(username);
         int usernameBoxes = 1 + (maxNameWidth + 4) / 5;

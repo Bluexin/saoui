@@ -29,7 +29,7 @@ public final class GLCore {
     private static FontRenderer glFont() {
         final Minecraft mc = glMinecraft();
 
-        return mc != null ? mc.fontRendererObj : null;
+        return mc != null ? mc.fontRenderer : null;
     }
 
     private static TextureManager glTextureManager() {
@@ -85,15 +85,15 @@ public final class GLCore {
     }
 
     public static void setFont(Minecraft mc, boolean custom) {
-        if (mc.fontRendererObj == null) return;
+        if (mc.fontRenderer == null) return;
         ResourceLocation fontLocation = custom ? new ResourceLocation(SAOCore.MODID, "textures/ascii.png") : new ResourceLocation("textures/font/ascii.png");
         GameSettings gs = mc.gameSettings;
-        mc.fontRendererObj = new FontRenderer(gs, fontLocation, mc.getTextureManager(), false);
+        mc.fontRenderer = new FontRenderer(gs, fontLocation, mc.getTextureManager(), false);
         if (gs.language != null) {
-            mc.fontRendererObj.setUnicodeFlag(mc.isUnicode());
-            mc.fontRendererObj.setBidiFlag(mc.getLanguageManager().isCurrentLanguageBidirectional());
+            mc.fontRenderer.setUnicodeFlag(mc.isUnicode());
+            mc.fontRenderer.setBidiFlag(mc.getLanguageManager().isCurrentLanguageBidirectional());
         }
-        ((IReloadableResourceManager) mc.getResourceManager()).registerReloadListener(mc.fontRendererObj);
+        ((IReloadableResourceManager) mc.getResourceManager()).registerReloadListener(mc.fontRenderer);
     }
 
     private static int glStringWidth(FontRenderer font, String string) {

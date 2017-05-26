@@ -21,7 +21,7 @@ apply plugin: "maven"
 apply plugin: 'kotlin'
 apply plugin: 'net.minecraftforge.gradle.forge'
 
-version = "1.10.2-2.0-lite-SNAPSHOT"
+version = "1.11.2-2.0-lite-SNAPSHOT"
 group = "com.saomc" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "saoui"
 
@@ -29,9 +29,9 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 minecraft {
-    version = "1.10.2-12.18.3.2185"
+    version = "1.11.2-13.20.0.2308"
     runDir = "run"
-    mappings = "stable_29"
+    mappings = "snapshot_20170526"
 }
 
 repositories {
