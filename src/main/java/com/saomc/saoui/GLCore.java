@@ -19,23 +19,17 @@ import org.lwjgl.opengl.GL11;
 @SideOnly(Side.CLIENT)
 public final class GLCore {
 
+    private static Minecraft mc = Minecraft.getMinecraft();
+
     private GLCore() {
     }
 
-    private static Minecraft glMinecraft() {
-        return Minecraft.getMinecraft();
-    }
-
     private static FontRenderer glFont() {
-        final Minecraft mc = glMinecraft();
-
-        return mc != null ? mc.fontRenderer : null;
+        return mc.fontRenderer;
     }
 
     private static TextureManager glTextureManager() {
-        final Minecraft mc = glMinecraft();
-
-        return mc != null ? mc.getTextureManager() : null;
+        return mc.getTextureManager();
     }
 
     public static void glColor(float red, float green, float blue) {
@@ -85,11 +79,9 @@ public final class GLCore {
     }
 
     public static void setFont(Minecraft mc, boolean custom) {
-        if (mc.fontRenderer == null) return;
         ResourceLocation fontLocation = custom ? new ResourceLocation(SAOCore.MODID, "textures/ascii.png") : new ResourceLocation("textures/font/ascii.png");
-        GameSettings gs = mc.gameSettings;
-        mc.fontRenderer = new FontRenderer(gs, fontLocation, mc.getTextureManager(), false);
-        if (gs.language != null) {
+        mc.fontRenderer = new FontRenderer(mc.gameSettings, fontLocation, mc.getTextureManager(), false);
+        if (mc.gameSettings.language != null) {
             mc.fontRenderer.setUnicodeFlag(mc.isUnicode());
             mc.fontRenderer.setBidiFlag(mc.getLanguageManager().isCurrentLanguageBidirectional());
         }
@@ -97,8 +89,7 @@ public final class GLCore {
     }
 
     private static int glStringWidth(FontRenderer font, String string) {
-        if (font != null) return font.getStringWidth(string);
-        else return 0;
+        return font != null ? font.getStringWidth(string) : 0;
     }
 
     public static int glStringWidth(String string) {
@@ -106,8 +97,7 @@ public final class GLCore {
     }
 
     private static int glStringHeight(FontRenderer font) {
-        if (font != null) return font.FONT_HEIGHT;
-        else return 0;
+        return font != null ? font.FONT_HEIGHT : 0;
     }
 
     public static int glStringHeight() {
