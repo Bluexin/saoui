@@ -4,6 +4,7 @@ import com.saomc.saoui.effects.RenderDispatcher;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraftforge.client.event.*;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
@@ -31,6 +32,12 @@ public class EventCore {
     public void renderTickListener(TickEvent.RenderTickEvent e) {
         RenderHandler.deathHandlers();
         RenderHandler.deathCheck();
+    }
+
+    @SubscribeEvent
+    public void onDeath(LivingDeathEvent e){
+        if (e.getEntityLiving() != null && e.getEntityLiving().world.isRemote)
+            RenderHandler.addDeadMob(e.getEntityLiving());
     }
 
     @SubscribeEvent

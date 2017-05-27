@@ -35,21 +35,23 @@ class RenderHandler {
 
     static void deathHandlers() {
         deadHandlers.forEach(ent -> {
-            if (ent != null) {
-                final boolean deadStart = (ent.deathTime == 1);
-                final boolean deadExactly = (ent.deathTime >= 18);
-                if (deadStart) {
-                    ent.deathTime++;
-                    SoundCore.playAtEntity(ent, SoundCore.PARTICLES_DEATH);
-                }
+            final boolean deadStart = (ent.deathTime == 1);
+            final boolean deadExactly = (ent.deathTime >= 18);
+            if (deadStart) {
+                ent.deathTime++;
+                SoundCore.playAtEntity(ent, SoundCore.PARTICLES_DEATH);
+            }
 
-                if (deadExactly) {
-                    StaticRenderer.doSpawnDeathParticles(EventCore.mc, ent);
-                    ent.setDead();
-                }
+            if (deadExactly) {
+                StaticRenderer.doSpawnDeathParticles(EventCore.mc, ent);
+                ent.setDead();
             }
         });
         deadHandlers.removeIf(ent -> ent.isDead);
+    }
+
+    static void addDeadMob(EntityLivingBase ent){
+        deadHandlers.add(ent);
     }
 
     static void guiInstance(GuiOpenEvent e) {
