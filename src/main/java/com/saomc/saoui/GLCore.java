@@ -20,16 +20,10 @@ import org.lwjgl.opengl.GL11;
 public final class GLCore {
 
     private static Minecraft mc = Minecraft.getMinecraft();
+    private static FontRenderer glFont = mc.fontRenderer;
+    private static TextureManager glTextureManager = mc.getTextureManager();
 
     private GLCore() {
-    }
-
-    private static FontRenderer glFont() {
-        return mc.fontRenderer;
-    }
-
-    private static TextureManager glTextureManager() {
-        return mc.getTextureManager();
     }
 
     public static void glColor(float red, float green, float blue) {
@@ -71,7 +65,7 @@ public final class GLCore {
     }
 
     public static void glString(String string, int x, int y, int argb, boolean shadow) {
-        glString(glFont(), string, x, y, argb, shadow);
+        glString(glFont, string, x, y, argb, shadow);
     }
 
     public static void glString(String string, int x, int y, int argb) {
@@ -93,7 +87,7 @@ public final class GLCore {
     }
 
     public static int glStringWidth(String string) {
-        return glStringWidth(glFont(), string);
+        return glStringWidth(glFont, string);
     }
 
     private static int glStringHeight(FontRenderer font) {
@@ -101,7 +95,7 @@ public final class GLCore {
     }
 
     public static int glStringHeight() {
-        return glStringHeight(glFont());
+        return glStringHeight(glFont);
     }
 
     private static void glBindTexture(TextureManager textureManager, ResourceLocation location) {
@@ -109,7 +103,7 @@ public final class GLCore {
     }
 
     public static void glBindTexture(ResourceLocation location) {
-        glBindTexture(glTextureManager(), location);
+        glBindTexture(glTextureManager, location);
     }
 
     public static void glTexturedRect(double x, double y, double z, double width, double height, double srcX, double srcY, double srcWidth, double srcHeight) {
