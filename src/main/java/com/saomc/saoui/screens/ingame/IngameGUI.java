@@ -1,13 +1,12 @@
 package com.saomc.saoui.screens.ingame;
 
+import be.bluexin.saomclib.HelpersKt;
 import be.bluexin.saomclib.capabilities.PartyCapability;
 import be.bluexin.saomclib.party.IParty;
 import com.saomc.saoui.GLCore;
 import com.saomc.saoui.config.ConfigHandler;
 import com.saomc.saoui.config.OptionCore;
-import com.saomc.saoui.effects.StatusEffects;
 import com.saomc.saoui.neo.screens.IngameMenuGUI;
-import com.saomc.saoui.resources.StringNames;
 import com.saomc.saoui.screens.death.DeathScreen;
 import com.saomc.saoui.social.StaticPlayerHelper;
 import com.saomc.saoui.themes.ThemeLoader;
@@ -139,6 +138,7 @@ public class IngameGUI extends GuiIngameForge {
     protected void renderPotionEffects(ScaledResolution resolution) {
         if (OptionCore.VANILLA_UI.isEnabled()) super.renderPotionEffects(resolution);
         // todo: move effects to here?
+        else HelpersKt.profile(mc, "potionEffectsNew", () -> ThemeLoader.HUD.draw(HudPartType.EFFECTS, getContext()));
     }
 
     @Override
@@ -157,28 +157,6 @@ public class IngameGUI extends GuiIngameForge {
             ThemeLoader.HUD.draw(HudPartType.HEALTH_BOX, getContext());
             mc.mcProfiler.endSection();
             post(HEALTH);
-
-            final int healthBarWidth = 234;
-            final int healthWidth = 216;
-            final int healthHeight = OptionCore.SAO_UI.isEnabled() ? 9 : 4;
-            int stepOne = (int) (healthWidth / 3.0F - 3);
-            int stepTwo = (int) (healthWidth / 3.0F * 2.0F - 3);
-            int stepThree = healthWidth - 3;
-
-            renderFood(healthWidth, healthHeight, offsetUsername, stepOne, stepTwo, stepThree);
-
-            GLCore.glColor(1.0F, 1.0F, 1.0F, 1.0F);
-
-            mc.mcProfiler.startSection("effects");
-
-            final int offsetForEffects = offsetUsername + healthBarWidth - 4;
-            final List<StatusEffects> effects = StatusEffects.getEffects(mc.player);
-
-            GLCore.glBindTexture(OptionCore.SAO_UI.isEnabled() ? StringNames.gui : StringNames.guiCustom);
-
-            for (int i = 0; i < effects.size(); i++) effects.get(i).glDraw(offsetForEffects + i * 11, 2, zLevel);
-
-            mc.mcProfiler.endSection();
 
             renderParty();
         }
@@ -205,7 +183,13 @@ public class IngameGUI extends GuiIngameForge {
     @Override
     public void renderFood(int width, int height) {
         if (OptionCore.VANILLA_UI.isEnabled()) super.renderFood(width, height);
-        // See below, called by renderHealth
+        else {
+            if (replaceEvent(FOOD)) return;
+            GLCore.glAlphaTest(true);
+            GLCore.glBlend(true);
+            HelpersKt.profile(mc, "foodNew", () -> ThemeLoader.HUD.draw(HudPartType.FOOD, getContext()));
+            post(FOOD);
+        }
     }
 
     private void renderFood(int healthWidth, int healthHeight, int offsetUsername, int stepOne, int stepTwo, int stepThree) {

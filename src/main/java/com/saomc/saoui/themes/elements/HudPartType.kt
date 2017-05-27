@@ -45,5 +45,15 @@ enum class HudPartType {
     /**
      * Key for the HudPart rendering the party.
      */
-    PARTY
+    PARTY,
+
+    /**
+     * Key for the HudPart rendering food.
+     */
+    FOOD,
+
+    /**
+     * Key for the HudPart rendering potion effects.
+     */
+    EFFECTS
 }

@@ -1,8 +1,8 @@
 package com.saomc.saoui.effects;
 
 import com.saomc.saoui.GLCore;
-import com.saomc.saoui.resources.StringNames;
 import com.saomc.saoui.config.OptionCore;
+import com.saomc.saoui.resources.StringNames;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
@@ -11,9 +11,10 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @SideOnly(Side.CLIENT)
-public enum StatusEffects {
+public enum StatusEffects { // TODO: load from xml FTW
 
     PARALYZED,
     POISONED,
@@ -51,8 +52,7 @@ public enum StatusEffects {
     public static List<StatusEffects> getEffects(EntityLivingBase entity) {
         final List<StatusEffects> effects = new ArrayList<>();
 
-        entity.getActivePotionEffects().stream().filter(potionEffect0 -> potionEffect0 != null).forEach(potionEffect0 -> {
-
+        entity.getActivePotionEffects().stream().filter(Objects::nonNull).forEach(potionEffect0 -> {
             if (potionEffect0.getPotion() == MobEffects.SLOWNESS && potionEffect0.getAmplifier() > 5)
                 effects.add(PARALYZED);
             else if (potionEffect0.getPotion() == MobEffects.POISON) effects.add(POISONED);

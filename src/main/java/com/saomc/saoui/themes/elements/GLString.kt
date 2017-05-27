@@ -22,6 +22,6 @@ open class GLString : GLRectangle() {
         val x = (this.x?.invoke(ctx) ?: 0.0) + (p?.getX(ctx) ?: 0.0)
         val y = (this.y?.invoke(ctx) ?: 0.0) + (p?.getY(ctx) ?: 0.0) + ((this.h?.invoke(ctx) ?: 0.0) - ctx.fontRenderer.FONT_HEIGHT) / 2.0
 
-        GLCore.glString(ctx.fontRenderer, this.text.invoke(ctx), x.toInt(), y.toInt(), rgba?.invoke(ctx) ?: 0xFFFFFFFF.toInt(), shadow)
+        GLCore.glString(ctx.fontRenderer, this.text(ctx), x.toInt(), y.toInt(), rgba?.invoke(ctx) ?: 0xFFFFFFFF.toInt(), shadow)
     }
 }

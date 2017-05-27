@@ -47,7 +47,7 @@ abstract class ExpressionAdapter<T> : XmlAdapter<ExpressionIntermediate, CValue<
 
      * @return target
      */
-    protected abstract val type: Class<*>
+    protected abstract val type: Class<*>?
 
     protected abstract fun value(c: CachedExpression<T>): CValue<T>
 
@@ -103,4 +103,15 @@ class BooleanExpressionAdapter : ExpressionAdapter<Boolean>() {
     override val type: Class<*> = java.lang.Boolean.TYPE
 
     override fun wrap(ce: CompiledExpression) = BooleanExpressionWrapper(ce)
+}
+
+/**
+ * Adapts an expression that should return [Unit] (aka void).
+ */
+class UnitExpressionAdapter : ExpressionAdapter<Unit>() {
+    override val type: Class<*>? = null
+
+    override fun value(c: CachedExpression<Unit>) = CUnit(c)
+
+    override fun wrap(ce: CompiledExpression) = UnitExpressionWrapper(ce)
 }

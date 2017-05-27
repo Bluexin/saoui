@@ -16,7 +16,7 @@ import javax.xml.bind.annotation.XmlRootElement
  * @author Bluexin
  */
 @XmlRootElement
-open class GLHotbarItem constructor() : GLRectangle() {
+open class GLHotbarItem : GLRectangle() {
 
     protected lateinit var slot: CInt
     protected lateinit var itemXoffset: CInt
@@ -51,8 +51,8 @@ open class GLHotbarItem constructor() : GLRectangle() {
         val p: ElementParent? = this.parent.get()
         val it: ItemStack?
 
-        if (hand == null) it = ctx.player.inventory.mainInventory[slot.invoke(ctx)]
-        else it = ctx.player.inventory.offHandInventory[slot.invoke(ctx)]
+        if (hand == null) it = ctx.player.inventory.mainInventory[slot(ctx)]
+        else it = ctx.player.inventory.offHandInventory[slot(ctx)]
         if (it == null) return
 
         GLCore.glBlend(false)
@@ -60,8 +60,8 @@ open class GLHotbarItem constructor() : GLRectangle() {
         RenderHelper.enableGUIStandardItemLighting()
 
         renderHotbarItem(
-                (x?.invoke(ctx)?.toInt() ?: 0) + itemXoffset.invoke(ctx) + (p?.getX(ctx)?.toInt() ?: 0),
-                (y?.invoke(ctx)?.toInt() ?: 0) + itemYoffset.invoke(ctx) + (p?.getY(ctx)?.toInt() ?: 0),
+                (x?.invoke(ctx)?.toInt() ?: 0) + itemXoffset(ctx) + (p?.getX(ctx)?.toInt() ?: 0),
+                (y?.invoke(ctx)?.toInt() ?: 0) + itemYoffset(ctx) + (p?.getY(ctx)?.toInt() ?: 0),
                 ctx.partialTicks, ctx.player, it, ctx)
 
         GLCore.glRescaleNormal(false)

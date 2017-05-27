@@ -14,7 +14,7 @@ import javax.xml.bind.annotation.XmlSeeAlso
  *
  * @author Bluexin
  */
-@XmlSeeAlso(GLRectangle::class, ElementGroup::class) //Instructs JAXB to also bind other classes when binding this class
+@XmlSeeAlso(GLRectangle::class, ElementGroup::class, RawElement::class) //Instructs JAXB to also bind other classes when binding this class
 abstract class Element {
 
     companion object {
@@ -25,18 +25,22 @@ abstract class Element {
      * X position.
      */
     protected var x: CDouble? = null
+
     /**
      * Y position.
      */
     protected var y: CDouble? = null
+
     /**
      * Z position.
      */
     protected var z: CDouble? = null
+
     /**
      * Whether this element should be enabled.
      */
     protected var enabled: CBoolean? = null
+
     /**
      * Parent element for this element.
      */
@@ -50,7 +54,7 @@ abstract class Element {
     /**
      * Draw this element on the screen.
      * This method should handle all the GL calls.
-
+     *
      * @param ctx additional info about the draws
      */
     abstract fun draw(ctx: IHudDrawContext)
@@ -58,7 +62,7 @@ abstract class Element {
     /**
      * Called during setup, used to initialize anything extra (after it has finished loading)
      * and returns whether this is an anonymous element.
-
+     *
      * @param parent the parent to this element
      * @return whether this is an anonymous element
      */

@@ -45,6 +45,8 @@
                         <xs:enumeration value="JUMP_BAR"/>
                         <xs:enumeration value="AM2BARS"/>
                         <xs:enumeration value="PARTY"/>
+                        <xs:enumeration value="FOOD"/>
+                        <xs:enumeration value="EFFECTS"/>
                     </xs:restriction>
                 </xs:simpleType>
             </xs:element>
@@ -58,6 +60,7 @@
     <xs:element name="glHotbarItem" substitutionGroup="element" type="GLHotbarItem"/>
     <xs:element name="elementGroup" substitutionGroup="element" type="ElementGroup"/>
     <xs:element name="repetitionGroup" substitutionGroup="element" type="RepetitionGroup"/>
+    <xs:element name="rawElement" substitutionGroup="element" type="RawElement"/>
 
     <xs:complexType name="Element" abstract="true">
         <xs:annotation>
@@ -341,6 +344,21 @@
             <xs:extension base="ElementGroup">
                 <xs:all>
                     <xs:element name="amount" type="CachedExpression"/>
+                </xs:all>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="RawElement">
+        <xs:annotation>
+            <xs:documentation>
+                WIP
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="Element">
+                <xs:all>
+                    <xs:element name="expression" type="CachedExpression"/>
                 </xs:all>
             </xs:extension>
         </xs:complexContent>

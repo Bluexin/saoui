@@ -113,6 +113,11 @@ public class StaticPlayerHelper {
 
     public static float getHungerFract(final Minecraft mc, final Entity entity, final float time) {
         if (!(entity instanceof EntityPlayer)) return 1.0F;
+        else return getHungerLevel(mc, entity, time) / 20.0F;
+    }
+
+    public static float getHungerLevel(final Minecraft mc, final Entity entity, final float time) {
+        if (!(entity instanceof EntityPlayer)) return 1.0F;
         EntityPlayer player = (EntityPlayer) entity;
         final float hungerReal;
         if (OptionCore.SMOOTH_HEALTH.isEnabled()) {
@@ -138,12 +143,12 @@ public class StaticPlayerHelper {
                 else hungerValue = hungerReal;
 
                 hungerSmooth.put(uuid, hungerValue);
-                return hungerValue / 20.0F;
+                return hungerValue;
             } else {
                 hungerSmooth.put(uuid, hungerReal);
-                return hungerReal / 20.0F;
+                return hungerReal;
             }
-        } else return player.getFoodStats().getFoodLevel() / 20.0F;
+        } else return player.getFoodStats().getFoodLevel();
     }
 
     private static float gameTimeDelay(Minecraft mc, float time) {
