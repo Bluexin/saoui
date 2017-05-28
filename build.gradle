@@ -38,6 +38,7 @@ repositories {
     mavenCentral()
     maven {
         url = "https://maven.bluexin.be/repository/releases/"
+        url = "https://maven.bluexin.be/repository/snapshots/"
     }
 }
 
@@ -53,7 +54,7 @@ configurations {
 }
 
 dependencies {
-    compile "be.bluexin:saomc-lib:1.10.2-1.1:deobf"
+    compile "be.bluexin:saomc-lib:1.11.2-1.1-SNAPSHOT:deobf"
     shade files('lib/jel-2_1_1/lib/jel_g_homebaked.jar')
 }
 
