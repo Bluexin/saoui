@@ -1,5 +1,5 @@
 buildscript {
-    ext.kotlin_version = '1.0.5'
+    ext.kotlin_version = '1.1.1'
     repositories {
         mavenCentral()
         maven {
@@ -41,22 +41,13 @@ repositories {
     }
 }
 
-reobf {
-    jar {
-        extraLines += ["PK: gnu/jel saoui/shade/gnu/jel"]
-        extraLines += ["PK: kotlin be/bluexin/saomclib/shade/kotlin"]
-        extraLines += ["PK: org/jetbrains/annotations be/bluexin/saomclib/shade/annotations"]
-    }
-}
-
 configurations {
     shade
     compile.extendsFrom shade
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    compile "be.bluexin:saomc-lib:1.10.2-1.0.5b:deobf"
+    compile "be.bluexin:saomc-lib:1.10.2-1.1:deobf"
     shade files('lib/jel-2_1_1/lib/jel_g_homebaked.jar')
 }
 
