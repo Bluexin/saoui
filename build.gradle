@@ -41,6 +41,12 @@ repositories {
     }
 }
 
+reobf {
+    jar {
+        extraLines += ["PK: gnu/jel saoui/shade/gnu/jel"]
+    }
+}
+
 configurations {
     shade
     compile.extendsFrom shade
