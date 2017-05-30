@@ -80,8 +80,8 @@ idea { module { inheritOutputDirs = true } }
 
 uploadArchives {
     if (System.getenv('REPO_PWD') != null) {
-        repositories.mavenDeployer {
-            repository(url: "https://maven.bluexin.be/repository/" + (((String) project.version).contains("SNAPSHOT")? "snapshots": "releases") + "/") {
+        repositories.mavenDeployer { // Note: don't use ssl until gradle knows how to use Expect header.
+            repository(url: "http://maven.bluexin.be/repository/" + (((String) project.version).contains("SNAPSHOT")? "snapshots": "releases") + "/") {
                 authentication(userName: "CI", password: System.getenv('REPO_PWD'))
             }
         }
