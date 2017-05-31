@@ -69,7 +69,7 @@ abstract class ScreenGUI : GuiScreen(), MenuElementParent {
     }
 
     override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
-        profile(mc, "saoui menu") {
+        mc.profile("saoui menu") {
             elements.forEach { it.draw(mc, mouseX, mouseY) }
 
             if (CURSOR_STATUS == CursorStatus.SHOW) { // TODO: maybe there's a way to move all of this to the actual org.lwjgl.input.Cursor

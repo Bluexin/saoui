@@ -21,7 +21,7 @@ public class SAOCore {
     public static final String MODID = "saoui";
     public static final String NAME = "Sword Art Online UI";
     public static final String VERSION = "2.0-lite-dev";
-    public static final String DEPS = "required-before:" + MODID + "ntw;required-after:saomclib@[1.0.5,)";
+    public static final String DEPS = "required-before:" + MODID + "ntw;required-after:saomclib@[1.1,)";
     public static final float UNKNOWN_TIME_DELAY = -1F;
     // TODO: optimize things, ie remove public and static!
 
