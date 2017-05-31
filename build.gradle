@@ -1,5 +1,4 @@
 buildscript {
-    ext.kotlin_version = '1.1.2-4'
     ext.kotlin_version = '1.1.1'
     repositories {
         mavenCentral()
@@ -82,7 +81,7 @@ idea { module { inheritOutputDirs = true } }
 
 uploadArchives {
     if (System.getenv('REPO_PWD') != null) {
-        repositories.mavenDeployer {
+        repositories.mavenDeployer { // Note: don't use SSL until gradle knows how to use Expect header.
             repository(url: "http://maven.bluexin.be/repository/" + (((String) project.version).contains("SNAPSHOT")? "snapshots": "releases") + "/") {
                 authentication(userName: "CI", password: System.getenv('REPO_PWD'))
             }
