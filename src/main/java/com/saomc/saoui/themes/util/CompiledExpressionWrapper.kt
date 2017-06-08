@@ -1,7 +1,7 @@
 package com.saomc.saoui.themes.util
 
+import com.saomc.saoui.SAOCore
 import com.saomc.saoui.api.themes.IHudDrawContext
-import com.saomc.saoui.util.LogCore
 import gnu.jel.CompiledExpression
 
 /**
@@ -11,8 +11,8 @@ import gnu.jel.CompiledExpression
  */
 abstract class CompiledExpressionWrapper<out T>(val compiledExpression: CompiledExpression) : Function1<IHudDrawContext, T> {
     protected fun warn(e: Throwable) {
-        LogCore.logWarn("An error occurred while executing an Expression.\n${e.message}\n${e.cause}")
-        LogCore.log(e)
+        SAOCore.LOGGER.warn("An error occurred while executing an Expression.\n${e.message}\n${e.cause}")
+        SAOCore.LOGGER.warn(e)
     }
 }
 

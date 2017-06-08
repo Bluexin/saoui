@@ -1,6 +1,7 @@
 package com.saomc.saoui.elements;
 
 import com.saomc.saoui.GLCore;
+import com.saomc.saoui.SAOCore;
 import com.saomc.saoui.api.events.ElementAction;
 import com.saomc.saoui.api.screens.Actions;
 import com.saomc.saoui.api.screens.ElementType;
@@ -8,7 +9,6 @@ import com.saomc.saoui.api.screens.ParentElement;
 import com.saomc.saoui.config.OptionCore;
 import com.saomc.saoui.resources.StringNames;
 import com.saomc.saoui.util.ColorUtil;
-import com.saomc.saoui.util.LogCore;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.RenderItem;
@@ -26,10 +26,6 @@ import org.lwjgl.opengl.GL11;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Tencao on 23/08/2016.
- */
-@SuppressWarnings("ALL")
 public class ElementController {
     private static final ResourceLocation RES_ITEM_GLINT = new ResourceLocation("textures/misc/enchanted_item_glint.png");
     //private boolean dragging;
@@ -80,7 +76,7 @@ public class ElementController {
     public void update(Minecraft mc) {
         //This part is the initial setting up of the list.
         if (parentElement == null && !elements.isEmpty() && elements.get(0).getParent() != null && !elements.get(0).getParent().equals("none"))
-            parentElement = ElementBuilder.getInstance().getElementParent(elements.get(0).getParent(), elements.get(0).getGui());
+            parentElement = ElementBuilder.Companion.getInstance().getElementParent(elements.get(0).getParent(), elements.get(0).getGui());
         if (!elements.isEmpty()) isVisible = elements.stream().anyMatch(Element::isEnabled);
         if (parentElement != null) {
             x = parentElement.getX(true) + parentElement.getWidth() + 14;
@@ -116,14 +112,14 @@ public class ElementController {
                         ItemStack item = e.getInventory().getStackInSlot(i);
                         //checks to see if the item is valid for storing
                         if (item != null && e.getItemFilter().isFine(item, false)) {
-                            LogCore.logInfo("Passing item - " + item.getDisplayName());
+                            SAOCore.LOGGER.info("Passing item - " + item.getDisplayName());
                             Slot itemSlot = new Slot(e.getInventory(), i, 0, 0);
                             //If the item perfectly matches an existing element, add it
                             if (items.stream().anyMatch(items -> items.getItem() == item.getItem() && items.compareStack(item))) {
-                                LogCore.logInfo("Adding item - " + item.getDisplayName() + " with slot number - " + i + " to existing element");
+                                SAOCore.LOGGER.info("Adding item - " + item.getDisplayName() + " with slot number - " + i + " to existing element");
                                 items.stream().filter(items -> items.getItem() == item.getItem() && items.compareStack(item)).forEach(items -> items.addSlot(slot));
                             } else { // Otherwise create a new element
-                                LogCore.logInfo("Adding item - " + item.getDisplayName() + " with slot number - " + i + " to new element");
+                                SAOCore.LOGGER.info("Adding item - " + item.getDisplayName() + " with slot number - " + i + " to new element");
                                 items.add(new Element(e.getParent(), e.getGui(), item.getItem(), i, e.getInventory(), parent));
                             }
                         }
@@ -151,8 +147,8 @@ public class ElementController {
         //Sets up the X and Y for the elements
         if (element.isEnabled())
             if (element.getElementType() != ElementType.MENU) {
-                if (!ElementBuilder.getInstance().isParentEnabled(element.getParent()))
-                    element.setEnabled(false);
+                //if (!ElementBuilder.Companion.getInstance().isParentEnabled(element.getParent()))
+                    //element.setEnabled(false);
                 element.setY(top - getOffset(index));
                 element.setX(getX(true));
             } else {
@@ -681,7 +677,7 @@ public class ElementController {
 
             if (elements.get(i).mousePressed(mc, cursorX, cursorY, button)) {
                 actionPerformed(elements.get(i), Actions.LEFT_PRESSED, button);
-                LogCore.logDebug("mousePressed for " + elements.get(i).getCaption());
+                SAOCore.LOGGER.debug("mousePressed for " + elements.get(i).getCaption());
                 //dragging = true;
                 return true;
             }

@@ -1,9 +1,9 @@
 package com.saomc.saoui.elements;
 
 import com.google.common.collect.LinkedHashMultimap;
+import com.saomc.saoui.SAOCore;
 import com.saomc.saoui.api.screens.GuiSelection;
 import com.saomc.saoui.api.screens.ParentElement;
-import com.saomc.saoui.util.LogCore;
 import jdk.nashorn.internal.objects.annotations.Getter;
 import jdk.nashorn.internal.objects.annotations.Setter;
 import net.minecraftforge.fml.relauncher.Side;
@@ -43,7 +43,7 @@ public class ElementDispatcher {
         //Elements need to be sent in groups to the ElementController, not together
         //Groups are done via parent category, as seen in the ElementBuilder MultiMap
         if (!menuElements.isEmpty()){
-            LogCore.logWarn("Gui - " + gui + " called ElementDispatcher when list isn't empty \n" +
+            SAOCore.LOGGER.warn("Gui - " + gui + " called ElementDispatcher when list isn't empty \n" +
                     "Either list wasn't cleaned or it was called early\n" +
                     "List will now be cleaned");
             menuElements.clear();
@@ -64,7 +64,7 @@ public class ElementDispatcher {
                     menuElements.add(list);
                 }
         }
-        LogCore.logDebug("Dispatched");
+        SAOCore.LOGGER.debug("Dispatched");
     }
 
     public static void close(){
