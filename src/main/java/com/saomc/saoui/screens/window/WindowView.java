@@ -1,11 +1,11 @@
 package com.saomc.saoui.screens.window;
 
 import com.saomc.saoui.GLCore;
+import com.saomc.saoui.SAOCore;
 import com.saomc.saoui.api.screens.ParentElement;
 import com.saomc.saoui.api.screens.WindowAlign;
 import com.saomc.saoui.resources.StringNames;
 import com.saomc.saoui.util.ColorUtil;
-import com.saomc.saoui.util.LogCore;
 import com.saomc.saoui.config.OptionCore;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -51,12 +51,12 @@ public class WindowView extends Gui{
         this.height = 60;
         this.width = 200;
         this.lines = toLines(message, this.width - 10);
-        LogCore.logInfo("Popup Launched");
+        SAOCore.LOGGER.info("Popup Launched");
 
     }
 
     public void updateScreen(){
-        LogCore.logInfo("Updating");
+        SAOCore.LOGGER.info("Updating");
         int w = lines.length > 0 ? Stream.of(lines).mapToInt(GLCore::glStringWidth).max().getAsInt() + 16 : 0;
         if (w > width) width = w;
 
@@ -68,7 +68,7 @@ public class WindowView extends Gui{
 
     public void drawScreen(int mouseX, int mouseY, float partialTicks){
         //drawDefaultBackground();
-        LogCore.logInfo("Drawing");
+        SAOCore.LOGGER.info("Drawing");
 
         int left;
         int top;

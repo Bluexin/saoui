@@ -1,12 +1,12 @@
 package com.saomc.saoui.events;
 
+import com.saomc.saoui.SAOCore;
 import com.saomc.saoui.SoundCore;
 import com.saomc.saoui.api.events.ElementAction;
 import com.saomc.saoui.api.screens.Actions;
 import com.saomc.saoui.api.screens.ElementType;
 import com.saomc.saoui.elements.ElementBuilder;
 import com.saomc.saoui.screens.menu.IngameMenuGUI;
-import com.saomc.saoui.util.LogCore;
 import com.saomc.saoui.config.OptionCore;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiIngameMenu;
@@ -26,17 +26,17 @@ public class ElementHandler {
 
     protected static void defaultActions(ElementAction e){
         if (e.getAction() == Actions.LEFT_RELEASED) {
-            LogCore.logDebug("Category - " + e.getCategory());
-            LogCore.logDebug("Parent - " + e.getParent());
-            LogCore.logDebug("isLocked - " + e.isLocked());
-            LogCore.logDebug("isOpen - " + e.isOpen());
+            SAOCore.LOGGER.debug("Category - " + e.getCategory());
+            SAOCore.LOGGER.debug("Parent - " + e.getParent());
+            SAOCore.LOGGER.debug("isLocked - " + e.isLocked());
+            SAOCore.LOGGER.debug("isOpen - " + e.isOpen());
             if (e.getElementType() == ElementType.OPTION) optionAction(e);
             if (e.getElementType() == ElementType.SLOT) slotAction(e);
             if (e.isOpen()) {
-                ElementBuilder.getInstance().disableChildElements(e.getCategory(), e.getParent(), e.getGui());
+                ElementBuilder.Companion.getInstance().disableChildElements(e.getCategory(), e.getParent(), e.getGui());
                 SoundCore.play(Minecraft.getMinecraft().getSoundHandler(), SoundCore.DIALOG_CLOSE);
             } else if (!e.isOpen() && !e.isLocked()) {
-                ElementBuilder.getInstance().enableChildElements(e.getCategory(), e.getParent(), e.getGui());
+                ElementBuilder.Companion.getInstance().enableChildElements(e.getCategory(), e.getParent(), e.getGui());
                 SoundCore.play(Minecraft.getMinecraft().getSoundHandler(), SoundCore.MENU_POPUP);
             }
         }

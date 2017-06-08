@@ -1,8 +1,8 @@
 package com.saomc.saoui.themes.elements
 
 import com.saomc.saoui.GLCore
+import com.saomc.saoui.SAOCore
 import com.saomc.saoui.api.themes.IHudDrawContext
-import com.saomc.saoui.util.LogCore
 import net.minecraft.util.ResourceLocation
 import javax.xml.bind.annotation.*
 
@@ -59,7 +59,7 @@ open class ElementGroup : Element(), ElementParent {
         val res = super.setup(parent)
         var anonymous = 0
         this.elements.forEach { if (it.name == Element.DEFAULT_NAME) ++anonymous; it.setup(this) }
-        if (anonymous > 0) LogCore.logInfo("Set up $anonymous anonymous elements in $name.")
+        if (anonymous > 0) SAOCore.LOGGER.info("Set up $anonymous anonymous elements in $name.")
         return res
     }
 

@@ -1,6 +1,7 @@
 package com.saomc.saoui.screens.window;
 
 import com.saomc.saoui.GLCore;
+import com.saomc.saoui.SAOCore;
 import com.saomc.saoui.api.screens.Actions;
 import com.saomc.saoui.api.screens.GuiSelection;
 import com.saomc.saoui.api.screens.ParentElement;
@@ -12,7 +13,6 @@ import com.saomc.saoui.elements.ElementDispatcher;
 import com.saomc.saoui.elements.defaultelements.DefaultElements;
 import com.saomc.saoui.resources.StringNames;
 import com.saomc.saoui.util.ColorUtil;
-import com.saomc.saoui.util.LogCore;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -149,7 +149,7 @@ public abstract class ScreenGUI extends GuiScreen implements ParentElement {
         super.keyTyped(ch, key);
 
         ElementDispatcher.getElements().stream().anyMatch(e -> e.keyTyped(mc, ch, key));
-        LogCore.logDebug("ch - " + ch + " key - " + key);
+        SAOCore.LOGGER.debug("ch - " + ch + " key - " + key);
 
         //elements.menuElements.keySet().stream().filter(Element::isFocus).forEach(element -> actionPerformed(element, Actions.KEY_TYPED, key));
     }
@@ -164,7 +164,7 @@ public abstract class ScreenGUI extends GuiScreen implements ParentElement {
                 backgroundClicked(cursorX, cursorY, button);
         } catch (ConcurrentModificationException e){
             //Do Nothing
-            LogCore.logDebug("mouseClicked ended unexpectedly");
+            SAOCore.LOGGER.debug("mouseClicked ended unexpectedly");
         }
     }
 
@@ -188,12 +188,12 @@ public abstract class ScreenGUI extends GuiScreen implements ParentElement {
 
         } catch (ConcurrentModificationException e){
             //Do Nothing
-            LogCore.logWarn("mouseClicked ended unexpectedly");
+            SAOCore.LOGGER.warn("mouseClicked ended unexpectedly");
         }
     }
 
     private void backgroundClicked(int cursorX, int cursorY, int button) {
-        LogCore.logDebug("Background Clicked");
+        SAOCore.LOGGER.debug("Background Clicked");
     }
 
     private void mouseWheel(int cursorX, int cursorY, int delta) {
@@ -203,7 +203,7 @@ public abstract class ScreenGUI extends GuiScreen implements ParentElement {
             ElementDispatcher.getElements().stream().anyMatch(e -> e.mouseWheel(mc, cursorX, cursorY, delta));
         } catch (ConcurrentModificationException e){
             //Do Nothing
-            LogCore.logWarn("mouseWheel ended unexpectedly");
+            SAOCore.LOGGER.warn("mouseWheel ended unexpectedly");
         }
     }
 

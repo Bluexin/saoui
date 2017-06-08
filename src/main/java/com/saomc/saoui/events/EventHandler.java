@@ -38,7 +38,7 @@ public class EventHandler {
     }
 
     static void cleanTempElements(){
-        ElementBuilder.getInstance().cleanTempElements();
+        ElementBuilder.Companion.getInstance().cleanTempElements();
     }
 }
 

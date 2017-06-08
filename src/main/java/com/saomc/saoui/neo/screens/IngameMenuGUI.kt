@@ -1,7 +1,9 @@
 package com.saomc.saoui.neo.screens
 
 import com.saomc.saoui.SoundCore
-import com.saomc.saoui.themes.elements.menus.PlaceholderElement
+import com.saomc.saoui.themes.elements.menus.CategoryData
+import com.saomc.saoui.themes.elements.menus.MenuDefEnum
+import com.saomc.saoui.themes.elements.menus.ElementData
 import com.saomc.saoui.util.IconCore
 import net.minecraft.client.gui.GuiOptions
 import net.minecraftforge.fml.relauncher.Side
@@ -18,6 +20,7 @@ class IngameMenuGUI(override val name: String = "In-game menu GUI") : ScreenGUI(
     private var flowY = 0
     private var flowX = 0
     private var playedSound = false
+
 
     override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
         if (!playedSound) { // This trickery is used to circumvent the stupid shit in Minecraft#displayInGameMenu()
@@ -37,10 +40,29 @@ class IngameMenuGUI(override val name: String = "In-game menu GUI") : ScreenGUI(
     }
 
     override fun initGui() {
-        elements.addAll(listOf(
-                PlaceholderElement(0, 0, IconCore.ACCESSORY),
-                PlaceholderElement(0, 24, IconCore.ARMOR)
-        ))
+        val list = listOf(
+                Pair("menu", ElementData(MenuDefEnum.ICON_BUTTON, IconCore.PROFILE, "profile")),
+                Pair("menu", ElementData(MenuDefEnum.ICON_BUTTON, IconCore.SOCIAL, "social")),
+                Pair("menu", ElementData(MenuDefEnum.ICON_BUTTON, IconCore.MESSAGE, "message")),
+                Pair("menu", ElementData(MenuDefEnum.ICON_BUTTON, IconCore.NAVIGATION, "navigation")),
+                Pair("menu", ElementData(MenuDefEnum.ICON_BUTTON, IconCore.SETTINGS, "settings"))
+                //Pair("profile", ElementData(MenuDefEnum.ICON_LABEL_BUTTON, IconCore.EQUIPMENT, "equipment")),
+                //Pair("profile", ElementData(MenuDefEnum.ICON_LABEL_BUTTON, IconCore.ITEMS, "items")),
+                //Pair("profile", ElementData(MenuDefEnum.ICON_LABEL_BUTTON, IconCore.SKILLS, "skills"))
+        )
+        list.stream().forEachOrdered { element -> kotlin.run{
+            var category: CategoryData? = categories.firstOrNull() { it.name.equals(element.first, true) }
+
+            if (category != null)
+                category.run { addElement(element.second) }
+            else {
+                category = CategoryData(element.first, categories.find { it.parentOf(element.first) })
+                category.init(this)
+                category.addElement(element.second)
+                categories.add(category)
+            }
+        } }
+
 //        flowY = -height
 
 //        SoundCore.play(mc, SoundCore.ORB_DROPDOWN)

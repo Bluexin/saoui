@@ -1,6 +1,6 @@
 package com.saomc.saoui.themes.util
 
-import com.saomc.saoui.util.LogCore
+import com.saomc.saoui.SAOCore
 import gnu.jel.CompilationException
 import gnu.jel.CompiledExpression
 import gnu.jel.Evaluator
@@ -30,12 +30,12 @@ abstract class ExpressionAdapter<T> : XmlAdapter<ExpressionIntermediate, CValue<
         val w = StringWriter()
         ce.printStackTrace(PrintWriter(w))
         sb.append('\n').append(w)
-        LogCore.logFatal(sb.toString())
+        SAOCore.LOGGER.fatal(sb.toString())
         null
     } catch (e: Exception) {
         val w = StringWriter()
         e.printStackTrace(PrintWriter(w))
-        LogCore.logFatal("An error occurred while compiling '${v.expression}'.\n$w")
+        SAOCore.LOGGER.fatal("An error occurred while compiling '${v.expression}'.\n$w")
         null
     }
 

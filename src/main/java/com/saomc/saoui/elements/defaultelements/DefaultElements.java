@@ -1,12 +1,12 @@
 package com.saomc.saoui.elements.defaultelements;
 
+import com.saomc.saoui.SAOCore;
 import com.saomc.saoui.api.screens.GuiSelection;
 import com.saomc.saoui.api.screens.IElementBuilder;
 import com.saomc.saoui.elements.ElementBuilder;
 import com.saomc.saoui.elements.ElementProvider;
 import com.saomc.saoui.screens.inventory.InventoryCore;
 import com.saomc.saoui.util.IconCore;
-import com.saomc.saoui.util.LogCore;
 import com.saomc.saoui.config.OptionCore;
 
 import java.util.stream.Stream;
@@ -19,7 +19,7 @@ import java.util.stream.Stream;
 public class DefaultElements {
 
     public static void dispatch() {
-        LogCore.logDebug("Starting Element Dispatch");
+        SAOCore.LOGGER.debug("Starting Element Dispatch");
         ingameMenu();
     }
 
@@ -104,8 +104,8 @@ public class DefaultElements {
         b.addSlot("Slot 12", "Test", IconCore.QUEST, GuiSelection.IngameMenuGUI);
 
         Stream.of(OptionCore.values()).filter(option -> option.isCategory() && option.getCategory() == null).forEachOrdered(option -> b.addSlot(option.getName(), "Options", IconCore.OPTION, GuiSelection.IngameMenuGUI));
-        Stream.of(OptionCore.values()).filter(option -> option.getCategory() != null).forEachOrdered(option -> ElementBuilder.getInstance().addOption(option.getName(), option.getCategoryName(), IconCore.OPTION, GuiSelection.IngameMenuGUI, option));
-        LogCore.logDebug("Finished Element Dispatch");
+        Stream.of(OptionCore.values()).filter(option -> option.getCategory() != null).forEachOrdered(option -> ElementBuilder.Companion.getInstance().addOption(option.getName(), option.getCategoryName(), IconCore.OPTION, GuiSelection.IngameMenuGUI, option));
+        SAOCore.LOGGER.debug("Finished Element Dispatch");
     }
 
 }

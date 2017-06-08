@@ -60,8 +60,8 @@ public class IngameMenuGUI extends ScreenGUI {
     public void onGuiClosed() {
         super.onGuiClosed();
         SoundCore.play(mc, SoundCore.DIALOG_CLOSE);
-        ElementBuilder.getInstance().resetElements(GuiSelection.IngameMenuGUI);
-        ElementBuilder.getInstance().cleanItemFilters();
+        ElementBuilder.Companion.getInstance().resetElements(GuiSelection.IngameMenuGUI);
+        ElementBuilder.Companion.getInstance().cleanItemFilters();
     }
 
 /*

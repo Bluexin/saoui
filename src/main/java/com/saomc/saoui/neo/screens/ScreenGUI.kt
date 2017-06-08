@@ -2,13 +2,13 @@ package com.saomc.saoui.neo.screens
 
 import be.bluexin.saomclib.profile
 import com.saomc.saoui.GLCore
+import com.saomc.saoui.SAOCore
 import com.saomc.saoui.colorstates.CursorStatus
 import com.saomc.saoui.config.OptionCore
 import com.saomc.saoui.resources.StringNames
+import com.saomc.saoui.themes.elements.menus.CategoryData
 import com.saomc.saoui.themes.elements.menus.MenuElementParent
-import com.saomc.saoui.themes.elements.menus.PlaceholderElement
 import com.saomc.saoui.util.ColorUtil
-import com.saomc.saoui.util.LogCore
 import net.minecraft.client.gui.GuiScreen
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
@@ -42,14 +42,14 @@ abstract class ScreenGUI : GuiScreen(), MenuElementParent {
     protected var rotationPitch = 0.0F
     protected var cursorHidden = false
     protected var lockCursor = false
-    protected val elements = mutableListOf<PlaceholderElement>()
+    protected val categories = mutableListOf<CategoryData>()
 
     @OverridingMethodsMustInvokeSuper
     override fun initGui() {
         if (CURSOR_STATUS != CursorStatus.DEFAULT) hideCursor()
-        rotationYaw = mc.player?.rotationYaw ?: 0.0F
-        rotationPitch = mc.player?.rotationPitch ?: 0.0F
-        elements.forEach { it.init(this) }
+        rotationYaw = mc.player!!.rotationYaw
+        rotationPitch = mc.player!!.rotationPitch
+        categories.forEach { it.init(this) }
 
         super.initGui()
     }
@@ -70,7 +70,7 @@ abstract class ScreenGUI : GuiScreen(), MenuElementParent {
 
     override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
         mc.profile("saoui menu") {
-            elements.forEach { it.draw(mc, mouseX, mouseY) }
+            categories.forEach { it.draw(mc, mouseX, mouseY) }
 
             if (CURSOR_STATUS == CursorStatus.SHOW) { // TODO: maybe there's a way to move all of this to the actual org.lwjgl.input.Cursor
 
@@ -104,7 +104,7 @@ abstract class ScreenGUI : GuiScreen(), MenuElementParent {
 
     override fun keyTyped(ch: Char, key: Int) {
         if (OptionCore.CURSOR_TOGGLE.isEnabled && GuiScreen.isCtrlKeyDown()) lockCursor = !lockCursor
-        LogCore.logDebug("ch - $ch key - $key")
+        SAOCore.LOGGER.debug("ch - $ch key - $key")
         super.keyTyped(ch, key)
 
 //        ElementDispatcher.getElements().stream().anyMatch({ e -> e.keyTyped(mc, ch, key) })
@@ -122,7 +122,7 @@ abstract class ScreenGUI : GuiScreen(), MenuElementParent {
             backgroundClicked(cursorX, cursorY, button)
         } catch (e: ConcurrentModificationException) {
             //Do Nothing
-            LogCore.logDebug("mouseClicked ended unexpectedly")
+            SAOCore.LOGGER.debug("mouseClicked ended unexpectedly")
         }
 
     }
@@ -133,7 +133,7 @@ abstract class ScreenGUI : GuiScreen(), MenuElementParent {
     }
 
     private fun backgroundClicked(cursorX: Int, cursorY: Int, button: Int) {
-        LogCore.logDebug("Background Clicked")
+        SAOCore.LOGGER.debug("Background Clicked")
     }
 
     private fun mouseWheel(cursorX: Int, cursorY: Int, delta: Int) {
@@ -160,7 +160,7 @@ abstract class ScreenGUI : GuiScreen(), MenuElementParent {
         close()
     }
 
-    protected open fun close() = elements.forEach { it.close() }
+    protected open fun close() = categories.forEach { it.close() }
 
     private fun showCursor() {
         if (cursorHidden) toggleHideCursor()

@@ -1,7 +1,7 @@
 package com.saomc.saoui.elements;
 
+import com.saomc.saoui.SAOCore;
 import com.saomc.saoui.api.screens.*;
-import com.saomc.saoui.util.LogCore;
 import com.saomc.saoui.config.OptionCore;
 import jdk.nashorn.internal.objects.annotations.Getter;
 import jdk.nashorn.internal.objects.annotations.Setter;
@@ -466,14 +466,14 @@ public class Element implements ParentElement {
     @Getter
     @Nullable
     public ItemFilter getItemFilter() {
-        if (this.elementType != ElementType.INVENTORY) LogCore.logFatal("getItemFilter called on non-inventory element");
+        if (this.elementType != ElementType.INVENTORY) SAOCore.LOGGER.fatal("getItemFilter called on non-inventory element");
         return this.itemFilter;
     }
 
     @Getter
     @Nullable
     public IInventory getInventory() {
-        if (this.elementType != ElementType.INVENTORY) LogCore.logFatal("getInventory called on non-inventory element");
+        if (this.elementType != ElementType.INVENTORY) SAOCore.LOGGER.fatal("getInventory called on non-inventory element");
         return this.inventory;
     }
 
@@ -492,7 +492,7 @@ public class Element implements ParentElement {
     @Getter
     @Nullable
     public String getItemName() {
-        LogCore.logInfo("slot - " + this.slots.get(0));
+        SAOCore.LOGGER.info("slot - " + this.slots.get(0));
         if (!this.slots.isEmpty() && this.inventory != null) {
             if (this.inventory.getStackInSlot(this.slots.get(0)) != null)
                 return this.inventory.getStackInSlot(this.slots.get(0)).getDisplayName();
