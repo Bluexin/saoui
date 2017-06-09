@@ -4,20 +4,15 @@ import com.saomc.saoui.SAOCore
 import com.saomc.saoui.SoundCore
 import com.saomc.saoui.api.events.ElementAction
 import com.saomc.saoui.api.screens.Actions
-import com.saomc.saoui.api.screens.ElementType
-import com.saomc.saoui.elements.ElementBuilder
-import com.saomc.saoui.neo.screens.ScreenGUI
-import com.saomc.saoui.screens.menu.IngameMenuGUI
 import com.saomc.saoui.config.OptionCore
+import com.saomc.saoui.events.EventCore.mc
+import com.saomc.saoui.screens.menu.IngameMenuGUI
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiIngameMenu
 import net.minecraft.client.gui.GuiMainMenu
 import net.minecraft.client.gui.GuiOptions
-
-import java.util.stream.Stream
-
-import com.saomc.saoui.events.EventCore.mc
 import java.util.function.Consumer
+import java.util.stream.Stream
 
 /**
  * This handles and controls the default event, and our custom events for slots
@@ -44,7 +39,7 @@ object ElementHandler {
         val option = OptionCore.fromString(e.name)
         if (option.isRestricted) {
             if (!option.isEnabled) {
-                Stream.of(*OptionCore.values()).filter { opt -> opt.category == option.category }.forEach(Consumer<OptionCore> { it.disable() })
+                Stream.of(*OptionCore.values()).filter { opt -> opt.category == option.category }.forEach({ it.disable() })
                 option.enable()
             }
         } else

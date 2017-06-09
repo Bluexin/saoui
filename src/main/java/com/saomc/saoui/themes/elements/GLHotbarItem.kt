@@ -16,7 +16,7 @@ import javax.xml.bind.annotation.XmlRootElement
  * @author Bluexin
  */
 @XmlRootElement
-open class GLHotbarItem constructor() : GLRectangle() {
+open class GLHotbarItem : GLRectangle() {
 
     protected lateinit var slot: CInt
     protected lateinit var itemXoffset: CInt

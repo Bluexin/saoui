@@ -1,11 +1,7 @@
 package com.saomc.saoui.api.events
 
 import com.saomc.saoui.api.screens.Actions
-import com.saomc.saoui.api.screens.ElementType
-import com.saomc.saoui.api.screens.GuiSelection
-import com.saomc.saoui.api.screens.ParentElement
 import com.saomc.saoui.themes.elements.menus.MenuElementParent
-import jdk.nashorn.internal.objects.annotations.Getter
 import net.minecraftforge.fml.common.eventhandler.Event
 
 /**

@@ -11,6 +11,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @SideOnly(Side.CLIENT)
 public enum StatusEffects {
@@ -51,7 +52,7 @@ public enum StatusEffects {
     public static List<StatusEffects> getEffects(EntityLivingBase entity) {
         final List<StatusEffects> effects = new ArrayList<>();
 
-        entity.getActivePotionEffects().stream().filter(potionEffect0 -> potionEffect0 != null).forEach(potionEffect0 -> {
+        entity.getActivePotionEffects().stream().filter(Objects::nonNull).forEach(potionEffect0 -> {
 
             if (potionEffect0.getPotion() == MobEffects.SLOWNESS && potionEffect0.getAmplifier() > 5)
                 effects.add(PARALYZED);

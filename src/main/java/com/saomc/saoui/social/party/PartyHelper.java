@@ -76,7 +76,7 @@ public class PartyHelper {
     }
 
     public boolean isMember(String username) {
-        return username.equals(StaticPlayerHelper.getName(Minecraft.getMinecraft())) || hasParty() && Stream.of(party).anyMatch(member -> member.equals(username));
+        return username.equals(StaticPlayerHelper.getName(Minecraft.getMinecraft())) || hasParty() && party.getMembers().stream().anyMatch(player -> player.getName().equals(username));
     }
 
     private boolean isLeader(String username) {
