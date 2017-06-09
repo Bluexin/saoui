@@ -2,7 +2,6 @@ package com.saomc.saoui.events;
 
 import be.bluexin.saouintw.communication.Command;
 import com.saomc.saoui.SoundCore;
-import com.saomc.saoui.elements.ElementBuilder;
 import net.minecraft.client.multiplayer.GuiConnecting;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
@@ -37,8 +36,5 @@ public class EventHandler {
             evt.setCanceled(true);// TODO: add pm feature and PT chat
     }
 
-    static void cleanTempElements(){
-        ElementBuilder.Companion.getInstance().cleanTempElements();
-    }
 }
 

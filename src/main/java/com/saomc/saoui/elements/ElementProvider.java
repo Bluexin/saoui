@@ -2,9 +2,6 @@ package com.saomc.saoui.elements;
 
 import com.saomc.saoui.api.screens.IElementBuilder;
 
-/**
- * Created by Tencao on 04/08/2016.
- */
 public class ElementProvider {
 
     private static ElementProvider instance;

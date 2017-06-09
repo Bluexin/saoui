@@ -8,7 +8,6 @@ import com.saomc.saoui.config.OptionCore;
 import com.saomc.saoui.effects.StatusEffects;
 import com.saomc.saoui.neo.screens.IngameMenuGUI;
 import com.saomc.saoui.resources.StringNames;
-import com.saomc.saoui.screens.death.DeathScreen;
 import com.saomc.saoui.social.StaticPlayerHelper;
 import com.saomc.saoui.themes.ThemeLoader;
 import com.saomc.saoui.themes.elements.HudPartType;
@@ -90,7 +89,7 @@ public class IngameGUI extends GuiIngameForge {
     protected void renderCrosshairs(float partialTicks) {
         if (pre(CROSSHAIRS)) return;
         ThemeLoader.HUD.draw(HudPartType.CROSS_HAIR, getContext()); // TODO: rework
-        if (OptionCore.CROSS_HAIR.isEnabled() && !(mc.currentScreen instanceof IngameMenuGUI || mc.currentScreen instanceof DeathScreen)) {
+        if (OptionCore.CROSS_HAIR.isEnabled() && !(mc.currentScreen instanceof IngameMenuGUI/* || mc.currentScreen instanceof DeathScreen*/)) {
             super.renderCrosshairs(partialTicks);
         }
         post(CROSSHAIRS);

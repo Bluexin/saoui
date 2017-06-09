@@ -1,17 +1,15 @@
 package com.saomc.saoui.events
 
-import com.saomc.saoui.SAOCore
 import com.saomc.saoui.SoundCore
 import com.saomc.saoui.api.events.ElementAction
 import com.saomc.saoui.api.screens.Actions
 import com.saomc.saoui.config.OptionCore
 import com.saomc.saoui.events.EventCore.mc
-import com.saomc.saoui.screens.menu.IngameMenuGUI
+import com.saomc.saoui.neo.screens.IngameMenuGUI
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiIngameMenu
 import net.minecraft.client.gui.GuiMainMenu
 import net.minecraft.client.gui.GuiOptions
-import java.util.function.Consumer
 import java.util.stream.Stream
 
 /**

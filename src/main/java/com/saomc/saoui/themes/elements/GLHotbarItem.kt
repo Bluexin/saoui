@@ -16,7 +16,7 @@ import javax.xml.bind.annotation.XmlRootElement
  * @author Bluexin
  */
 @XmlRootElement
-open class GLHotbarItem : GLRectangle() {
+open class GLHotbarItem: GLRectangle() {
 
     protected lateinit var slot: CInt
     protected lateinit var itemXoffset: CInt
@@ -53,7 +53,7 @@ open class GLHotbarItem : GLRectangle() {
 
         if (hand == null) it = ctx.player.inventory.mainInventory[slot.invoke(ctx)]
         else it = ctx.player.inventory.offHandInventory[slot.invoke(ctx)]
-        if (it == null) return
+        if (it == ItemStack.EMPTY) return
 
         GLCore.glBlend(false)
         GLCore.glRescaleNormal(true)

@@ -4,7 +4,6 @@ import com.saomc.saoui.SoundCore;
 import com.saomc.saoui.config.OptionCore;
 import com.saomc.saoui.neo.screens.IngameMenuGUI;
 import com.saomc.saoui.renders.StaticRenderer;
-import com.saomc.saoui.screens.death.DeathScreen;
 import com.saomc.saoui.screens.ingame.IngameGUI;
 import com.saomc.saoui.screens.menu.StartupGUI;
 import net.minecraft.client.gui.GuiIngameMenu;
@@ -85,10 +84,11 @@ class RenderHandler {
     }
 
     static void deathCheck() {
+        /*
         if (EventCore.mc.currentScreen instanceof DeathScreen && EventCore.mc.player.getHealth() > 0.0F) {
             EventCore.mc.currentScreen.onGuiClosed();
             EventCore.mc.setIngameFocus();
-        }
+        }*/
     }
 
     static void renderPlayer(RenderPlayerEvent.Post e) {
