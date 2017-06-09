@@ -1,9 +1,11 @@
 package com.saomc.saoui.neo.screens
 
+import com.saomc.saoui.SAOCore
 import com.saomc.saoui.SoundCore
+import com.saomc.saoui.api.elements.ElementData
+import com.saomc.saoui.api.screens.Actions
 import com.saomc.saoui.themes.elements.menus.CategoryData
 import com.saomc.saoui.themes.elements.menus.MenuDefEnum
-import com.saomc.saoui.themes.elements.menus.ElementData
 import com.saomc.saoui.util.IconCore
 import net.minecraft.client.gui.GuiOptions
 import net.minecraftforge.fml.relauncher.Side
@@ -22,61 +24,60 @@ class IngameMenuGUI(override val name: String = "In-game menu GUI") : ScreenGUI(
     private var playedSound = false
 
 
-    override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
+    override fun drawScreen(cursorX: Int, cursorY: Int, partialTicks: Float) {
         if (!playedSound) { // This trickery is used to circumvent the stupid shit in Minecraft#displayInGameMenu()
             SoundCore.play(mc, SoundCore.ORB_DROPDOWN)
             playedSound = true
         }
 
-        super.drawScreen(mouseX, mouseY, partialTicks)
+        super.drawScreen(cursorX, cursorY, partialTicks)
     }
 
     override fun mouseReleased(cursorX: Int, cursorY: Int, button: Int) {
         super.mouseReleased(cursorX, cursorY, button)
 
+    }
+
+    override fun backgroundClicked(cursorX: Int, cursorY: Int, button: Actions) {
         when (button) { // 0 = left click, 1 = right click, 2 = middle click, 3 = back
-            1 -> this.mc.displayGuiScreen(GuiOptions(this, this.mc.gameSettings))
+            Actions.RIGHT_PRESSED -> this.mc.displayGuiScreen(GuiOptions(this, this.mc.gameSettings))
+            else -> return
         }
+        SAOCore.LOGGER.debug("Background Clicked")
     }
 
     override fun initGui() {
         categories.clear()
         val list = listOf(
-                Pair("menu", ElementData(MenuDefEnum.ICON_BUTTON, IconCore.PROFILE, "profile")),
-                Pair("menu", ElementData(MenuDefEnum.ICON_BUTTON, IconCore.SOCIAL, "social")),
-                Pair("menu", ElementData(MenuDefEnum.ICON_BUTTON, IconCore.MESSAGE, "message")),
-                Pair("menu", ElementData(MenuDefEnum.ICON_BUTTON, IconCore.NAVIGATION, "navigation")),
-                Pair("menu", ElementData(MenuDefEnum.ICON_BUTTON, IconCore.SETTINGS, "settings")),
-                Pair("profile", ElementData(MenuDefEnum.ICON_LABEL_BUTTON, IconCore.EQUIPMENT, "equipment")),
-                Pair("profile", ElementData(MenuDefEnum.ICON_LABEL_BUTTON, IconCore.ITEMS, "items")),
-                Pair("profile", ElementData(MenuDefEnum.ICON_LABEL_BUTTON, IconCore.SKILLS, "skills"))
+                ElementData("menu", MenuDefEnum.ICON_BUTTON, IconCore.PROFILE, "profile"),
+                ElementData("menu", MenuDefEnum.ICON_BUTTON, IconCore.SOCIAL, "social"),
+                ElementData("menu", MenuDefEnum.ICON_BUTTON, IconCore.MESSAGE, "message"),
+                ElementData("menu", MenuDefEnum.ICON_BUTTON, IconCore.NAVIGATION, "navigation"),
+                ElementData("menu", MenuDefEnum.ICON_BUTTON, IconCore.SETTINGS, "settings"),
+                ElementData("profile", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.EQUIPMENT, "equipment"),
+                ElementData("profile", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.ITEMS, "items"),
+                ElementData("profile", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.SKILLS, "skills")
         )
-        list.stream().forEachOrdered { (first, second) -> kotlin.run{
-            var category: CategoryData? = categories.firstOrNull { it.name.equals(first, true) }
+        list.stream().forEachOrdered { first -> kotlin.run{
+            var category: CategoryData? = categories.firstOrNull { it.name.equals(first.category, true) }
 
+            //If category exists, add to existing
             if (category != null)
-                category.run { addElement(second) }
+                category.run { addElement(first.type, first.icon, first.name) }
+            //Else, create new category and add to that
             else {
-                category = CategoryData(first, categories.find { it.parentOf(first) })
+                category = CategoryData(first.category, categories.find { it.parentOf(first.category) })
                 category.init(this)
-                category.addElement(second)
+                category.addElement(first.type, first.icon, first.name) }
                 categories.add(category)
             }
-        } }
+        }
 
 //        flowY = -height
 
 //        SoundCore.play(mc, SoundCore.ORB_DROPDOWN)
 
         super.initGui()
-    }
-
-    override fun closeCategory(name: String) {
-        super.closeCategory(name)
-    }
-
-    override fun openCategory(name: String) {
-        super.openCategory(name)
     }
 
     override val parentX: Int

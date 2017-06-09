@@ -23,7 +23,6 @@ object ElementHandler {
 
     fun defaultActions(e: ElementAction) {
         if (e.action == Actions.LEFT_RELEASED) {
-            SAOCore.LOGGER.info("Triggered event for " + e.name)
             if (e.isOpen) {
                 e.parent.closeCategory(e.name)
                 SoundCore.play(Minecraft.getMinecraft().soundHandler, SoundCore.DIALOG_CLOSE)
