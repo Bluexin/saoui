@@ -118,11 +118,11 @@ abstract class ScreenGUI : GuiScreen(), MenuElementParent {
     }
 
     override fun closeCategory(name: String) {
-        categories.find { it.name.equals(name, true) }?.setEnabled(false).also { categories.find { it.parentOf(name) }?.setOpen(name, false) }
+        categories.find { it.name.equals(name, true) }?.setEnabled(false)
     }
 
     override fun openCategory(name: String){
-        categories.find { it.name.equals(name, true) }?.setEnabled(true).also { categories.find { it.parentOf(name) }?.setOpen(name, true) }
+        categories.find { it.name.equals(name, true) }?.setEnabled(true)
     }
 
     override fun keyTyped(ch: Char, key: Int) {
@@ -139,10 +139,11 @@ abstract class ScreenGUI : GuiScreen(), MenuElementParent {
     override fun mouseClicked(cursorX: Int, cursorY: Int, button: Int) {
         super.mouseClicked(cursorX, cursorY, button)
         mouseDown = mouseDown or (0x1 shl button)
+        val mouseButton: Actions = if (button == 0) Actions.LEFT_PRESSED else Actions.RIGHT_PRESSED
 
-        if (categories.firstOrNull { it.mouseClicked(cursorX, cursorY, Actions.LEFT_PRESSED) } == null)
+        if (categories.firstOrNull { it.mouseClicked(cursorX, cursorY, mouseButton) } == null)
             try {
-                backgroundClicked(cursorX, cursorY, button)
+                backgroundClicked(cursorX, cursorY, mouseButton)
             } catch (e: ConcurrentModificationException) {
                 //Do Nothing
                 SAOCore.LOGGER.debug("mouseClicked ended unexpectedly")
@@ -152,11 +153,12 @@ abstract class ScreenGUI : GuiScreen(), MenuElementParent {
 
     override fun mouseReleased(cursorX: Int, cursorY: Int, button: Int) {
         super.mouseReleased(cursorX, cursorY, button)
-        categories.firstOrNull { it.mouseClicked(cursorX, cursorY, Actions.LEFT_RELEASED) }
+        val mouseButton: Actions = if (button == 0) Actions.LEFT_RELEASED else Actions.RIGHT_RELEASED
+        categories.firstOrNull { it.mouseClicked(cursorX, cursorY, mouseButton) }
         mouseDown = mouseDown and (0x1 shl button).inv()
     }
 
-    private fun backgroundClicked(cursorX: Int, cursorY: Int, button: Int) {
+    open fun backgroundClicked(cursorX: Int, cursorY: Int, button: Actions) {
         SAOCore.LOGGER.debug("Background Clicked")
     }
 
