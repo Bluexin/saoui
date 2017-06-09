@@ -70,7 +70,7 @@ public class ElementController {
      * @param data    Button ID
      */
     public static void actionPerformed(Element element, Actions action, int data) {
-        MinecraftForge.EVENT_BUS.post(new ElementAction(element.getCaption(), element.getCategory(), element.getParent(), action, data, element.getGui(), element.isOpen(), !element.isFocus(), element.getElementType(), element.getParentElement()));
+        //MinecraftForge.EVENT_BUS.post(new ElementAction(element.getCaption(), element.getCategory(), element.getParent(), action, data, element.getGui(), element.isOpen(), !element.isFocus(), element.getElementType(), element.getParentElement()));
     }
 
     public void update(Minecraft mc) {

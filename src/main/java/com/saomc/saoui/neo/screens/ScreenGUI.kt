@@ -3,13 +3,18 @@ package com.saomc.saoui.neo.screens
 import be.bluexin.saomclib.profile
 import com.saomc.saoui.GLCore
 import com.saomc.saoui.SAOCore
+import com.saomc.saoui.api.events.ElementAction
+import com.saomc.saoui.api.screens.Actions
+import com.saomc.saoui.api.screens.ParentElement
 import com.saomc.saoui.colorstates.CursorStatus
 import com.saomc.saoui.config.OptionCore
 import com.saomc.saoui.resources.StringNames
 import com.saomc.saoui.themes.elements.menus.CategoryData
+import com.saomc.saoui.themes.elements.menus.ElementData
 import com.saomc.saoui.themes.elements.menus.MenuElementParent
 import com.saomc.saoui.util.ColorUtil
 import net.minecraft.client.gui.GuiScreen
+import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
 import org.lwjgl.BufferUtils
@@ -54,6 +59,15 @@ abstract class ScreenGUI : GuiScreen(), MenuElementParent {
         super.initGui()
     }
 
+    private fun getCursorX(): Int {
+        return if (lockCursor) 0 else (width / 2 - mouseX) / 2
+    }
+
+    private fun getCursorY(): Int {
+        return if (lockCursor) 0 else (height / 2 - mouseY) / 2
+    }
+
+
     private fun hideCursor() {
         if (!cursorHidden) toggleHideCursor()
     }
@@ -64,13 +78,16 @@ abstract class ScreenGUI : GuiScreen(), MenuElementParent {
     }
 
     override fun updateScreen() {
-        mc.player?.rotationYaw = rotationYaw// - parentX * ROTATION_FACTOR
-        mc.player?.rotationPitch = rotationPitch// - parentY * ROTATION_FACTOR
     }
 
-    override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
+    override fun drawScreen(cursorX: Int, cursorY: Int, partialTicks: Float) {
         mc.profile("saoui menu") {
-            categories.forEach { it.draw(mc, mouseX, mouseY) }
+            mouseX = cursorX
+            mouseY = cursorY
+            mc.player.rotationYaw = rotationYaw - getCursorX() * ROTATION_FACTOR
+            mc.player?.rotationPitch = rotationPitch - getCursorY() * ROTATION_FACTOR
+
+            categories.forEach { it.draw(mc, cursorX, cursorY) }
 
             if (CURSOR_STATUS == CursorStatus.SHOW) { // TODO: maybe there's a way to move all of this to the actual org.lwjgl.input.Cursor
 
@@ -87,7 +104,7 @@ abstract class ScreenGUI : GuiScreen(), MenuElementParent {
                         mouseDownValue = 1.0f
 
                     GLCore.glColorRGBA(ColorUtil.CURSOR_COLOR.multiplyAlpha(mouseDownValue))
-                    GLCore.glTexturedRect((mouseX - 7).toDouble(), (mouseY - 7).toDouble(), 35.0, 115.0, 15.0, 15.0)
+                    GLCore.glTexturedRect((cursorX - 7).toDouble(), (cursorY - 7).toDouble(), 35.0, 115.0, 15.0, 15.0)
 
                     GLCore.glColorRGBA(ColorUtil.DEFAULT_COLOR)
                 } else {
@@ -96,10 +113,20 @@ abstract class ScreenGUI : GuiScreen(), MenuElementParent {
                     GLCore.glColorRGBA(ColorUtil.CURSOR_COLOR)
                 }
 
-                GLCore.glTexturedRect((mouseX - 7).toDouble(), (mouseY - 7).toDouble(), 20.0, 115.0, 15.0, 15.0)
+                GLCore.glTexturedRect((cursorX - 7).toDouble(), (cursorY - 7).toDouble(), 20.0, 115.0, 15.0, 15.0)
                 GLCore.glBlend(false)
             }
+
+
         }
+    }
+
+    override fun closeCategory(name: String) {
+        categories.find { it.name.equals(name, true) }?.setEnabled(false).also { categories.find { it.parentOf(name) }?.setOpen(name, false) }
+    }
+
+    override fun openCategory(name: String){
+        categories.find { it.name.equals(name, true) }?.setEnabled(true).also { categories.find { it.parentOf(name) }?.setOpen(name, true) }
     }
 
     override fun keyTyped(ch: Char, key: Int) {
@@ -117,18 +144,19 @@ abstract class ScreenGUI : GuiScreen(), MenuElementParent {
         super.mouseClicked(cursorX, cursorY, button)
         mouseDown = mouseDown or (0x1 shl button)
 
-        try {
-            //if (ElementDispatcher.getElements().stream().noneMatch({ controller -> controller.mousePressed(mc, cursorX, cursorY, button) }))
-            backgroundClicked(cursorX, cursorY, button)
-        } catch (e: ConcurrentModificationException) {
-            //Do Nothing
-            SAOCore.LOGGER.debug("mouseClicked ended unexpectedly")
-        }
+        if (categories.firstOrNull { it.mouseClicked(cursorX, cursorY, Actions.LEFT_PRESSED) } == null)
+            try {
+                backgroundClicked(cursorX, cursorY, button)
+            } catch (e: ConcurrentModificationException) {
+                //Do Nothing
+                SAOCore.LOGGER.debug("mouseClicked ended unexpectedly")
+            }
 
     }
 
     override fun mouseReleased(cursorX: Int, cursorY: Int, button: Int) {
         super.mouseReleased(cursorX, cursorY, button)
+        categories.firstOrNull { it.mouseClicked(cursorX, cursorY, Actions.LEFT_RELEASED) }
         mouseDown = mouseDown and (0x1 shl button).inv()
     }
 
@@ -167,12 +195,10 @@ abstract class ScreenGUI : GuiScreen(), MenuElementParent {
     }
 
     override val parentX: Int
-        get() = if (OptionCore.CURSOR_TOGGLE.isEnabled) if (lockCursor) 0 else -mouseX / 2
-        else if (GuiScreen.isCtrlKeyDown()) 0 else -mouseX / 2
+        get() = getCursorX()
 
     override val parentY: Int
-        get() = if (OptionCore.CURSOR_TOGGLE.isEnabled) if (lockCursor) 0 else -mouseY / 2
-        else if (GuiScreen.isCtrlKeyDown()) 0 else -mouseY / 2
+        get() = getCursorY()
 
     override val parentZ = 0
 }

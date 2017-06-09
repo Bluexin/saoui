@@ -2,10 +2,13 @@ package com.saomc.saoui.themes.elements.menus
 
 import com.saomc.saoui.GLCore
 import com.saomc.saoui.SAOCore
+import com.saomc.saoui.api.events.ElementAction
+import com.saomc.saoui.api.screens.Actions
 import com.saomc.saoui.api.themes.IHudDrawContext
 import com.saomc.saoui.themes.elements.Element
 import com.saomc.saoui.themes.elements.RepetitionGroup
 import net.minecraft.util.ResourceLocation
+import net.minecraftforge.common.MinecraftForge
 import javax.xml.bind.annotation.*
 
 /**
@@ -35,6 +38,11 @@ open class MenuElementGroup : MenuElement(), MenuElementParent {
         latestTicks = ctx.partialTicks; true
     }
 
+    override fun closeCategory(name: String) {
+    }
+
+    override fun openCategory(name: String) {
+    }
 
     override val parentX: Int
         get() {

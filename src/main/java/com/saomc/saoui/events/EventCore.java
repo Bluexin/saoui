@@ -1,10 +1,12 @@
 package com.saomc.saoui.events;
 
+import com.saomc.saoui.api.events.ElementAction;
 import com.saomc.saoui.effects.RenderDispatcher;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
@@ -77,5 +79,10 @@ public class EventCore {
     public void guiOpenListener(GuiOpenEvent e) {
         RenderHandler.guiInstance(e);
         RenderHandler.mainMenuGUI(e);
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public void elementActionListener(ElementAction e){
+        ElementHandler.INSTANCE.defaultActions(e);
     }
 }

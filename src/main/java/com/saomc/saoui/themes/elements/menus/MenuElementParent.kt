@@ -1,5 +1,6 @@
 package com.saomc.saoui.themes.elements.menus
 
+
 /**
  * Part of saoui by Bluexin.
 
@@ -13,4 +14,8 @@ interface MenuElementParent {
     val parentZ: Int
 
     val name: String
+
+    fun openCategory(name: String)
+
+    fun closeCategory(name: String)
 }
