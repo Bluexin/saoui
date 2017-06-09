@@ -1,6 +1,9 @@
 package com.saomc.saoui.themes.elements.menus
 
+import com.saomc.saoui.api.events.ElementAction
+import com.saomc.saoui.api.screens.Actions
 import com.saomc.saoui.api.themes.IHudDrawContext
+import net.minecraftforge.common.MinecraftForge
 import java.util.*
 import javax.xml.bind.annotation.XmlRootElement
 
@@ -22,4 +25,12 @@ open class MenuDefs protected constructor(override val name: String = "MenuDefs"
     fun setup() = this.parts.values.forEach { it.setup(this) }
 
     fun draw(key: MenuDefEnum, ctx: IHudDrawContext) = this[key]?.draw(ctx)
+
+    override fun closeCategory(name: String) {
+
+    }
+
+    override fun openCategory(name: String) {
+
+    }
 }

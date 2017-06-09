@@ -1,11 +1,14 @@
 package com.saomc.saoui.themes.elements.menus
 
 import com.saomc.saoui.GLCore
+import com.saomc.saoui.api.events.ElementAction
+import com.saomc.saoui.api.screens.Actions
 import com.saomc.saoui.api.screens.IIcon
 import com.saomc.saoui.config.OptionCore
 import com.saomc.saoui.resources.StringNames
 import com.saomc.saoui.util.ColorUtil
 import net.minecraft.client.Minecraft
+import net.minecraftforge.common.MinecraftForge
 
 /**
  * Part of saoui by Bluexin.
@@ -20,11 +23,10 @@ data class ElementData(val type: MenuDefEnum, val icon: IIcon?, val name: String
     private var width: Double = 60.0
     private var height: Double = 20.0
     private var visibility: Float = 1.0F
-    private var isOpen: Boolean = false
-    private var disabled: Boolean = false
+    var isOpen: Boolean = false
+    var focus: Boolean = true
 
     fun draw(mc: Minecraft, mouseX: Int, mouseY: Int) {
-
         val hoverState = hoverState(mouseX, mouseY)
         val color0 = getColor(hoverState, true)
         val color1 = getColor(hoverState, false)
@@ -58,7 +60,7 @@ data class ElementData(val type: MenuDefEnum, val icon: IIcon?, val name: String
     }
 
     fun hoverState(cursorX: Int, cursorY: Int): Int {
-        return if (mouseOver(cursorX, cursorY)) 2 else if (this.isOpen) 2 else if (this.disabled) 0 else 1
+        return if (mouseOver(cursorX, cursorY)) 2 else if (this.isOpen) 2 else if (this.focus) 1 else 0
     }
 
     fun mouseOver(cursorX: Int, cursorY: Int): Boolean {

@@ -40,15 +40,16 @@ class IngameMenuGUI(override val name: String = "In-game menu GUI") : ScreenGUI(
     }
 
     override fun initGui() {
+        categories.clear()
         val list = listOf(
                 Pair("menu", ElementData(MenuDefEnum.ICON_BUTTON, IconCore.PROFILE, "profile")),
                 Pair("menu", ElementData(MenuDefEnum.ICON_BUTTON, IconCore.SOCIAL, "social")),
                 Pair("menu", ElementData(MenuDefEnum.ICON_BUTTON, IconCore.MESSAGE, "message")),
                 Pair("menu", ElementData(MenuDefEnum.ICON_BUTTON, IconCore.NAVIGATION, "navigation")),
-                Pair("menu", ElementData(MenuDefEnum.ICON_BUTTON, IconCore.SETTINGS, "settings"))
-                //Pair("profile", ElementData(MenuDefEnum.ICON_LABEL_BUTTON, IconCore.EQUIPMENT, "equipment")),
-                //Pair("profile", ElementData(MenuDefEnum.ICON_LABEL_BUTTON, IconCore.ITEMS, "items")),
-                //Pair("profile", ElementData(MenuDefEnum.ICON_LABEL_BUTTON, IconCore.SKILLS, "skills"))
+                Pair("menu", ElementData(MenuDefEnum.ICON_BUTTON, IconCore.SETTINGS, "settings")),
+                Pair("profile", ElementData(MenuDefEnum.ICON_LABEL_BUTTON, IconCore.EQUIPMENT, "equipment")),
+                Pair("profile", ElementData(MenuDefEnum.ICON_LABEL_BUTTON, IconCore.ITEMS, "items")),
+                Pair("profile", ElementData(MenuDefEnum.ICON_LABEL_BUTTON, IconCore.SKILLS, "skills"))
         )
         list.stream().forEachOrdered { element -> kotlin.run{
             var category: CategoryData? = categories.firstOrNull() { it.name.equals(element.first, true) }
@@ -68,6 +69,14 @@ class IngameMenuGUI(override val name: String = "In-game menu GUI") : ScreenGUI(
 //        SoundCore.play(mc, SoundCore.ORB_DROPDOWN)
 
         super.initGui()
+    }
+
+    override fun closeCategory(name: String) {
+        super.closeCategory(name)
+    }
+
+    override fun openCategory(name: String) {
+        super.openCategory(name)
     }
 
     override val parentX: Int
