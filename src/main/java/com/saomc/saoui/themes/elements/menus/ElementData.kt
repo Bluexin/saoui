@@ -45,13 +45,13 @@ data class ElementData(val type: MenuDefEnum, val icon: IIcon?, val name: String
         GLCore.glTexturedRect(x.toDouble(), y.toDouble(), 0.0, 25.0, width.toDouble(), height.toDouble())
         GLCore.glColorRGBA(ColorUtil.multiplyAlpha(color1, visibility))
         GLCore.glBindTexture(if (OptionCore.SAO_UI.isEnabled) StringNames.icons else StringNames.iconsCustom)
+        GLCore.glColorRGBA(ColorUtil.multiplyAlpha(color1, visibility))
         icon?.glDrawUnsafe(x + 2, y + 2)
         GLCore.glBlend(false)
         GLCore.glAlphaTest(true)
     }
 
     fun drawSlot(mc: Minecraft, mouseX: Int, mouseY: Int){
-        /*
         val hoverState = hoverState(mouseX, mouseY)
         val color0 = getColor(hoverState, true)
         val color1 = getColor(hoverState, false)
@@ -73,15 +73,12 @@ data class ElementData(val type: MenuDefEnum, val icon: IIcon?, val name: String
             GLCore.glTexturedRect(x.toDouble(), y.toDouble(), width.toDouble(), height.toDouble(), 0.0, 1.0, (100 - 16).toDouble(), (20 - 2).toDouble())
             GLCore.glString(if (name.length < 50) name else name.substring(0, 50), x + iconOffset * 2 + 16 + 4, y + captionOffset, ColorUtil.multiplyAlpha(color0, visibility), OptionCore.TEXT_SHADOW.isEnabled)
         }
-        GLCore.glBindTexture(if (OptionCore.SAO_UI.isEnabled) StringNames.gui else StringNames.guiCustom)
-
-        GLCore.glColorRGBA(ColorUtil.multiplyAlpha(color1, visibility))
-        GLCore.glTexturedRect((x + iconOffset).toDouble(), (y + iconOffset).toDouble(), 140.0, 25.0, 16.0, 16.0)
 
         GLCore.glColorRGBA(ColorUtil.multiplyAlpha(color0, visibility))
+        GLCore.glBindTexture(if (OptionCore.SAO_UI.isEnabled) StringNames.icons else StringNames.iconsCustom)
         icon?.glDrawUnsafe(x + iconOffset, y + iconOffset)
         GLCore.glBlend(false)
-        GLCore.glAlphaTest(true)*/
+        GLCore.glAlphaTest(true)
 
     }
 
@@ -93,7 +90,6 @@ data class ElementData(val type: MenuDefEnum, val icon: IIcon?, val name: String
         }
         x = categoryData.x + 16
         x = categoryData.categoryElement?.getHeight()?: 0 + categoryData.y / 2
-
     }
 
     fun getColor(hoverState: Int, bg: Boolean): Int {
