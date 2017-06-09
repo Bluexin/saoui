@@ -73,7 +73,7 @@ public class ElementDispatcher {
     }
 
     public static void check(){
-        menuElements.stream().filter(controller -> controller.elements.isEmpty()).forEach(controller -> menuElements.remove(controller));
+        menuElements.stream().filter(controller -> controller.elements.isEmpty()).forEach(menuElements::remove);
     }
 
     @Getter

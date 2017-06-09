@@ -51,15 +51,15 @@ class IngameMenuGUI(override val name: String = "In-game menu GUI") : ScreenGUI(
                 Pair("profile", ElementData(MenuDefEnum.ICON_LABEL_BUTTON, IconCore.ITEMS, "items")),
                 Pair("profile", ElementData(MenuDefEnum.ICON_LABEL_BUTTON, IconCore.SKILLS, "skills"))
         )
-        list.stream().forEachOrdered { element -> kotlin.run{
-            var category: CategoryData? = categories.firstOrNull() { it.name.equals(element.first, true) }
+        list.stream().forEachOrdered { (first, second) -> kotlin.run{
+            var category: CategoryData? = categories.firstOrNull { it.name.equals(first, true) }
 
             if (category != null)
-                category.run { addElement(element.second) }
+                category.run { addElement(second) }
             else {
-                category = CategoryData(element.first, categories.find { it.parentOf(element.first) })
+                category = CategoryData(first, categories.find { it.parentOf(first) })
                 category.init(this)
-                category.addElement(element.second)
+                category.addElement(second)
                 categories.add(category)
             }
         } }

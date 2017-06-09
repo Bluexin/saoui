@@ -121,7 +121,7 @@ public class WindowView extends Gui{
 
             final List<String> lines = new ArrayList<>();
 
-            String cut = "";
+            StringBuilder cut = new StringBuilder();
             String line = rawLines[0];
             int rawIndex = 0;
 
@@ -132,12 +132,12 @@ public class WindowView extends Gui{
                     final int lastIndex = line.lastIndexOf(' ');
 
                     if (lastIndex != -1) {
-                        cut = line.substring(lastIndex + 1) + " " + cut;
+                        cut.insert(0, line.substring(lastIndex + 1) + " ");
                         line = line.substring(0, lastIndex);
 
                         if (rawIndex + 1 < rawLines.length) {
                             rawLines[rawIndex + 1] = cut + rawLines[rawIndex + 1];
-                            cut = "";
+                            cut = new StringBuilder();
                         }
                     } else break;
 
@@ -147,8 +147,8 @@ public class WindowView extends Gui{
                 if (!line.matches(" *")) lines.add(line);
 
                 if (cut.length() > 0) {
-                    line = cut;
-                    cut = "";
+                    line = cut.toString();
+                    cut = new StringBuilder();
                 } else if (++rawIndex < rawLines.length) line = rawLines[rawIndex];
                 else line = null;
             }

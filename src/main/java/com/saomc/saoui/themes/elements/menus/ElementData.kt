@@ -1,14 +1,11 @@
 package com.saomc.saoui.themes.elements.menus
 
 import com.saomc.saoui.GLCore
-import com.saomc.saoui.api.events.ElementAction
-import com.saomc.saoui.api.screens.Actions
 import com.saomc.saoui.api.screens.IIcon
 import com.saomc.saoui.config.OptionCore
 import com.saomc.saoui.resources.StringNames
 import com.saomc.saoui.util.ColorUtil
 import net.minecraft.client.Minecraft
-import net.minecraftforge.common.MinecraftForge
 
 /**
  * Part of saoui by Bluexin.

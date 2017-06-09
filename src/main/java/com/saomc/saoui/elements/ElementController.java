@@ -2,7 +2,6 @@ package com.saomc.saoui.elements;
 
 import com.saomc.saoui.GLCore;
 import com.saomc.saoui.SAOCore;
-import com.saomc.saoui.api.events.ElementAction;
 import com.saomc.saoui.api.screens.Actions;
 import com.saomc.saoui.api.screens.ElementType;
 import com.saomc.saoui.api.screens.ParentElement;
@@ -19,7 +18,6 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.MinecraftForge;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
@@ -781,16 +779,14 @@ public class ElementController {
     }
 
     public boolean mouseOver(int cursorX, int cursorY, int flag) {
-        if (isFocus && elements.stream().anyMatch(e -> e.mouseOver(cursorX, cursorY, flag))) {
-            /*
-            if (dragging) {
-                dragY += scroll(cursorY - lastDragY);
-                lastDragY = cursorY;
-            }
+        /*
+        if (dragging) {
+            dragY += scroll(cursorY - lastDragY);
+            lastDragY = cursorY;
+        }
 
-            dragging = false;*/
-            return true;
-        } else return false;
+        dragging = false;*/
+        return isFocus && elements.stream().anyMatch(e -> e.mouseOver(cursorX, cursorY, flag));
     }
 
     /**

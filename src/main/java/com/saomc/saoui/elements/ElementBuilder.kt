@@ -29,7 +29,7 @@ class ElementBuilder private constructor()
      * @return Returns true if enabled
      */
     internal fun isParentEnabled(name: String): Boolean {
-        return elementList.values().stream().filter { e -> e.category == name.toLowerCase() }.anyMatch(Predicate<Element> { it.isEnabled() })
+        return elementList.values().stream().filter { e -> e.category == name.toLowerCase() }.anyMatch({ it.isEnabled })
     }
 
     /**
