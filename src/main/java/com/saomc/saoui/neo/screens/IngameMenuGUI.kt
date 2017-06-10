@@ -4,12 +4,15 @@ import com.saomc.saoui.SAOCore
 import com.saomc.saoui.SoundCore
 import com.saomc.saoui.api.elements.ElementData
 import com.saomc.saoui.api.screens.Actions
+import com.saomc.saoui.config.OptionCore
+import com.saomc.saoui.screens.inventory.InventoryCore
 import com.saomc.saoui.themes.elements.menus.CategoryData
 import com.saomc.saoui.themes.elements.menus.MenuDefEnum
 import com.saomc.saoui.util.IconCore
 import net.minecraft.client.gui.GuiOptions
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
+import java.util.stream.Stream
 
 /**
  * Part of saoui by Bluexin.
@@ -48,30 +51,75 @@ class IngameMenuGUI(override val name: String = "In-game menu GUI") : ScreenGUI(
 
     override fun initGui() {
         categories.clear()
+
         val list = listOf(
-                ElementData("menu", MenuDefEnum.ICON_BUTTON, IconCore.PROFILE, "profile"),
-                ElementData("menu", MenuDefEnum.ICON_BUTTON, IconCore.SOCIAL, "social"),
-                ElementData("menu", MenuDefEnum.ICON_BUTTON, IconCore.MESSAGE, "message"),
-                ElementData("menu", MenuDefEnum.ICON_BUTTON, IconCore.NAVIGATION, "navigation"),
-                ElementData("menu", MenuDefEnum.ICON_BUTTON, IconCore.SETTINGS, "settings"),
-                ElementData("profile", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.EQUIPMENT, "equipment"),
-                ElementData("profile", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.ITEMS, "items"),
-                ElementData("profile", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.SKILLS, "skills")
+                ElementData("Menu", MenuDefEnum.ICON_BUTTON, IconCore.PROFILE, "Profile"),
+                ElementData("Menu", MenuDefEnum.ICON_BUTTON, IconCore.SOCIAL, "Social"),
+                ElementData("Menu", MenuDefEnum.ICON_BUTTON, IconCore.MESSAGE, "Message"),
+                ElementData("Menu", MenuDefEnum.ICON_BUTTON, IconCore.NAVIGATION, "Navigation"),
+                ElementData("Menu", MenuDefEnum.ICON_BUTTON, IconCore.SETTINGS, "Settings"),
+                ElementData("Profile", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.EQUIPMENT, "Equipment"),
+                ElementData("Profile", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.ITEMS, "Items"),
+                ElementData("Profile", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.SKILLS, "Skills"),
+                ElementData("Equipment", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.EQUIPMENT, "Tools"),
+                ElementData("Equipment", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.ARMOR, "Armor"),
+                ElementData("Equipment", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.ITEMS, "Consumables"),
+                ElementData("Tools", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.EQUIPMENT, "Weapons"),
+                ElementData("Tools", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.EQUIPMENT, "Bows"),
+                ElementData("Tools", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.EQUIPMENT, "Pickaxe"),
+                ElementData("Tools", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.EQUIPMENT, "Axe"),
+                ElementData("Tools", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.EQUIPMENT, "Shovel"),
+                ElementData("Social", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.GUILD, "Guild"),
+                ElementData("Social", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.PARTY, "Party"),
+                ElementData("Social", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.FRIEND, "Friends"),
+                ElementData("Party", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.INVITE, "Invite"),
+                ElementData("Party", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.CANCEL, "Dissolve"),
+                ElementData("Message", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.MESSAGE, "Message Box"),
+                ElementData("Navigation", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.QUEST, "Quests"),
+                ElementData("Navigation", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.FIELD_MAP, "Field Map"),
+                ElementData("Navigation", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.DUNGEON_MAP, "Dungeon Map"),
+                ElementData("Settings", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.OPTION, "Options"),
+                ElementData("Settings", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.HELP, "Menu"),
+                ElementData("Settings", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.LOGOUT, "Logout")
         )
-        list.stream().forEachOrdered { first -> kotlin.run{
-            var category: CategoryData? = categories.firstOrNull { it.name.equals(first.category, true) }
+
+        if (InventoryCore.isBaublesLoaded())
+            list.plusElement(ElementData("Equipment", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.ACCESSORY, "Accessory"))
+
+        OptionCore.values().forEachIndexed{ _, optionCore -> list.plusElement(ElementData(optionCore.getCategoryName(), MenuDefEnum.ICON_LABEL_BUTTON, IconCore.OPTION, optionCore.name)) }
+
+        list.forEach { (category, type, icon, name) ->
+            var categoryData: CategoryData? = categories.firstOrNull { it.name.equals(category, true) }
 
             //If category exists, add to existing
-            if (category != null)
-                category.run { addElement(first.type, first.icon, first.name) }
+            if (categoryData != null) {
+                categoryData.addElement(type, icon, name)
+            }
             //Else, create new category and add to that
             else {
-                category = CategoryData(first.category, categories.find { it.parentOf(first.category) })
-                category.init(this)
-                category.addElement(first.type, first.icon, first.name) }
-                categories.add(category)
+                categoryData = CategoryData(category, categories.find { it.parentOf(category) })
+                categoryData.init(this)
+                categoryData.addElement(type, icon, name)
+                categories.add(categoryData)
             }
+
         }
+        /*
+
+        list.stream().forEachOrdered { (category, type, icon, name) -> kotlin.run{
+            var categoryData: CategoryData? = categories.firstOrNull { it.name.equals(category, true) }
+
+            //If category exists, add to existing
+            if (categoryData != null)
+                categoryData.addElement(type, icon, name)
+            //Else, create new category and add to that
+            else {
+                categoryData = CategoryData(category, categories.find { it.parentOf(category) })
+                categoryData.init(this)
+                categoryData.addElement(type, icon, name) }
+                categories.add(categoryData)
+            }
+        }*/
 
 //        flowY = -height
 

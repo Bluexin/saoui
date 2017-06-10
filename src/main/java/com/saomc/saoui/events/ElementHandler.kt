@@ -34,7 +34,7 @@ object ElementHandler {
 
     private fun optionAction(e: ElementAction) {
         val option = OptionCore.fromString(e.name)
-        if (option.isRestricted) {
+        if (option!!.isRestricted) {
             if (!option.isEnabled) {
                 Stream.of(*OptionCore.values()).filter { opt -> opt.category == option.category }.forEach({ it.disable() })
                 option.enable()

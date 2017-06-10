@@ -1,6 +1,7 @@
 package com.saomc.saoui.themes.elements.menus
 
 import com.saomc.saoui.GLCore
+import com.saomc.saoui.SAOCore
 import com.saomc.saoui.api.screens.IIcon
 import com.saomc.saoui.config.OptionCore
 import com.saomc.saoui.resources.StringNames
@@ -17,12 +18,11 @@ data class ElementData(val type: MenuDefEnum, val icon: IIcon?, val name: String
     private lateinit var parent: MenuElementParent
     private var x: Int = 0
     private var y: Int = 0
-    private var width: Int = 100
+    private var width: Int = 20
     private var height: Int = 20
     private var visibility: Float = 1.0F
     private var scrollTextX: Float = 0.0F
     var isOpen: Boolean = false
-    var focus: Boolean = true
 
     //TODO Replace all of this with xml based rendering
     fun draw(mc: Minecraft, mouseX: Int, mouseY: Int) {
@@ -47,8 +47,6 @@ data class ElementData(val type: MenuDefEnum, val icon: IIcon?, val name: String
         GLCore.glBindTexture(if (OptionCore.SAO_UI.isEnabled) StringNames.icons else StringNames.iconsCustom)
         GLCore.glColorRGBA(ColorUtil.multiplyAlpha(color1, visibility))
         icon?.glDrawUnsafe(x + 2, y + 2)
-        GLCore.glBlend(false)
-        GLCore.glAlphaTest(true)
     }
 
     fun drawSlot(mc: Minecraft, mouseX: Int, mouseY: Int){
@@ -77,19 +75,17 @@ data class ElementData(val type: MenuDefEnum, val icon: IIcon?, val name: String
         GLCore.glColorRGBA(ColorUtil.multiplyAlpha(color0, visibility))
         GLCore.glBindTexture(if (OptionCore.SAO_UI.isEnabled) StringNames.icons else StringNames.iconsCustom)
         icon?.glDrawUnsafe(x + iconOffset, y + iconOffset)
-        GLCore.glBlend(false)
-        GLCore.glAlphaTest(true)
-
     }
 
     fun init(parent: MenuElementParent) {
         this.parent = parent
-        if (type == MenuDefEnum.ICON_BUTTON){
-            this.width = 20
+        //SAOCore.LOGGER.info("Element " + name + ", type " + type)
+        if (type != MenuDefEnum.ICON_BUTTON){
+            this.width = 100
             this.height = 20
         }
-        x = categoryData.x + 16
-        x = categoryData.categoryElement?.getHeight()?: 0 + categoryData.y / 2
+        this.x = categoryData.getX()
+        this.y = categoryData.getY(this)
     }
 
     fun getColor(hoverState: Int, bg: Boolean): Int {
@@ -109,7 +105,7 @@ data class ElementData(val type: MenuDefEnum, val icon: IIcon?, val name: String
     }
 
     fun hoverState(cursorX: Int, cursorY: Int): Int {
-        return if (mouseOver(cursorX, cursorY)) 2 else if (this.isOpen) 2 else if (this.focus) 1 else 0
+        return if (mouseOver(cursorX, cursorY)) 2 else if (this.isOpen) 2 else if (categoryData.isFocus()) 1 else 0
     }
 
     fun mouseOver(cursorX: Int, cursorY: Int): Boolean {
@@ -158,6 +154,10 @@ data class ElementData(val type: MenuDefEnum, val icon: IIcon?, val name: String
 
     fun setY(y: Int){
         this.y = y
+    }
+
+    fun setX(x: Int){
+        this.x = x
     }
 
     fun close() = Unit

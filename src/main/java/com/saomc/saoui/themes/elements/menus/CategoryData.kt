@@ -12,21 +12,21 @@ data class CategoryData(val name: String, val parentCategory: CategoryData?) {
     private var elements = mutableListOf<ElementData>()
     private lateinit var parent: MenuElementParent
     var categoryElement: ElementData? = null
-    var x = 0
-    var y = 0
+    //If the elements should render
     private var enabled: Boolean = false
+    //If the elements are selectable or locked
+    private var focus: Boolean = false
     //The y value each element will have from the next. Needs to be moved to xml
     private var yIncrement = 24
     //The x value each element will have from the parent element. Needs to be moved to xml
-    private var xIncrement = 14
+    private var xIncrement = 16
 
     fun actionPerformed(element: ElementData, action: Actions, data: Int, menutElement: MenuElementParent){
-        MinecraftForge.EVENT_BUS.post(ElementAction(element.name, action, data, element.isOpen, !element.focus, menutElement))
+        MinecraftForge.EVENT_BUS.post(ElementAction(element.name, action, data, element.isOpen, !focus, menutElement))
     }
 
     fun addElement(type: MenuDefEnum, icon: IIcon, name: String){
         val data: ElementData = ElementData(type, icon, name, this)
-        data.setY(elements.size * yIncrement)
         elements.add(data)
     }
 
@@ -38,12 +38,25 @@ data class CategoryData(val name: String, val parentCategory: CategoryData?) {
     fun init(parent: MenuElementParent) {
         this.parent = parent
         this.enabled = name.equals("menu", true)
+        this.focus = name.equals("menu", true)
         elements.forEach { it.init(parent) }
         if (this.parentCategory != null) {
             this.categoryElement = parentCategory.getParentElement(name)
-            this.x = categoryElement?.getWidth()?: 0 + parentCategory.x + xIncrement
-            this.y = categoryElement?.getY()?: 0
         }
+    }
+
+    fun isFocus(): Boolean{
+        return focus
+    }
+
+    fun getX(): Int{
+        return (categoryElement?.getWidth()?: 20).plus(parentCategory?.getX()?: 0).plus(xIncrement)
+    }
+
+    fun getY(element: ElementData): Int{
+        if (categoryElement != null)
+            return (parentCategory?.getY(categoryElement!!)?: 0).plus((elements.indexOf(element)).times(yIncrement))
+        else return (elements.indexOf(element)).times(yIncrement)
     }
 
     fun getParentElement(name: String): ElementData{
@@ -67,21 +80,24 @@ data class CategoryData(val name: String, val parentCategory: CategoryData?) {
     }
 
     /**
-     * Called when the menu is just opening
+     * Called when the menu is just opening or closing
      */
     fun setEnabled(flag: Boolean){
-        this.enabled = flag
-        parentCategory?.setOpen(name, flag)
-        resetElemments()
+        if (flag || focus && !flag) {
+            this.enabled = flag
+            parentCategory?.setOpen(name, flag)
+            resetElemments()
+        }
     }
 
     fun setOpen(name: String, flag: Boolean){
+        focus = !flag
         getParentElement(name).isOpen = flag
-        elements.forEach { it.focus = !flag }
     }
 
     fun resetElemments(){
-        elements.forEach { it.focus = true && it.isOpen == false }
+        focus = true
+        elements.forEach { it.isOpen == false }
     }
 
     fun close(){
