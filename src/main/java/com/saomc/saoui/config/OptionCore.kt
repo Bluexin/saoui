@@ -1,18 +1,32 @@
-package com.saomc.saoui.config;
+package com.saomc.saoui.config
 
-import com.saomc.saoui.GLCore;
-import com.saomc.saoui.api.info.IOption;
-import jdk.nashorn.internal.objects.annotations.Getter;
-import jdk.nashorn.internal.objects.annotations.Setter;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.I18n;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import com.saomc.saoui.GLCore
+import com.saomc.saoui.api.info.IOption
+import jdk.nashorn.internal.objects.annotations.Getter
+import jdk.nashorn.internal.objects.annotations.Setter
+import net.minecraft.client.Minecraft
+import net.minecraft.client.resources.I18n
+import net.minecraftforge.fml.relauncher.Side
+import net.minecraftforge.fml.relauncher.SideOnly
 
-import java.util.stream.Stream;
+import java.util.stream.Stream
 
 @SideOnly(Side.CLIENT)
-public enum OptionCore implements IOption {
+enum class OptionCore private constructor(
+        /**
+         * @return Returns the Option name in String format
+         * *
+         *
+         *
+         * * Deprecated:
+         * *
+         * @see OptionCore.toString
+         */
+        val displayName: String, private var value: Boolean,
+        /**
+         * @return Returns true if this is a Category or not
+         */
+        val isCategory: Boolean, private val category: OptionCore?, private val restricted: Boolean) : IOption {
 
     //Main Categories
     VANILLA_OPTIONS(I18n.format("guiOptions"), false, false, null, false),
@@ -31,12 +45,12 @@ public enum OptionCore implements IOption {
     LOGOUT(I18n.format("optionLogout"), false, false, UI, false),
     GUI_PAUSE(I18n.format("optionGuiPause"), true, false, UI, false),
     // Themes
-    @Deprecated // TODO: way to load other xml-defined themes
-            VANILLA_UI(I18n.format("optionDefaultUI"), false, false, THEME, true),
-    @Deprecated // TODO: way to load other xml-defined themes
-            ALO_UI(I18n.format("optionALOUI"), false, false, THEME, true),
-    @Deprecated // TODO: way to load other xml-defined themes
-            SAO_UI(I18n.format("optionSAOUI"), true, false, THEME, true),
+    @Deprecated("") // TODO: way to load other xml-defined themes
+    VANILLA_UI(I18n.format("optionDefaultUI"), false, false, THEME, true),
+    @Deprecated("") // TODO: way to load other xml-defined themes
+    ALO_UI(I18n.format("optionALOUI"), false, false, THEME, true),
+    @Deprecated("") // TODO: way to load other xml-defined themes
+    SAO_UI(I18n.format("optionSAOUI"), true, false, THEME, true),
     // Health Options
     SMOOTH_HEALTH(I18n.format("optionSmoothHealth"), true, false, HEALTH_OPTIONS, false),
     HEALTH_BARS(I18n.format("optionHealthBars"), true, false, HEALTH_OPTIONS, false),
@@ -68,136 +82,98 @@ public enum OptionCore implements IOption {
     BUGGY_MENU(I18n.format("optionEnableMenus"), true, false, MISC, false),
     NOTICE(I18n.format("optionNotice"), true, false, MISC, false);
 
-    private final String name;
-    private final boolean isCategory;
-    private final OptionCore category;
-    private boolean value;
-    private boolean restricted;
-
-    OptionCore(String optionName, boolean defaultValue, boolean isCat, OptionCore category, boolean onlyOne) {
-        name = optionName;
-        value = defaultValue;
-        isCategory = isCat;
-        this.category = category;
-        restricted = onlyOne;
-    }
-
-    public static OptionCore fromString(String str) {
-        return Stream.of(values()).filter(option -> option.toString().equals(str)).findAny().orElse(null);
-    }
-
-    /**
-     * Easy downcaster to use with JEL.
-     *
-     * @param o the option to downcast
-     * @return downcasted option
-     */
-    public static IOption get(OptionCore o) {
-        return o;
-    }
-
-    /**
-     * Easy getter to use with JEL.
-     *
-     * @param o the option to get
-     * @return whether the option is enabled
-     */
-    public static boolean isEnabled(OptionCore o) {
-        return o.isEnabled();
-    }
-
     // TODO: make a way for themes to register custom options?
 
-    @Override
-    public final String toString() {
-        return name;
+    override fun toString(): String {
+        return name
     }
 
     /**
      * This will flip the enabled state of the option and return the new value
-     *
+
      * @return Returns the newly set value
      */
     @Setter
-    public boolean flip() {
-        this.value = !this.isEnabled();
-        ConfigHandler.setOption(this);
-        if (this == CUSTOM_FONT) GLCore.setFont(Minecraft.getMinecraft(), this.value);
-        return this.value;
+    fun flip(): Boolean {
+        this.value = !this.isEnabled
+        ConfigHandler.setOption(this)
+        if (this == CUSTOM_FONT) GLCore.setFont(Minecraft.getMinecraft(), this.value)
+        return this.value
     }
 
     /**
      * @return Returns true if the Option is selected/enabled
      */
-    @Getter
-    @Override
-    public boolean isEnabled() {
-        return this.value;
+    override fun isEnabled(): Boolean {
+        return this.value
     }
 
     /**
      * This checks if the Option is restricted or not.
      * Restricted Options can only have one option enabled
      * in their Category.
-     *
+
      * @return Returns true if restricted
      */
-    @Getter
-    @Override
-    public boolean isRestricted() {
-        return this.restricted;
+    override fun isRestricted(): Boolean {
+        return this.restricted
     }
 
     /**
      * @return Returns the Category
      */
-    @Getter
-    @Override
-    public OptionCore getCategory() {
-        return this.category;
+    override fun getCategory(): OptionCore? {
+        return this.category
     }
 
     /**
-     * @return Returns the Category name in String format
+     * @return Returns the Category
      */
-    @Getter
-    public String getCategoryName() {
-        return this.category.toString();
+    fun getCategoryName(): String {
+        return this.category?.displayName?: "Options"
     }
 
     /**
      * This will disable the Option when called
      */
-    @Setter
-    public void disable() {
-        if (this.value) this.flip();
+    fun disable() {
+        if (this.value) this.flip()
     }
 
     /**
      * This will enable the Option when called
      */
-    @Setter
-    public void enable() {
-        if (!this.value) this.flip();
+    fun enable() {
+        if (!this.value) this.flip()
     }
 
-    /**
-     * @return Returns the Option name in String format
-     * <p>
-     * Deprecated:
-     * @see OptionCore#toString()
-     */
-    @Getter
-    @Deprecated
-    public String getName() {
-        return name;
-    }
+    companion object {
 
-    /**
-     * @return Returns true if this is a Category or not
-     */
-    @Getter
-    public boolean isCategory() {
-        return isCategory;
+        fun fromString(str: String): OptionCore? {
+            return valueOf(str)
+        }
+
+        /**
+         * Easy downcaster to use with JEL.
+
+         * @param o the option to downcast
+         * *
+         * @return downcasted option
+         */
+        operator fun get(o: OptionCore): IOption {
+            return o
+        }
+
+        /**
+         * Easy getter to use with JEL.
+
+         * @param o the option to get
+         * *
+         * @return whether the option is enabled
+         */
+        @JvmStatic
+        fun isEnabled(o: OptionCore): Boolean {
+            return o.isEnabled
+        }
     }
 }

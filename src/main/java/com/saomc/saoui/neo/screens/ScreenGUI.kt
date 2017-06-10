@@ -110,7 +110,6 @@ abstract class ScreenGUI : GuiScreen(), MenuElementParent {
                 }
 
                 GLCore.glTexturedRect((cursorX - 7).toDouble(), (cursorY - 7).toDouble(), 20.0, 115.0, 15.0, 15.0)
-                GLCore.glBlend(false)
             }
 
 
