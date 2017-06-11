@@ -144,3 +144,35 @@ ptJoin=%s joined your party.
 ptDecline=%s declined the party invite.
 ptLeft=%s left your party.
 ptNew=You joined a new party.
+
+
+# Categories
+sao.element.profile=Profile
+sao.element.social=Social
+sao.element.message=Message
+sao.element.navigation=Navigation
+sao.element.settings=Settings
+sao.element.equipment=Equipment
+sao.element.items=Items
+sao.element.skills=Skills
+sao.element.tools=Tools
+sao.element.armor=Armor
+sao.element.consumables=Consumables
+sao.element.accessory=Accessory
+sao.element.weapons=Weapons
+sao.element.bows=Bows
+sao.element.pickaxe=Pickaxe
+sao.element.axe=Axe
+sao.element.shovel=Shovel
+sao.element.guild=Guild
+sao.element.party=Party
+sao.element.friends=Friends
+sao.element.invite=Invite
+sao.element.dissolve=Dissolve
+sao.element.message_box=Message Box
+sao.element.quests=Quests
+sao.element.field_map=Field Map
+sao.element.dungeon_map=Dungeon Map
+sao.element.options=Options
+sao.element.menu=Menu
+sao.element.logout=Logout

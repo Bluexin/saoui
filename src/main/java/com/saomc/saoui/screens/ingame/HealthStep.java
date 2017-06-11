@@ -28,7 +28,7 @@ public enum HealthStep { // Could be loaded from file. Currently the HPBar loads
     }
 
     public static HealthStep getStep(Minecraft mc, EntityLivingBase entity, float time) {
-        return getStep(entity, StaticPlayerHelper.getHealth(mc, entity, time) / StaticPlayerHelper.getMaxHealth(entity));
+        return getStep(entity, StaticPlayerHelper.INSTANCE.getHealth(mc, entity, time) / StaticPlayerHelper.INSTANCE.getMaxHealth(entity));
     }
 
     public static HealthStep getStep(EntityLivingBase entity, double health) {

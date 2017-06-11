@@ -29,7 +29,6 @@ enum class OptionCore private constructor(
         val isCategory: Boolean, private val category: OptionCore?, private val restricted: Boolean) : IOption {
 
     //Main Categories
-    VANILLA_OPTIONS(I18n.format("guiOptions"), false, false, null, false),
     UI(I18n.format("optCatUI"), false, true, null, false),
     THEME(I18n.format("optTheme"), false, true, null, false),
     HEALTH_OPTIONS(I18n.format("optCatHealth"), false, true, null, false),
@@ -130,7 +129,7 @@ enum class OptionCore private constructor(
      * @return Returns the Category
      */
     fun getCategoryName(): String {
-        return this.category?.displayName?: "Options"
+        return this.category?.name?: "Options"
     }
 
     /**

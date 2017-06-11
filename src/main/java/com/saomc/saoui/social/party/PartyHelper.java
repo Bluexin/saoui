@@ -76,7 +76,7 @@ public class PartyHelper {
     }
 
     public boolean isMember(String username) {
-        return username.equals(StaticPlayerHelper.getName(Minecraft.getMinecraft())) || hasParty() && party.getMembers().stream().anyMatch(player -> player.getName().equals(username));
+        return username.equals(StaticPlayerHelper.INSTANCE.getName(Minecraft.getMinecraft())) || hasParty() && party.getMembers().stream().anyMatch(player -> player.getName().equals(username));
     }
 
     private boolean isLeader(String username) {
@@ -111,8 +111,8 @@ public class PartyHelper {
         if (isLeader(player)) {
             final Minecraft mc = Minecraft.getMinecraft();
             for (String a : args) {
-                if (a.charAt(0) == '+') addPlayer(StaticPlayerHelper.findOnlinePlayer(mc, a.substring(1)));
-                else if (a.charAt(0) == '-') removePlayer(StaticPlayerHelper.findOnlinePlayer(mc, a.substring(1)));
+                if (a.charAt(0) == '+') addPlayer(StaticPlayerHelper.INSTANCE.findOnlinePlayer(mc, a.substring(1)));
+                else if (a.charAt(0) == '-') removePlayer(StaticPlayerHelper.INSTANCE.findOnlinePlayer(mc, a.substring(1)));
             }
         }
     }
@@ -121,7 +121,7 @@ public class PartyHelper {
         if (!party.isInParty(player)) {
             invited.add(player);
             final Minecraft mc = Minecraft.getMinecraft();
-            Communicator.INSTANCE.send(CommandType.INVITE_TO_PARTY, player, hasParty() ? party.getLeader().getDisplayNameString() : StaticPlayerHelper.getName(mc));
+            Communicator.INSTANCE.send(CommandType.INVITE_TO_PARTY, player, hasParty() ? party.getLeader().getDisplayNameString() : StaticPlayerHelper.INSTANCE.getName(mc));
         }
     }
 
@@ -163,7 +163,7 @@ public class PartyHelper {
     }
 
     public boolean shouldHighlight(Categories id) {
-        return id.equals(Categories.DISSOLVE) ? hasParty() : id.equals(Categories.INVITE_LIST) && (!hasParty() || isLeader(StaticPlayerHelper.getName(Minecraft.getMinecraft())));
+        return id.equals(Categories.DISSOLVE) ? hasParty() : id.equals(Categories.INVITE_LIST) && (!hasParty() || isLeader(StaticPlayerHelper.INSTANCE.getName(Minecraft.getMinecraft())));
     }
 
     public void clean() {

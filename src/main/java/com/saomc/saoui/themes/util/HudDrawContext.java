@@ -104,8 +104,8 @@ public class HudDrawContext implements IHudDrawContext {
      * Aka partialTicks
      */
     public void setTime(float time) {
-        this.hp = StaticPlayerHelper.getHealth(mc, player, time);
-        this.maxHp = StaticPlayerHelper.getMaxHealth(player);
+        this.hp = StaticPlayerHelper.INSTANCE.getHealth(mc, player, time);
+        this.maxHp = StaticPlayerHelper.INSTANCE.getMaxHealth(player);
         healthStep = HealthStep.getStep(player, hpPct());
         partialTicks = time;
     }
@@ -203,12 +203,12 @@ public class HudDrawContext implements IHudDrawContext {
 
     @Override
     public float ptHp(int index) {
-        return validatePtIndex(index) ? StaticPlayerHelper.getHealth(mc, pt.get(index), partialTicks) : 0f;
+        return validatePtIndex(index) ? StaticPlayerHelper.INSTANCE.getHealth(mc, pt.get(index), partialTicks) : 0f;
     }
 
     @Override
     public float ptMaxHp(int index) {
-        return validatePtIndex(index) ? StaticPlayerHelper.getMaxHealth(pt.get(index)) : 0f;
+        return validatePtIndex(index) ? StaticPlayerHelper.INSTANCE.getMaxHealth(pt.get(index)) : 0f;
     }
 
     @Override

@@ -2,16 +2,17 @@ package com.saomc.saoui.neo.screens
 
 import com.saomc.saoui.SAOCore
 import com.saomc.saoui.SoundCore
-import com.saomc.saoui.api.elements.ElementData
-import com.saomc.saoui.api.elements.CategoryEnum
-import com.saomc.saoui.api.elements.CategoryHelper
+import com.saomc.saoui.api.elements.*
 import com.saomc.saoui.api.screens.Actions
 import com.saomc.saoui.screens.inventory.InventoryCore
 import com.saomc.saoui.themes.elements.menus.CategoryData
-import com.saomc.saoui.api.elements.MenuDefEnum
+import com.saomc.saoui.config.OptionCore
+import com.saomc.saoui.social.StaticPlayerHelper
+import com.saomc.saoui.social.party.PartyHelper
 import com.saomc.saoui.util.IconCore
 import net.minecraft.client.gui.GuiOptions
 import net.minecraftforge.common.util.EnumHelper
+import net.minecraftforge.fml.common.FMLCommonHandler
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
 import java.lang.IllegalArgumentException
@@ -43,54 +44,55 @@ class IngameMenuGUI(override val name: String = "In-game menu GUI") : ScreenGUI(
 
     }
 
-    override fun backgroundClicked(cursorX: Int, cursorY: Int, button: Actions) {
-        when (button) { // 0 = left click, 1 = right click, 2 = middle click, 3 = back
-            Actions.RIGHT_PRESSED -> this.mc.displayGuiScreen(GuiOptions(this, this.mc.gameSettings))
-            else -> return
-        }
-        SAOCore.LOGGER.debug("Background Clicked")
-    }
-
     override fun initGui() {
         categories.clear()
 
-        val list = listOf(
-                ElementData("Main", null, MenuDefEnum.ICON_BUTTON, IconCore.PROFILE, "Profile", "sao.element.profile", true),
-                ElementData("Main", null, MenuDefEnum.ICON_BUTTON, IconCore.SOCIAL, "Social", "sao.element.social", true),
-                ElementData("Main", null, MenuDefEnum.ICON_BUTTON, IconCore.MESSAGE, "Message", "sao.element.message", true),
-                ElementData("Main", null, MenuDefEnum.ICON_BUTTON, IconCore.NAVIGATION, "Navigation", "sao.element.navigation", true),
-                ElementData("Main", null, MenuDefEnum.ICON_BUTTON, IconCore.SETTINGS, "Settings", "sao.element.settings", true),
-                ElementData("Profile", "Main", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.EQUIPMENT, "Equipment", "sao.element.equipment", true),
-                ElementData("Profile", "Main", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.ITEMS, "Items", "sao.element.items", true),
-                ElementData("Profile", "Main", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.SKILLS, "Skills", "sao.element.skills", true),
-                ElementData("Equipment", "Profile", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.EQUIPMENT, "Tools", "sao.element.tools", true),
-                ElementData("Equipment", "Profile", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.ARMOR, "Armor", "sao.element.armor", true),
-                ElementData("Equipment", "Profile", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.ITEMS, "Consumables", "sao.element.consumables", true),
-                ElementData("Tools", "Equipment", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.EQUIPMENT, "Weapons", "sao.element.weapons", true),
-                ElementData("Tools", "Equipment", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.EQUIPMENT, "Bows", "sao.element.bows", true),
-                ElementData("Tools", "Equipment", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.EQUIPMENT, "Pickaxe", "sao.element.pickaxe", true),
-                ElementData("Tools", "Equipment", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.EQUIPMENT, "Axe", "sao.element.axe", true),
-                ElementData("Tools", "Equipment", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.EQUIPMENT, "Shovel", "sao.element.shovel", true),
-                ElementData("Social", "Main", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.GUILD, "Guild", "sao.element.guild", true),
-                ElementData("Social", "Main", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.PARTY, "Party", "sao.element.party", true),
-                ElementData("Social", "Main", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.FRIEND, "Friends", "sao.element.friends", true),
-                ElementData("Party", "Social", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.INVITE, "Invite", "sao.element.invite", true),
-                ElementData("Party", "Social", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.CANCEL, "Dissolve", "sao.element.dissolve", false),
-                ElementData("Message", "Main", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.MESSAGE, "Message Box", "sao.element.message_box", true),
-                ElementData("Navigation", "Main", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.QUEST, "Quests", "sao.element.quests", true),
-                ElementData("Navigation", "Main", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.FIELD_MAP, "Field Map", "sao.element.field_map", true),
-                ElementData("Navigation", "Main", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.DUNGEON_MAP, "Dungeon Map", "sao.element.dungeon_map", true),
-                ElementData("Settings", "Main", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.OPTION, "Options", "sao.element.options", true),
-                ElementData("Settings", "Main", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.HELP, "Menu", "sao.element.menu", false),
-                ElementData("Settings", "Main", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.LOGOUT, "Logout", "sao.element.logout", false)
-        )
+        val list: MutableList<ElementData> = mutableListOf()
+        list.addAll(listOf(
+                ElementData("Main", null, MenuDefEnum.ICON_BUTTON, IconCore.PROFILE, "Profile", "sao.element.profile", ElementDefEnum.CATEGORY),
+                ElementData("Main", null, MenuDefEnum.ICON_BUTTON, IconCore.SOCIAL, "Social", "sao.element.social", ElementDefEnum.CATEGORY),
+                ElementData("Main", null, MenuDefEnum.ICON_BUTTON, IconCore.MESSAGE, "Message", "sao.element.message", ElementDefEnum.CATEGORY),
+                ElementData("Main", null, MenuDefEnum.ICON_BUTTON, IconCore.NAVIGATION, "Navigation", "sao.element.navigation", ElementDefEnum.CATEGORY),
+                ElementData("Main", null, MenuDefEnum.ICON_BUTTON, IconCore.SETTINGS, "Settings", "sao.element.settings", ElementDefEnum.CATEGORY),
+                ElementData("Profile", "Main", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.EQUIPMENT, "Equipment", "sao.element.equipment", ElementDefEnum.CATEGORY),
+                ElementData("Profile", "Main", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.ITEMS, "Items", "sao.element.items", ElementDefEnum.CATEGORY),
+                ElementData("Profile", "Main", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.SKILLS, "Skills", "sao.element.skills", ElementDefEnum.CATEGORY),
+                ElementData("Equipment", "Profile", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.EQUIPMENT, "Tools", "sao.element.tools", ElementDefEnum.CATEGORY),
+                ElementData("Equipment", "Profile", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.ARMOR, "Armor", "sao.element.armor", ElementDefEnum.CATEGORY),
+                ElementData("Equipment", "Profile", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.ITEMS, "Consumables", "sao.element.consumables", ElementDefEnum.CATEGORY),
+                ElementData("Tools", "Equipment", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.EQUIPMENT, "Weapons", "sao.element.weapons", ElementDefEnum.CATEGORY),
+                ElementData("Tools", "Equipment", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.EQUIPMENT, "Bows", "sao.element.bows", ElementDefEnum.CATEGORY),
+                ElementData("Tools", "Equipment", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.EQUIPMENT, "Pickaxe", "sao.element.pickaxe", ElementDefEnum.CATEGORY),
+                ElementData("Tools", "Equipment", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.EQUIPMENT, "Axe", "sao.element.axe", ElementDefEnum.CATEGORY),
+                ElementData("Tools", "Equipment", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.EQUIPMENT, "Shovel", "sao.element.shovel", ElementDefEnum.CATEGORY),
+                ElementData("Social", "Main", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.GUILD, "Guild", "sao.element.guild", ElementDefEnum.CATEGORY),
+                ElementData("Social", "Main", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.PARTY, "Party", "sao.element.party", ElementDefEnum.CATEGORY),
+                ElementData("Social", "Main", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.FRIEND, "Friends", "sao.element.friends", ElementDefEnum.CATEGORY),
+                ElementData("Party", "Social", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.INVITE, "Invite", "sao.element.invite", ElementDefEnum.CATEGORY),
+                ElementData("Party", "Social", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.CANCEL, "Dissolve", "sao.element.dissolve", ElementDefEnum.BUTTON),
+                ElementData("Message", "Main", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.MESSAGE, "Message Box", "sao.element.message_box", ElementDefEnum.CATEGORY),
+                ElementData("Navigation", "Main", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.QUEST, "Quests", "sao.element.quests", ElementDefEnum.CATEGORY),
+                ElementData("Navigation", "Main", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.FIELD_MAP, "Field Map", "sao.element.field_map", ElementDefEnum.CATEGORY),
+                ElementData("Navigation", "Main", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.DUNGEON_MAP, "Dungeon Map", "sao.element.dungeon_map", ElementDefEnum.CATEGORY),
+                ElementData("Settings", "Main", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.OPTION, "Options", "sao.element.options", ElementDefEnum.CATEGORY),
+                ElementData("Settings", "Main", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.HELP, "Menu", "sao.element.menu", ElementDefEnum.BUTTON),
+                ElementData("Settings", "Main", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.LOGOUT, "Logout", "sao.element.logout", ElementDefEnum.BUTTON),
+                ElementData("Options", "Settings", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.OPTION, "Vanilla_Options", "guiOptions", ElementDefEnum.BUTTON)
+        ))
 
         if (InventoryCore.isBaublesLoaded())
-            list.plusElement(ElementData("Equipment", "Profile", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.ACCESSORY, "Accessory", "sao.element.accessory", true))
+            list.add(ElementData("Equipment", "Profile", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.ACCESSORY, "Accessory", "sao.element.accessory", ElementDefEnum.CATEGORY))
 
-        //OptionCore.values().forEachIndexed{ _, optionCore -> list.plusElement(ElementData(optionCore.getCategoryName(), MenuDefEnum.ICON_LABEL_BUTTON, IconCore.OPTION, optionCore.name)) }
+        OptionCore.values().forEach{ optionCore -> run {
+            if (optionCore.category != null)
+                list.add(ElementData(optionCore.getCategoryName(), optionCore.category?.getCategoryName()?: "Options", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.OPTION, optionCore.name, optionCore.displayName, if (optionCore.isCategory) ElementDefEnum.CATEGORY else ElementDefEnum.OPTION))
+            else
+                list.add(ElementData("Options", "Settings", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.OPTION, optionCore.name, optionCore.displayName, if (optionCore.isCategory) ElementDefEnum.CATEGORY else ElementDefEnum.OPTION))
+        } }
 
-        list.forEach { (cat, parentCat, type, icon, name, displayName, isCategory) ->
+        FMLCommonHandler.instance().minecraftServerInstance.playerList.players.filter { it != StaticPlayerHelper.thePlayer() }.forEach { player ->  run{list.add(ElementData("Invite", "Party", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.INVITE, player.name, player.displayNameString, ElementDefEnum.PLAYER))}}
+
+        list.forEach { (cat, parentCat, type, icon, name, displayName, elementType) ->
             var category: CategoryEnum
 
             try {
@@ -116,13 +118,13 @@ class IngameMenuGUI(override val name: String = "In-game menu GUI") : ScreenGUI(
 
             //If category exists, add to existing
             if (categoryData != null) {
-                categoryData.addElement(type, icon, name, displayName, isCategory)
+                categoryData.addElement(type, icon, name, displayName, elementType)
             }
             //Else, create new category and add to that
             else {
                 categoryData = CategoryData(category, categories.firstOrNull { it.category == category.parent })
                 categoryData.init(this)
-                categoryData.addElement(type, icon, name, displayName, isCategory)
+                categoryData.addElement(type, icon, name, displayName, elementType)
                 categories.add(categoryData)
             }
 

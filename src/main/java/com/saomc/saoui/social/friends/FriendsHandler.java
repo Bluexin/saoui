@@ -84,7 +84,7 @@ public class FriendsHandler {
             for (final String name : names)
                 if (!friendRequests.contains(new FriendRequest(name, 10000)) && !isFriend(name)) {
                     friendRequests.add(new FriendRequest(name, 10000));
-                    Communicator.INSTANCE.send(CommandType.ADD_FRIEND_REQUEST, StaticPlayerHelper.findOnlinePlayer(mc, name));
+                    Communicator.INSTANCE.send(CommandType.ADD_FRIEND_REQUEST, StaticPlayerHelper.INSTANCE.findOnlinePlayer(mc, name));
                 }
         }
     }
@@ -107,7 +107,7 @@ public class FriendsHandler {
     }
 
     public boolean isFriend(EntityPlayer player) {
-        return isFriend(StaticPlayerHelper.getName(player));
+        return isFriend(StaticPlayerHelper.INSTANCE.getName(player));
     }
 
     public boolean addRawFriends(String[] names) {

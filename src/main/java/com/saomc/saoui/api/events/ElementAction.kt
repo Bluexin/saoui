@@ -1,6 +1,7 @@
 package com.saomc.saoui.api.events
 
 import com.saomc.saoui.api.elements.CategoryEnum
+import com.saomc.saoui.api.elements.ElementDefEnum
 import com.saomc.saoui.api.screens.Actions
 import com.saomc.saoui.themes.elements.menus.MenuElementParent
 import net.minecraftforge.fml.common.eventhandler.Event
@@ -45,7 +46,6 @@ class ElementAction(
          */
         val parent: MenuElementParent,
         /**
-         * Checks to see if this is a category or a button
-         * @return Returns true if a category
+         * @return Returns the element type
          */
-        val isCategory: Boolean) : Event()
+        val elementType: ElementDefEnum) : Event()
