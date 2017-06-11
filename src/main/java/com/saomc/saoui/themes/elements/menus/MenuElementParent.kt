@@ -1,5 +1,7 @@
 package com.saomc.saoui.themes.elements.menus
 
+import com.saomc.saoui.api.elements.CategoryEnum
+
 
 /**
  * Part of saoui by Bluexin.
@@ -15,7 +17,7 @@ interface MenuElementParent {
 
     val name: String
 
-    fun openCategory(name: String)
+    fun openCategory(category: CategoryEnum)
 
-    fun closeCategory(name: String)
+    fun closeCategory(category: CategoryEnum)
 }

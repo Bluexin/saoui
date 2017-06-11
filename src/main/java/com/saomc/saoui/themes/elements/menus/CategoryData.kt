@@ -1,5 +1,7 @@
 package com.saomc.saoui.themes.elements.menus
 
+import com.saomc.saoui.api.elements.CategoryEnum
+import com.saomc.saoui.api.elements.MenuDefEnum
 import com.saomc.saoui.api.events.ElementAction
 import com.saomc.saoui.api.screens.Actions
 import com.saomc.saoui.api.screens.IIcon
@@ -7,7 +9,7 @@ import net.minecraft.client.Minecraft
 import net.minecraftforge.common.MinecraftForge
 
 
-data class CategoryData(val name: String, val parentCategory: CategoryData?) {
+data class CategoryData(val category: CategoryEnum, val parentCategory: CategoryData?) {
 
     private var elements = mutableListOf<ElementData>()
     private lateinit var parent: MenuElementParent
@@ -22,11 +24,11 @@ data class CategoryData(val name: String, val parentCategory: CategoryData?) {
     private var xIncrement = 16
 
     fun actionPerformed(element: ElementData, action: Actions, data: Int, menutElement: MenuElementParent){
-        MinecraftForge.EVENT_BUS.post(ElementAction(element.name, action, data, element.isOpen, !focus, menutElement))
+        MinecraftForge.EVENT_BUS.post(ElementAction(element.name, action, data, element.isOpen, !focus, menutElement, element.isCategory))
     }
 
-    fun addElement(type: MenuDefEnum, icon: IIcon, name: String){
-        val data: ElementData = ElementData(type, icon, name, this)
+    fun addElement(type: MenuDefEnum, icon: IIcon, name: String, displayName: String, isCategory: Boolean){
+        val data: ElementData = ElementData(type, icon, name, displayName, isCategory, this)
         elements.add(data)
     }
 
@@ -37,11 +39,11 @@ data class CategoryData(val name: String, val parentCategory: CategoryData?) {
 
     fun init(parent: MenuElementParent) {
         this.parent = parent
-        this.enabled = name.equals("menu", true)
-        this.focus = name.equals("menu", true)
+        this.enabled = category == CategoryEnum.MAIN
+        this.focus = enabled
         elements.forEach { it.init(parent) }
         if (this.parentCategory != null) {
-            this.categoryElement = parentCategory.getParentElement(name)
+            this.categoryElement = parentCategory.getParentElement(category.name)
         }
     }
 
@@ -60,7 +62,7 @@ data class CategoryData(val name: String, val parentCategory: CategoryData?) {
     }
 
     fun getParentElement(name: String): ElementData{
-        return elements.first{ it.name.equals(name, true) }
+        return elements.find{ it.name.equals(name, true) }!!
     }
 
     fun mouseClicked(cursorX: Int, cursorY: Int, actions: Actions): Boolean {
@@ -75,24 +77,20 @@ data class CategoryData(val name: String, val parentCategory: CategoryData?) {
         return false
     }
 
-    fun parentOf(name: String): Boolean{
-        return elements.firstOrNull{ it.name.equals(name, true) } != null
-    }
-
     /**
      * Called when the menu is just opening or closing
      */
     fun setEnabled(flag: Boolean){
         if (flag || focus && !flag) {
             this.enabled = flag
-            parentCategory?.setOpen(name, flag)
+            parentCategory?.setOpen(category, flag)
             resetElemments()
         }
     }
 
-    fun setOpen(name: String, flag: Boolean){
+    fun setOpen(category: CategoryEnum, flag: Boolean){
         focus = !flag
-        getParentElement(name).isOpen = flag
+        getParentElement(category.name).isOpen = flag
     }
 
     fun resetElemments(){

@@ -1,6 +1,8 @@
 package com.saomc.saoui.events
 
+import com.saomc.saoui.SAOCore
 import com.saomc.saoui.SoundCore
+import com.saomc.saoui.api.elements.CategoryEnum
 import com.saomc.saoui.api.events.ElementAction
 import com.saomc.saoui.api.screens.Actions
 import com.saomc.saoui.config.OptionCore
@@ -10,6 +12,7 @@ import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiIngameMenu
 import net.minecraft.client.gui.GuiMainMenu
 import net.minecraft.client.gui.GuiOptions
+import java.lang.IllegalArgumentException
 import java.util.stream.Stream
 
 /**
@@ -21,12 +24,19 @@ object ElementHandler {
 
     fun defaultActions(e: ElementAction) {
         if (e.action == Actions.LEFT_RELEASED) {
-            if (e.isOpen) {
-                e.parent.closeCategory(e.name)
-                SoundCore.play(Minecraft.getMinecraft().soundHandler, SoundCore.DIALOG_CLOSE)
-            } else if (!e.isOpen && !e.isLocked) {
-                e.parent.openCategory(e.name)
-                SoundCore.play(Minecraft.getMinecraft().soundHandler, SoundCore.MENU_POPUP)
+            if (e.isCategory) {
+                try {
+                    val category = CategoryEnum.valueOf(e.name.toUpperCase())
+                    if (e.isOpen) {
+                        e.parent.closeCategory(category)
+                        SoundCore.play(Minecraft.getMinecraft().soundHandler, SoundCore.DIALOG_CLOSE)
+                    } else if (!e.isOpen && !e.isLocked) {
+                        e.parent.openCategory(category)
+                        SoundCore.play(Minecraft.getMinecraft().soundHandler, SoundCore.MENU_POPUP)
+                    }
+                } catch (error: IllegalArgumentException){
+                    SAOCore.LOGGER.fatal("Element: " + e.name + " incorrectly set isCategory with no matching categories")
+                }
             }
         }
 

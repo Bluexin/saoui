@@ -3,6 +3,7 @@ package com.saomc.saoui.neo.screens
 import be.bluexin.saomclib.profile
 import com.saomc.saoui.GLCore
 import com.saomc.saoui.SAOCore
+import com.saomc.saoui.api.elements.CategoryEnum
 import com.saomc.saoui.api.screens.Actions
 import com.saomc.saoui.colorstates.CursorStatus
 import com.saomc.saoui.config.OptionCore
@@ -116,12 +117,12 @@ abstract class ScreenGUI : GuiScreen(), MenuElementParent {
         }
     }
 
-    override fun closeCategory(name: String) {
-        categories.find { it.name.equals(name, true) }?.setEnabled(false)
+    override fun closeCategory(category: CategoryEnum) {
+        categories.find { it.category == category }?.setEnabled(false)
     }
 
-    override fun openCategory(name: String){
-        categories.find { it.name.equals(name, true) }?.setEnabled(true)
+    override fun openCategory(category: CategoryEnum){
+        categories.find { it.category == category }?.setEnabled(true)
     }
 
     override fun keyTyped(ch: Char, key: Int) {
