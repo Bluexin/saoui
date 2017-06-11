@@ -33,7 +33,7 @@ public class StaticRenderer { // TODO: add usage of scale, offset etc from capab
     public static void render(RenderManager renderManager, EntityLivingBase living, double x, double y, double z) {
         final Minecraft mc = Minecraft.getMinecraft();
 
-        boolean dead = StaticPlayerHelper.getHealth(mc, living, SAOCore.UNKNOWN_TIME_DELAY) <= 0;
+        boolean dead = StaticPlayerHelper.INSTANCE.getHealth(mc, living, SAOCore.UNKNOWN_TIME_DELAY) <= 0;
 
         if (living.deathTime == 1) living.deathTime++;
 
@@ -48,7 +48,7 @@ public class StaticRenderer { // TODO: add usage of scale, offset etc from capab
 
     private static void doRenderColorCursor(RenderManager renderManager, Minecraft mc, EntityLivingBase entity, double x, double y, double z, int distance) {
         if (entity.getRidingEntity() != null) return;
-        if (OptionCore.LESS_VISUALS.isEnabled() && !(entity instanceof IMob || StaticPlayerHelper.getHealth(mc, entity, SAOCore.UNKNOWN_TIME_DELAY) != StaticPlayerHelper.getMaxHealth(entity)))
+        if (OptionCore.LESS_VISUALS.isEnabled() && !(entity instanceof IMob || StaticPlayerHelper.INSTANCE.getHealth(mc, entity, SAOCore.UNKNOWN_TIME_DELAY) != StaticPlayerHelper.INSTANCE.getMaxHealth(entity)))
             return;
 
         if (entity.world.isRemote) {
@@ -122,7 +122,7 @@ public class StaticRenderer { // TODO: add usage of scale, offset etc from capab
 
     private static void doRenderHealthBar(RenderManager renderManager, Minecraft mc, EntityLivingBase living, double x, double y, double z) {
         if (living.getRidingEntity() != null && living.getRidingEntity() == mc.player) return;
-        if (OptionCore.LESS_VISUALS.isEnabled() && !(living instanceof IMob || StaticPlayerHelper.getHealth(mc, living, SAOCore.UNKNOWN_TIME_DELAY) != StaticPlayerHelper.getMaxHealth(living)))
+        if (OptionCore.LESS_VISUALS.isEnabled() && !(living instanceof IMob || StaticPlayerHelper.INSTANCE.getHealth(mc, living, SAOCore.UNKNOWN_TIME_DELAY) != StaticPlayerHelper.INSTANCE.getMaxHealth(living)))
             return;
 
         GLCore.glBindTexture(OptionCore.SAO_UI.isEnabled() ? StringNames.entities : StringNames.entitiesCustom);
@@ -214,7 +214,7 @@ public class StaticRenderer { // TODO: add usage of scale, offset etc from capab
     }
 
     private static float getHealthFactor(Minecraft mc, Entity living, float time) {
-        final float normalFactor = StaticPlayerHelper.getHealth(mc, living, time) / StaticPlayerHelper.getMaxHealth(living);
+        final float normalFactor = StaticPlayerHelper.INSTANCE.getHealth(mc, living, time) / StaticPlayerHelper.INSTANCE.getMaxHealth(living);
         final float delta = 1.0F - normalFactor;
 
         return normalFactor + (delta * delta / 2) * normalFactor;

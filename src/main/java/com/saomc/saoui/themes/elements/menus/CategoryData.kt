@@ -1,11 +1,14 @@
 package com.saomc.saoui.themes.elements.menus
 
+import com.saomc.saoui.SAOCore
 import com.saomc.saoui.api.elements.CategoryEnum
+import com.saomc.saoui.api.elements.ElementDefEnum
 import com.saomc.saoui.api.elements.MenuDefEnum
 import com.saomc.saoui.api.events.ElementAction
 import com.saomc.saoui.api.screens.Actions
 import com.saomc.saoui.api.screens.IIcon
 import net.minecraft.client.Minecraft
+import net.minecraft.client.resources.I18n
 import net.minecraftforge.common.MinecraftForge
 
 
@@ -24,11 +27,11 @@ data class CategoryData(val category: CategoryEnum, val parentCategory: Category
     private var xIncrement = 16
 
     fun actionPerformed(element: ElementData, action: Actions, data: Int, menutElement: MenuElementParent){
-        MinecraftForge.EVENT_BUS.post(ElementAction(element.name, action, data, element.isOpen, !focus, menutElement, element.isCategory))
+        MinecraftForge.EVENT_BUS.post(ElementAction(element.name, action, data, element.isOpen, !focus, menutElement, element.elementType))
     }
 
-    fun addElement(type: MenuDefEnum, icon: IIcon, name: String, displayName: String, isCategory: Boolean){
-        val data: ElementData = ElementData(type, icon, name, displayName, isCategory, this)
+    fun addElement(type: MenuDefEnum, icon: IIcon, name: String, displayName: String, elementType: ElementDefEnum){
+        val data: ElementData = ElementData(type, icon, name, I18n.format(displayName), elementType, this)
         elements.add(data)
     }
 
@@ -57,10 +60,23 @@ data class CategoryData(val category: CategoryEnum, val parentCategory: Category
 
     fun getY(element: ElementData): Int{
         if (categoryElement != null)
-            return (parentCategory?.getY(categoryElement!!)?: 0).plus((elements.indexOf(element)).times(yIncrement))
+            return (parentCategory?.getY(categoryElement!!)?: 0).plus((elements.indexOf(element)).times(yIncrement)).plus(getYOffset())
         else return (elements.indexOf(element)).times(yIncrement)
     }
 
+    fun getYOffset(): Int{
+        when (elements.size){
+            1 -> return 0
+            2 -> return -13
+            3 -> return -24
+            4 -> return -36
+            else -> return -48
+        }
+    }
+
+    /**
+     * Used to get an element belonging to a category
+     */
     fun getParentElement(name: String): ElementData{
         return elements.find{ it.name.equals(name, true) }!!
     }

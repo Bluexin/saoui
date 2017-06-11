@@ -1,10 +1,13 @@
 package com.saomc.saoui.themes.elements.menus
 
 import com.saomc.saoui.GLCore
+import com.saomc.saoui.api.elements.ElementDefEnum
 import com.saomc.saoui.api.elements.MenuDefEnum
 import com.saomc.saoui.api.screens.IIcon
 import com.saomc.saoui.config.OptionCore
 import com.saomc.saoui.resources.StringNames
+import com.saomc.saoui.social.StaticPlayerHelper
+import com.saomc.saoui.social.party.PartyHelper
 import com.saomc.saoui.util.ColorUtil
 import net.minecraft.client.Minecraft
 
@@ -13,7 +16,7 @@ import net.minecraft.client.Minecraft
  *
  * @author Bluexin
  */
-data class ElementData(val type: MenuDefEnum, val icon: IIcon?, val name: String, val displayName: String, val isCategory: Boolean, val categoryData: CategoryData) {
+data class ElementData(val type: MenuDefEnum, val icon: IIcon?, val name: String, val displayName: String, val elementType: ElementDefEnum, val categoryData: CategoryData) {
 
     private lateinit var parent: MenuElementParent
     private var x: Int = 0
@@ -64,12 +67,12 @@ data class ElementData(val type: MenuDefEnum, val icon: IIcon?, val name: String
         if (hoverState == 2) {
             GLCore.glColor(1.0f, 1.0f, 1.0f)
             GLCore.glTexturedRect(x.toDouble(), y.toDouble(), width.toDouble(), height.toDouble(), 0.0, 21.0, (100 - 16).toDouble(), (20 - 2).toDouble())
-            renderHighlightText(name, x  + iconOffset * 2 + 16 + 4, y + captionOffset, ColorUtil.multiplyAlpha(color1, visibility))
+            renderHighlightText(displayName, x  + iconOffset * 2 + 16 + 4, y + captionOffset, ColorUtil.multiplyAlpha(color1, visibility))
         } else {
             scrollTextX = 0.0F
             GLCore.glColorRGBA(ColorUtil.multiplyAlpha(color0, visibility))
             GLCore.glTexturedRect(x.toDouble(), y.toDouble(), width.toDouble(), height.toDouble(), 0.0, 1.0, (100 - 16).toDouble(), (20 - 2).toDouble())
-            GLCore.glString(if (name.length < 50) name else name.substring(0, 50), x + iconOffset * 2 + 16 + 4, y + captionOffset, ColorUtil.multiplyAlpha(color0, visibility), OptionCore.TEXT_SHADOW.isEnabled)
+            GLCore.glString(if (displayName.length < 50) displayName else displayName.substring(0, 50), x + iconOffset * 2 + 16 + 4, y + captionOffset, ColorUtil.multiplyAlpha(color0, visibility), OptionCore.TEXT_SHADOW.isEnabled)
         }
 
         GLCore.glColorRGBA(ColorUtil.multiplyAlpha(color0, visibility))
@@ -105,6 +108,8 @@ data class ElementData(val type: MenuDefEnum, val icon: IIcon?, val name: String
     }
 
     fun hoverState(cursorX: Int, cursorY: Int): Int {
+        if (elementType == ElementDefEnum.OPTION) isOpen = OptionCore.valueOf(name).isEnabled
+        else if (elementType == ElementDefEnum.PLAYER) isOpen = StaticPlayerHelper.getParty()?.isMember(StaticPlayerHelper.findOnlinePlayer(Minecraft.getMinecraft(), name)!!)?: false
         return if (isOpen) 2 else if (!categoryData.isFocus()) 0 else if (mouseOver(cursorX, cursorY)) 2 else if (this.isOpen) 2 else 1
     }
 
