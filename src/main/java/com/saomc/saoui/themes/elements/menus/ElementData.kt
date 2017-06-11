@@ -1,7 +1,7 @@
 package com.saomc.saoui.themes.elements.menus
 
 import com.saomc.saoui.GLCore
-import com.saomc.saoui.SAOCore
+import com.saomc.saoui.api.elements.MenuDefEnum
 import com.saomc.saoui.api.screens.IIcon
 import com.saomc.saoui.config.OptionCore
 import com.saomc.saoui.resources.StringNames
@@ -13,7 +13,7 @@ import net.minecraft.client.Minecraft
  *
  * @author Bluexin
  */
-data class ElementData(val type: MenuDefEnum, val icon: IIcon?, val name: String, val categoryData: CategoryData) {
+data class ElementData(val type: MenuDefEnum, val icon: IIcon?, val name: String, val displayName: String, val isCategory: Boolean, val categoryData: CategoryData) {
 
     private lateinit var parent: MenuElementParent
     private var x: Int = 0
@@ -105,7 +105,7 @@ data class ElementData(val type: MenuDefEnum, val icon: IIcon?, val name: String
     }
 
     fun hoverState(cursorX: Int, cursorY: Int): Int {
-        return if (mouseOver(cursorX, cursorY)) 2 else if (this.isOpen) 2 else if (categoryData.isFocus()) 1 else 0
+        return if (isOpen) 2 else if (!categoryData.isFocus()) 0 else if (mouseOver(cursorX, cursorY)) 2 else if (this.isOpen) 2 else 1
     }
 
     fun mouseOver(cursorX: Int, cursorY: Int): Boolean {
