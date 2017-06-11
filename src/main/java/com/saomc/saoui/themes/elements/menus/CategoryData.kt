@@ -1,5 +1,6 @@
 package com.saomc.saoui.themes.elements.menus
 
+import com.saomc.saoui.GLCore
 import com.saomc.saoui.SAOCore
 import com.saomc.saoui.api.elements.CategoryEnum
 import com.saomc.saoui.api.elements.ElementDefEnum
@@ -25,6 +26,8 @@ data class CategoryData(val category: CategoryEnum, val parentCategory: Category
     private var yIncrement = 24
     //The x value each element will have from the parent element. Needs to be moved to xml
     private var xIncrement = 16
+    //Dynamic width for elements
+    var width = 100
 
     fun actionPerformed(element: ElementData, action: Actions, data: Int, menutElement: MenuElementParent){
         MinecraftForge.EVENT_BUS.post(ElementAction(element.name, action, data, element.isOpen, !focus, menutElement, element.elementType))
@@ -33,6 +36,7 @@ data class CategoryData(val category: CategoryEnum, val parentCategory: Category
     fun addElement(type: MenuDefEnum, icon: IIcon, name: String, displayName: String, elementType: ElementDefEnum){
         val data: ElementData = ElementData(type, icon, name, I18n.format(displayName), elementType, this)
         elements.add(data)
+        setWidth(data.displayName)
     }
 
     fun draw(mc: Minecraft, mouseX: Int, mouseY: Int) {
@@ -52,6 +56,11 @@ data class CategoryData(val category: CategoryEnum, val parentCategory: Category
 
     fun isFocus(): Boolean{
         return focus
+    }
+
+    fun setWidth(name: String){
+        val newWidth = 40 + (GLCore.glStringWidth(if (name.length > 50) name.substring(0, 50) else name))
+        if (newWidth > width) width = newWidth
     }
 
     fun getX(): Int{

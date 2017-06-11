@@ -84,7 +84,7 @@ data class ElementData(val type: MenuDefEnum, val icon: IIcon?, val name: String
         this.parent = parent
         //SAOCore.LOGGER.info("Element " + name + ", type " + type)
         if (type != MenuDefEnum.ICON_BUTTON){
-            this.width = 100
+            this.width = categoryData.width
             this.height = 20
         }
         this.x = categoryData.getX()
