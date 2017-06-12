@@ -2,12 +2,14 @@ package com.saomc.saoui.themes.elements.menus
 
 import com.saomc.saoui.GLCore
 import com.saomc.saoui.api.elements.ElementDefEnum
+import com.saomc.saoui.api.elements.IElement
 import com.saomc.saoui.api.elements.MenuDefEnum
+import com.saomc.saoui.api.elements.MenuElementParent
+import com.saomc.saoui.api.screens.Actions
 import com.saomc.saoui.api.screens.IIcon
 import com.saomc.saoui.config.OptionCore
 import com.saomc.saoui.resources.StringNames
 import com.saomc.saoui.social.StaticPlayerHelper
-import com.saomc.saoui.social.party.PartyHelper
 import com.saomc.saoui.util.ColorUtil
 import net.minecraft.client.Minecraft
 
@@ -16,19 +18,20 @@ import net.minecraft.client.Minecraft
  *
  * @author Bluexin
  */
-data class ElementData(val type: MenuDefEnum, val icon: IIcon?, val name: String, val displayName: String, val elementType: ElementDefEnum, val categoryData: CategoryData) {
+data class SlotData(override val type: MenuDefEnum, val icon: IIcon?, override val name: String, val displayName: String, override val elementType: ElementDefEnum): IElement {
 
     private lateinit var parent: MenuElementParent
+    private lateinit var categoryData: CategoryData
     private var x: Int = 0
     private var y: Int = 0
-    private var width: Int = 20
-    private var height: Int = 20
+    override var width: Int = 20
+    override var height: Int = 20
     private var visibility: Float = 1.0F
     private var scrollTextX: Float = 0.0F
-    var isOpen: Boolean = false
+    override var isOpen: Boolean = false
 
     //TODO Replace all of this with xml based rendering
-    fun draw(mc: Minecraft, mouseX: Int, mouseY: Int) {
+    override fun draw(mc: Minecraft, mouseX: Int, mouseY: Int) {
         if (type == MenuDefEnum.ICON_BUTTON)
             drawIcon(mc, mouseX, mouseY)
         else
@@ -80,7 +83,8 @@ data class ElementData(val type: MenuDefEnum, val icon: IIcon?, val name: String
         icon?.glDrawUnsafe(x + iconOffset, y + iconOffset)
     }
 
-    fun init(parent: MenuElementParent) {
+    override fun init(parent: MenuElementParent, categoryData: CategoryData) {
+        this.categoryData = categoryData
         this.parent = parent
         //SAOCore.LOGGER.info("Element " + name + ", type " + type)
         if (type != MenuDefEnum.ICON_BUTTON){
@@ -99,21 +103,13 @@ data class ElementData(val type: MenuDefEnum, val icon: IIcon?, val name: String
         return this.y
     }
 
-    fun getWidth(): Int{
-        return this.width
-    }
-
-    fun getHeight(): Int{
-        return this.height
-    }
-
     fun hoverState(cursorX: Int, cursorY: Int): Int {
         if (elementType == ElementDefEnum.OPTION) isOpen = OptionCore.valueOf(name).isEnabled
         else if (elementType == ElementDefEnum.PLAYER) isOpen = StaticPlayerHelper.getParty()?.isMember(StaticPlayerHelper.findOnlinePlayer(Minecraft.getMinecraft(), name)!!)?: false
         return if (isOpen) 2 else if (!categoryData.isFocus()) 0 else if (mouseOver(cursorX, cursorY)) 2 else if (this.isOpen) 2 else 1
     }
 
-    fun mouseOver(cursorX: Int, cursorY: Int): Boolean {
+    override fun mouseOver(cursorX: Int, cursorY: Int): Boolean {
         if (this.visibility >= 0.6) {
             val left = x + parent.parentX
             val top = y + parent.parentY
@@ -125,6 +121,14 @@ data class ElementData(val type: MenuDefEnum, val icon: IIcon?, val name: String
         } else {
             return false
         }
+    }
+
+    override fun mouseClicked(cursorX: Int, cursorY: Int, action: Actions): Boolean {
+        return mouseOver(cursorX, cursorY)
+    }
+
+    override fun mouseScroll(cursorX: Int, cursorY: Int, delta: Int): Boolean {
+        TODO("not implemented")
     }
 
     /**
@@ -165,5 +169,5 @@ data class ElementData(val type: MenuDefEnum, val icon: IIcon?, val name: String
         this.x = x
     }
 
-    fun close() = Unit
+    override fun close() = Unit
 }

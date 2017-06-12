@@ -1,9 +1,8 @@
 package com.saomc.saoui.api.events
 
-import com.saomc.saoui.api.elements.CategoryEnum
 import com.saomc.saoui.api.elements.ElementDefEnum
 import com.saomc.saoui.api.screens.Actions
-import com.saomc.saoui.themes.elements.menus.MenuElementParent
+import com.saomc.saoui.api.elements.MenuElementParent
 import net.minecraftforge.fml.common.eventhandler.Event
 
 /**
