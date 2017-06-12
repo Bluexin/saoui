@@ -50,7 +50,7 @@ public class HudDrawContext implements IHudDrawContext {
         this.mc = mc;
         this.player = player;
         this.itemRenderer = itemRenderer;
-        this.stats = PlayerStats.instance().getStats();
+        this.stats = PlayerStats.Companion.instance().getStats();
 
         this.usernameWidth = (1 + (mc.fontRenderer.getStringWidth(username) + 4) / 5) * 5;
     }
@@ -108,7 +108,7 @@ public class HudDrawContext implements IHudDrawContext {
     public void setTime(float time) {
         this.hp = StaticPlayerHelper.INSTANCE.getHealth(mc, player, time);
         this.maxHp = StaticPlayerHelper.INSTANCE.getMaxHealth(player);
-        healthStep = HealthStep.getStep(player, hpPct());
+        healthStep = HealthStep.Companion.getStep(player, hpPct());
         partialTicks = time;
         this.effects = StatusEffects.getEffects(this.player);
     }
@@ -226,7 +226,7 @@ public class HudDrawContext implements IHudDrawContext {
 
     @Override
     public HealthStep ptHealthStep(int index) {
-        return HealthStep.getStep(ptHpPct(index));
+        return HealthStep.Companion.getStep(ptHpPct(index));
     }
 
     @Override

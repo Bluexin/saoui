@@ -50,7 +50,7 @@ open class ElementGroup : Element(), ElementParent {
     }
 
     override fun draw(ctx: IHudDrawContext) {
-        if (this.rl != null) GLCore.glBindTexture(this.rl)
+        if (this.rl != null) GLCore.glBindTexture(this.rl!!)
         if (enabled?.invoke(ctx) ?: true) this.elements.forEach { it.draw(ctx) }
     }
 

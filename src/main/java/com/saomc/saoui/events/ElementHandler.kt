@@ -7,7 +7,7 @@ import com.saomc.saoui.api.elements.ElementDefEnum
 import com.saomc.saoui.api.events.ElementAction
 import com.saomc.saoui.api.screens.Actions
 import com.saomc.saoui.config.OptionCore
-import com.saomc.saoui.events.EventCore.mc
+import com.saomc.saoui.events.EventCore.Companion.mc
 import com.saomc.saoui.neo.screens.IngameMenuGUI
 import com.saomc.saoui.social.StaticPlayerHelper
 import com.saomc.saoui.social.party.PartyHelper
@@ -63,7 +63,6 @@ object ElementHandler {
                             pt?.removeMember(player)
                         else pt?.invite(player)
                     }
-                    PartyHelper.instance().invite(FMLCommonHandler.instance().minecraftServerInstance.playerList.getPlayerByUsername(e.name))
                 }
                 else -> return
             }

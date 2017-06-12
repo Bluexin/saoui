@@ -51,16 +51,16 @@ public class WindowView extends Gui{
         this.height = 60;
         this.width = 200;
         this.lines = toLines(message, this.width - 10);
-        SAOCore.LOGGER.info("Popup Launched");
+        SAOCore.Companion.getLOGGER().info("Popup Launched");
 
     }
 
     public void updateScreen(){
-        SAOCore.LOGGER.info("Updating");
-        int w = lines.length > 0 ? Stream.of(lines).mapToInt(GLCore::glStringWidth).max().getAsInt() + 16 : 0;
+        SAOCore.Companion.getLOGGER().info("Updating");
+        int w = lines.length > 0 ? Stream.of(lines).mapToInt(GLCore.INSTANCE::glStringWidth).max().getAsInt() + 16 : 0;
         if (w > width) width = w;
 
-        final int linesHeight = lines.length * GLCore.glStringHeight() + 16;
+        final int linesHeight = lines.length * GLCore.INSTANCE.glStringHeight() + 16;
         if (linesHeight > height) height = linesHeight;
 
     }
@@ -68,7 +68,7 @@ public class WindowView extends Gui{
 
     public void drawScreen(int mouseX, int mouseY, float partialTicks){
         //drawDefaultBackground();
-        SAOCore.LOGGER.info("Drawing");
+        SAOCore.Companion.getLOGGER().info("Drawing");
 
         int left;
         int top;
@@ -76,39 +76,39 @@ public class WindowView extends Gui{
         final int width2 = width /2;
         final int size = height - (boxSize * 2);
 
-        int w = Stream.of(lines).mapToInt(GLCore::glStringWidth).max().getAsInt();
+        int w = Stream.of(lines).mapToInt(GLCore.INSTANCE::glStringWidth).max().getAsInt();
 
         if (horizontal != null) left = horizontal.getPos(width, parentElement, false, w);
         else left = x + getX(false);
 
-        if (vertical != null) top = vertical.getPos(height, parentElement, false, GLCore.glStringHeight());
+        if (vertical != null) top = vertical.getPos(height, parentElement, false, GLCore.INSTANCE.glStringHeight());
         else top = y + getY(false);
 
-        GLCore.glBindTexture(OptionCore.SAO_UI.isEnabled() ? StringNames.gui : StringNames.guiCustom);
-        GLCore.glColorRGBA(ColorUtil.DEFAULT_COLOR.multiplyAlpha(1.0F));
+        GLCore.INSTANCE.glBindTexture(OptionCore.SAO_UI.isEnabled() ? StringNames.INSTANCE.getGui() : StringNames.INSTANCE.getGuiCustom());
+        GLCore.INSTANCE.glColorRGBA(ColorUtil.DEFAULT_COLOR.multiplyAlpha(1.0F));
 
-        GLCore.glTexturedRect(left, top, width2, boxSize, 0, 65, width2, 20);
-        GLCore.glTexturedRect(left + width2, top, width2, boxSize, 200 - width2, 65, width2, 20);
+        GLCore.INSTANCE.glTexturedRect(left, top, width2, boxSize, 0, 65, width2, 20);
+        GLCore.INSTANCE.glTexturedRect(left + width2, top, width2, boxSize, 200 - width2, 65, width2, 20);
 
         if (size > 0) {
             final int borderSize = Math.min(size / 2, 10);
 
-            GLCore.glTexturedRect(left, top + boxSize, 0, 85, width2, borderSize);
-            GLCore.glTexturedRect(left + width2, top + boxSize, 200 - width2, 85, width2, borderSize);
+            GLCore.INSTANCE.glTexturedRect(left, top + boxSize, 0, 85, width2, borderSize);
+            GLCore.INSTANCE.glTexturedRect(left + width2, top + boxSize, 200 - width2, 85, width2, borderSize);
 
             if ((size + 1) / 2 > 10)
-                GLCore.glTexturedRect(left, top + boxSize + borderSize, width, size - borderSize * 2, 0, 95, 200, 10);
+                GLCore.INSTANCE.glTexturedRect(left, top + boxSize + borderSize, width, size - borderSize * 2, 0, 95, 200, 10);
 
-            GLCore.glTexturedRect(left, top + boxSize + size - borderSize, 0, 115 - borderSize, width2, borderSize);
-            GLCore.glTexturedRect(left + width2, top + boxSize + size - borderSize, 200 - width2, 115 - borderSize, width2, borderSize);
+            GLCore.INSTANCE.glTexturedRect(left, top + boxSize + size - borderSize, 0, 115 - borderSize, width2, borderSize);
+            GLCore.INSTANCE.glTexturedRect(left + width2, top + boxSize + size - borderSize, 200 - width2, 115 - borderSize, width2, borderSize);
         }
 
-        GLCore.glTexturedRect(left, top + size + boxSize, width2, boxSize, 0, 65, width2, 20);
-        GLCore.glTexturedRect(left + width2, top + size + boxSize, width2, boxSize, 200 - width2, 65, width2, 20);
+        GLCore.INSTANCE.glTexturedRect(left, top + size + boxSize, width2, boxSize, 0, 65, width2, 20);
+        GLCore.INSTANCE.glTexturedRect(left + width2, top + size + boxSize, width2, boxSize, 200 - width2, 65, width2, 20);
 
 
         for (int i = 0; i < lines.length; i++)
-            GLCore.glString(lines[i], left + 8, top + 8 + i * (GLCore.glStringHeight() + 1), ColorUtil.DEFAULT_FONT_COLOR.multiplyAlpha(1.0F));
+            GLCore.INSTANCE.glString(lines[i], left + 8, top + 8 + i * (GLCore.INSTANCE.glStringHeight() + 1), ColorUtil.DEFAULT_FONT_COLOR.multiplyAlpha(1.0F));
     }
 
 
@@ -126,7 +126,7 @@ public class WindowView extends Gui{
             int rawIndex = 0;
 
             while (line != null) {
-                int size = GLCore.glStringWidth(line);
+                int size = GLCore.INSTANCE.glStringWidth(line);
 
                 while (size > width - 16) {
                     final int lastIndex = line.lastIndexOf(' ');
@@ -141,7 +141,7 @@ public class WindowView extends Gui{
                         }
                     } else break;
 
-                    size = GLCore.glStringWidth(line);
+                    size = GLCore.INSTANCE.glStringWidth(line);
                 }
 
                 if (!line.matches(" *")) lines.add(line);

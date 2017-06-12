@@ -145,7 +145,7 @@ public class FriendsHandler {
 
                 return true;
             } catch (IOException e) {
-                if (ConfigHandler.DEBUG) e.printStackTrace();
+                if (ConfigHandler.INSTANCE.getDEBUG()) e.printStackTrace();
 
                 return false;
             }
