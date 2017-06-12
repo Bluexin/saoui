@@ -3,7 +3,6 @@ package com.saomc.saoui.effects
 import com.saomc.saoui.GLCore
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.Tessellator
-import net.minecraft.profiler.Profiler
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
 import org.lwjgl.opengl.GL11

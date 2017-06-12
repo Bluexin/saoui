@@ -52,7 +52,7 @@ class SAOCore {
         const val VERSION = "2.0-lite-dev"
         const val DEPS = "required-before:" + MODID + "ntw;required-after:saomclib@[1.1,)"
         val UNKNOWN_TIME_DELAY = -1f
-        val LOGGER = LogManager.getLogger(MODID)
+        val LOGGER: Logger = LogManager.getLogger(MODID)
         // TODO: optimize things, ie remove public and static!
 
         @Mod.Instance(MODID)
