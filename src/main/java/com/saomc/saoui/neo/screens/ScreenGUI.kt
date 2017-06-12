@@ -9,7 +9,7 @@ import com.saomc.saoui.colorstates.CursorStatus
 import com.saomc.saoui.config.OptionCore
 import com.saomc.saoui.resources.StringNames
 import com.saomc.saoui.themes.elements.menus.CategoryData
-import com.saomc.saoui.themes.elements.menus.MenuElementParent
+import com.saomc.saoui.api.elements.MenuElementParent
 import com.saomc.saoui.util.ColorUtil
 import net.minecraft.client.gui.GuiScreen
 import net.minecraftforge.fml.relauncher.Side
@@ -163,7 +163,7 @@ abstract class ScreenGUI : GuiScreen(), MenuElementParent {
     }
 
     private fun mouseWheel(cursorX: Int, cursorY: Int, delta: Int) {
-        // Nothing here atm
+        categories.forEach { it.mouseScroll(cursorX, cursorY, delta) }
     }
 
     override fun handleMouseInput() {

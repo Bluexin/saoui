@@ -1,4 +1,4 @@
-package com.saomc.saoui.themes.elements.menus
+package com.saomc.saoui.api.elements
 
 import com.saomc.saoui.api.elements.CategoryEnum
 
