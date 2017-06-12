@@ -47,9 +47,11 @@ object ElementHandler {
                 ElementDefEnum.OPTION -> {
                     try{
                         val option = OptionCore.valueOf(e.name)
-                        if (option.isRestricted)
+                        if (option.isRestricted) {
                             OptionCore.values().filter { it.category == option.category }.forEach { it.disable() }
-                        option.enable()
+                            option.enable()
+                        }
+                        else option.flip()
                     } catch (error: IllegalArgumentException){
                     }
                 }
