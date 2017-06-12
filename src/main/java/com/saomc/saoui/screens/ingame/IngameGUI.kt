@@ -1,7 +1,6 @@
 package com.saomc.saoui.screens.ingame
 
 import be.bluexin.saomclib.capabilities.PartyCapability
-import be.bluexin.saomclib.party.IParty
 import com.saomc.saoui.GLCore
 import com.saomc.saoui.config.ConfigHandler
 import com.saomc.saoui.config.OptionCore
@@ -13,27 +12,23 @@ import com.saomc.saoui.themes.ThemeLoader
 import com.saomc.saoui.themes.elements.HudPartType
 import com.saomc.saoui.themes.util.HudDrawContext
 import net.minecraft.client.Minecraft
-import net.minecraft.client.gui.FontRenderer
 import net.minecraft.client.gui.GuiOverlayDebug
 import net.minecraft.client.gui.ScaledResolution
 import net.minecraft.client.renderer.OpenGlHelper
 import net.minecraft.client.resources.I18n
-import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.util.StringUtils
 import net.minecraftforge.client.GuiIngameForge
 import net.minecraftforge.client.event.RenderGameOverlayEvent
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType
+import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType.*
 import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.fml.common.eventhandler.Event
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
 import org.lwjgl.opengl.GL11
-
-import java.util.ArrayList
-
-import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType.*
+import java.util.*
 
 @SideOnly(Side.CLIENT)
 class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
@@ -225,7 +220,7 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
             }
         }*/
 
-        if (foodValue >= stepTwo && foodValue < stepThree)
+        if (foodValue in stepTwo..(stepThree - 1))
             GLCore.glTexturedRect((offsetUsername + foodValue).toDouble(), 9.0, zLevel.toDouble(), 11.0, 249.0, 7.0, 4.0)
         if (foodValue >= stepOne && foodValue < stepTwo + 4)
             GLCore.glTexturedRect((offsetUsername + foodValue).toDouble(), 9.0, zLevel.toDouble(), 4.0, 249.0, 7.0, 4.0)

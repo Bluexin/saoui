@@ -10,7 +10,6 @@ import com.saomc.saoui.config.OptionCore
 import com.saomc.saoui.events.EventCore.Companion.mc
 import com.saomc.saoui.neo.screens.IngameMenuGUI
 import com.saomc.saoui.social.StaticPlayerHelper
-import com.saomc.saoui.social.party.PartyHelper
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiIngameMenu
 import net.minecraft.client.gui.GuiMainMenu

@@ -6,12 +6,10 @@ import com.saomc.saoui.api.social.party.IParty
 import com.saomc.saoui.screens.menu.Categories
 import com.saomc.saoui.social.StaticPlayerHelper
 import net.minecraft.client.Minecraft
-import net.minecraft.client.gui.GuiScreen
 import net.minecraft.client.resources.I18n
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.util.text.TextComponentTranslation
-
-import java.util.ArrayList
+import java.util.*
 
 /**
  * Part of SAOUI

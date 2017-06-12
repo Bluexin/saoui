@@ -17,7 +17,7 @@ object EventHandler {
     var IS_SNEAKING = false
 
     internal fun nameNotification(e: ClientChatReceivedEvent) {
-        if (mc.currentScreen !is GuiConnecting && e.message.unformattedText.contains(mc.player.getDisplayNameString()))
+        if (mc.currentScreen !is GuiConnecting && e.message.unformattedText.contains(mc.player.displayNameString))
             SoundCore.play(mc, SoundCore.MESSAGE)
     }
 
@@ -26,8 +26,8 @@ object EventHandler {
             IS_SPRINTING = false
             IS_SNEAKING = false
         } else if (mc.inGameHasFocus) {
-            if (IS_SPRINTING) KeyBinding.setKeyBindState(mc.gameSettings.keyBindSprint.getKeyCode(), true)
-            if (IS_SNEAKING) KeyBinding.setKeyBindState(mc.gameSettings.keyBindSneak.getKeyCode(), true)
+            if (IS_SPRINTING) KeyBinding.setKeyBindState(mc.gameSettings.keyBindSprint.keyCode, true)
+            if (IS_SNEAKING) KeyBinding.setKeyBindState(mc.gameSettings.keyBindSneak.keyCode, true)
         }
     }
 

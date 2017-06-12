@@ -3,11 +3,11 @@ package com.saomc.saoui.renders
 import com.saomc.saoui.GLCore
 import com.saomc.saoui.SAOCore
 import com.saomc.saoui.api.entity.rendering.RenderCapability
+import com.saomc.saoui.config.OptionCore
 import com.saomc.saoui.effects.DeathParticles
 import com.saomc.saoui.resources.StringNames
 import com.saomc.saoui.screens.ingame.HealthStep
 import com.saomc.saoui.social.StaticPlayerHelper
-import com.saomc.saoui.config.OptionCore
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.entity.RenderManager
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats
@@ -15,7 +15,6 @@ import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.monster.EntityMob
 import net.minecraft.entity.monster.IMob
-import net.minecraft.world.World
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
 import org.lwjgl.opengl.GL11

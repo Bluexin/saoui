@@ -16,8 +16,8 @@ import java.util.function.BooleanSupplier;
 
 @SideOnly(Side.CLIENT)
 public enum DefaultSkills implements ISkill {
-    SPRINTING(IconCore.SPRINTING, () -> EventHandler.INSTANCE.getIS_SPRINTING(), (mc, parent) -> EventHandler.INSTANCE.setIS_SPRINTING(!EventHandler.INSTANCE.getIS_SPRINTING())),
-    SNEAKING(IconCore.SNEAKING, () -> EventHandler.INSTANCE.getIS_SNEAKING(), (mc, parent) -> EventHandler.INSTANCE.setIS_SNEAKING(!EventHandler.INSTANCE.getIS_SNEAKING())),
+    SPRINTING(IconCore.SPRINTING, EventHandler.INSTANCE::getIS_SPRINTING, (mc, parent) -> EventHandler.INSTANCE.setIS_SPRINTING(!EventHandler.INSTANCE.getIS_SPRINTING())),
+    SNEAKING(IconCore.SNEAKING, EventHandler.INSTANCE::getIS_SNEAKING, (mc, parent) -> EventHandler.INSTANCE.setIS_SNEAKING(!EventHandler.INSTANCE.getIS_SNEAKING())),
     CRAFTING(IconCore.CRAFTING, () -> false, (mc, parent) -> {
         if (parent != null) mc.displayGuiScreen(parent);
         else {

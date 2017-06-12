@@ -29,7 +29,7 @@ class DeathParticles private constructor(world: World, xCoord: Double, yCoord: D
     private var rotationY: Float = 0.toFloat() // Rotation around Y axis
     private val speedRotationY: Float // Rotation speed around Y axis
 
-    constructor(world: World, xCoord: Double, yCoord: Double, zCoord: Double, redValue: Float, greenValue: Float, blueValue: Float) : this(world, xCoord, yCoord, zCoord, redValue, greenValue, blueValue, 1.0f) {}
+    constructor(world: World, xCoord: Double, yCoord: Double, zCoord: Double, redValue: Float, greenValue: Float, blueValue: Float) : this(world, xCoord, yCoord, zCoord, redValue, greenValue, blueValue, 1.0f)
 
     init {
         this.motionX = ((Math.random() * 2.0 - 1.0).toFloat() * 0.05f).toDouble()

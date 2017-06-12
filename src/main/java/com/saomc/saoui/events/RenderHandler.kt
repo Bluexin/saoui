@@ -62,7 +62,7 @@ internal object RenderHandler {
             }
         }
         if (e.gui is GuiInventory && !OptionCore.DEFAULT_INVENTORY.isEnabled) {
-            if (EventCore.mc.playerController.isInCreativeMode())
+            if (EventCore.mc.playerController.isInCreativeMode)
                 e.gui = GuiContainerCreative(EventCore.mc.player)
             else if (EventCore.mc.currentScreen !is IngameMenuGUI)
                 e.gui = IngameMenuGUI(/*(GuiInventory) EventCore.mc.currentScreen*/)
