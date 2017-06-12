@@ -15,12 +15,12 @@ import com.saomc.saoui.util.IconCore;
 public class DefaultElements {
 
     public static void dispatch() {
-        SAOCore.LOGGER.debug("Starting Element Dispatch");
+        SAOCore.Companion.getLOGGER().debug("Starting Element Dispatch");
         ingameMenu();
     }
 
     public static void dispatchItemFilter() {
-        IElementBuilder b = ElementProvider.instance().getBuilder();
+        IElementBuilder b = ElementProvider.Companion.instance().getBuilder();
 
         b.addInventory("Weapons", GuiSelection.IngameMenuGUI, InventoryCore.WEAPONS);
         b.addInventory("Bows", GuiSelection.IngameMenuGUI, InventoryCore.BOWS);
@@ -30,7 +30,7 @@ public class DefaultElements {
     }
 
     private static void ingameMenu() {
-        IElementBuilder b = ElementProvider.instance().getBuilder();
+        IElementBuilder b = ElementProvider.Companion.instance().getBuilder();
 
         b.addMenu("Profile", IconCore.PROFILE, GuiSelection.IngameMenuGUI);
         b.addMenu("Social", IconCore.SOCIAL, GuiSelection.IngameMenuGUI);
@@ -101,7 +101,7 @@ public class DefaultElements {
 
         //Stream.of(OptionCore.values()).filter(option -> option.isCategory() && option.getCategory() == null).forEachOrdered(option -> b.addSlot(option.getName(), "Options", IconCore.OPTION, GuiSelection.IngameMenuGUI));
         //Stream.of(OptionCore.values()).filter(option -> option.getCategory() != null).forEachOrdered(option -> ElementBuilder.Companion.getInstance().addOption(option.getName(), option.getCategoryName(), IconCore.OPTION, GuiSelection.IngameMenuGUI, option));
-        SAOCore.LOGGER.debug("Finished Element Dispatch");
+        SAOCore.Companion.getLOGGER().debug("Finished Element Dispatch");
     }
 
 }

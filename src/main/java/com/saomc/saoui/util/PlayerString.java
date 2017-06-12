@@ -11,7 +11,7 @@ public final class PlayerString implements Strings {
     }
 
     public final String toString() {
-        return PlayerStats.instance().getStats().getStatsString(player);
+        return PlayerStats.Companion.instance().getStats().getStatsString(player);
     }
 
 }
