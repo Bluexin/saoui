@@ -6,9 +6,6 @@ import com.saomc.saoui.api.screens.IElementBuilder;
 import com.saomc.saoui.elements.ElementProvider;
 import com.saomc.saoui.screens.inventory.InventoryCore;
 import com.saomc.saoui.util.IconCore;
-import com.saomc.saoui.config.OptionCore;
-
-import java.util.stream.Stream;
 
 /**
  * These are all the default elements used within the UI

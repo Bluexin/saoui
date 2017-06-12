@@ -2,17 +2,14 @@ package com.saomc.saoui.config
 
 import com.saomc.saoui.GLCore
 import com.saomc.saoui.api.info.IOption
-import jdk.nashorn.internal.objects.annotations.Getter
 import jdk.nashorn.internal.objects.annotations.Setter
 import net.minecraft.client.Minecraft
 import net.minecraft.client.resources.I18n
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
 
-import java.util.stream.Stream
-
 @SideOnly(Side.CLIENT)
-enum class OptionCore private constructor(
+enum class OptionCore constructor(
         /**
          * @return Returns the Option name in String format
          * *

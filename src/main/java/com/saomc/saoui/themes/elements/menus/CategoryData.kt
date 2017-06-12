@@ -126,7 +126,7 @@ data class CategoryData(val category: CategoryEnum, val parentCategory: Category
 
     fun resetElemments(){
         focus = true
-        elements.forEach { it.isOpen == false }
+        elements.forEach { !it.isOpen }
     }
 
     fun close(){

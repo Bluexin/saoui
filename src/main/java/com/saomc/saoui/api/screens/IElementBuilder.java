@@ -2,8 +2,6 @@ package com.saomc.saoui.api.screens;
 
 import net.minecraft.inventory.IInventory;
 
-import java.util.List;
-
 /**
  * This is used to add and remove elements within the SAO UI
  * <p>

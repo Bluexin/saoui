@@ -99,7 +99,7 @@ object StaticPlayerHelper {
 
                     return Math.max(0.0f, healthValue * value)
                 } else if (Math.round(healthValue * 10) != Math.round(healthReal * 10))
-                    healthValue = healthValue + (healthReal - healthValue) * (gameTimeDelay(mc, time) * HEALTH_ANIMATION_FACTOR)
+                    healthValue += (healthReal - healthValue) * (gameTimeDelay(mc, time) * HEALTH_ANIMATION_FACTOR)
                 else
                     healthValue = healthReal
 
@@ -140,7 +140,7 @@ object StaticPlayerHelper {
 
                     return hungerValue * value
                 } else if (Math.round(hungerValue * 10) != Math.round(hungerReal * 10))
-                    hungerValue = hungerValue + (hungerReal - hungerValue) * (gameTimeDelay(mc, time) * HEALTH_ANIMATION_FACTOR)
+                    hungerValue += (hungerReal - hungerValue) * (gameTimeDelay(mc, time) * HEALTH_ANIMATION_FACTOR)
                 else
                     hungerValue = hungerReal
 

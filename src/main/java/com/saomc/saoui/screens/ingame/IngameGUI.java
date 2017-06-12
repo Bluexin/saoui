@@ -6,6 +6,7 @@ import be.bluexin.saomclib.party.IParty;
 import com.saomc.saoui.GLCore;
 import com.saomc.saoui.config.ConfigHandler;
 import com.saomc.saoui.config.OptionCore;
+import com.saomc.saoui.effects.StatusEffects;
 import com.saomc.saoui.neo.screens.IngameMenuGUI;
 import com.saomc.saoui.neo.screens.ScreenGUI;
 import com.saomc.saoui.resources.StringNames;

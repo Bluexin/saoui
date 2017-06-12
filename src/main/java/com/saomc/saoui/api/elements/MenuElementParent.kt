@@ -1,7 +1,5 @@
 package com.saomc.saoui.api.elements
 
-import com.saomc.saoui.api.elements.CategoryEnum
-
 
 /**
  * Part of saoui by Bluexin.
