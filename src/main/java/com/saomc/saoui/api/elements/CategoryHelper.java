@@ -217,7 +217,7 @@ public class CategoryHelper {
         try
         {
             T[] previousValues = (T[])valuesField.get(enumType);
-            List<T> values = new ArrayList<T>(Arrays.asList(previousValues));
+            List<T> values = new ArrayList<>(Arrays.asList(previousValues));
             T newValue = makeEnum(enumType, enumName, values.size(), paramTypes, paramValues);
             values.add(newValue);
             setFailsafeFieldValue(valuesField, null, values.toArray((T[]) Array.newInstance(enumType, 0)));

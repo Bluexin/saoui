@@ -1,6 +1,5 @@
 package com.saomc.saoui.events
 
-import be.bluexin.saomclib.capabilities.PartyCapability
 import com.saomc.saoui.SAOCore
 import com.saomc.saoui.SoundCore
 import com.saomc.saoui.api.elements.CategoryEnum

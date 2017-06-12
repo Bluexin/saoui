@@ -3,15 +3,11 @@ package com.saomc.saoui.neo.screens
 import com.saomc.saoui.SAOCore
 import com.saomc.saoui.SoundCore
 import com.saomc.saoui.api.elements.*
-import com.saomc.saoui.api.screens.Actions
-import com.saomc.saoui.screens.inventory.InventoryCore
-import com.saomc.saoui.themes.elements.menus.CategoryData
 import com.saomc.saoui.config.OptionCore
+import com.saomc.saoui.screens.inventory.InventoryCore
 import com.saomc.saoui.social.StaticPlayerHelper
-import com.saomc.saoui.social.party.PartyHelper
+import com.saomc.saoui.themes.elements.menus.CategoryData
 import com.saomc.saoui.util.IconCore
-import net.minecraft.client.gui.GuiOptions
-import net.minecraftforge.common.util.EnumHelper
 import net.minecraftforge.fml.common.FMLCommonHandler
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
@@ -101,7 +97,7 @@ class IngameMenuGUI(override val name: String = "In-game menu GUI") : ScreenGUI(
                 try {
                     category = CategoryHelper.addCategory(cat.toUpperCase(), CategoryEnum.valueOf(parentCat!!.toUpperCase()))!!
                 } catch (e: NullPointerException){
-                    SAOCore.LOGGER.fatal("Failed to make category for " + name + " with category: " + cat + " and parent category: " + parentCat)
+                    SAOCore.LOGGER.fatal("Failed to make category for $name with category: $cat and parent category: $parentCat")
                     return@forEach
                 }
             }
@@ -110,7 +106,7 @@ class IngameMenuGUI(override val name: String = "In-game menu GUI") : ScreenGUI(
                 try {
                     category = CategoryHelper.addCategory(cat.toUpperCase(), CategoryEnum.valueOf(parentCat!!.toUpperCase()))!!
                 } catch (e: NullPointerException){
-                    SAOCore.LOGGER.fatal("Failed to make category for " + name + " with category: " + cat + " and parent category: " + parentCat)
+                    SAOCore.LOGGER.fatal("Failed to make category for $name with category: $cat and parent category: $parentCat")
                     return@forEach
                 }
 

@@ -3,9 +3,6 @@ package com.saomc.saoui.api.events;
 import com.saomc.saoui.api.screens.IElementBuilder;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
-/**
- * Created by Tencao on 04/08/2016.
- */
 public class EventinitElements extends Event { // TODO: is this really needed?
     private IElementBuilder implementation;
 
