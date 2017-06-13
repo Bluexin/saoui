@@ -63,13 +63,13 @@ internal class EventHandler {
 
     @SubscribeEvent
     fun attackEntity(e: LivingAttackEvent) {
-        if (e.entityLiving is EntityPlayer && e.source.entity is EntityPlayer)
-            println(e.entityLiving.toString() + " attacked by " + e.source.entity)
+        if (e.entityLiving is EntityPlayer && e.source.trueSource is EntityPlayer)
+            println(e.entityLiving.toString() + " attacked by " + e.source.trueSource)
     }
 
     @SubscribeEvent
     fun pk(e: LivingDeathEvent) {
-        if (e.entityLiving is EntityPlayer && e.source.entity is EntityPlayer)
-            (RenderCapability.get(e.entityLiving).colorStateHandler as PlayerColorStateHandler).kill(e.source.entity as EntityPlayer?)
+        if (e.entityLiving is EntityPlayer && e.source.trueSource is EntityPlayer)
+            (RenderCapability.get(e.entityLiving).colorStateHandler as PlayerColorStateHandler).kill(e.source.trueSource as EntityPlayer?)
     }
 }
