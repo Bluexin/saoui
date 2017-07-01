@@ -13,12 +13,12 @@ import java.util.stream.Stream;
 
 public enum CommandType {
 
-    INVITE_TO_PARTY((target, args) -> PartyHelper.instance().receiveInvite(target, args)),
-    DISSOLVE_PARTY((target, args) -> PartyHelper.instance().receiveDissolve(target)),
-    UPDATE_PARTY((target, args) -> PartyHelper.instance().receiveUpdate(target, args)),
+    INVITE_TO_PARTY((target, args) -> PartyHelper.Companion.instance().receiveInvite(target, args)),
+    DISSOLVE_PARTY((target, args) -> PartyHelper.Companion.instance().receiveDissolve(target)),
+    UPDATE_PARTY((target, args) -> PartyHelper.Companion.instance().receiveUpdate(target, args)),
 
-    CONFIRM_INVITE_PARTY((target, args) -> PartyHelper.instance().receiveConfirmation(target, args)),
-    CANCEL_INVITE_PARTY((target, args) -> StaticPlayerHelper.thePlayer().sendMessage(new TextComponentTranslation("ptDecline", target.getDisplayName()))),
+    CONFIRM_INVITE_PARTY((target, args) -> PartyHelper.Companion.instance().receiveConfirmation(target, args)),
+    CANCEL_INVITE_PARTY((target, args) -> StaticPlayerHelper.INSTANCE.thePlayer().sendMessage(new TextComponentTranslation("ptDecline", target.getDisplayName()))),
 
     ADD_FRIEND_REQUEST((target, args) -> FriendsHandler.instance().addFriendRequest(target)),
 

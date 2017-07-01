@@ -1,13 +1,12 @@
 package com.saomc.saoui.screens.death;
-
+/*
 import com.saomc.saoui.GLCore;
 import com.saomc.saoui.api.screens.GuiSelection;
 import com.saomc.saoui.colorstates.CursorStatus;
-import com.saomc.saoui.screens.window.ScreenGUI;
+import com.saomc.saoui.neo.screens.ScreenGUI;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -62,7 +61,7 @@ public class DeathScreen extends ScreenGUI {
     protected void backgroundClicked(int cursorX, int cursorY, int button) {
         confirmClicked(this.mc.theWorld.getWorldInfo().isHardcoreModeEnabled(), -1);
     }*/
-
+/*
     @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
 
@@ -91,39 +90,4 @@ public class DeathScreen extends ScreenGUI {
         return true;
     }
 
-    /**
-     * This is a dummy class intended to fix the ghost death screen
-     */
-    public static class DummyScreen extends GuiScreen {
-
-        @Override
-        public void initGui() {
-        }
-
-        @Override
-        protected void keyTyped(char typedChar, int keyCode) {
-        }
-
-
-        @Override
-        protected void actionPerformed(GuiButton button) {
-        }
-
-        @Override
-        public void confirmClicked(boolean result, int id) {
-        }
-
-        @Override
-        public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        }
-
-        @Override
-        public void updateScreen() {
-        }
-
-        @Override
-        public boolean doesGuiPauseGame() {
-            return false;
-        }
-    }
-}
+}*/

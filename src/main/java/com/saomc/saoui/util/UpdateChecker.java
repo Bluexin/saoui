@@ -11,6 +11,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
 
+@Deprecated // For the time being
 public class UpdateChecker extends Thread {
 
     private static final String curseURL = "http://minecraft.curseforge.com/projects/sao-ui/files";
@@ -51,7 +52,7 @@ public class UpdateChecker extends Thread {
             String line = reader.readLine();
 
             if (line == null) {
-                LogCore.logFatal("Update check failed!");
+                SAOCore.Companion.getLOGGER().fatal("Update check failed!");
                 throw new IOException("No data from github changelog!");
             }
 
@@ -62,18 +63,18 @@ public class UpdateChecker extends Thread {
             latestVersion = latestVersion.trim();
 
             //Checks to see if this update has already been found before, and if so, check to see if the user opted to ignore this update
-            if (ConfigHandler.getLastVersion().equals(latestVersion)) {
-                if (ConfigHandler.ignoreVersion()) {
+            if (ConfigHandler.INSTANCE.getLastVersion().equals(latestVersion)) {
+                if (ConfigHandler.INSTANCE.ignoreVersion()) {
                     hasChecked = true;
                     return;
                 }
             }
 
             //Reset ignore update if the recent update is not the same as the last update
-            if (!ConfigHandler.getLastVersion().equals(latestVersion)) {
-                ConfigHandler.saveVersion(latestVersion);
-                if (ConfigHandler.ignoreVersion()) {
-                    ConfigHandler.setIgnoreVersion(false);
+            if (!ConfigHandler.INSTANCE.getLastVersion().equals(latestVersion)) {
+                ConfigHandler.INSTANCE.saveVersion(latestVersion);
+                if (ConfigHandler.INSTANCE.ignoreVersion()) {
+                    ConfigHandler.INSTANCE.setIgnoreVersion(false);
                 }
             }
 
@@ -100,7 +101,7 @@ public class UpdateChecker extends Thread {
             }
 
         } catch (Exception e) {
-            LogCore.logFatal("Caught exception in Update Checker thread!");
+            SAOCore.Companion.getLOGGER().fatal("Caught exception in Update Checker thread!");
             e.printStackTrace();
 
         } finally {
@@ -108,7 +109,7 @@ public class UpdateChecker extends Thread {
                 try {
                     reader.close();
                 } catch (IOException e) {
-                    LogCore.logFatal("Caught exception in Update Checker");
+                    SAOCore.Companion.getLOGGER().fatal("Caught exception in Update Checker");
                     e.printStackTrace();
                 }
             }

@@ -1,9 +1,9 @@
 package com.saomc.saoui.themes.elements
 
+import com.saomc.saoui.SAOCore
 import com.saomc.saoui.api.themes.IHudDrawContext
 import com.saomc.saoui.themes.util.CBoolean
 import com.saomc.saoui.themes.util.CDouble
-import com.saomc.saoui.util.LogCore
 import java.lang.ref.WeakReference
 import javax.annotation.OverridingMethodsMustInvokeSuper
 import javax.xml.bind.annotation.XmlAttribute
@@ -66,7 +66,7 @@ abstract class Element {
     open fun setup(parent: ElementParent): Boolean {
         this.parent = WeakReference(parent)
         return if (name != DEFAULT_NAME) {
-            LogCore.logInfo("Set up $this in ${parent.name}"); false
+            SAOCore.LOGGER.info("Set up $this in ${parent.name}"); false
         } else true
     }
 

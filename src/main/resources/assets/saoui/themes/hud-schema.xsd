@@ -1,8 +1,8 @@
 <?xml version='1.0'?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
            elementFormDefault="unqualified"
-           targetNamespace="http://www.bluexin.be/com/saomc/saoui/hud-schema"
-           xmlns="http://www.bluexin.be/com/saomc/saoui/hud-schema">
+           attributeFormDefault="unqualified"
+           targetNamespace="http://www.bluexin.be/com/saomc/saoui/hud-schema">
 
     <xs:element name="hud">
         <xs:annotation>
@@ -44,6 +44,7 @@
                         <xs:enumeration value="ARMOR"/>
                         <xs:enumeration value="JUMP_BAR"/>
                         <xs:enumeration value="AM2BARS"/>
+                        <xs:enumeration value="PARTY"/>
                     </xs:restriction>
                 </xs:simpleType>
             </xs:element>
@@ -105,49 +106,49 @@
         </xs:annotation>
         <xs:complexContent>
             <xs:extension base="Element">
-                <xs:all>
-                    <xs:element name="rgba" default="0xFFFFFFFF" minOccurs="0" type="CachedExpression">
+                <xs:all minOccurs="0">
+                    <xs:element name="rgba" default="0xFFFFFFFF" type="CachedExpression">
                         <xs:annotation>
                             <xs:documentation>rgba to use when drawing this element.</xs:documentation>
                         </xs:annotation>
                     </xs:element>
-                    <xs:element name="srcX" default="0" minOccurs="0" type="CachedExpression">
+                    <xs:element name="srcX" default="0" type="CachedExpression">
                         <xs:annotation>
                             <xs:documentation>X position of the rectangle on the texture (should resolve to a double).
                             </xs:documentation>
                         </xs:annotation>
                     </xs:element>
-                    <xs:element name="srcY" default="0" minOccurs="0" type="CachedExpression">
+                    <xs:element name="srcY" default="0" type="CachedExpression">
                         <xs:annotation>
                             <xs:documentation>Y position of the rectangle on the texture (should resolve to a double).
                             </xs:documentation>
                         </xs:annotation>
                     </xs:element>
-                    <xs:element name="w" default="0" minOccurs="0" type="CachedExpression">
+                    <xs:element name="w" default="0" type="CachedExpression">
                         <xs:annotation>
                             <xs:documentation>Width for the rectangle (should resolve to a double).</xs:documentation>
                         </xs:annotation>
                     </xs:element>
-                    <xs:element name="h" default="0" minOccurs="0" type="CachedExpression">
+                    <xs:element name="h" default="0" type="CachedExpression">
                         <xs:annotation>
                             <xs:documentation>Height for the rectangle (should resolve to a double).</xs:documentation>
                         </xs:annotation>
                     </xs:element>
-                    <xs:element name="srcW" default="0" minOccurs="0" type="CachedExpression">
+                    <xs:element name="srcW" default="0" type="CachedExpression">
                         <xs:annotation>
                             <xs:documentation>
                                 Width of the rectangle on the texture (should resolve to a double, defaults to w).
                             </xs:documentation>
                         </xs:annotation>
                     </xs:element>
-                    <xs:element name="srcH" default="0" minOccurs="0" type="CachedExpression">
+                    <xs:element name="srcH" default="0" type="CachedExpression">
                         <xs:annotation>
                             <xs:documentation>
                                 Height of the rectangle on the texture (should resolve to a double, defaults to h).
                             </xs:documentation>
                         </xs:annotation>
                     </xs:element>
-                    <xs:element name="texture" default="" minOccurs="0" type="xs:anyURI">
+                    <xs:element name="texture" default="" type="xs:anyURI">
                         <xs:annotation>
                             <xs:documentation>
                                 Texture location, in minecraft format ('modid:path/to/texture' -> ie.
@@ -166,7 +167,7 @@
             <xs:documentation>
                 String that can be rendered on-screen.
                 This will respect minecraft formatting style (translation calls can be made trough 'format("key")').
-                Also includes all value declarations from GLRectangle (though some of them will have no usage).
+                Also includes all value declarations from GLRectangle (though some of them will have no effect).
             </xs:documentation>
         </xs:annotation>
         <xs:complexContent>
@@ -231,7 +232,7 @@
                             </xs:documentation>
                         </xs:annotation>
                     </xs:element>
-                    <xs:element name="hand" minOccurs="0">
+                    <xs:element name="hand" minOccurs="0" type="CachedExpression">
                         <xs:annotation>
                             <xs:documentation>
                                 Offhand this slot should render.
@@ -240,14 +241,12 @@
                                 make complex expressions that resolve to these.
                             </xs:documentation>
                         </xs:annotation>
-                        <xs:complexType>
-                            <xs:complexContent>
-                                <xs:restriction base="CachedExpression">
-                                    <xs:enumeration value="LEFT"/>
-                                    <xs:enumeration value="RIGHT"/>
-                                </xs:restriction>
-                            </xs:complexContent>
-                        </xs:complexType>
+                        <xs:simpleType>
+                            <xs:restriction base="CachedExpression">
+                                <xs:enumeration value="LEFT"/>
+                                <xs:enumeration value="RIGHT"/>
+                            </xs:restriction>
+                        </xs:simpleType>
                     </xs:element>
                 </xs:all>
             </xs:extension>
@@ -265,18 +264,20 @@
                 Also includes all value declarations from Element.
             </xs:documentation>
         </xs:annotation>
-        <xs:extension base="Element">
-            <xs:all>
-                <xs:element name="texture" default="" minOccurs="0" type="xs:anyURI"/>
-                <xs:element name="children">
-                    <xs:complexType>
-                        <xs:sequence maxOccurs="unbounded" minOccurs="0">
-                            <xs:element ref="element"/>
-                        </xs:sequence>
-                    </xs:complexType>
-                </xs:element>
-            </xs:all>
-        </xs:extension>
+        <xs:complexContent>
+            <xs:extension base="Element">
+                <xs:all>
+                    <xs:element name="texture" default="" minOccurs="0" type="xs:anyURI"/>
+                    <xs:element name="children">
+                        <xs:complexType>
+                            <xs:sequence maxOccurs="unbounded" minOccurs="0">
+                                <xs:element ref="element"/>
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:all>
+            </xs:extension>
+        </xs:complexContent>
     </xs:complexType>
 
     <xs:complexType name="CachedExpression">

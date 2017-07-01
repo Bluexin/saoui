@@ -2,7 +2,6 @@ package com.saomc.saoui.themes;
 
 import com.saomc.saoui.SAOCore;
 import com.saomc.saoui.themes.elements.Hud;
-import com.saomc.saoui.util.LogCore;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 
@@ -17,6 +16,7 @@ import java.io.InputStream;
  *
  * @author Bluexin
  */
+@SuppressWarnings("MethodCallSideOnly")
 public class ThemeLoader {
 
     //TODO: tests
@@ -38,6 +38,6 @@ public class ThemeLoader {
 
         HUD.setup();
 
-        LogCore.logInfo("Loaded theme and set it up in " + (System.currentTimeMillis() - start) + "ms.");
+        SAOCore.Companion.getLOGGER().info("Loaded theme and set it up in " + (System.currentTimeMillis() - start) + "ms.");
     }
 }

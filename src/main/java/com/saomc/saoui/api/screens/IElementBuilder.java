@@ -1,9 +1,6 @@
 package com.saomc.saoui.api.screens;
 
-import com.saomc.saoui.elements.Element;
 import net.minecraft.inventory.IInventory;
-
-import java.util.List;
 
 /**
  * This is used to add and remove elements within the SAO UI
@@ -92,79 +89,4 @@ public interface IElementBuilder {
      * @param gui    The class of the GUI this belongs to
      */
     void removeSlot(String name, String parent, GuiSelection gui);
-
-    /**
-     * Gets the element from the list
-
-     * @param name The name of the element
-     * @param gui The name of the gui
-     * @return Returns the element
-     */
-    Element getElementMenu(String name, GuiSelection gui);
-
-    /**
-     * Gets the element from the list
-     *
-     * @param parent The parent category of the element
-     * @param name The name of the element
-     * @param gui The name of the gui
-     * @return Returns the element
-     */
-    Element getElementSlot(String parent, String name, GuiSelection gui);
-
-    /**
-     * Gets the element from the list
-     *
-     * @param name The name of the element
-     * @param gui The name of the gui
-     * @return Returns the element
-     */
-    Element getElementParent(String name, GuiSelection gui);
-
-    /**
-     * Gets all elements for a gui
-     *
-     * @param gui The name of the gui
-     * @return Returns the list of elements belonging to the category
-     */
-    List<Element> getforGui(GuiSelection gui);
-
-    /**
-     * Gets all elements for a category
-     *
-     * @param gui The gui the slots belong to
-     * @param category The name of the category
-     * @return Returns the list of elements belonging to the category
-     */
-    List<Element> getCategorySlots(GuiSelection gui, String category);
-
-    /**
-     * Gets all the menus belonging to a gui
-     *
-     * @param gui The gui the menus belong to
-     * @return Returns all the menus that belong to the gui
-     */
-    List<Element> getMenus(GuiSelection gui);
-
-    /**
-     * Gets all slots belonging to a gui
-     *
-     * @param gui The gui the slots belong to
-     * @return Returns all slots that belong to that gui
-     */
-    List<Element> getSlots(GuiSelection gui);
-
-    /**
-     * Enables all elements that belongs to a category
-     *
-     * @param category The category to enable elements for
-     */
-    void enableSubElements(String category);
-
-    /**
-     * Disables all elements that belongs to a category
-     *
-     * @param category The category to disable elements for
-     */
-    void disableSubElements(String category);
 }

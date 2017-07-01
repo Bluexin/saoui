@@ -1,8 +1,8 @@
 package com.saomc.saoui.themes.elements
 
 import com.saomc.saoui.GLCore
+import com.saomc.saoui.SAOCore
 import com.saomc.saoui.api.themes.IHudDrawContext
-import com.saomc.saoui.util.LogCore
 import net.minecraft.util.ResourceLocation
 import javax.xml.bind.annotation.*
 
@@ -13,7 +13,7 @@ import javax.xml.bind.annotation.*
  */
 @XmlRootElement
 @XmlSeeAlso(RepetitionGroup::class)
-open class ElementGroup : Element(), ElementParent { // TODO: make elementGroups with a texture for less RL instantiation and binding on children
+open class ElementGroup : Element(), ElementParent {
 
     @XmlElementWrapper(name = "children")
     @XmlElementRef(type = Element::class)
@@ -50,7 +50,7 @@ open class ElementGroup : Element(), ElementParent { // TODO: make elementGroups
     }
 
     override fun draw(ctx: IHudDrawContext) {
-        if (this.rl != null) GLCore.glBindTexture(this.rl)
+        if (this.rl != null) GLCore.glBindTexture(this.rl!!)
         if (enabled?.invoke(ctx) ?: true) this.elements.forEach { it.draw(ctx) }
     }
 
@@ -59,7 +59,7 @@ open class ElementGroup : Element(), ElementParent { // TODO: make elementGroups
         val res = super.setup(parent)
         var anonymous = 0
         this.elements.forEach { if (it.name == Element.DEFAULT_NAME) ++anonymous; it.setup(this) }
-        if (anonymous > 0) LogCore.logInfo("Set up $anonymous anonymous elements in $name.")
+        if (anonymous > 0) SAOCore.LOGGER.info("Set up $anonymous anonymous elements in $name.")
         return res
     }
 

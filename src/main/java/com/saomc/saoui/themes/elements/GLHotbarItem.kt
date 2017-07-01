@@ -16,7 +16,7 @@ import javax.xml.bind.annotation.XmlRootElement
  * @author Bluexin
  */
 @XmlRootElement
-open class GLHotbarItem constructor() : GLRectangle() {
+open class GLHotbarItem: GLRectangle() {
 
     protected lateinit var slot: CInt
     protected lateinit var itemXoffset: CInt
@@ -45,16 +45,15 @@ open class GLHotbarItem constructor() : GLRectangle() {
     }
 
     override fun draw(ctx: IHudDrawContext) {
-        if (!(enabled?.invoke(ctx) ?: true)) return
+        if (!(enabled?.invoke(ctx) ?: true) || hand == ctx.player.primaryHand) return
         super.draw(ctx)
 
         val p: ElementParent? = this.parent.get()
         val it: ItemStack?
 
         if (hand == null) it = ctx.player.inventory.mainInventory[slot.invoke(ctx)]
-        else if (hand == ctx.player.primaryHand.opposite()) it = ctx.player.inventory.offHandInventory[slot.invoke(ctx)]
-        else return
-        if (it == null) return
+        else it = ctx.player.inventory.offHandInventory[slot.invoke(ctx)]
+        if (it == ItemStack.EMPTY) return
 
         GLCore.glBlend(false)
         GLCore.glRescaleNormal(true)

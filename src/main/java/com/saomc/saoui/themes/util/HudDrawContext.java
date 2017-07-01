@@ -11,6 +11,11 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.util.List;
 
 /**
  * Part of saoui by Bluexin.
@@ -18,16 +23,17 @@ import net.minecraft.entity.player.EntityPlayer;
  *
  * @author Bluexin
  */
+@SideOnly(Side.CLIENT)
 public class HudDrawContext implements IHudDrawContext {
     /*
     Feel free to add anything you'd need here.
      */
     private final String username;
-    private final EntityPlayer player;
     private final RenderItem itemRenderer;
     private final Minecraft mc;
     private final double usernameWidth;
     private final IPlayerStatsProvider stats;
+    private EntityPlayer player;
     private HealthStep healthStep;
     private double z;
     private float hp;
@@ -35,15 +41,20 @@ public class HudDrawContext implements IHudDrawContext {
     private ScaledResolution scaledResolution;
     private float partialTicks;
     private int i;
+    private List<EntityPlayer> pt;
 
     public HudDrawContext(EntityPlayer player, Minecraft mc, RenderItem itemRenderer) {
         this.username = player.getDisplayNameString();
         this.mc = mc;
         this.player = player;
         this.itemRenderer = itemRenderer;
-        this.stats = PlayerStats.instance().getStats();
+        this.stats = PlayerStats.Companion.instance().getStats();
 
-        this.usernameWidth = (1 + (mc.fontRendererObj.getStringWidth(username) + 4) / 5) * 5;
+        this.usernameWidth = (1 + (mc.fontRenderer.getStringWidth(username) + 4) / 5) * 5;
+    }
+
+    public void setPt(List<EntityPlayer> pt) {
+        this.pt = pt;
     }
 
     @Override
@@ -66,7 +77,7 @@ public class HudDrawContext implements IHudDrawContext {
 
     @Override
     public FontRenderer getFontRenderer() {
-        return mc.fontRendererObj;
+        return mc.fontRenderer;
     }
 
     @Override
@@ -76,7 +87,7 @@ public class HudDrawContext implements IHudDrawContext {
 
     @Override
     public double hpPct() {
-        return hp / maxHp;
+        return Math.min(hp / maxHp, 1.0);
     }
 
     @Override
@@ -93,15 +104,19 @@ public class HudDrawContext implements IHudDrawContext {
      * Aka partialTicks
      */
     public void setTime(float time) {
-        this.hp = StaticPlayerHelper.getHealth(mc, mc.player, time);
-        this.maxHp = StaticPlayerHelper.getMaxHealth(mc.player);
-        healthStep = HealthStep.getStep(hpPct());
+        this.hp = StaticPlayerHelper.INSTANCE.getHealth(mc, player, time);
+        this.maxHp = StaticPlayerHelper.INSTANCE.getMaxHealth(player);
+        healthStep = HealthStep.Companion.getStep(player, hpPct());
         partialTicks = time;
     }
 
     @Override
     public EntityPlayer getPlayer() {
         return player;
+    }
+
+    public void setPlayer(EntityPlayer player) {
+        this.player = player;
     }
 
     @Override
@@ -139,12 +154,12 @@ public class HudDrawContext implements IHudDrawContext {
 
     @Override
     public boolean offhandEmpty(int slot) {
-        return slot >= 0 && player.inventory.offHandInventory.length > slot && player.inventory.offHandInventory[slot] == null;
+        return player.inventory.offHandInventory.get(0) == ItemStack.EMPTY;
     }
 
     @Override
     public int strWidth(String s) {
-        return mc.fontRendererObj.getStringWidth(s);
+        return mc.fontRenderer.getStringWidth(s);
     }
 
     @Override
@@ -179,5 +194,39 @@ public class HudDrawContext implements IHudDrawContext {
     @Override
     public int i() {
         return getI();
+    }
+
+    @Override
+    public String ptName(int index) {
+        return validatePtIndex(index) ? pt.get(index).getDisplayNameString() : "???";
+    }
+
+    @Override
+    public float ptHp(int index) {
+        return validatePtIndex(index) ? StaticPlayerHelper.INSTANCE.getHealth(mc, pt.get(index), partialTicks) : 0f;
+    }
+
+    @Override
+    public float ptMaxHp(int index) {
+        return validatePtIndex(index) ? StaticPlayerHelper.INSTANCE.getMaxHealth(pt.get(index)) : 0f;
+    }
+
+    @Override
+    public float ptHpPct(int index) {
+        return validatePtIndex(index) ? ptHp(index) / ptMaxHp(index) : 0f;
+    }
+
+    @Override
+    public int ptSize() {
+        return pt == null ? 0 : pt.size();
+    }
+
+    @Override
+    public HealthStep ptHealthStep(int index) {
+        return HealthStep.Companion.getStep(ptHpPct(index));
+    }
+
+    private boolean validatePtIndex(int index) {
+        return index >= 0 && index < ptSize();
     }
 }
