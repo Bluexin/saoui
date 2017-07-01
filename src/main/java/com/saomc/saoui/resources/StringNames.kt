@@ -8,7 +8,7 @@ import net.minecraftforge.fml.relauncher.SideOnly
 @SideOnly(Side.CLIENT)
 object StringNames {
 
-    val gui = ResourceLocation(SAOCore.MODID, "textures/guiet.png")
+    val gui = ResourceLocation(SAOCore.MODID, "textures/guiedt.png")
     val guiCustom = ResourceLocation(SAOCore.MODID, "textures/guicustom.png")
     val slot = ResourceLocation(SAOCore.MODID, "textures/slot.png")
     val icons = ResourceLocation(SAOCore.MODID, "textures/icons.png")
