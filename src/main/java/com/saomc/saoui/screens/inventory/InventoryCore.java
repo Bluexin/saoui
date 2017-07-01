@@ -17,7 +17,7 @@ public enum InventoryCore implements ItemFilter{ // Todo: support for TConstruct
     EQUIPMENT((stack, state) -> {
         final Item item = stack.getItem();
 
-        return (item instanceof ItemArmor) || ((item instanceof ItemBlock) && (((ItemBlock) item).block instanceof BlockPumpkin));
+        return (item instanceof ItemArmor) || ((item instanceof ItemBlock) && (((ItemBlock) item).getBlock() instanceof BlockPumpkin));
     }),
 
     WEAPONS((stack, state) -> stack.getItem() instanceof ItemSword),
