@@ -4,8 +4,8 @@ import com.saomc.saoui.GLCore
 import com.saomc.saoui.resources.StringNames
 import net.minecraft.client.Minecraft
 import net.minecraft.client.particle.Particle
-import net.minecraft.client.renderer.Tessellator
 import net.minecraft.client.renderer.VertexBuffer
+import net.minecraft.client.renderer.Tessellator
 import net.minecraft.entity.Entity
 import net.minecraft.util.EnumFacing
 import net.minecraft.world.World

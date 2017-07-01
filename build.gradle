@@ -29,9 +29,9 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 minecraft {
-    version = "1.11.2-13.20.0.2308"
+    version = "1.11.2-13.20.0.2315"
     runDir = "run"
-    mappings = "snapshot_20170526"
+    mappings = "stable_32"
 }
 
 repositories {
