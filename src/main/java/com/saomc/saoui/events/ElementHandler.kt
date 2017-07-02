@@ -56,7 +56,7 @@ object ElementHandler {
                 ElementDefEnum.BUTTON -> optionAction(e)
                 ElementDefEnum.PLAYER -> {
                     val pt = StaticPlayerHelper.getParty()
-                    val player: EntityPlayer? = FMLCommonHandler.instance().minecraftServerInstance.playerList.getPlayerByUsername(e.name)
+                    val player: EntityPlayer? = Minecraft.getMinecraft().world.getPlayerEntityByName(e.name)
                     if (player != null){
                         if (pt?.isMember(player)?: false)
                             pt?.removeMember(player)
