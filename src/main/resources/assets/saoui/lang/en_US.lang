@@ -97,6 +97,7 @@ optionSmoothHealth=Smooth Health
 optionHealthBars=Health Bars
 optionLightHud=Lighter HUD
 optionAltAbsorbPos=Alt Absorb Value Pos
+optionMobHealth=Mob Health Bars
 
 # Options - Hotbar
 optionDefaultHotbar=Default Hotbar

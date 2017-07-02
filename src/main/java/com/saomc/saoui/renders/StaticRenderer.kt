@@ -15,6 +15,7 @@ import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.monster.EntityMob
 import net.minecraft.entity.monster.IMob
+import net.minecraftforge.fml.common.Loader
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
 import org.lwjgl.opengl.GL11
@@ -122,6 +123,7 @@ object StaticRenderer { // TODO: add usage of scale, offset etc from capability
         if (living.ridingEntity != null && living.ridingEntity === mc.player) return
         if (OptionCore.LESS_VISUALS.isEnabled && !(living is IMob || StaticPlayerHelper.getHealth(mc, living, SAOCore.UNKNOWN_TIME_DELAY) != StaticPlayerHelper.getMaxHealth(living)))
             return
+        if (!OptionCore.MOB_HEALTH.isEnabled || Loader.isModLoaded("neat")) return
 
         GLCore.glBindTexture(if (OptionCore.SAO_UI.isEnabled) StringNames.entities else StringNames.entitiesCustom)
         GLCore.start()
