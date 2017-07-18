@@ -49,8 +49,4 @@ public class SAOCore {
         PlayerStats.init(s.getImplementation());
     }
 
-    public void t() {
-
-    }
-
 }
