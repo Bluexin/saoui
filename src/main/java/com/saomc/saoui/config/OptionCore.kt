@@ -2,7 +2,6 @@ package com.saomc.saoui.config
 
 import com.saomc.saoui.GLCore
 import com.saomc.saoui.api.info.IOption
-import jdk.nashorn.internal.objects.annotations.Setter
 import net.minecraft.client.Minecraft
 import net.minecraft.client.resources.I18n
 import net.minecraftforge.fml.relauncher.Side
@@ -19,11 +18,15 @@ enum class OptionCore constructor(
          * *
          * @see OptionCore.toString
          */
-        val displayName: String, private var value: Boolean,
+        val displayName: String,
+        private var value: Boolean,
         /**
          * @return Returns true if this is a Category or not
          */
-        val isCategory: Boolean, private val category: OptionCore?, private val restricted: Boolean) : IOption {
+        val isCategory: Boolean,
+        private val category: OptionCore?,
+        private val restricted: Boolean
+) : IOption {
 
     //Main Categories
     UI(I18n.format("optCatUI"), false, true, null, false),
@@ -81,20 +84,26 @@ enum class OptionCore constructor(
 
     // TODO: make a way for themes to register custom options?
 
-    override fun toString(): String {
-        return name
-    }
+    override fun toString() = name
 
     /**
-     * This will flip the enabled state of the option and return the new value
+     * This will flip the enabled state of the option and return the new value.
+     * For category restrictions, this will always enable the option.
 
      * @return Returns the newly set value
      */
-    @Setter
     fun flip(): Boolean {
-        this.value = !this.isEnabled
+        if (this.isRestricted) {
+            OptionCore.values().filter { it.category == this.category }.forEach {
+                it.value = false
+                ConfigHandler.setOption(it) // TODO: transaction
+            }
+            this.value = true
+        } else {
+            this.value = !this.isEnabled
+            if (this == CUSTOM_FONT) GLCore.setFont(Minecraft.getMinecraft(), this.value)
+        }
         ConfigHandler.setOption(this)
-        if (this == CUSTOM_FONT) GLCore.setFont(Minecraft.getMinecraft(), this.value)
         return this.value
     }
 
@@ -127,7 +136,7 @@ enum class OptionCore constructor(
      * @return Returns the Category
      */
     fun getCategoryName(): String {
-        return this.category?.name?: "Options"
+        return this.category?.name ?: "Options"
     }
 
     /**

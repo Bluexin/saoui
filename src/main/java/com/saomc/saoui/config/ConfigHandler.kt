@@ -55,7 +55,7 @@ object ConfigHandler {
     }
 
     fun setOption(option: OptionCore) {
-        config!!.get(Configuration.CATEGORY_GENERAL, "option." + option.name.toLowerCase(), option.isEnabled).set(option.isEnabled)
+        config!!.get(option.category?.name?.toLowerCase() ?: Configuration.CATEGORY_GENERAL, option.name.toLowerCase(), option.isEnabled).set(option.isEnabled)
         saveAllOptions()
     }
 

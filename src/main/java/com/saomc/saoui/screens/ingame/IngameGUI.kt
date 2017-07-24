@@ -24,7 +24,6 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType.*
 import net.minecraftforge.common.MinecraftForge
-import net.minecraftforge.fml.common.eventhandler.Event
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
 import org.lwjgl.opengl.GL11
@@ -95,18 +94,18 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
     }
 
     override fun renderHotbar(res: ScaledResolution, partialTicks: Float) {
-        if (replaceEvent(HOTBAR)) return
-        if (mc.playerController.isSpectator)
-            this.spectatorGui.renderTooltip(res, partialTicks)
-        else if (OptionCore.DEFAULT_HOTBAR.isEnabled)
-            super.renderHotbar(res, partialTicks)
+        if (OptionCore.DEFAULT_HOTBAR.isEnabled) super.renderHotbar(res, partialTicks)
         else {
-            mc.mcProfiler.startSection("hotbar")
-            ThemeLoader.HUD.draw(HudPartType.HOTBAR, context)
-            mc.mcProfiler.endSection()
+            if (replaceEvent(HOTBAR)) return
+            if (mc.playerController?.isSpectator ?: false)
+                this.spectatorGui.renderTooltip(res, partialTicks)
+            else {
+                mc.mcProfiler.startSection("hotbar")
+                ThemeLoader.HUD.draw(HudPartType.HOTBAR, context)
+                mc.mcProfiler.endSection()
+            }
+            post(HOTBAR)
         }
-
-        post(HOTBAR)
     }
 
     override fun renderAir(width: Int, height: Int) {
@@ -180,8 +179,8 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
         GLCore.glBlend(true)
 
         var members: MutableList<EntityPlayer> = mutableListOf()
-        if (pt!!.isParty)
-            members = pt.members.filter { it != mc.player }.toMutableList()
+        if (pt?.isParty ?: false)
+            members = pt!!.members.filter { it != mc.player }.toMutableList()
         else
             for (i in 1..ConfigHandler.debugFakePT) members.add(mc.player)
 
@@ -336,13 +335,14 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
     }
 
     private fun replaceEvent(el: ElementType): Boolean {
-        if (eventParent!!.type == el && eventParent!!.isCanceled) {
+        /*if (eventParent!!.type == el && eventParent!!.isCanceled) {
             eventParent!!.isCanceled = false
             eventParent!!.result = Event.Result.ALLOW
             pre(el)
             return true
         }
-        return false
+        return false*/
+        return pre(el)
     }
 
     // c/p from GuiIngameForge
