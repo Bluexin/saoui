@@ -1,12 +1,11 @@
 package com.saomc.saoui.screens.ingame
 
 import be.bluexin.saomclib.capabilities.PartyCapability
+import be.bluexin.saomclib.profile
 import com.saomc.saoui.GLCore
 import com.saomc.saoui.config.ConfigHandler
 import com.saomc.saoui.config.OptionCore
-import com.saomc.saoui.effects.StatusEffects
 import com.saomc.saoui.neo.screens.ScreenGUI
-import com.saomc.saoui.resources.StringNames
 import com.saomc.saoui.social.StaticPlayerHelper
 import com.saomc.saoui.themes.ThemeLoader
 import com.saomc.saoui.themes.elements.HudPartType
@@ -55,7 +54,7 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
         val height = res.scaledHeight
         context.setTime(partialTicks)
         context.setScaledResolution(res)
-        context.setZ(zLevel)
+        context.z = zLevel
         context.player = mc.player
         GLCore.glBlend(true)
         mc.mcProfiler.endSection()
@@ -138,32 +137,8 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
             super.renderHealth(width, height)
         else {
             if (replaceEvent(HEALTH)) return
-            mc.mcProfiler.startSection("health")
-            ThemeLoader.HUD.draw(HudPartType.HEALTH_BOX, context)
-            mc.mcProfiler.endSection()
+            mc.profile("health") { ThemeLoader.HUD.draw(HudPartType.HEALTH_BOX, context) }
             post(HEALTH)
-
-            val healthBarWidth = 234
-            val healthWidth = 216
-            val healthHeight = if (OptionCore.SAO_UI.isEnabled) 9 else 4
-            val stepOne = (healthWidth / 3.0f - 3).toInt()
-            val stepTwo = (healthWidth / 3.0f * 2.0f - 3).toInt()
-            val stepThree = healthWidth - 3
-
-            renderFood(healthWidth, healthHeight, offsetUsername, stepOne, stepTwo, stepThree)
-
-            GLCore.glColor(1.0f, 1.0f, 1.0f, 1.0f)
-
-            mc.mcProfiler.startSection("effects")
-
-            val offsetForEffects = offsetUsername + healthBarWidth - 4
-            val effects = StatusEffects.getEffects(mc.player)
-
-            GLCore.glBindTexture(if (OptionCore.SAO_UI.isEnabled) StringNames.gui else StringNames.guiCustom)
-
-            for (i in effects.indices) effects[i].glDraw(offsetForEffects + i * 11, 2, zLevel)
-
-            mc.mcProfiler.endSection()
 
             renderParty()
         }
@@ -192,7 +167,13 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
 
     override fun renderFood(width: Int, height: Int) {
         if (OptionCore.VANILLA_UI.isEnabled) super.renderFood(width, height)
-        // See below, called by renderHealth
+        else {
+            if (replaceEvent(FOOD)) return
+            GLCore.glAlphaTest(true)
+            GLCore.glBlend(true)
+            mc.profile("foodNew") { ThemeLoader.HUD.draw(HudPartType.FOOD, context) }
+            post(FOOD)
+        }
     }
 
     private fun renderFood(healthWidth: Int, healthHeight: Int, offsetUsername: Int, stepOne: Int, stepTwo: Int, stepThree: Int) {

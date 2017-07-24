@@ -63,7 +63,7 @@ class StaticCachedExpression<out T>(expression: CompiledExpressionWrapper<T>) : 
         override fun horsejump() = 0f
         override fun foodLevel() = 0f
         override fun saturationLevel() = 0f
-        override fun statusEffects() = emptyList<StatusEffects>()
+        override fun statusEffects() = mutableListOf<StatusEffects>()
     }
 
     override fun invoke(ctx: IHudDrawContext) = cache

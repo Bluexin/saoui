@@ -110,7 +110,7 @@ public class HudDrawContext implements IHudDrawContext {
         this.maxHp = StaticPlayerHelper.INSTANCE.getMaxHealth(player);
         healthStep = HealthStep.Companion.getStep(player, hpPct());
         partialTicks = time;
-        this.effects = StatusEffects.getEffects(this.player);
+        this.effects = StatusEffects.Companion.getEffects(this.player);
     }
 
     @Override
@@ -231,7 +231,7 @@ public class HudDrawContext implements IHudDrawContext {
 
     @Override
     public float foodLevel() {
-        return StaticPlayerHelper.getHungerLevel(mc, player, partialTicks);
+        return StaticPlayerHelper.INSTANCE.getHungerLevel(mc, player, partialTicks);
     }
 
     @Override
