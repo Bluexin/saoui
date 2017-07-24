@@ -15,8 +15,6 @@ import net.minecraft.client.gui.GuiIngameMenu
 import net.minecraft.client.gui.GuiMainMenu
 import net.minecraft.client.gui.GuiOptions
 import net.minecraft.entity.player.EntityPlayer
-import net.minecraftforge.fml.common.FMLCommonHandler
-import java.lang.IllegalArgumentException
 
 /**
  * This handles and controls the default event, and our custom events for slots
@@ -27,7 +25,7 @@ object ElementHandler {
 
     fun defaultActions(e: ElementAction) {
         if (e.action == Actions.LEFT_RELEASED) {
-            when(e.elementType){
+            when (e.elementType) {
                 ElementDefEnum.CATEGORY -> {
                     try {
                         val category = CategoryEnum.valueOf(e.name.toUpperCase())
@@ -38,27 +36,22 @@ object ElementHandler {
                             e.parent.openCategory(category)
                             SoundCore.play(Minecraft.getMinecraft().soundHandler, SoundCore.MENU_POPUP)
                         }
-                    } catch (error: IllegalArgumentException){
+                    } catch (error: IllegalArgumentException) {
                         SAOCore.LOGGER.fatal("Element: " + e.name + " incorrectly set isCategory with no matching categories")
                     }
                 }
                 ElementDefEnum.OPTION -> {
-                    try{
-                        val option = OptionCore.valueOf(e.name)
-                        if (option.isRestricted) {
-                            OptionCore.values().filter { it.category == option.category }.forEach { it.disable() }
-                            option.enable()
-                        }
-                        else option.flip()
-                    } catch (error: IllegalArgumentException){
+                    try {
+                        OptionCore.valueOf(e.name).flip()
+                    } catch (ignored: IllegalArgumentException) {
                     }
                 }
                 ElementDefEnum.BUTTON -> optionAction(e)
                 ElementDefEnum.PLAYER -> {
                     val pt = StaticPlayerHelper.getParty()
                     val player: EntityPlayer? = Minecraft.getMinecraft().world.getPlayerEntityByName(e.name)
-                    if (player != null){
-                        if (pt?.isMember(player)?: false)
+                    if (player != null) {
+                        if (pt?.isMember(player) ?: false)
                             pt?.removeMember(player)
                         else pt?.invite(player)
                     }
