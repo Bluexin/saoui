@@ -1,6 +1,6 @@
 package com.saomc.saoui.api.events;
 
-import com.saomc.saoui.api.social.party.IParty;
+import be.bluexin.saomclib.party.IParty;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
 /**

@@ -1,6 +1,7 @@
 package com.saomc.saoui.social
 
 import be.bluexin.saomclib.capabilities.PartyCapability
+import be.bluexin.saomclib.capabilities.getPartyCapability
 import be.bluexin.saomclib.party.IParty
 import com.saomc.saoui.config.OptionCore
 import net.minecraft.client.Minecraft
@@ -169,11 +170,11 @@ object StaticPlayerHelper {
         return Minecraft.getMinecraft().player
     }
 
-    fun getParty(): IParty? {
-        return Minecraft.getMinecraft().player.getCapability(PartyCapability.CAP_INSTANCE, null)!!.party
+    fun getIParty(): IParty {
+        return Minecraft.getMinecraft().player.getPartyCapability().getOrCreatePT()
     }
 
-    fun getParty(player: EntityPlayer): IParty {
-        return player.getCapability(PartyCapability.CAP_INSTANCE, null)!!.party!!
+    fun getIParty(player: EntityPlayer): IParty {
+        return player.getPartyCapability().getOrCreatePT()
     }
 }

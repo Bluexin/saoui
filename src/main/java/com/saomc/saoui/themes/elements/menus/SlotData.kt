@@ -99,7 +99,7 @@ data class SlotData(override val type: MenuDefEnum, val icon: IIcon?, override v
 
     fun hoverState(cursorX: Int, cursorY: Int): Int {
         if (elementType == ElementDefEnum.OPTION) isOpen = OptionCore.valueOf(name).isEnabled
-        else if (elementType == ElementDefEnum.PLAYER) isOpen = StaticPlayerHelper.getParty()?.isMember(StaticPlayerHelper.findOnlinePlayer(Minecraft.getMinecraft(), name)!!) ?: false
+        else if (elementType == ElementDefEnum.PLAYER) isOpen = StaticPlayerHelper.getIParty()?.isMember(StaticPlayerHelper.findOnlinePlayer(Minecraft.getMinecraft(), name)!!) ?: false
         return if (isOpen) 2 else if (!categoryData.isFocus()) 0 else if (mouseOver(cursorX, cursorY)) 2 else if (this.isOpen) 2 else 1
     }
 

@@ -1,5 +1,6 @@
 package com.saomc.saoui.events
 
+import be.bluexin.saomclib.capabilities.getPartyCapability
 import com.saomc.saoui.SAOCore
 import com.saomc.saoui.SoundCore
 import com.saomc.saoui.api.elements.CategoryEnum
@@ -10,6 +11,7 @@ import com.saomc.saoui.config.OptionCore
 import com.saomc.saoui.events.EventCore.Companion.mc
 import com.saomc.saoui.neo.screens.IngameMenuGUI
 import com.saomc.saoui.social.StaticPlayerHelper
+import com.saomc.saoui.social.party.PartyHelper
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiIngameMenu
 import net.minecraft.client.gui.GuiMainMenu
@@ -48,12 +50,17 @@ object ElementHandler {
                 }
                 ElementDefEnum.BUTTON -> optionAction(e)
                 ElementDefEnum.PLAYER -> {
-                    val pt = StaticPlayerHelper.getParty()
                     val player: EntityPlayer? = Minecraft.getMinecraft().world.getPlayerEntityByName(e.name)
                     if (player != null) {
-                        if (pt?.isMember(player) ?: false)
-                            pt?.removeMember(player)
-                        else pt?.invite(player)
+                        val pt = StaticPlayerHelper.getIParty()
+                        val check = pt.invite(player)
+                        if (!!check && pt.isMember(player)) {
+                            pt.removeMember(player)
+                            SAOCore.LOGGER.info("Removing " + player.name + " from party")
+                        }
+                        else {
+                            SAOCore.LOGGER.info("Sending party invite to " + player.name)
+                        }
                     }
                 }
                 else -> return
@@ -72,7 +79,7 @@ object ElementHandler {
             mc.loadWorld(null)
             mc.displayGuiScreen(GuiMainMenu())
         }
-        if (e.name.equals("Dissolve", true)) StaticPlayerHelper.getParty()?.dissolve()
+        if (e.name.equals("Dissolve", true)) StaticPlayerHelper.getIParty()?.dissolve()
     }
 
     private fun slotAction(e: ElementAction) {}
