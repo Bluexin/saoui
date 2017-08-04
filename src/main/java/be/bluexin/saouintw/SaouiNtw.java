@@ -48,7 +48,7 @@ public class SaouiNtw {
     public boolean checkOtherSide(Map<String, String> remoteVersions, Side side) {
         if (side.equals(Side.SERVER)) {
             Communicator.INSTANCE.setSupportsPackets(SAOCore.VERSION.equals(remoteVersions.get(SAOCore.MODID + "ntw")));
-            SAOCore.Companion.getLOGGER().info("Connected to a server " + (Communicator.INSTANCE.getSupportsPackets() ? "with" : "without") + " support for Packets.");
+            SAOCore.INSTANCE.getLOGGER().info("Connected to a server " + (Communicator.INSTANCE.getSupportsPackets() ? "with" : "without") + " support for Packets.");
         }
 
         return true;

@@ -38,6 +38,6 @@ public class ThemeLoader {
 
         HUD.setup();
 
-        SAOCore.Companion.getLOGGER().info("Loaded theme and set it up in " + (System.currentTimeMillis() - start) + "ms.");
+        SAOCore.INSTANCE.getLOGGER().info("Loaded theme and set it up in " + (System.currentTimeMillis() - start) + "ms.");
     }
 }

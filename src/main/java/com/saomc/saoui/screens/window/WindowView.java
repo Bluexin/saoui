@@ -51,12 +51,12 @@ public class WindowView extends Gui{
         this.height = 60;
         this.width = 200;
         this.lines = toLines(message, this.width - 10);
-        SAOCore.Companion.getLOGGER().info("Popup Launched");
+        SAOCore.INSTANCE.getLOGGER().info("Popup Launched");
 
     }
 
     public void updateScreen(){
-        SAOCore.Companion.getLOGGER().info("Updating");
+        SAOCore.INSTANCE.getLOGGER().info("Updating");
         int w = lines.length > 0 ? Stream.of(lines).mapToInt(GLCore.INSTANCE::glStringWidth).max().getAsInt() + 16 : 0;
         if (w > width) width = w;
 
@@ -68,7 +68,7 @@ public class WindowView extends Gui{
 
     public void drawScreen(int mouseX, int mouseY, float partialTicks){
         //drawDefaultBackground();
-        SAOCore.Companion.getLOGGER().info("Drawing");
+        SAOCore.INSTANCE.getLOGGER().info("Drawing");
 
         int left;
         int top;

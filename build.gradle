@@ -21,7 +21,7 @@ apply plugin: "maven"
 apply plugin: 'kotlin'
 apply plugin: 'net.minecraftforge.gradle.forge'
 
-version = "${mc_version}-${mod_version}"
+version = "${mod_version}"
 group = "com.saomc" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "saoui"
 
@@ -34,7 +34,7 @@ minecraft {
     mappings = "${mappings_version}"
 
     replace "@VERSION@", project.version
-    replaceIn "SAOCore.java"
+    replaceIn "SAOCore.kt"
     useDepAts = true
 }
 
@@ -58,7 +58,7 @@ configurations {
 }
 
 dependencies {
-    compile "be.bluexin:saomc-lib:1.11.2-1.1-SNAPSHOT:deobf"
+    compile "be.bluexin:saomc-lib:1.11.2-1.2-SNAPSHOT:deobf"
     shade files('lib/jel-2_1_1/lib/jel_g_homebaked.jar')
 }
 
