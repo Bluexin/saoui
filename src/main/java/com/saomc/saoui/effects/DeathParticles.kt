@@ -4,7 +4,7 @@ import com.saomc.saoui.GLCore
 import com.saomc.saoui.resources.StringNames
 import net.minecraft.client.Minecraft
 import net.minecraft.client.particle.Particle
-import net.minecraft.client.renderer.VertexBuffer
+import net.minecraft.client.renderer.BufferBuilder
 import net.minecraft.client.renderer.Tessellator
 import net.minecraft.entity.Entity
 import net.minecraft.util.EnumFacing
@@ -46,7 +46,7 @@ class DeathParticles private constructor(world: World, xCoord: Double, yCoord: D
         this.particleMaxAge = (this.particleMaxAge.toFloat() * scale).toInt()
     }
 
-    override fun renderParticle(worldrender: VertexBuffer, entity: Entity?, time: Float, x: Float, y: Float, z: Float, f0: Float, f1: Float) {
+    override fun renderParticle(worldrender: BufferBuilder, entity: Entity?, time: Float, x: Float, y: Float, z: Float, f0: Float, f1: Float) {
         this.time = time
         this.particleX = x
         this.particleY = y
