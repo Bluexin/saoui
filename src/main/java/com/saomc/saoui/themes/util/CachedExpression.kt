@@ -1,6 +1,7 @@
 package com.saomc.saoui.themes.util
 
 import com.saomc.saoui.api.themes.IHudDrawContext
+import com.saomc.saoui.effects.StatusEffects
 import com.saomc.saoui.screens.ingame.HealthStep
 
 /**
@@ -54,12 +55,15 @@ class StaticCachedExpression<out T>(expression: CompiledExpressionWrapper<T>) : 
         override fun absorption() = 0f
         override fun level() = 0
         override fun experience() = 0f
-        override fun getZ() = 0.0
+        override fun getZ() = 0.0f
         override fun getFontRenderer() = null
         override fun getItemRenderer() = null
         override fun getPlayer() = null
         override fun getPartialTicks() = 0f
         override fun horsejump() = 0f
+        override fun foodLevel() = 0f
+        override fun saturationLevel() = 0f
+        override fun statusEffects() = mutableListOf<StatusEffects>()
     }
 
     override fun invoke(ctx: IHudDrawContext) = cache

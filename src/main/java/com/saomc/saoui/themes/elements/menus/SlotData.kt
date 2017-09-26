@@ -18,12 +18,12 @@ import net.minecraft.client.Minecraft
  *
  * @author Bluexin
  */
-data class SlotData(override val type: MenuDefEnum, val icon: IIcon?, override val name: String, val displayName: String, override val elementType: ElementDefEnum): IElement {
+data class SlotData(override val type: MenuDefEnum, val icon: IIcon?, override val name: String, val displayName: String, override val elementType: ElementDefEnum) : IElement {
 
     private lateinit var parent: MenuElementParent
     private lateinit var categoryData: CategoryData
-    private var x: Int = 0
-    private var y: Int = 0
+    var x: Int = 0
+    var y: Int = 0
     override var width: Int = 20
     override var height: Int = 20
     private var visibility: Float = 1.0F
@@ -38,7 +38,7 @@ data class SlotData(override val type: MenuDefEnum, val icon: IIcon?, override v
             drawSlot(mc, mouseX, mouseY)
     }
 
-    fun drawIcon(mc: Minecraft, mouseX: Int, mouseY: Int){
+    fun drawIcon(mc: Minecraft, mouseX: Int, mouseY: Int) {
         val hoverState = hoverState(mouseX, mouseY)
         val color0 = getColor(hoverState, true)
         val color1 = getColor(hoverState, false)
@@ -55,7 +55,7 @@ data class SlotData(override val type: MenuDefEnum, val icon: IIcon?, override v
         icon?.glDrawUnsafe(x + 2, y + 2)
     }
 
-    fun drawSlot(mc: Minecraft, mouseX: Int, mouseY: Int){
+    fun drawSlot(mc: Minecraft, mouseX: Int, mouseY: Int) {
         val hoverState = hoverState(mouseX, mouseY)
         val color0 = getColor(hoverState, true)
         val color1 = getColor(hoverState, false)
@@ -70,7 +70,7 @@ data class SlotData(override val type: MenuDefEnum, val icon: IIcon?, override v
         if (hoverState == 2) {
             GLCore.glColor(1.0f, 1.0f, 1.0f)
             GLCore.glTexturedRect(x.toDouble(), y.toDouble(), width.toDouble(), height.toDouble(), 0.0, 21.0, (100 - 16).toDouble(), (20 - 2).toDouble())
-            renderHighlightText(displayName, x  + iconOffset * 2 + 16 + 4, y + captionOffset, ColorUtil.multiplyAlpha(color1, visibility))
+            renderHighlightText(displayName, x + iconOffset * 2 + 16 + 4, y + captionOffset, ColorUtil.multiplyAlpha(color1, visibility))
         } else {
             scrollTextX = 0.0F
             GLCore.glColorRGBA(ColorUtil.multiplyAlpha(color0, visibility))
@@ -87,7 +87,7 @@ data class SlotData(override val type: MenuDefEnum, val icon: IIcon?, override v
         this.categoryData = categoryData
         this.parent = parent
         //SAOCore.LOGGER.info("Element " + name + ", type " + type)
-        if (type != MenuDefEnum.ICON_BUTTON){
+        if (type != MenuDefEnum.ICON_BUTTON) {
             this.width = categoryData.width
             this.height = 20
         }
@@ -95,44 +95,29 @@ data class SlotData(override val type: MenuDefEnum, val icon: IIcon?, override v
         this.y = categoryData.getY(this)
     }
 
-    override fun isMenu(): Boolean {
-        return true
-    }
-
-    fun getColor(hoverState: Int, bg: Boolean): Int {
-        return if (bg) if (hoverState == 1) ColorUtil.DEFAULT_COLOR.rgba else if (hoverState == 2) ColorUtil.HOVER_COLOR.rgba else ColorUtil.DEFAULT_COLOR.rgba and ColorUtil.DISABLED_MASK.rgba else if (hoverState == 1) ColorUtil.DEFAULT_FONT_COLOR.rgba else if (hoverState == 2) ColorUtil.HOVER_FONT_COLOR.rgba else ColorUtil.DEFAULT_FONT_COLOR.rgba and ColorUtil.DISABLED_MASK.rgba
-    }
-
-    fun getY(): Int{
-        return this.y
-    }
+    fun getColor(hoverState: Int, bg: Boolean) = if (bg) if (hoverState == 1) ColorUtil.DEFAULT_COLOR.rgba else if (hoverState == 2) ColorUtil.HOVER_COLOR.rgba else ColorUtil.DEFAULT_COLOR.rgba and ColorUtil.DISABLED_MASK.rgba else if (hoverState == 1) ColorUtil.DEFAULT_FONT_COLOR.rgba else if (hoverState == 2) ColorUtil.HOVER_FONT_COLOR.rgba else ColorUtil.DEFAULT_FONT_COLOR.rgba and ColorUtil.DISABLED_MASK.rgba
 
     fun hoverState(cursorX: Int, cursorY: Int): Int {
         if (elementType == ElementDefEnum.OPTION) isOpen = OptionCore.valueOf(name).isEnabled
-        else if (elementType == ElementDefEnum.PLAYER) isOpen = StaticPlayerHelper.getParty()?.isMember(StaticPlayerHelper.findOnlinePlayer(Minecraft.getMinecraft(), name)!!)?: false
+        //else if (elementType == ElementDefEnum.PLAYER) isOpen = StaticPlayerHelper.getIParty().isMember(StaticPlayerHelper.findOnlinePlayer(Minecraft.getMinecraft(), name)!!)
         return if (isOpen) 2 else if (!categoryData.isFocus()) 0 else if (mouseOver(cursorX, cursorY)) 2 else if (this.isOpen) 2 else 1
     }
 
-    override fun mouseOver(cursorX: Int, cursorY: Int): Boolean {
-        if (this.visibility >= 0.6) {
-            val left = x + parent.parentX
-            val top = y + parent.parentY
+    override fun mouseOver(cursorX: Int, cursorY: Int) = if (this.visibility >= 0.6) {
+        val left = x + parent.parentX
+        val top = y + parent.parentY
 
-            return cursorX >= left &&
-                    cursorY >= top &&
-                    cursorX <= left + this.width &&
-                    cursorY <= top + this.height
-        } else {
-            return false
-        }
-    }
+        cursorX >= left &&
+                cursorY >= top &&
+                cursorX <= left + this.width &&
+                cursorY <= top + this.height
+    } else false
 
-    override fun mouseClicked(cursorX: Int, cursorY: Int, action: Actions): Boolean {
-        return mouseOver(cursorX, cursorY)
-    }
+    override fun mouseClicked(cursorX: Int, cursorY: Int, action: Actions) = mouseOver(cursorX, cursorY)
 
     override fun mouseScroll(cursorX: Int, cursorY: Int, delta: Int): Boolean {
-        TODO("not implemented")
+        // Commenting out not to crash the poor client >.< TODO("not implemented")
+        return false
     }
 
     /**
@@ -147,31 +132,19 @@ data class SlotData(override val type: MenuDefEnum, val icon: IIcon?, override v
      * @param y      Y coord to render
      * @param argb   Color code
      */
-    private fun renderHighlightText(string: String, x: Int, y: Int, argb: Int) {
-        if (string.length >= 50) {
-            val name: String
+    private fun renderHighlightText(string: String, x: Int, y: Int, argb: Int) = if (string.length >= 50) {
+        val name: String
 
-            if (string.length > scrollTextX)
-                name = string.substring(scrollTextX.toInt())
-            else {
-                scrollTextX = 0.0F
-                name = string
-            }
+        if (string.length > scrollTextX) name = string.substring(scrollTextX.toInt())
+        else {
+            scrollTextX = 0.0F
+            name = string
+        }
 
-            GLCore.glString(name, x, y, argb, OptionCore.TEXT_SHADOW.isEnabled)
+        GLCore.glString(name, x, y, argb, OptionCore.TEXT_SHADOW.isEnabled)
 
-            scrollTextX += 0.01F
-        } else
-            GLCore.glString(string, x, y, argb, OptionCore.TEXT_SHADOW.isEnabled)
-    }
-
-    fun setY(y: Int){
-        this.y = y
-    }
-
-    fun setX(x: Int){
-        this.x = x
-    }
+        scrollTextX += 0.01F
+    } else GLCore.glString(string, x, y, argb, OptionCore.TEXT_SHADOW.isEnabled)
 
     override fun close() = Unit
 }

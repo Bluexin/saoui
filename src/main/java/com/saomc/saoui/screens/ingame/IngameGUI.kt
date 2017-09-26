@@ -1,12 +1,11 @@
 package com.saomc.saoui.screens.ingame
 
 import be.bluexin.saomclib.capabilities.PartyCapability
+import be.bluexin.saomclib.profile
 import com.saomc.saoui.GLCore
 import com.saomc.saoui.config.ConfigHandler
 import com.saomc.saoui.config.OptionCore
-import com.saomc.saoui.effects.StatusEffects
 import com.saomc.saoui.neo.screens.ScreenGUI
-import com.saomc.saoui.resources.StringNames
 import com.saomc.saoui.social.StaticPlayerHelper
 import com.saomc.saoui.themes.ThemeLoader
 import com.saomc.saoui.themes.elements.HudPartType
@@ -24,7 +23,6 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType.*
 import net.minecraftforge.common.MinecraftForge
-import net.minecraftforge.fml.common.eventhandler.Event
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
 import org.lwjgl.opengl.GL11
@@ -56,7 +54,7 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
         val height = res.scaledHeight
         context.setTime(partialTicks)
         context.setScaledResolution(res)
-        context.setZ(zLevel)
+        context.z = zLevel
         context.player = mc.player
         GLCore.glBlend(true)
         mc.mcProfiler.endSection()
@@ -95,18 +93,18 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
     }
 
     override fun renderHotbar(res: ScaledResolution, partialTicks: Float) {
-        if (replaceEvent(HOTBAR)) return
-        if (mc.playerController.isSpectator)
-            this.spectatorGui.renderTooltip(res, partialTicks)
-        else if (OptionCore.DEFAULT_HOTBAR.isEnabled)
-            super.renderHotbar(res, partialTicks)
+        if (OptionCore.DEFAULT_HOTBAR.isEnabled) super.renderHotbar(res, partialTicks)
         else {
-            mc.mcProfiler.startSection("hotbar")
-            ThemeLoader.HUD.draw(HudPartType.HOTBAR, context)
-            mc.mcProfiler.endSection()
+            if (replaceEvent(HOTBAR)) return
+            if (mc.playerController?.isSpectator ?: false)
+                this.spectatorGui.renderTooltip(res, partialTicks)
+            else {
+                mc.mcProfiler.startSection("hotbar")
+                ThemeLoader.HUD.draw(HudPartType.HOTBAR, context)
+                mc.mcProfiler.endSection()
+            }
+            post(HOTBAR)
         }
-
-        post(HOTBAR)
     }
 
     override fun renderAir(width: Int, height: Int) {
@@ -139,32 +137,8 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
             super.renderHealth(width, height)
         else {
             if (replaceEvent(HEALTH)) return
-            mc.mcProfiler.startSection("health")
-            ThemeLoader.HUD.draw(HudPartType.HEALTH_BOX, context)
-            mc.mcProfiler.endSection()
+            mc.profile("health") { ThemeLoader.HUD.draw(HudPartType.HEALTH_BOX, context) }
             post(HEALTH)
-
-            val healthBarWidth = 234
-            val healthWidth = 216
-            val healthHeight = if (OptionCore.SAO_UI.isEnabled) 9 else 4
-            val stepOne = (healthWidth / 3.0f - 3).toInt()
-            val stepTwo = (healthWidth / 3.0f * 2.0f - 3).toInt()
-            val stepThree = healthWidth - 3
-
-            renderFood(healthWidth, healthHeight, offsetUsername, stepOne, stepTwo, stepThree)
-
-            GLCore.glColor(1.0f, 1.0f, 1.0f, 1.0f)
-
-            mc.mcProfiler.startSection("effects")
-
-            val offsetForEffects = offsetUsername + healthBarWidth - 4
-            val effects = StatusEffects.getEffects(mc.player)
-
-            GLCore.glBindTexture(if (OptionCore.SAO_UI.isEnabled) StringNames.gui else StringNames.guiCustom)
-
-            for (i in effects.indices) effects[i].glDraw(offsetForEffects + i * 11, 2, zLevel)
-
-            mc.mcProfiler.endSection()
 
             renderParty()
         }
@@ -180,8 +154,8 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
         GLCore.glBlend(true)
 
         var members: MutableList<EntityPlayer> = mutableListOf()
-        if (pt!!.isParty)
-            members = pt.members.filter { it != mc.player }.toMutableList()
+        if (pt?.isParty ?: false)
+            members = pt!!.members.filter { it != mc.player }.toMutableList()
         else
             for (i in 1..ConfigHandler.debugFakePT) members.add(mc.player)
 
@@ -193,7 +167,13 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
 
     override fun renderFood(width: Int, height: Int) {
         if (OptionCore.VANILLA_UI.isEnabled) super.renderFood(width, height)
-        // See below, called by renderHealth
+        else {
+            if (replaceEvent(FOOD)) return
+            GLCore.glAlphaTest(true)
+            GLCore.glBlend(true)
+            mc.profile("foodNew") { ThemeLoader.HUD.draw(HudPartType.FOOD, context) }
+            post(FOOD)
+        }
     }
 
     private fun renderFood(healthWidth: Int, healthHeight: Int, offsetUsername: Int, stepOne: Int, stepTwo: Int, stepThree: Int) {
@@ -304,6 +284,7 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
             if (!MinecraftForge.EVENT_BUS.post(event)) {
                 var top = 20
                 for (msg in listL) {
+                    if (msg == null) continue
                     drawRect(1, top - 1, 2 + fontRenderer!!.getStringWidth(msg) + 1, top + fontRenderer!!.FONT_HEIGHT - 1, -1873784752)
                     fontRenderer!!.drawString(msg, 2, top, 14737632)
                     top += fontRenderer!!.FONT_HEIGHT
@@ -311,6 +292,7 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
 
                 top = 2
                 for (msg in listR) {
+                    if (msg == null) continue
                     val w = fontRenderer!!.getStringWidth(msg)
 
                     val slotsY = (height - 9 * 22) / 2
@@ -334,13 +316,14 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
     }
 
     private fun replaceEvent(el: ElementType): Boolean {
-        if (eventParent!!.type == el && eventParent!!.isCanceled) {
+        /*if (eventParent!!.type == el && eventParent!!.isCanceled) {
             eventParent!!.isCanceled = false
             eventParent!!.result = Event.Result.ALLOW
             pre(el)
             return true
         }
-        return false
+        return false*/
+        return pre(el)
     }
 
     // c/p from GuiIngameForge

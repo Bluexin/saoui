@@ -2,6 +2,7 @@ package com.saomc.saoui.themes.util;
 
 import com.saomc.saoui.api.info.IPlayerStatsProvider;
 import com.saomc.saoui.api.themes.IHudDrawContext;
+import com.saomc.saoui.effects.StatusEffects;
 import com.saomc.saoui.screens.ingame.HealthStep;
 import com.saomc.saoui.social.StaticPlayerHelper;
 import com.saomc.saoui.util.PlayerStats;
@@ -35,13 +36,14 @@ public class HudDrawContext implements IHudDrawContext {
     private final IPlayerStatsProvider stats;
     private EntityPlayer player;
     private HealthStep healthStep;
-    private double z;
+    private float z;
     private float hp;
     private float maxHp;
     private ScaledResolution scaledResolution;
     private float partialTicks;
     private int i;
     private List<EntityPlayer> pt;
+    private List<StatusEffects> effects;
 
     public HudDrawContext(EntityPlayer player, Minecraft mc, RenderItem itemRenderer) {
         this.username = player.getDisplayNameString();
@@ -67,7 +69,7 @@ public class HudDrawContext implements IHudDrawContext {
     }
 
     @Override
-    public double getZ() {
+    public float getZ() {
         return z;
     }
 
@@ -108,6 +110,7 @@ public class HudDrawContext implements IHudDrawContext {
         this.maxHp = StaticPlayerHelper.INSTANCE.getMaxHealth(player);
         healthStep = HealthStep.Companion.getStep(player, hpPct());
         partialTicks = time;
+        this.effects = StatusEffects.Companion.getEffects(this.player);
     }
 
     @Override
@@ -224,6 +227,21 @@ public class HudDrawContext implements IHudDrawContext {
     @Override
     public HealthStep ptHealthStep(int index) {
         return HealthStep.Companion.getStep(ptHpPct(index));
+    }
+
+    @Override
+    public float foodLevel() {
+        return StaticPlayerHelper.INSTANCE.getHungerLevel(mc, player, partialTicks);
+    }
+
+    @Override
+    public float saturationLevel() {
+        return player.getFoodStats().getSaturationLevel();
+    }
+
+    @Override
+    public List<StatusEffects> statusEffects() {
+        return effects;
     }
 
     private boolean validatePtIndex(int index) {

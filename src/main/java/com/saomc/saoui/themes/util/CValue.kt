@@ -8,8 +8,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter
  *
  * @author Bluexin
  */
-abstract class CValue<out T>(val value: CachedExpression<T>) : Function1<IHudDrawContext, T> {
-    override fun invoke(ctx: IHudDrawContext) = value.invoke(ctx)
+abstract class CValue<out T>(val value: CachedExpression<T>) : (IHudDrawContext) -> T {
+    override fun invoke(ctx: IHudDrawContext) = value(ctx)
 }
 
 /**
@@ -35,3 +35,9 @@ class CString(value: CachedExpression<String>) : CValue<String>(value)
  */
 @XmlJavaTypeAdapter(BooleanExpressionAdapter::class)
 class CBoolean(value: CachedExpression<Boolean>) : CValue<Boolean>(value)
+
+/**
+ * Custom Unit/Void type.
+ */
+@XmlJavaTypeAdapter(UnitExpressionAdapter::class)
+class CUnit(value: CachedExpression<Unit>) : CValue<Unit>(value)

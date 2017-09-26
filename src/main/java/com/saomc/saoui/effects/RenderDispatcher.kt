@@ -10,7 +10,7 @@ import org.lwjgl.opengl.GL11
 /**
  * This code was original created by <Vazkii> and has been modified to our needs
  * All credit goes to him
-*/
+</Vazkii> */
 @SideOnly(Side.CLIENT)
 object RenderDispatcher {
 

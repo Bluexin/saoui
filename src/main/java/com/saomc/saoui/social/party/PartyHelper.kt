@@ -1,8 +1,8 @@
 package com.saomc.saoui.social.party
 
+import be.bluexin.saomclib.party.IParty
 import be.bluexin.saouintw.communication.CommandType
 import be.bluexin.saouintw.communication.Communicator
-import com.saomc.saoui.api.social.party.IParty
 import com.saomc.saoui.screens.menu.Categories
 import com.saomc.saoui.social.StaticPlayerHelper
 import net.minecraft.client.Minecraft
@@ -61,7 +61,7 @@ class PartyHelper private constructor(private val party: IParty) {
     }
 
     private fun isLeader(username: String): Boolean {
-        return username == party.leader.displayNameString // TODO: check with text formatters, not sure how this would work out
+        return username == party.leader?.displayNameString // TODO: check with text formatters, not sure how this would work out
     }
 
     private fun isLeader(player: EntityPlayer): Boolean {
@@ -100,10 +100,10 @@ class PartyHelper private constructor(private val party: IParty) {
     }
 
     fun invite(player: EntityPlayer) {
-        if (!party.isInParty(player)) {
+        if (!party.isMember(player)) {
             invited.add(player)
             val mc = Minecraft.getMinecraft()
-            Communicator.send(CommandType.INVITE_TO_PARTY, player, if (hasParty()) party.leader.displayNameString else StaticPlayerHelper.getName(mc))
+            Communicator.send(CommandType.INVITE_TO_PARTY, player, if (hasParty()) party.leader!!.displayNameString else StaticPlayerHelper.getName(mc))
         }
     }
 
@@ -113,7 +113,7 @@ class PartyHelper private constructor(private val party: IParty) {
                 party.members.stream().filter { pl -> pl == mc.player }.forEach { member -> Communicator.send(CommandType.DISSOLVE_PARTY, member) }
                 mc.player.sendMessage(TextComponentTranslation("ptDissolve"))
             } else {
-                Communicator.send(CommandType.DISSOLVE_PARTY, party.leader) // aka leave PT
+                Communicator.send(CommandType.DISSOLVE_PARTY, party.leader!!) // aka leave PT
                 mc.player.sendMessage(TextComponentTranslation("ptLeave"))
             }
         }
@@ -135,7 +135,7 @@ class PartyHelper private constructor(private val party: IParty) {
 
     fun receiveConfirmation(player: EntityPlayer, vararg args: String) { // Keeping args for later (will be needed for auth/PT UUID system)
         val mc = Minecraft.getMinecraft()
-        if (party.leader == mc.player && !party.isInParty(player) && invited.contains(player)) {
+        if (party.leader == mc.player && !party.isMember(player) && invited.contains(player)) {
             addPlayer(player)
             invited.remove(player)
         } else
@@ -157,8 +157,9 @@ class PartyHelper private constructor(private val party: IParty) {
     companion object {
         private var instance: PartyHelper? = null
 
-        fun init(party: IParty) {
+        fun init(party: IParty): PartyHelper {
             instance = PartyHelper(party)
+            return instance!!
         }
 
         fun instance(): PartyHelper {

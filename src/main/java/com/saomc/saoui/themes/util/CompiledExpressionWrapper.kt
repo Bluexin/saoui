@@ -52,3 +52,11 @@ class BooleanExpressionWrapper(compiledExpression: CompiledExpression) : Compile
         false
     }
 }
+
+class UnitExpressionWrapper(compiledExpression: CompiledExpression) : CompiledExpressionWrapper<Unit>(compiledExpression) {
+    override fun invoke(ctx: IHudDrawContext): Unit = try {
+        compiledExpression.evaluate_void(arrayOf(ctx))
+    } catch (e: Throwable) {
+        warn(e)
+    }
+}

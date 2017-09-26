@@ -38,8 +38,8 @@ repositories {
     jcenter()
     mavenCentral()
     maven {
-        url = "https://maven.bluexin.be/repository/releases/"
-        url = "https://maven.bluexin.be/repository/snapshots/"
+        url = "http://maven.bluexin.be/repository/releases/"
+        url = "http://maven.bluexin.be/repository/snapshots/"
     }
 }
 
@@ -55,7 +55,7 @@ configurations {
 }
 
 dependencies {
-    compile "be.bluexin:saomc-lib:1.12-1.1-SNAPSHOT:deobf"
+    compile "be.bluexin:saomc-lib:1.12.1-1.2.0.5-SNAPSHOT:deobf"
     shade files('lib/jel-2_1_1/lib/jel_g_homebaked.jar')
     shade files('lib/jel-2_1_1/lib/jel.jar')
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"

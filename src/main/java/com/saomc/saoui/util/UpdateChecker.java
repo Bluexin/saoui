@@ -52,7 +52,7 @@ public class UpdateChecker extends Thread {
             String line = reader.readLine();
 
             if (line == null) {
-                SAOCore.Companion.getLOGGER().fatal("Update check failed!");
+                SAOCore.INSTANCE.getLOGGER().fatal("Update check failed!");
                 throw new IOException("No data from github changelog!");
             }
 
@@ -101,7 +101,7 @@ public class UpdateChecker extends Thread {
             }
 
         } catch (Exception e) {
-            SAOCore.Companion.getLOGGER().fatal("Caught exception in Update Checker thread!");
+            SAOCore.INSTANCE.getLOGGER().fatal("Caught exception in Update Checker thread!");
             e.printStackTrace();
 
         } finally {
@@ -109,7 +109,7 @@ public class UpdateChecker extends Thread {
                 try {
                     reader.close();
                 } catch (IOException e) {
-                    SAOCore.Companion.getLOGGER().fatal("Caught exception in Update Checker");
+                    SAOCore.INSTANCE.getLOGGER().fatal("Caught exception in Update Checker");
                     e.printStackTrace();
                 }
             }

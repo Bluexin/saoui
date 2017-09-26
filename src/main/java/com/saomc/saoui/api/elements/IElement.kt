@@ -25,9 +25,6 @@ interface IElement {
 
     fun init(parent: MenuElementParent, categoryData: CategoryData)
 
-    /** Return true if you want this element to be part of the menu, otherwise return false to not be tied to it **/
-    fun isMenu(): Boolean
-
     fun mouseOver(cursorX: Int, cursorY: Int): Boolean
 
     /** Fires a Action event if returned true **/

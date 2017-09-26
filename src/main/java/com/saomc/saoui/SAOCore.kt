@@ -18,7 +18,18 @@ import org.apache.logging.log4j.Logger
 import javax.xml.bind.JAXBException
 
 @Mod(modid = SAOCore.MODID, name = SAOCore.NAME, version = SAOCore.VERSION, clientSideOnly = true, dependencies = SAOCore.DEPS, acceptableSaveVersions = "*", canBeDeactivated = true)
-class SAOCore {
+object SAOCore {
+    const val MODID = "saoui"
+    const val NAME = "Sword Art Online UI"
+    const val VERSION = "2.0.0.3"
+    const val DEPS = "required-before:" + MODID + "ntw;required-after:saomclib@[1.2,)"
+
+    @JvmStatic
+    @Mod.InstanceFactory
+    fun shenanigan() = this
+
+    val UNKNOWN_TIME_DELAY = -1f
+    val LOGGER: Logger = LogManager.getLogger(MODID)
 
     @Mod.EventHandler
     @Throws(Exception::class)
@@ -26,7 +37,7 @@ class SAOCore {
         MinecraftForge.EVENT_BUS.register(EventCore())
         ConfigHandler.preInit(event)
 
-        (Minecraft.getMinecraft().resourceManager as IReloadableResourceManager).registerReloadListener { _ ->
+        (Minecraft.getMinecraft().resourceManager as IReloadableResourceManager).registerReloadListener { resourceManager ->
             try {
                 ThemeLoader.load()
             } catch (e: JAXBException) {
@@ -40,23 +51,6 @@ class SAOCore {
         val s = EventInitStatsProvider(DefaultStatsProvider())
         MinecraftForge.EVENT_BUS.post(s)
         PlayerStats.init(s.implementation)
-    }
-
-    fun t() {
-
-    }
-
-    companion object {
-        const val MODID = "saoui"
-        const val NAME = "Sword Art Online UI"
-        const val VERSION = "2.0-lite-dev"
-        const val DEPS = "required-before:" + MODID + "ntw;required-after:saomclib@[1.1,)"
-        val UNKNOWN_TIME_DELAY = -1f
-        val LOGGER: Logger = LogManager.getLogger(MODID)
-        // TODO: optimize things, ie remove public and static!
-
-        @Mod.Instance(MODID)
-        var instance: SAOCore? = null
     }
 
 }

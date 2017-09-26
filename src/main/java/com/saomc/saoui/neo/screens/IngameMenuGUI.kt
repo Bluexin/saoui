@@ -8,6 +8,8 @@ import com.saomc.saoui.screens.inventory.InventoryCore
 import com.saomc.saoui.social.StaticPlayerHelper
 import com.saomc.saoui.themes.elements.menus.CategoryData
 import com.saomc.saoui.util.IconCore
+import net.minecraft.client.Minecraft
+import net.minecraftforge.fml.client.FMLClientHandler
 import net.minecraftforge.fml.common.FMLCommonHandler
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
@@ -86,7 +88,9 @@ class IngameMenuGUI(override val name: String = "In-game menu GUI") : ScreenGUI(
                 list.add(ElementData("Options", "Settings", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.OPTION, optionCore.name, optionCore.displayName, if (optionCore.isCategory) ElementDefEnum.CATEGORY else ElementDefEnum.OPTION))
         } }
 
-        FMLCommonHandler.instance().minecraftServerInstance.playerList.players.filter { it != StaticPlayerHelper.thePlayer() }.forEach { player ->  run{list.add(ElementData("Invite", "Party", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.INVITE, player.name, player.displayNameString, ElementDefEnum.PLAYER))}}
+        Minecraft.getMinecraft().world.playerEntities.filter { it != mc.player }.forEach { player ->  run{list.add(ElementData("Invite", "Party", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.INVITE, player.name, player.displayNameString, ElementDefEnum.PLAYER))}}
+
+        //FMLCommonHandler.instance().minecraftServerInstance.playerList.players.filter { it != StaticPlayerHelper.thePlayer() }.forEach { player ->  run{list.add(ElementData("Invite", "Party", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.INVITE, player.name, player.displayNameString, ElementDefEnum.PLAYER))}}
 
         list.forEach { (cat, parentCat, type, icon, name, displayName, elementType) ->
             var category: CategoryEnum
@@ -114,13 +118,13 @@ class IngameMenuGUI(override val name: String = "In-game menu GUI") : ScreenGUI(
 
             //If category exists, add to existing
             if (categoryData != null) {
-                categoryData.addSlot(type, icon, name, displayName, elementType)
+                categoryData.addElement(type, icon, name, displayName, elementType)
             }
             //Else, create new category and add to that
             else {
                 categoryData = CategoryData(category, categories.firstOrNull { it.category == category.parent })
                 categoryData.init(this)
-                categoryData.addSlot(type, icon, name, displayName, elementType)
+                categoryData.addElement(type, icon, name, displayName, elementType)
                 categories.add(categoryData)
             }
 

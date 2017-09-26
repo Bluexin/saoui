@@ -1,9 +1,12 @@
 package com.saomc.saoui.api.themes;
 
+import com.saomc.saoui.effects.StatusEffects;
 import com.saomc.saoui.screens.ingame.HealthStep;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.entity.player.EntityPlayer;
+
+import java.util.List;
 
 /**
  * Getters to use in JEL (for access in xml themes).
@@ -92,7 +95,7 @@ public interface IHudDrawContext {
      */
     float experience();
 
-    double getZ();
+    float getZ();
 
     FontRenderer getFontRenderer();
 
@@ -119,4 +122,30 @@ public interface IHudDrawContext {
     int ptSize();
 
     HealthStep ptHealthStep(int index);
+
+    float foodLevel();
+
+    default float foodMax() {
+        return 20.0f;
+    }
+
+    default float foodPct() {
+        return Math.min(foodLevel() / foodMax(), 1.0f);
+    }
+
+    float saturationLevel();
+
+    default float saturationMax() {
+        return 20.0f;
+    }
+
+    default float saturationPct() {
+        return Math.min(saturationLevel() / saturationMax(), 1.0f);
+    }
+
+    List<StatusEffects> statusEffects();
+
+    default StatusEffects statusEffect(int i) {
+        return statusEffects().get(i);
+    }
 }

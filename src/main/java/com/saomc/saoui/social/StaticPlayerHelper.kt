@@ -1,15 +1,14 @@
 package com.saomc.saoui.social
 
 import be.bluexin.saomclib.capabilities.PartyCapability
+import be.bluexin.saomclib.capabilities.getPartyCapability
 import be.bluexin.saomclib.party.IParty
 import com.saomc.saoui.config.OptionCore
 import net.minecraft.client.Minecraft
 import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
-
-import java.util.HashMap
-import java.util.UUID
+import java.util.*
 
 /**
  * Part of SAOUI
@@ -117,7 +116,11 @@ object StaticPlayerHelper {
         return if (entity is EntityLivingBase) Math.max(0.0000001f, entity.maxHealth) else 1f
     }
 
-    fun getHungerFract(mc: Minecraft, entity: Entity, time: Float): Float {
+    fun getHungerFract(mc: Minecraft, entity: Entity, time: Float) =
+            if (entity !is EntityPlayer) 1.0f
+            else getHungerLevel(mc, entity, time) / 20.0f
+
+    fun getHungerLevel(mc: Minecraft, entity: Entity, time: Float): Float {
         if (entity !is EntityPlayer) return 1.0f
         val player = entity
         val hungerReal: Float
@@ -135,23 +138,20 @@ object StaticPlayerHelper {
 
                 if (hungerReal <= 0) {
                     val value = (18 - player.deathTime).toFloat() / 18
-
                     if (value <= 0) hungerSmooth.remove(uuid)
 
                     return hungerValue * value
                 } else if (Math.round(hungerValue * 10) != Math.round(hungerReal * 10))
                     hungerValue += (hungerReal - hungerValue) * (gameTimeDelay(mc, time) * HEALTH_ANIMATION_FACTOR)
-                else
-                    hungerValue = hungerReal
+                else hungerValue = hungerReal
 
                 hungerSmooth.put(uuid, hungerValue)
-                return hungerValue / 20.0f
+                return hungerValue
             } else {
                 hungerSmooth.put(uuid, hungerReal)
-                return hungerReal / 20.0f
+                return hungerReal
             }
-        } else
-            return player.foodStats.foodLevel / 20.0f
+        } else return player.foodStats.foodLevel.toFloat()
     }
 
     private fun gameTimeDelay(mc: Minecraft, time: Float): Float {
@@ -170,11 +170,11 @@ object StaticPlayerHelper {
         return Minecraft.getMinecraft().player
     }
 
-    fun getParty(): IParty? {
-        return Minecraft.getMinecraft().player.getCapability(PartyCapability.CAP_INSTANCE, null)!!.party
+    fun getIParty(): IParty {
+        return Minecraft.getMinecraft().player.getPartyCapability().getOrCreatePT()
     }
 
-    fun getParty(player: EntityPlayer): IParty {
-        return player.getCapability(PartyCapability.CAP_INSTANCE, null)!!.party!!
+    fun getIParty(player: EntityPlayer): IParty {
+        return player.getPartyCapability().getOrCreatePT()
     }
 }
