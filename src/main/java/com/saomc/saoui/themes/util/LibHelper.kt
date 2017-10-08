@@ -10,6 +10,7 @@ import gnu.jel.CompilationException
 import gnu.jel.Library
 import net.minecraft.client.resources.I18n
 import net.minecraft.launchwrapper.LaunchClassLoader
+import net.minecraft.world.World
 
 /**
  * Part of saoui by Bluexin.

@@ -13,10 +13,10 @@ class ExpressionIntermediate {
     @XmlAttribute(name = "cache") val cacheType = CacheType.DEFAULT
 
     @XmlValue
-    val expression = "" // Will get replaced by the loading
+    var expression = "" // Will get replaced by the loading
         get() {
-            if (LibHelper.obfuscated) field = field.replace("format(", "func_135052_a(")
-            field = field.replace('\n', ' ')
-            return field
+        if (LibHelper.obfuscated) field = field.replace("format(", "func_135052_a(")
+        field = field.replace('\n', ' ')
+        return field
         }
 }
