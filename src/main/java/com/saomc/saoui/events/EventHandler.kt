@@ -2,13 +2,12 @@ package com.saomc.saoui.events
 
 import be.bluexin.saouintw.communication.Command
 import com.saomc.saoui.SoundCore
+import com.saomc.saoui.events.EventCore.mc
 import net.minecraft.client.multiplayer.GuiConnecting
 import net.minecraft.client.settings.KeyBinding
 import net.minecraftforge.client.event.ClientChatReceivedEvent
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
-
-import com.saomc.saoui.events.EventCore.Companion.mc
 
 @SideOnly(Side.CLIENT)
 object EventHandler {

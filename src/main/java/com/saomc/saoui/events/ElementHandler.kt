@@ -1,6 +1,5 @@
 package com.saomc.saoui.events
 
-import be.bluexin.saomclib.capabilities.getPartyCapability
 import com.saomc.saoui.SAOCore
 import com.saomc.saoui.SoundCore
 import com.saomc.saoui.api.elements.CategoryEnum
@@ -8,10 +7,9 @@ import com.saomc.saoui.api.elements.ElementDefEnum
 import com.saomc.saoui.api.events.ElementAction
 import com.saomc.saoui.api.screens.Actions
 import com.saomc.saoui.config.OptionCore
-import com.saomc.saoui.events.EventCore.Companion.mc
+import com.saomc.saoui.events.EventCore.mc
 import com.saomc.saoui.neo.screens.IngameMenuGUI
 import com.saomc.saoui.social.StaticPlayerHelper
-import com.saomc.saoui.social.party.PartyHelper
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiIngameMenu
 import net.minecraft.client.gui.GuiMainMenu
@@ -79,7 +77,7 @@ object ElementHandler {
             mc.loadWorld(null)
             mc.displayGuiScreen(GuiMainMenu())
         }
-        if (e.name.equals("Dissolve", true)) StaticPlayerHelper.getIParty()?.dissolve()
+        if (e.name.equals("Dissolve", true)) StaticPlayerHelper.getIParty().dissolve()
     }
 
     private fun slotAction(e: ElementAction) {}

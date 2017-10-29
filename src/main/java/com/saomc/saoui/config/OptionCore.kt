@@ -8,7 +8,7 @@ import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
 
 @SideOnly(Side.CLIENT)
-enum class OptionCore constructor(
+enum class OptionCore(
         /**
          * @return Returns the Option name in String format
          * *

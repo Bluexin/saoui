@@ -17,8 +17,7 @@ import net.minecraftforge.client.event.RenderLivingEvent
 import net.minecraftforge.client.event.RenderPlayerEvent
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
-
-import java.util.ArrayList
+import java.util.*
 
 @SideOnly(Side.CLIENT)
 internal object RenderHandler {
@@ -27,8 +26,8 @@ internal object RenderHandler {
     private var menuGUI = true
 
     fun checkingameGUI() {
-        //if (EventCore.mc.ingameGUI != null && EventCore.mc.ingameGUI !is IngameGUI)
-            //EventCore.mc.ingameGUI = IngameGUI(EventCore.mc)
+        if (EventCore.mc.ingameGUI != null && EventCore.mc.ingameGUI !is IngameGUI)
+            EventCore.mc.ingameGUI = IngameGUI(EventCore.mc)
     }
 
     fun deathHandlers() {
@@ -52,7 +51,7 @@ internal object RenderHandler {
         deadHandlers.add(ent)
     }
 
-    fun guiInstance(e: GuiOpenEvent) {/*
+    fun guiInstance(e: GuiOpenEvent) {
         if (!OptionCore.BUGGY_MENU.isEnabled) return
         if (OptionCore.DEBUG_MODE.isEnabled) print(e.gui.toString() + " called GuiOpenEvent \n")
 
@@ -79,7 +78,7 @@ internal object RenderHandler {
                 e.isCanceled = true
                 EventCore.mc.currentScreen!!.onGuiClosed()
                 EventCore.mc.setIngameFocus()
-            }*/
+            }
 
     }
 

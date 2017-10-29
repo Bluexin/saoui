@@ -14,7 +14,7 @@ import net.minecraftforge.fml.common.network.FMLNetworkEvent
 /**
  * This is the core for all event handlers, listening to events then passing on to the other events that need it.
  */
-class EventCore {
+object EventCore {
 
     /*@SubscribeEvent
     public void chatListener(ClientChatReceivedEvent e) {
@@ -82,8 +82,5 @@ class EventCore {
         ElementHandler.defaultActions(e)
     }
 
-    companion object {
-
-        internal val mc = Minecraft.getMinecraft()
-    }
+    internal val mc = Minecraft.getMinecraft()
 }

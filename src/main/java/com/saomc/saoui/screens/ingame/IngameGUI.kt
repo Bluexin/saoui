@@ -96,7 +96,7 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
         if (OptionCore.DEFAULT_HOTBAR.isEnabled) super.renderHotbar(res, partialTicks)
         else {
             if (replaceEvent(HOTBAR)) return
-            if (mc.playerController?.isSpectator ?: false)
+            if (mc.playerController?.isSpectator == true)
                 this.spectatorGui.renderTooltip(res, partialTicks)
             else {
                 mc.mcProfiler.startSection("hotbar")
@@ -154,7 +154,7 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
         GLCore.glBlend(true)
 
         var members: MutableList<EntityPlayer> = mutableListOf()
-        if (pt?.isParty ?: false)
+        if (pt?.isParty == true)
             members = pt!!.members.filter { it != mc.player }.toMutableList()
         else
             for (i in 1..ConfigHandler.debugFakePT) members.add(mc.player)
@@ -284,7 +284,6 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
             if (!MinecraftForge.EVENT_BUS.post(event)) {
                 var top = 20
                 for (msg in listL) {
-                    if (msg == null) continue
                     drawRect(1, top - 1, 2 + fontRenderer!!.getStringWidth(msg) + 1, top + fontRenderer!!.FONT_HEIGHT - 1, -1873784752)
                     fontRenderer!!.drawString(msg, 2, top, 14737632)
                     top += fontRenderer!!.FONT_HEIGHT
@@ -292,7 +291,6 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
 
                 top = 2
                 for (msg in listR) {
-                    if (msg == null) continue
                     val w = fontRenderer!!.getStringWidth(msg)
 
                     val slotsY = (height - 9 * 22) / 2

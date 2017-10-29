@@ -10,13 +10,15 @@ import javax.xml.bind.annotation.XmlValue
  */
 class ExpressionIntermediate {
 
-    @XmlAttribute(name = "cache") val cacheType = CacheType.DEFAULT
+    @XmlAttribute(name = "cache")
+    val cacheType = CacheType.DEFAULT
 
     @XmlValue
-    var expression = "" // Will get replaced by the loading
+    val expression = "" // Will get replaced by the loading
         get() {
-        if (LibHelper.obfuscated) field = field.replace("format(", "func_135052_a(")
-        field = field.replace('\n', ' ')
-        return field
+            var f = field
+            if (LibHelper.obfuscated) f = f.replace("format(", "func_135052_a(")
+            f = f.replace('\n', ' ')
+            return f
         }
 }

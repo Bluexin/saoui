@@ -34,7 +34,7 @@ object SAOCore {
     @Mod.EventHandler
     @Throws(Exception::class)
     fun preInit(event: FMLPreInitializationEvent) {
-        MinecraftForge.EVENT_BUS.register(EventCore())
+        MinecraftForge.EVENT_BUS.register(EventCore)
         ConfigHandler.preInit(event)
 
         (Minecraft.getMinecraft().resourceManager as IReloadableResourceManager).registerReloadListener { resourceManager ->

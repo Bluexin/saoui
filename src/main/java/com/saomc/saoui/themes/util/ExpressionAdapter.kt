@@ -25,7 +25,7 @@ abstract class ExpressionAdapter<T> : XmlAdapter<ExpressionIntermediate, CValue<
                 .append("                       ")
                 .append(v.expression).append('\n')
         val column = ce.column // Column, where error was found
-        for (i in 0..column + 23 - 1 - 1) sb.append(' ')
+        for (i in 0 until column + 23 - 1) sb.append(' ')
         sb.append('^')
         val w = StringWriter()
         ce.printStackTrace(PrintWriter(w))
