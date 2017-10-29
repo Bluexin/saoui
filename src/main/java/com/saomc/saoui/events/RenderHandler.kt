@@ -2,7 +2,8 @@ package com.saomc.saoui.events
 
 import com.saomc.saoui.SoundCore
 import com.saomc.saoui.config.OptionCore
-import com.saomc.saoui.neo.screens.IngameMenuGUI
+import com.saomc.saoui.neo.screens.NeoGui
+import com.saomc.saoui.neo.screens.old.IngameMenuGUI
 import com.saomc.saoui.renders.StaticRenderer
 import com.saomc.saoui.screens.ingame.IngameGUI
 import com.saomc.saoui.screens.menu.StartupGUI
@@ -56,8 +57,10 @@ internal object RenderHandler {
         if (OptionCore.DEBUG_MODE.isEnabled) print(e.gui.toString() + " called GuiOpenEvent \n")
 
         if (e.gui is GuiIngameMenu) {
-            if (EventCore.mc.currentScreen !is IngameMenuGUI) {
-                e.gui = IngameMenuGUI()
+            if (OptionCore.NEO_MENU.isEnabled) {
+                if (EventCore.mc.currentScreen !is NeoGui) e.gui = NeoGui(50.0, 50.0)
+            } else {
+                if (EventCore.mc.currentScreen !is IngameMenuGUI) e.gui = IngameMenuGUI()
             }
         }
         if (e.gui is GuiInventory && !OptionCore.DEFAULT_INVENTORY.isEnabled) {

@@ -1,16 +1,13 @@
-package com.saomc.saoui.neo.screens
+package com.saomc.saoui.neo.screens.old
 
 import com.saomc.saoui.SAOCore
 import com.saomc.saoui.SoundCore
 import com.saomc.saoui.api.elements.*
 import com.saomc.saoui.config.OptionCore
 import com.saomc.saoui.screens.inventory.InventoryCore
-import com.saomc.saoui.social.StaticPlayerHelper
 import com.saomc.saoui.themes.elements.menus.CategoryData
 import com.saomc.saoui.util.IconCore
 import net.minecraft.client.Minecraft
-import net.minecraftforge.fml.client.FMLClientHandler
-import net.minecraftforge.fml.common.FMLCommonHandler
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
 import java.lang.IllegalArgumentException
@@ -26,7 +23,6 @@ class IngameMenuGUI(override val name: String = "In-game menu GUI") : ScreenGUI(
     private var flowY = 0
     private var flowX = 0
     private var playedSound = false
-
 
     override fun drawScreen(cursorX: Int, cursorY: Int, partialTicks: Float) {
         if (!playedSound) { // This trickery is used to circumvent the stupid shit in Minecraft#displayInGameMenu()
@@ -45,8 +41,56 @@ class IngameMenuGUI(override val name: String = "In-game menu GUI") : ScreenGUI(
     override fun initGui() {
         categories.clear()
 
-        val list: MutableList<ElementData> = mutableListOf()
-        list.addAll(listOf(
+        /*+category("Main") {
+            +category("Profile") {
+                categoryIcon(IconCore.PROFILE)
+                +category("Equipment") {
+                    categoryIconLabel(IconCore.EQUIPMENT)
+                    +category("Tools") {
+                        categoryIconLabel(IconCore.EQUIPMENT)
+                        // TODO: Weapons, Bows, Pickaxes, Axes, Shovels
+                    }
+                    +category("Armor") {
+                        categoryIconLabel(IconCore.ARMOR)
+                    }
+                    +category("Consumables") {
+                        categoryIconLabel(IconCore.ITEMS)
+                    }
+                }
+                +category("Items") {
+                    categoryIconLabel(IconCore.ITEMS)
+                }
+                +category("Skills") {
+                    categoryIconLabel(IconCore.SKILLS)
+                }
+            }
+            +category("Social") {
+                categoryIcon(IconCore.SOCIAL)
+                // TODO: Guild
+                +category("Party") {
+                    categoryIconLabel(IconCore.PARTY)
+                    // TODO: Invite, Cancel
+                }
+                // TODO: Friends
+            }
+            +category("Message") {
+                categoryIcon(IconCore.MESSAGE)
+            }
+            +category("Navigation") {
+                categoryIcon(IconCore.NAVIGATION)
+                // TODO: Quest, Field Map, Dungeon Map
+            }
+            +category("Settings") {
+                categoryIcon(IconCore.SETTINGS)
+                +category("Options") {
+                    categoryIconLabel(IconCore.OPTION)
+                    // TODO: Vanilla_Options
+                }
+                // TODO: Help, Logout
+            }
+        }*/
+
+        val list: MutableList<ElementData> = mutableListOf(
                 ElementData("Main", null, MenuDefEnum.ICON_BUTTON, IconCore.PROFILE, "Profile", "sao.element.profile", ElementDefEnum.CATEGORY),
                 ElementData("Main", null, MenuDefEnum.ICON_BUTTON, IconCore.SOCIAL, "Social", "sao.element.social", ElementDefEnum.CATEGORY),
                 ElementData("Main", null, MenuDefEnum.ICON_BUTTON, IconCore.MESSAGE, "Message", "sao.element.message", ElementDefEnum.CATEGORY),
@@ -76,31 +120,61 @@ class IngameMenuGUI(override val name: String = "In-game menu GUI") : ScreenGUI(
                 ElementData("Settings", "Main", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.HELP, "Menu", "sao.element.menu", ElementDefEnum.BUTTON),
                 ElementData("Settings", "Main", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.LOGOUT, "Logout", "sao.element.logout", ElementDefEnum.BUTTON),
                 ElementData("Options", "Settings", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.OPTION, "Vanilla_Options", "guiOptions", ElementDefEnum.BUTTON)
-        ))
+        )
 
-        if (InventoryCore.isBaublesLoaded())
-            list.add(ElementData("Equipment", "Profile", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.ACCESSORY, "Accessory", "sao.element.accessory", ElementDefEnum.CATEGORY))
+        if (InventoryCore.isBaublesLoaded()) list.add(ElementData(
+                "Equipment",
+                "Profile",
+                MenuDefEnum.ICON_LABEL_BUTTON,
+                IconCore.ACCESSORY,
+                "Accessory", "sao.element.accessory",
+                ElementDefEnum.CATEGORY)
+        )
 
-        OptionCore.values().forEach{ optionCore -> run {
-            if (optionCore.category != null)
-                list.add(ElementData(optionCore.getCategoryName(), optionCore.category?.getCategoryName()?: "Options", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.OPTION, optionCore.name, optionCore.displayName, if (optionCore.isCategory) ElementDefEnum.CATEGORY else ElementDefEnum.OPTION))
-            else
-                list.add(ElementData("Options", "Settings", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.OPTION, optionCore.name, optionCore.displayName, if (optionCore.isCategory) ElementDefEnum.CATEGORY else ElementDefEnum.OPTION))
-        } }
+        list.addAll(OptionCore.values().map {
+            if (it.category != null) ElementData(
+                    it.getCategoryName(),
+                    it.category?.getCategoryName() ?: "Options",
+                    MenuDefEnum.ICON_LABEL_BUTTON,
+                    IconCore.OPTION,
+                    it.name, it.displayName,
+                    if (it.isCategory) ElementDefEnum.CATEGORY else ElementDefEnum.OPTION
+            ) else ElementData(
+                    "Options",
+                    "Settings",
+                    MenuDefEnum.ICON_LABEL_BUTTON,
+                    IconCore.OPTION,
+                    it.name, it.displayName,
+                    if (it.isCategory) ElementDefEnum.CATEGORY else ElementDefEnum.OPTION
+            )
+        })
 
-        Minecraft.getMinecraft().world.playerEntities.filter { it != mc.player }.forEach { player ->  run{list.add(ElementData("Invite", "Party", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.INVITE, player.name, player.displayNameString, ElementDefEnum.PLAYER))}}
+        Minecraft.getMinecraft().world.playerEntities.filter { it != mc.player }.forEach {
+            list.add(ElementData("Invite", "Party", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.INVITE, it.name, it.displayNameString, ElementDefEnum.PLAYER))
+        }
+
+        list.addAll(Minecraft.getMinecraft().world.playerEntities.filter { it != mc.player }.map {
+            ElementData(
+                    "Invite",
+                    "Party",
+                    MenuDefEnum.ICON_LABEL_BUTTON,
+                    IconCore.INVITE,
+                    it.name, it.displayNameString,
+                    ElementDefEnum.PLAYER
+            )
+        })
 
         //FMLCommonHandler.instance().minecraftServerInstance.playerList.players.filter { it != StaticPlayerHelper.thePlayer() }.forEach { player ->  run{list.add(ElementData("Invite", "Party", MenuDefEnum.ICON_LABEL_BUTTON, IconCore.INVITE, player.name, player.displayNameString, ElementDefEnum.PLAYER))}}
 
         list.forEach { (cat, parentCat, type, icon, name, displayName, elementType) ->
             var category: CategoryEnum
 
-            try {
-                category = CategoryEnum.valueOf(cat.toUpperCase())
-            } catch (e: IllegalArgumentException){
+            category = try {
+                CategoryEnum.valueOf(cat.toUpperCase())
+            } catch (e: IllegalArgumentException) {
                 try {
-                    category = CategoryHelper.addCategory(cat.toUpperCase(), CategoryEnum.valueOf(parentCat!!.toUpperCase()))!!
-                } catch (e: NullPointerException){
+                    CategoryHelper.addCategory(cat.toUpperCase(), CategoryEnum.valueOf(parentCat!!.toUpperCase()))!!
+                } catch (e: NullPointerException) {
                     SAOCore.LOGGER.fatal("Failed to make category for $name with category: $cat and parent category: $parentCat")
                     return@forEach
                 }
@@ -109,7 +183,7 @@ class IngameMenuGUI(override val name: String = "In-game menu GUI") : ScreenGUI(
             if ((category == CategoryEnum.MAIN && parentCat != null) || (category != CategoryEnum.MAIN && !category.parent?.name.equals(parentCat?.toUpperCase())))
                 try {
                     category = CategoryHelper.addCategory(cat.toUpperCase(), CategoryEnum.valueOf(parentCat!!.toUpperCase()))!!
-                } catch (e: NullPointerException){
+                } catch (e: NullPointerException) {
                     SAOCore.LOGGER.fatal("Failed to make category for $name with category: $cat and parent category: $parentCat")
                     return@forEach
                 }
@@ -127,10 +201,9 @@ class IngameMenuGUI(override val name: String = "In-game menu GUI") : ScreenGUI(
                 categoryData.addElement(type, icon, name, displayName, elementType)
                 categories.add(categoryData)
             }
-
         }
-        /*
 
+        /*
         list.stream().forEachOrdered { (category, type, icon, name) -> kotlin.run{
             var categoryData: CategoryData? = categories.firstOrNull { it.name.equals(category, true) }
 

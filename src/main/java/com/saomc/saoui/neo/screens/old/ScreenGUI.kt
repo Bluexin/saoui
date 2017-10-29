@@ -1,15 +1,15 @@
-package com.saomc.saoui.neo.screens
+package com.saomc.saoui.neo.screens.old
 
 import be.bluexin.saomclib.profile
 import com.saomc.saoui.GLCore
 import com.saomc.saoui.SAOCore
 import com.saomc.saoui.api.elements.CategoryEnum
+import com.saomc.saoui.api.elements.MenuElementParent
 import com.saomc.saoui.api.screens.Actions
 import com.saomc.saoui.colorstates.CursorStatus
 import com.saomc.saoui.config.OptionCore
 import com.saomc.saoui.resources.StringNames
 import com.saomc.saoui.themes.elements.menus.CategoryData
-import com.saomc.saoui.api.elements.MenuElementParent
 import com.saomc.saoui.util.ColorUtil
 import net.minecraft.client.gui.GuiScreen
 import net.minecraftforge.fml.relauncher.Side
@@ -199,4 +199,12 @@ abstract class ScreenGUI : GuiScreen(), MenuElementParent {
         get() = getCursorY()
 
     override val parentZ = 0
+
+    operator fun plusAssign(category: CategoryData) {
+        this.categories += category
+    }
+
+    operator fun CategoryData.unaryPlus() {
+        this@ScreenGUI += this
+    }
 }

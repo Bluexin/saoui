@@ -4,6 +4,7 @@ import com.saomc.saoui.GLCore
 import com.saomc.saoui.api.screens.IIcon
 import com.saomc.saoui.config.OptionCore
 import com.saomc.saoui.resources.StringNames
+import net.minecraft.util.ResourceLocation
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
 
@@ -64,8 +65,10 @@ enum class IconCore : IIcon {
     }
 
     companion object {
-
         private val SRC_SIZE = 16
     }
 
+    override fun getRL(): ResourceLocation? {
+        return if (OptionCore.SAO_UI.isEnabled) StringNames.icons else StringNames.iconsCustom
+    }
 }

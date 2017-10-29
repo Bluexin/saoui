@@ -9,7 +9,6 @@ import com.saomc.saoui.api.screens.Actions
 import com.saomc.saoui.api.screens.IIcon
 import com.saomc.saoui.config.OptionCore
 import com.saomc.saoui.resources.StringNames
-import com.saomc.saoui.social.StaticPlayerHelper
 import com.saomc.saoui.util.ColorUtil
 import net.minecraft.client.Minecraft
 
@@ -31,14 +30,14 @@ data class SlotData(override val type: MenuDefEnum, val icon: IIcon?, override v
     override var isOpen: Boolean = false
 
     //TODO Replace all of this with xml based rendering
-    override fun draw(mc: Minecraft, mouseX: Int, mouseY: Int) {
+    override fun draw(mc: Minecraft, cursorX: Int, cursorY: Int) {
         if (type == MenuDefEnum.ICON_BUTTON)
-            drawIcon(mc, mouseX, mouseY)
+            drawIcon(mc, cursorX, cursorY)
         else
-            drawSlot(mc, mouseX, mouseY)
+            drawSlot(mc, cursorX, cursorY)
     }
 
-    fun drawIcon(mc: Minecraft, mouseX: Int, mouseY: Int) {
+    private fun drawIcon(mc: Minecraft, mouseX: Int, mouseY: Int) {
         val hoverState = hoverState(mouseX, mouseY)
         val color0 = getColor(hoverState, true)
         val color1 = getColor(hoverState, false)
@@ -49,13 +48,12 @@ data class SlotData(override val type: MenuDefEnum, val icon: IIcon?, override v
         GLCore.glBindTexture(if (OptionCore.SAO_UI.isEnabled) StringNames.gui else StringNames.guiCustom)
         GLCore.glColorRGBA(ColorUtil.multiplyAlpha(color0, visibility))
         GLCore.glTexturedRect(x.toDouble(), y.toDouble(), 0.0, 25.0, width.toDouble(), height.toDouble())
-        GLCore.glColorRGBA(ColorUtil.multiplyAlpha(color1, visibility))
         GLCore.glBindTexture(if (OptionCore.SAO_UI.isEnabled) StringNames.icons else StringNames.iconsCustom)
         GLCore.glColorRGBA(ColorUtil.multiplyAlpha(color1, visibility))
         icon?.glDrawUnsafe(x + 2, y + 2)
     }
 
-    fun drawSlot(mc: Minecraft, mouseX: Int, mouseY: Int) {
+    private fun drawSlot(mc: Minecraft, mouseX: Int, mouseY: Int) {
         val hoverState = hoverState(mouseX, mouseY)
         val color0 = getColor(hoverState, true)
         val color1 = getColor(hoverState, false)

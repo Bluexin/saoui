@@ -5,7 +5,7 @@ import be.bluexin.saomclib.profile
 import com.saomc.saoui.GLCore
 import com.saomc.saoui.config.ConfigHandler
 import com.saomc.saoui.config.OptionCore
-import com.saomc.saoui.neo.screens.ScreenGUI
+import com.saomc.saoui.neo.screens.old.ScreenGUI
 import com.saomc.saoui.social.StaticPlayerHelper
 import com.saomc.saoui.themes.ThemeLoader
 import com.saomc.saoui.themes.elements.HudPartType
@@ -155,7 +155,7 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
 
         var members: MutableList<EntityPlayer> = mutableListOf()
         if (pt?.isParty == true)
-            members = pt!!.members.filter { it != mc.player }.toMutableList()
+            members = pt.members.filter { it != mc.player }.toMutableList()
         else
             for (i in 1..ConfigHandler.debugFakePT) members.add(mc.player)
 

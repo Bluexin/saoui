@@ -8,7 +8,7 @@ import com.saomc.saoui.api.events.ElementAction
 import com.saomc.saoui.api.screens.Actions
 import com.saomc.saoui.config.OptionCore
 import com.saomc.saoui.events.EventCore.mc
-import com.saomc.saoui.neo.screens.IngameMenuGUI
+import com.saomc.saoui.neo.screens.old.IngameMenuGUI
 import com.saomc.saoui.social.StaticPlayerHelper
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiIngameMenu

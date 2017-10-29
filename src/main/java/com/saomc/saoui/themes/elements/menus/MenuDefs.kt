@@ -26,7 +26,7 @@ open class MenuDefs protected constructor(override val name: String = "MenuDefs"
 
     fun draw(key: MenuDefEnum, ctx: IHudDrawContext) = this[key]?.draw(ctx)
 
-    override fun closeCategory(name: CategoryEnum) { }
+    override fun closeCategory(category: CategoryEnum) {}
 
-    override fun openCategory(name: CategoryEnum) { }
+    override fun openCategory(category: CategoryEnum) {}
 }

@@ -1,5 +1,9 @@
 package com.saomc.saoui.api.screens;
 
+import net.minecraft.util.ResourceLocation;
+
+import javax.annotation.Nullable;
+
 /**
  * Part of saoui
  * Icons are used to display any form on screen.
@@ -23,4 +27,16 @@ public interface IIcon {
         this.glDraw(x, y);
     }
 
+    default int getWidth() {
+        return 16;
+    }
+
+    default int getHeight() {
+        return 16;
+    }
+
+    @Nullable
+    default ResourceLocation getRL() {
+        return null;
+    }
 }

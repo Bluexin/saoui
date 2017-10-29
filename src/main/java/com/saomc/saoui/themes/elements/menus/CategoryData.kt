@@ -9,7 +9,6 @@ import net.minecraft.client.Minecraft
 import net.minecraft.client.resources.I18n
 import net.minecraftforge.common.MinecraftForge
 
-
 data class CategoryData(val category: CategoryEnum, val parentCategory: CategoryData?) {
 
     private var elements = mutableListOf<IElement>()
@@ -26,14 +25,18 @@ data class CategoryData(val category: CategoryEnum, val parentCategory: Category
     //Dynamic width for elements
     var width = 100
 
-    fun actionPerformed(element: IElement, action: Actions, data: Int, menutElement: MenuElementParent){
+    fun actionPerformed(element: IElement, action: Actions, data: Int, menutElement: MenuElementParent) {
         MinecraftForge.EVENT_BUS.post(ElementAction(element.name, action, data, element.isOpen, !focus, menutElement, element.elementType))
     }
 
-    fun addElement(type: MenuDefEnum, icon: IIcon, name: String, displayName: String, elementType: ElementDefEnum){
-        val data: SlotData = SlotData(type, icon, name, I18n.format(displayName), elementType)
+    fun addElement(type: MenuDefEnum, icon: IIcon, name: String, displayName: String, elementType: ElementDefEnum) {
+        val data = SlotData(type, icon, name, I18n.format(displayName), elementType)
         elements.add(data)
         setWidth(data.displayName)
+    }
+
+    operator fun plusAssign(element: IElement) {
+        elements.plusAssign(element)
     }
 
     fun draw(mc: Minecraft, mouseX: Int, mouseY: Int) {
@@ -46,32 +49,32 @@ data class CategoryData(val category: CategoryEnum, val parentCategory: Category
         this.enabled = category == CategoryEnum.MAIN
         this.focus = enabled
         elements.forEach { it.init(parent, this) }
-        if (this.parentCategory != null) {
-            this.categoryElement = parentCategory.getParentElement(category.name)
-        }
+//        if (this.parentCategory != null) {
+//            this.categoryElement = parentCategory.getParentElement(category.name)
+//        }
     }
 
-    fun isFocus(): Boolean{
+    fun isFocus(): Boolean {
         return focus
     }
 
-    fun setWidth(name: String){
+    fun setWidth(name: String) {
         val newWidth = 40 + (GLCore.glStringWidth(if (name.length > 50) name.substring(0, 50) else name))
         if (newWidth > width) width = newWidth
     }
 
-    fun getX(): Int{
-        return (categoryElement?.width?: 20).plus(parentCategory?.getX()?: 0).plus(xIncrement)
+    fun getX(): Int {
+        return (categoryElement?.width ?: 20).plus(parentCategory?.getX() ?: 0).plus(xIncrement)
     }
 
-    fun getY(element: IElement): Int{
+    fun getY(element: IElement): Int {
         if (categoryElement != null)
-            return (parentCategory?.getY(categoryElement!!)?: 0).plus((elements.indexOf(element)).times(yIncrement)).plus(getYOffset())
+            return (parentCategory?.getY(categoryElement!!) ?: 0).plus((elements.indexOf(element)).times(yIncrement)).plus(getYOffset())
         else return (elements.indexOf(element)).times(yIncrement)
     }
 
-    fun getYOffset(): Int{
-        when (elements.size){
+    fun getYOffset(): Int {
+        when (elements.size) {
             1 -> return 0
             2 -> return -13
             3 -> return -24
@@ -84,7 +87,7 @@ data class CategoryData(val category: CategoryEnum, val parentCategory: Category
      * Used to get an element belonging to a category
      */
     fun getParentElement(name: String): IElement {
-        return elements.find{ it.name.equals(name, true) }!!
+        return elements.find { it.name.equals(name, true) }!!
     }
 
     fun mouseClicked(cursorX: Int, cursorY: Int, action: Actions): Boolean {
@@ -111,7 +114,7 @@ data class CategoryData(val category: CategoryEnum, val parentCategory: Category
     /**
      * Called when the menu is just opening or closing
      */
-    fun setEnabled(flag: Boolean){
+    fun setEnabled(flag: Boolean) {
         if (flag || focus && !flag) {
             this.enabled = flag
             parentCategory?.setOpen(category, flag)
@@ -119,18 +122,41 @@ data class CategoryData(val category: CategoryEnum, val parentCategory: Category
         }
     }
 
-    fun setOpen(category: CategoryEnum, flag: Boolean){
+    fun setOpen(category: CategoryEnum, flag: Boolean) {
         focus = !flag
         getParentElement(category.name).isOpen = flag
     }
 
-    fun resetElemments(){
+    fun resetElemments() {
         focus = true
         elements.forEach { !it.isOpen }
     }
 
-    fun close(){
+    fun close() {
         elements.forEach { it.close() }
-        Unit
     }
+
+    fun category(name: String, body: (CategoryData.() -> Unit)? = null): CategoryData {
+        val cat = CategoryData(CategoryEnum.getOrAdd(name, this.category), this)
+        if (body != null) cat.body()
+        return cat
+    }
+
+    operator fun IElement.unaryPlus() {
+        this@CategoryData += this
+    }
+
+    fun categoryIcon(icon: IIcon) {
+        categoryElement = SlotData(MenuDefEnum.ICON_BUTTON, icon, this.category.name, "sao.element.${this.category.name.toLowerCase()}", ElementDefEnum.CATEGORY)
+    }
+
+    fun categoryIconLabel(icon: IIcon) {
+        categoryElement = SlotData(MenuDefEnum.ICON_LABEL_BUTTON, icon, this.category.name, "sao.element.${this.category.name.toLowerCase()}", ElementDefEnum.CATEGORY)
+    }
+}
+
+fun category(name: String, body: (CategoryData.() -> Unit)? = null): CategoryData {
+    val cat = CategoryData(CategoryEnum.getOrAdd(name, null), null)
+    if (body != null) cat.body()
+    return cat
 }

@@ -11,11 +11,8 @@ import net.minecraftforge.fml.relauncher.SideOnly
 enum class OptionCore(
         /**
          * @return Returns the Option name in String format
-         * *
          *
-         *
-         * * Deprecated:
-         * *
+         * Deprecated:
          * @see OptionCore.toString
          */
         val displayName: String,
@@ -80,7 +77,8 @@ enum class OptionCore(
     //Debug
     DISABLE_TICKS(I18n.format("optionDisableTicks"), false, false, MISC, false),
     BUGGY_MENU(I18n.format("optionEnableMenus"), true, false, MISC, false),
-    NOTICE(I18n.format("optionNotice"), true, false, MISC, false);
+    NOTICE(I18n.format("optionNotice"), true, false, MISC, false),
+    NEO_MENU(I18n.format("optionNeoMenu"), false, false, MISC, false);
 
     // TODO: make a way for themes to register custom options?
 
