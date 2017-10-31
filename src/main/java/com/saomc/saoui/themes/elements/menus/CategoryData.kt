@@ -68,18 +68,18 @@ data class CategoryData(val category: CategoryEnum, val parentCategory: Category
     }
 
     fun getY(element: IElement): Int {
-        if (categoryElement != null)
-            return (parentCategory?.getY(categoryElement!!) ?: 0).plus((elements.indexOf(element)).times(yIncrement)).plus(getYOffset())
-        else return (elements.indexOf(element)).times(yIncrement)
+        return if (categoryElement != null)
+            (parentCategory?.getY(categoryElement!!) ?: 0).plus((elements.indexOf(element)).times(yIncrement)).plus(getYOffset())
+        else (elements.indexOf(element)).times(yIncrement)
     }
 
     fun getYOffset(): Int {
-        when (elements.size) {
-            1 -> return 0
-            2 -> return -13
-            3 -> return -24
-            4 -> return -36
-            else -> return -48
+        return when (elements.size) {
+            1 -> 0
+            2 -> -13
+            3 -> -24
+            4 -> -36
+            else -> -48
         }
     }
 

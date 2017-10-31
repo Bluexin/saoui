@@ -64,12 +64,11 @@ internal object RenderHandler {
             }
         }
         if (e.gui is GuiInventory && !OptionCore.DEFAULT_INVENTORY.isEnabled) {
-            if (EventCore.mc.playerController.isInCreativeMode)
-                e.gui = GuiContainerCreative(EventCore.mc.player)
-            else if (EventCore.mc.currentScreen !is IngameMenuGUI)
-                e.gui = IngameMenuGUI(/*(GuiInventory) EventCore.mc.currentScreen*/)
-            else
-                e.isCanceled = true
+            when {
+                EventCore.mc.playerController.isInCreativeMode -> e.gui = GuiContainerCreative(EventCore.mc.player)
+                EventCore.mc.currentScreen !is IngameMenuGUI -> e.gui = IngameMenuGUI(/*(GuiInventory) EventCore.mc.currentScreen*/)
+                else -> e.isCanceled = true
+            }
         }
         /*if (e.getGui() instanceof GuiGameOver && (!OptionCore.DEFAULT_DEATH_SCREEN.isEnabled())) {
             if (!(e.getGui() instanceof DeathScreen)) {

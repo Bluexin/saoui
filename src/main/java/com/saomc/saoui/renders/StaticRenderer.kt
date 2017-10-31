@@ -51,7 +51,7 @@ object StaticRenderer { // TODO: add usage of scale, offset etc from capability
             return
 
         if (entity.world.isRemote) {
-            val d3 = entity.getDistanceSqToEntity(renderManager.renderViewEntity)
+            val d3 = entity.getDistanceSq(renderManager.renderViewEntity)
 
             if (d3 <= (distance * distance).toDouble()) {
                 val sizeMult = if (entity.isChild && entity is EntityMob) 0.5f else 1.0f
@@ -185,7 +185,7 @@ object StaticRenderer { // TODO: add usage of scale, offset etc from capability
             val size = living.width * living.height
             val pieces = Math.max(Math.min(size * 64, 128f), 8f).toInt()
 
-            for (i in 0..pieces - 1) {
+            for (i in 0 until pieces) {
                 val color = colors[i % 3]
 
                 val x0 = living.width.toDouble() * (Math.random() * 2 - 1) * 0.75

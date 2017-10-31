@@ -17,7 +17,7 @@ open class GLString : GLRectangle() {
     private val shadow = true
 
     override fun draw(ctx: IHudDrawContext) {
-        if (!(enabled?.invoke(ctx) ?: true)) return
+        if (enabled?.invoke(ctx) == false) return
         val p = this.parent.get()
         val x = (this.x?.invoke(ctx) ?: 0.0) + (p?.getX(ctx) ?: 0.0)
         val y = (this.y?.invoke(ctx) ?: 0.0) + (p?.getY(ctx) ?: 0.0) + ((this.h?.invoke(ctx) ?: 0.0) - ctx.fontRenderer.FONT_HEIGHT) / 2.0

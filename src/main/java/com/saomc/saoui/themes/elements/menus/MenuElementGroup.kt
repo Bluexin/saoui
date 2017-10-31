@@ -61,7 +61,7 @@ open class MenuElementGroup : MenuElement(), MenuElementParent {
 
     override fun draw(ctx: IHudDrawContext) {
         if (this.rl != null) GLCore.glBindTexture(this.rl!!)
-        if (enabled?.invoke(ctx) ?: true) this.elements.forEach { it.draw(ctx) }
+        if (enabled?.invoke(ctx) != false) this.elements.forEach { it.draw(ctx) }
     }
 
     override fun setup(parent: MenuElementParent): Boolean {

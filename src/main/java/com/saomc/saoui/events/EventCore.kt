@@ -57,7 +57,7 @@ object EventCore {
 
     @SubscribeEvent
     fun renderEntityListener(e: RenderLivingEvent.Pre<*>) {
-        if (e.entity.getDistanceSqToEntity(mc.player) > Math.pow((mc.gameSettings.getOptionFloatValue(GameSettings.Options.RENDER_DISTANCE) * 16).toDouble(), 2.0))
+        if (e.entity.getDistanceSq(mc.player) > Math.pow((mc.gameSettings.getOptionFloatValue(GameSettings.Options.RENDER_DISTANCE) * 16).toDouble(), 2.0))
             e.isCanceled = true
     }
 

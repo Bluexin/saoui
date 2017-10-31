@@ -45,14 +45,13 @@ open class GLHotbarItem: GLRectangle() {
     }
 
     override fun draw(ctx: IHudDrawContext) {
-        if (!(enabled?.invoke(ctx) ?: true) || hand == ctx.player.primaryHand) return
+        if (enabled?.invoke(ctx) == false || hand == ctx.player.primaryHand) return
         super.draw(ctx)
 
         val p: ElementParent? = this.parent.get()
-        val it: ItemStack?
+        val it: ItemStack = if (hand == null) ctx.player.inventory.mainInventory[slot(ctx)]
+        else ctx.player.inventory.offHandInventory[slot(ctx)]
 
-        if (hand == null) it = ctx.player.inventory.mainInventory[slot(ctx)]
-        else it = ctx.player.inventory.offHandInventory[slot(ctx)]
         if (it == ItemStack.EMPTY) return
 
         GLCore.glBlend(false)

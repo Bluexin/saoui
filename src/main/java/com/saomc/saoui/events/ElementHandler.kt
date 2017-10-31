@@ -52,7 +52,7 @@ object ElementHandler {
                     if (player != null) {
                         val pt = StaticPlayerHelper.getIParty()
                         val check = pt.invite(player)
-                        if (!!check && pt.isMember(player)) {
+                        if (check && pt.isMember(player)) {
                             pt.removeMember(player)
                             SAOCore.LOGGER.info("Removing " + player.name + " from party")
                         }

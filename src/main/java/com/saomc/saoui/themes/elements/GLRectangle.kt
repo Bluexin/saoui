@@ -28,7 +28,7 @@ open class GLRectangle : Element() {
     private val texture: String? = null
 
     override fun draw(ctx: IHudDrawContext) {
-        if (!(enabled?.invoke(ctx) ?: true)) return
+        if (enabled?.invoke(ctx) == false) return
 
         val p: ElementParent? = this.parent.get()
         val x = (this.x?.invoke(ctx) ?: 0.0) + (p?.getX(ctx) ?: 0.0)

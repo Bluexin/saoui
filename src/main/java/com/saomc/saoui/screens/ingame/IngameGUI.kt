@@ -45,7 +45,7 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
     override fun renderGameOverlay(partialTicks: Float) {
         mc.mcProfiler.startSection("setup")
         val username = mc.player.displayNameString
-        val maxNameWidth = fontRenderer!!.getStringWidth(username)
+        val maxNameWidth = fontRenderer.getStringWidth(username)
         val usernameBoxes = 1 + (maxNameWidth + 4) / 5
         offsetUsername = 18 + usernameBoxes * 5
         val res = ScaledResolution(mc)
@@ -206,7 +206,7 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
             GLCore.glTexturedRect((offsetUsername + foodValue).toDouble(), 9.0, zLevel.toDouble(), 4.0, 249.0, 7.0, 4.0)
         if (foodValue < stepOne + 4 && foodValue > 0) {
             GLCore.glTexturedRect((offsetUsername + foodValue + 2).toDouble(), 9.0, zLevel.toDouble(), 0.0, 249.0, 4.0, 4.0)
-            for (i in 0..foodValue - 2 - 1)
+            for (i in 0 until foodValue - 2)
                 GLCore.glTexturedRect((offsetUsername + i + 4).toDouble(), 9.0, zLevel.toDouble(), 0.0, 249.0, 4.0, 4.0)
         }
 
@@ -284,14 +284,14 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
             if (!MinecraftForge.EVENT_BUS.post(event)) {
                 var top = 20
                 for (msg in listL) {
-                    drawRect(1, top - 1, 2 + fontRenderer!!.getStringWidth(msg) + 1, top + fontRenderer!!.FONT_HEIGHT - 1, -1873784752)
-                    fontRenderer!!.drawString(msg, 2, top, 14737632)
-                    top += fontRenderer!!.FONT_HEIGHT
+                    drawRect(1, top - 1, 2 + fontRenderer.getStringWidth(msg) + 1, top + fontRenderer.FONT_HEIGHT - 1, -1873784752)
+                    fontRenderer.drawString(msg, 2, top, 14737632)
+                    top += fontRenderer.FONT_HEIGHT
                 }
 
                 top = 2
                 for (msg in listR) {
-                    val w = fontRenderer!!.getStringWidth(msg)
+                    val w = fontRenderer.getStringWidth(msg)
 
                     val slotsY = (height - 9 * 22) / 2
                     //                        (res.getScaledHeight() - (slotCount * 22)) / 2;
@@ -301,10 +301,10 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
                     GLCore.glTexturedRect(res.getScaledWidth() - 24, slotsY + (22 * i), zLevel, 0, 25, 20, 20);
                 }*/
 
-                    val left = width - (if (OptionCore.HOR_HOTBAR.isEnabled || top < slotsY - fontRenderer!!.FONT_HEIGHT - 2) 2 else 26) - w
-                    drawRect(left - 1, top - 1, left + w + 1, top + fontRenderer!!.FONT_HEIGHT - 1, -1873784752)
-                    fontRenderer!!.drawString(msg, left, top, 14737632)
-                    top += fontRenderer!!.FONT_HEIGHT
+                    val left = width - (if (OptionCore.HOR_HOTBAR.isEnabled || top < slotsY - fontRenderer.FONT_HEIGHT - 2) 2 else 26) - w
+                    drawRect(left - 1, top - 1, left + w + 1, top + fontRenderer.FONT_HEIGHT - 1, -1873784752)
+                    fontRenderer.drawString(msg, left, top, 14737632)
+                    top += fontRenderer.FONT_HEIGHT
                 }
             }
 

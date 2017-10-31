@@ -3,7 +3,7 @@ package com.saomc.saoui.screens.death;
 import com.saomc.saoui.GLCore;
 import com.saomc.saoui.api.screens.GuiSelection;
 import com.saomc.saoui.colorstates.CursorStatus;
-import com.saomc.saoui.neo.screens.ScreenGUI;
+import com.saomc.saoui.screens.ScreenGUI;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.GuiScreen;

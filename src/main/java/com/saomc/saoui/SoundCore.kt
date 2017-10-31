@@ -42,7 +42,7 @@ object SoundCore {
     }
 
     fun play(mc: Minecraft?, name: String) {
-        if (mc != null && mc.world != null && mc.world.isRemote) {
+        if (mc?.world != null && mc.world.isRemote) {
             play(mc.soundHandler, name)
         }
     }

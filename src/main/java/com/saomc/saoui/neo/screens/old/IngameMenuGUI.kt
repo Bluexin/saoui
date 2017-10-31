@@ -181,8 +181,8 @@ class IngameMenuGUI(override val name: String = "In-game menu GUI") : ScreenGUI(
             }
 
             if ((category == CategoryEnum.MAIN && parentCat != null) || (category != CategoryEnum.MAIN && !category.parent?.name.equals(parentCat?.toUpperCase())))
-                try {
-                    category = CategoryHelper.addCategory(cat.toUpperCase(), CategoryEnum.valueOf(parentCat!!.toUpperCase()))!!
+                category = try {
+                    CategoryHelper.addCategory(cat.toUpperCase(), CategoryEnum.valueOf(parentCat!!.toUpperCase()))!!
                 } catch (e: NullPointerException) {
                     SAOCore.LOGGER.fatal("Failed to make category for $name with category: $cat and parent category: $parentCat")
                     return@forEach

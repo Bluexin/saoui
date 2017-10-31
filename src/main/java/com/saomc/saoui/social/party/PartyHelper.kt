@@ -163,8 +163,8 @@ class PartyHelper private constructor(private val party: IParty) {
         }
 
         fun instance(): PartyHelper {
-            if (instance != null)
-                return instance!!
+            return if (instance != null)
+                instance!!
             else
                 throw IllegalStateException("PartyHelper isn't initialized!")
         }

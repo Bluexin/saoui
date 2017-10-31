@@ -8,10 +8,10 @@ enum class CategoryEnum constructor(var parent: CategoryEnum?) {
     MAIN(null);
 
     fun getPath(): String {
-        if (parent != null)
-            return parent!!.getPath() + "/" + this.name
+        return if (parent != null)
+            parent!!.getPath() + "/" + this.name
         else
-            return this.name
+            this.name
     }
 
     companion object {
