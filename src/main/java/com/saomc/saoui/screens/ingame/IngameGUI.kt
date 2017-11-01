@@ -75,9 +75,11 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
     override fun renderCrosshairs(partialTicks: Float) {
         if (pre(CROSSHAIRS)) return
         if (mc.currentScreen is ScreenGUI) return
-        ThemeLoader.HUD.draw(HudPartType.CROSS_HAIR, context) // TODO: rework
         if (OptionCore.CROSS_HAIR.isEnabled) {
-            super.renderCrosshairs(partialTicks)
+            if (OptionCore.VANILLA_UI.isEnabled)
+                super.renderCrosshairs(partialTicks)
+            else
+                ThemeLoader.HUD.draw(HudPartType.CROSS_HAIR, context) // TODO: rework
         }
         post(CROSSHAIRS)
     }
