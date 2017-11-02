@@ -14,7 +14,7 @@ import java.util.stream.Stream
  */
 object ConfigHandler {
     var lastVersion: String = ""
-    var _IGNORE_UPATE: Boolean = false
+    var IGNORE_UPDATE: Boolean = false
     var DEBUG = false
     var debugFakePT: Int = 0
     private var config: Configuration? = null
@@ -29,7 +29,7 @@ object ConfigHandler {
         DEBUG = config!!.get(Configuration.CATEGORY_GENERAL, "debug", DEBUG).boolean
 
         lastVersion = config!!.get(Configuration.CATEGORY_GENERAL, "lastUpdate", "nothing").string
-        _IGNORE_UPATE = config!!.get(Configuration.CATEGORY_GENERAL, "ignoreUpdate", false).boolean
+        IGNORE_UPDATE = config!!.get(Configuration.CATEGORY_GENERAL, "ignoreUpdate", false).boolean
 
         OptionCore.values().filter{ it.isCategory }
                 .forEach { c ->
@@ -74,7 +74,7 @@ object ConfigHandler {
     }
 
     fun ignoreVersion(): Boolean {
-        return _IGNORE_UPATE
+        return IGNORE_UPDATE
     }
 
     private fun confDir(genDir: File): File {
