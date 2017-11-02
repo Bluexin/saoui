@@ -49,7 +49,9 @@ abstract class Element {
     /**
      * Friendly name for this element. Mostly used for debug purposes.
      */
-    @XmlAttribute val name: String = DEFAULT_NAME
+    @XmlAttribute
+    var name: String = DEFAULT_NAME
+        @Deprecated("Has no effect") private set(value) = Unit // Effectively making it val, but avoiding warnings
 
     /**
      * Draw this element on the screen.

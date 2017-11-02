@@ -18,22 +18,38 @@ interface NeoElement {
     operator fun contains(pos: Vec2d) = pos in boundingBox
 
     fun click(pos: Vec2d) = false
+
+    val visible
+        get() = true
+
+    fun hide() = Unit
+    fun show() = Unit
 }
 
 abstract class NeoParent : NeoElement {
     val elements = mutableListOf<NeoElement>()
 
-    operator fun plusAssign(element: NeoElement) {
+    open operator fun plusAssign(element: NeoElement) {
         elements += element
     }
 
-    operator fun NeoElement.unaryPlus() {
+    open operator fun NeoElement.unaryPlus() {
         this@NeoParent += this
     }
 
-    override operator fun contains(pos: Vec2d) = super.contains(pos) || with(pos + vec(childrenXOffset, childrenYOffset)) { elements.any { this in it } }
+    override operator fun contains(pos: Vec2d) = super.contains(pos) ||
+            with(pos + vec(childrenXOffset, childrenYOffset)) {
+                var npos = this
+                elements.any {
+                    val r = npos in it
+                    npos += vec(childrenXSeparator, childrenYSeparator)
+                    r
+                }
+            }
 
     open val childrenXOffset = 0
     open val childrenYOffset = 0
+    open val childrenXSeparator = 0
+    open val childrenYSeparator = 0
 }
 

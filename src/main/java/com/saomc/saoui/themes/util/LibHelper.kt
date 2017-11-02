@@ -1,5 +1,6 @@
 package com.saomc.saoui.themes.util
 
+import com.saomc.saoui.SAOCore
 import com.saomc.saoui.api.info.IOption
 import com.saomc.saoui.api.themes.IHudDrawContext
 import com.saomc.saoui.config.OptionCore
@@ -9,7 +10,7 @@ import com.saomc.saoui.themes.elements.ElementParent
 import gnu.jel.CompilationException
 import gnu.jel.Library
 import net.minecraft.client.resources.I18n
-import net.minecraft.launchwrapper.LaunchClassLoader
+import net.minecraft.world.World
 
 /**
  * Part of saoui by Bluexin.
@@ -28,16 +29,19 @@ object LibHelper {
         try {
             LIB.markStateDependent("random", null)
         } catch (e: CompilationException) {
-            e.printStackTrace()
+            throw IllegalStateException(e)
         }
     }
 
     val obfuscated: Boolean by lazy {
-        try {
-            val bytes = (LibHelper::class.java.classLoader as LaunchClassLoader).getClassBytes("net.minecraft.world.World")
-            bytes == null
-        } catch (e: Exception) {
+        //        val ok = World::class.simpleName != "World"
+        val ok = try {
+            Class.forName("net.minecraft.world.World")
+            false
+        } catch (e: Throwable) {
             true
         }
+        SAOCore.LOGGER.warn("Obfuscated: $ok (${World::class.qualifiedName})")
+        ok
     }
 }

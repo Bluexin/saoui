@@ -18,7 +18,7 @@ import net.minecraft.client.renderer.GlStateManager
  *
  * @author Bluexin
  */
-open class NeoIconElement(protected val icon: IIcon, var x: Int = 0, var y: Int = 0) : NeoParent() {
+open class NeoIconLabelElement(icon: IIcon, private val label: String, var width: Int = 40, var height: Int = 20, x: Int = 0, y: Int = 0) : NeoIconElement(icon, x, y) {
 
     private var onClickBody: (Vec2d) -> Boolean = { true }
     private var onClickOutBody: (Vec2d) -> Unit = { Unit }
@@ -33,58 +33,21 @@ open class NeoIconElement(protected val icon: IIcon, var x: Int = 0, var y: Int 
         GLCore.glColorRGBA(if (mouse in this) ColorUtil.HOVER_FONT_COLOR else ColorUtil.DEFAULT_FONT_COLOR)
         if (icon.rl != null) GLCore.glBindTexture(icon.rl!!)
         icon.glDrawUnsafe(x + 2, y + 2)
+        GLCore.glString(label, x + 22, y + 2, if (mouse in this) ColorUtil.HOVER_FONT_COLOR.rgba else ColorUtil.DEFAULT_FONT_COLOR.rgba)
 
         GlStateManager.translate(x.toDouble() + childrenXOffset, y.toDouble() + childrenYOffset, 0.0)
-        var nmouse = mouse - vec(x + childrenXOffset, y + childrenYOffset)
+        val nmouse = mouse - vec(x + childrenXOffset, y + childrenYOffset)
         elements.filter { it.visible }.forEach {
             it.draw(nmouse, partialTicks)
             GlStateManager.translate(childrenXSeparator.toDouble(), childrenYSeparator.toDouble(), 0.0)
-            nmouse -= vec(childrenXSeparator, childrenYSeparator)
         }
         GlStateManager.popMatrix()
     }
 
-    override fun click(pos: Vec2d): Boolean {
-        return if (pos in boundingBox) {
-            onClickBody(pos)
-        } else {
-            var npos = pos - vec(x + childrenXOffset, y + childrenYOffset)
-            var ok = false
-            elements.forEach {
-                ok = it.click(npos) || ok
-                npos -= vec(childrenXSeparator, childrenYSeparator)
-            }
-            if (ok) true
-            else {
-                onClickOutBody(pos)
-                false
-            }
-        }
-    }
-
-    override val childrenXOffset = 25
-    override val childrenYSeparator = 20
-
-    fun onClick(body: (Vec2d) -> Boolean) {
-        onClickBody = body
-    }
-
-    fun onClickOut(body: (Vec2d) -> Unit) {
-        onClickOutBody = body
-    }
-
-    override var visible = true
-
-    override fun hide() {
-        visible = false
-    }
-
-    override fun show() {
-        visible = true
-    }
+    override val childrenXOffset = width + 5
 }
 
-class NeoTLCategoryButton(icon: IIcon, x: Int = 0, y: Int = 0) : NeoIconElement(icon, x, y) {
+class NeoCategoryButton(icon: IIcon, label: String, width: Int = 40, height: Int = 20, x: Int = 0, y: Int = 0) : NeoIconLabelElement(icon, label, width, height, x, y) {
 
     private var opened = false
 
@@ -113,11 +76,5 @@ class NeoTLCategoryButton(icon: IIcon, x: Int = 0, y: Int = 0) : NeoIconElement(
     override fun plusAssign(element: NeoElement) {
         super.plusAssign(element)
         element.hide()
-    }
-
-    fun category(icon: IIcon, label: String, body: (NeoCategoryButton.() -> Unit)? = null) {
-        val cat = NeoCategoryButton(icon, label)
-        if (body != null) cat.body()
-        this += cat
     }
 }
