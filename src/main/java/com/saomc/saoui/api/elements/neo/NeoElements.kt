@@ -22,6 +22,12 @@ interface NeoElement {
     val visible
         get() = true
 
+    val selected
+        get() = false
+
+    val disabled
+        get() = false
+
     fun hide() = Unit
     fun show() = Unit
 }
@@ -40,7 +46,7 @@ abstract class NeoParent : NeoElement {
     override operator fun contains(pos: Vec2d) = super.contains(pos) ||
             with(pos + vec(childrenXOffset, childrenYOffset)) {
                 var npos = this
-                elements.any {
+                elements.filter(NeoElement::visible).any {
                     val r = npos in it
                     npos += vec(childrenXSeparator, childrenYSeparator)
                     r

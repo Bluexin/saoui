@@ -54,4 +54,6 @@ enum class ColorUtil constructor(val rgba: Int) {
         }
     }
 
+    infix fun and(other: ColorUtil) = this.rgba and other.rgba
+
 }

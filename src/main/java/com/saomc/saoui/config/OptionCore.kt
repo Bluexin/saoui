@@ -151,6 +151,9 @@ enum class OptionCore(
         if (!this.value) this.flip()
     }
 
+    val subOptions
+        get() = OptionCore.values().filter { it.category == this }
+
     companion object {
 
         fun fromString(str: String): OptionCore? {
@@ -179,5 +182,8 @@ enum class OptionCore(
         fun isEnabled(o: OptionCore): Boolean {
             return o.isEnabled
         }
+
+        val tlOptions
+            get() = OptionCore.values().filter { it.category == null }
     }
 }

@@ -17,6 +17,7 @@ abstract class NeoGui(protected var x: Double, protected var y: Double) : GuiScr
     protected val elements = mutableListOf<NeoElement>()
 
     override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
+        println("drawScreen")
         GlStateManager.pushMatrix()
         GlStateManager.translate(x, y, 0.0)
 
@@ -24,6 +25,10 @@ abstract class NeoGui(protected var x: Double, protected var y: Double) : GuiScr
         elements.forEach { it.draw(mousePos, partialTicks) }
 
         GlStateManager.popMatrix()
+    }
+
+    override fun updateScreen() {
+        println("updateScreen")
     }
 
     override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int) {
@@ -34,7 +39,7 @@ abstract class NeoGui(protected var x: Double, protected var y: Double) : GuiScr
     override fun doesGuiPauseGame() = OptionCore.GUI_PAUSE.isEnabled
 
     fun tlCategory(icon: IIcon, body: (NeoTLCategoryButton.() -> Unit)? = null) {
-        val cat = NeoTLCategoryButton(icon, 0, 20 * elements.size)
+        val cat = NeoTLCategoryButton(icon, 0, 25 * elements.size)
         if (body != null) cat.body()
         this.elements += cat
     }

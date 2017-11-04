@@ -52,12 +52,14 @@ object GLCore {
         return alpha shl 24 or (red shl 16) or (blue shl 8) or green
     }
 
-    @JvmOverloads fun glString(font: FontRenderer?, string: String, x: Int, y: Int, argb: Int, shadow: Boolean = false) {
-        font?.drawString(string, x.toFloat(), y.toFloat(), glFontColor(argb), shadow)
+    @JvmOverloads
+    fun glString(font: FontRenderer?, string: String, x: Int, y: Int, argb: Int, shadow: Boolean = false, centered: Boolean = false) {
+        font?.drawString(string, x.toFloat(), y.toFloat() - if (centered) font.FONT_HEIGHT / 2f else 0f, glFontColor(argb), shadow)
     }
 
-    @JvmOverloads fun glString(string: String, x: Int, y: Int, argb: Int, shadow: Boolean = false) {
-        glString(glFont, string, x, y, argb, shadow)
+    @JvmOverloads
+    fun glString(string: String, x: Int, y: Int, argb: Int, shadow: Boolean = false, centered: Boolean = false) {
+        glString(glFont, string, x, y, argb, shadow, centered)
     }
 
     fun setFont(mc: Minecraft, custom: Boolean) {
