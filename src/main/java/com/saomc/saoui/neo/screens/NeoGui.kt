@@ -1,7 +1,8 @@
 package com.saomc.saoui.neo.screens
 
+import com.saomc.saoui.api.elements.neo.NeoCategoryButton
 import com.saomc.saoui.api.elements.neo.NeoElement
-import com.saomc.saoui.api.elements.neo.NeoTLCategoryButton
+import com.saomc.saoui.api.elements.neo.NeoIconElement
 import com.saomc.saoui.api.screens.IIcon
 import com.saomc.saoui.config.OptionCore
 import com.teamwizardry.librarianlib.features.animator.Animator
@@ -39,8 +40,8 @@ abstract class NeoGui(protected var x: Double, protected var y: Double) : GuiScr
 
     override fun doesGuiPauseGame() = OptionCore.GUI_PAUSE.isEnabled
 
-    fun tlCategory(icon: IIcon, body: (NeoTLCategoryButton.() -> Unit)? = null) {
-        val cat = NeoTLCategoryButton(icon, 0, 25 * elements.size)
+    fun tlCategory(icon: IIcon, body: (NeoCategoryButton.() -> Unit)? = null) {
+        val cat = NeoCategoryButton(NeoIconElement(icon, 0, 25 * elements.size))
         if (body != null) cat.body()
         this.elements += cat
     }

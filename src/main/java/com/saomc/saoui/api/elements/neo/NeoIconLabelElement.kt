@@ -7,7 +7,6 @@ import com.saomc.saoui.resources.StringNames
 import com.saomc.saoui.util.ColorUtil
 import com.teamwizardry.librarianlib.features.animator.animations.BasicAnimation
 import com.teamwizardry.librarianlib.features.helpers.vec
-import com.teamwizardry.librarianlib.features.kotlin.minus
 import com.teamwizardry.librarianlib.features.math.BoundingBox2D
 import com.teamwizardry.librarianlib.features.math.Vec2d
 import net.minecraft.client.renderer.GlStateManager
@@ -32,14 +31,7 @@ open class NeoIconLabelElement(icon: IIcon, private val label: String, var width
         icon.glDrawUnsafe(x + 1, y + 1)
         GLCore.glString(label, x + 22, y + height / 2, color, centered = true)
 
-        val centering = ((elements.size - 1) * childrenYSeparator) / 2.0
-        GlStateManager.translate(x.toDouble() + childrenXOffset, y.toDouble() + childrenYOffset - centering, 0.0)
-        var nmouse = mouse - vec(x + childrenXOffset, y + childrenYOffset - centering)
-        elements.filter { it.visible }.forEach {
-            it.draw(nmouse, partialTicks)
-            GlStateManager.translate(childrenXSeparator.toDouble(), childrenYSeparator.toDouble(), 0.0)
-            nmouse -= vec(childrenXSeparator, childrenYSeparator)
-        }
+        drawChildren(mouse, partialTicks)
         GlStateManager.popMatrix()
     }
 

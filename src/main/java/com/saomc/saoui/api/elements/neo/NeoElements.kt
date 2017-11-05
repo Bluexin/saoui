@@ -36,7 +36,9 @@ interface NeoElement {
 }
 
 abstract class NeoParent : NeoElement {
-    val elements = mutableListOf<NeoElement>()
+    open val elements = mutableListOf<NeoElement>()
+
+    open val elementsSequence by lazy { elements.asSequence() }
 
     open operator fun plusAssign(element: NeoElement) {
         elements += element
@@ -49,7 +51,7 @@ abstract class NeoParent : NeoElement {
     override operator fun contains(pos: Vec2d) = super.contains(pos) ||
             with(pos + vec(childrenXOffset, childrenYOffset)) {
                 var npos = this
-                elements.filter(NeoElement::visible).any {
+                elementsSequence.filter(NeoElement::visible).any {
                     val r = npos in it
                     npos += vec(childrenXSeparator, childrenYSeparator)
                     r

@@ -15,7 +15,7 @@ import net.minecraft.client.renderer.GlStateManager
  *
  * @author Bluexin
  */
-open class NeoIconElement(protected val icon: IIcon, var x: Int = 0, var y: Int = 0) : NeoParent() {
+open class NeoIconElement(val icon: IIcon, var x: Int = 0, var y: Int = 0) : NeoParent() {
 
     private var onClickBody: (Vec2d) -> Boolean = { true }
     private var onClickOutBody: (Vec2d) -> Unit = { Unit }
@@ -31,15 +31,29 @@ open class NeoIconElement(protected val icon: IIcon, var x: Int = 0, var y: Int 
         if (icon.rl != null) GLCore.glBindTexture(icon.rl!!)
         icon.glDrawUnsafe(x + 2, y + 2)
 
-        val centering = ((elements.size - 1) * childrenYSeparator) / 2.0
+        drawChildren(mouse, partialTicks)
+        GlStateManager.popMatrix()
+    }
+
+    protected open fun drawChildren(mouse: Vec2d, partialTicks: Float) {
+        val selectedIdx = if (elementsSequence.any { it is NeoCategoryButton }) elements.indexOfFirst { it.selected } else -1
+        val skipFront =
+                if (selectedIdx >= 0) (selectedIdx - (elements.size / 2 - (elements.size + 1) % 2) + elements.size) % elements.size
+                else 0
+        val centering = ((elements.size + elements.size % 2 - 2) * childrenYSeparator) / 2.0
         GlStateManager.translate(x.toDouble() + childrenXOffset, y.toDouble() + childrenYOffset - centering, 0.0)
         var nmouse = mouse - vec(x + childrenXOffset, y + childrenYOffset - centering)
-        elements.filter { it.visible }.forEach {
+        val seq = elementsSequence.filter(NeoElement::visible)
+        seq.drop(skipFront).forEach {
             it.draw(nmouse, partialTicks)
             GlStateManager.translate(childrenXSeparator.toDouble(), childrenYSeparator.toDouble(), 0.0)
             nmouse -= vec(childrenXSeparator, childrenYSeparator)
         }
-        GlStateManager.popMatrix()
+        seq.take(skipFront).forEach {
+            it.draw(nmouse, partialTicks)
+            GlStateManager.translate(childrenXSeparator.toDouble(), childrenYSeparator.toDouble(), 0.0)
+            nmouse -= vec(childrenXSeparator, childrenYSeparator)
+        }
     }
 
     open fun getColor(mouse: Vec2d) = if (disabled) ColorUtil.DEFAULT_COLOR and ColorUtil.DISABLED_MASK else if (selected || mouse in this) ColorUtil.HOVER_COLOR.rgba else ColorUtil.DEFAULT_COLOR.rgba
@@ -52,7 +66,16 @@ open class NeoIconElement(protected val icon: IIcon, var x: Int = 0, var y: Int 
         } else {
             var npos = pos - vec(x + childrenXOffset, y + childrenYOffset - ((elements.count(NeoElement::visible) - 1) * childrenYSeparator) / 2.0)
             var ok = false
-            elements.forEach {
+            val selectedIdx = if (elementsSequence.any { it is NeoCategoryButton }) elements.indexOfFirst { it.selected } else -1
+            val skip =
+                    if (selectedIdx >= 0) (selectedIdx - (elements.size / 2 - (elements.size + 1) % 2) + elements.size) % elements.size
+                    else 0
+            val seq = elementsSequence.filter(NeoElement::visible)
+            seq.drop(skip).forEach {
+                ok = it.click(npos) || ok
+                npos -= vec(childrenXSeparator, childrenYSeparator)
+            }
+            seq.take(skip).forEach {
                 ok = it.click(npos) || ok
                 npos -= vec(childrenXSeparator, childrenYSeparator)
             }
@@ -67,11 +90,11 @@ open class NeoIconElement(protected val icon: IIcon, var x: Int = 0, var y: Int 
     override val childrenXOffset = 25
     override val childrenYSeparator = 20
 
-    fun onClick(body: (Vec2d) -> Boolean) {
+    open fun onClick(body: (Vec2d) -> Boolean) {
         onClickBody = body
     }
 
-    fun onClickOut(body: (Vec2d) -> Unit) {
+    open fun onClickOut(body: (Vec2d) -> Unit) {
         onClickOutBody = body
     }
 

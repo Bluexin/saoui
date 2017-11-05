@@ -1,6 +1,9 @@
 package com.saomc.saoui.api.elements.neo
 
-import com.teamwizardry.librarianlib.features.animator.*
+import com.teamwizardry.librarianlib.features.animator.AnimatableProperty
+import com.teamwizardry.librarianlib.features.animator.Animation
+import com.teamwizardry.librarianlib.features.animator.Easing
+import com.teamwizardry.librarianlib.features.animator.LerperHandler
 import com.teamwizardry.librarianlib.features.animator.animations.ScheduledEventAnimation
 
 /**
@@ -27,8 +30,7 @@ open class IndexedScheduledCounter(val delay: Float, maxIdx: Int = 0, private va
             duration = delay * maxIdx
         }
 
-    @Suppress("UNCHECKED_CAST")
-    private val lerper = LerperHandler.getLerperOrError(Int::class.javaPrimitiveType!!) as Lerper<Int>
+    private val lerper = LerperHandler.getLerperOrError(Int::class.javaPrimitiveType!!)
 
     private var currentIdx = -1
 

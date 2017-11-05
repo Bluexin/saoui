@@ -20,9 +20,57 @@ class NeoIngameMenu : NeoGui(0.0, 0.0) {
         elements.clear()
 
         tlCategory(IconCore.PROFILE) {
-            +category(IconCore.EQUIPMENT, format("sao.element.equipment"))
-            +category(IconCore.ITEMS, format("sao.element.items"))
-            +category(IconCore.SKILLS, format("sao.element.skills"))
+            +category(IconCore.EQUIPMENT, format("sao.element.equipment")) {
+                +category(IconCore.EQUIPMENT, format("sao.element.equipment")) {
+                    +category(IconCore.EQUIPMENT, format("sao.element.equipment"))
+                    +category(IconCore.ITEMS, format("sao.element.items"))
+                    +category(IconCore.SKILLS, format("sao.element.skills"))
+                }
+                +category(IconCore.ITEMS, format("sao.element.items")) {
+                    +category(IconCore.EQUIPMENT, format("sao.element.equipment"))
+                    +category(IconCore.ITEMS, format("sao.element.items"))
+                    +category(IconCore.SKILLS, format("sao.element.skills"))
+                }
+                +category(IconCore.SKILLS, format("sao.element.skills")) {
+                    +category(IconCore.EQUIPMENT, format("sao.element.equipment"))
+                    +category(IconCore.ITEMS, format("sao.element.items"))
+                    +category(IconCore.SKILLS, format("sao.element.skills"))
+                }
+            }
+            +category(IconCore.ITEMS, format("sao.element.items")) {
+                +category(IconCore.EQUIPMENT, format("sao.element.equipment")) {
+                    +category(IconCore.EQUIPMENT, format("sao.element.equipment"))
+                    +category(IconCore.ITEMS, format("sao.element.items"))
+                    +category(IconCore.SKILLS, format("sao.element.skills"))
+                }
+                +category(IconCore.ITEMS, format("sao.element.items")) {
+                    +category(IconCore.EQUIPMENT, format("sao.element.equipment"))
+                    +category(IconCore.ITEMS, format("sao.element.items"))
+                    +category(IconCore.SKILLS, format("sao.element.skills"))
+                }
+                +category(IconCore.SKILLS, format("sao.element.skills")) {
+                    +category(IconCore.EQUIPMENT, format("sao.element.equipment"))
+                    +category(IconCore.ITEMS, format("sao.element.items"))
+                    +category(IconCore.SKILLS, format("sao.element.skills"))
+                }
+            }
+            +category(IconCore.SKILLS, format("sao.element.skills")) {
+                +category(IconCore.EQUIPMENT, format("sao.element.equipment")) {
+                    +category(IconCore.EQUIPMENT, format("sao.element.equipment"))
+                    +category(IconCore.ITEMS, format("sao.element.items"))
+                    +category(IconCore.SKILLS, format("sao.element.skills"))
+                }
+                +category(IconCore.ITEMS, format("sao.element.items")) {
+                    +category(IconCore.EQUIPMENT, format("sao.element.equipment"))
+                    +category(IconCore.ITEMS, format("sao.element.items"))
+                    +category(IconCore.SKILLS, format("sao.element.skills"))
+                }
+                +category(IconCore.SKILLS, format("sao.element.skills")) {
+                    +category(IconCore.EQUIPMENT, format("sao.element.equipment"))
+                    +category(IconCore.ITEMS, format("sao.element.items"))
+                    +category(IconCore.SKILLS, format("sao.element.skills"))
+                }
+            }
         }
         tlCategory(IconCore.SOCIAL) {
             +category(IconCore.GUILD, format("sao.element.guild"))
