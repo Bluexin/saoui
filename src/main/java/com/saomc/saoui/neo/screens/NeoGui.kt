@@ -4,6 +4,7 @@ import com.saomc.saoui.api.elements.neo.NeoElement
 import com.saomc.saoui.api.elements.neo.NeoTLCategoryButton
 import com.saomc.saoui.api.screens.IIcon
 import com.saomc.saoui.config.OptionCore
+import com.teamwizardry.librarianlib.features.animator.Animator
 import com.teamwizardry.librarianlib.features.helpers.vec
 import net.minecraft.client.gui.GuiScreen
 import net.minecraft.client.renderer.GlStateManager
@@ -17,7 +18,7 @@ abstract class NeoGui(protected var x: Double, protected var y: Double) : GuiScr
     protected val elements = mutableListOf<NeoElement>()
 
     override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
-        println("drawScreen")
+//        println("drawScreen")
         GlStateManager.pushMatrix()
         GlStateManager.translate(x, y, 0.0)
 
@@ -28,7 +29,7 @@ abstract class NeoGui(protected var x: Double, protected var y: Double) : GuiScr
     }
 
     override fun updateScreen() {
-        println("updateScreen")
+//        println("updateScreen")
     }
 
     override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int) {
@@ -42,5 +43,9 @@ abstract class NeoGui(protected var x: Double, protected var y: Double) : GuiScr
         val cat = NeoTLCategoryButton(icon, 0, 25 * elements.size)
         if (body != null) cat.body()
         this.elements += cat
+    }
+
+    companion object {
+        val animator = Animator()
     }
 }

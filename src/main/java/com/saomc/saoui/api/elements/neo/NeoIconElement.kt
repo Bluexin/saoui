@@ -24,14 +24,14 @@ open class NeoIconElement(protected val icon: IIcon, var x: Int = 0, var y: Int 
 
     override fun draw(mouse: Vec2d, partialTicks: Float) { // TODO: scrolling if too many elements
         GlStateManager.pushMatrix()
-        GLCore.glColorRGBA(getColor(mouse))
+        GLCore.glColorRGBA(ColorUtil.multiplyAlpha(getColor(mouse), opacity))
         GLCore.glBindTexture(StringNames.gui)
         GLCore.glTexturedRect(x.toDouble(), y.toDouble(), 0.0, 25.0, 20.0, 20.0)
-        GLCore.glColorRGBA(getTextColor(mouse))
+        GLCore.glColorRGBA(ColorUtil.multiplyAlpha(getTextColor(mouse), opacity))
         if (icon.rl != null) GLCore.glBindTexture(icon.rl!!)
         icon.glDrawUnsafe(x + 2, y + 2)
 
-        val centering = ((elements.count(NeoElement::visible) - 1) * childrenYSeparator) / 2.0
+        val centering = ((elements.size - 1) * childrenYSeparator) / 2.0
         GlStateManager.translate(x.toDouble() + childrenXOffset, y.toDouble() + childrenYOffset - centering, 0.0)
         var nmouse = mouse - vec(x + childrenXOffset, y + childrenYOffset - centering)
         elements.filter { it.visible }.forEach {
@@ -80,6 +80,8 @@ open class NeoIconElement(protected val icon: IIcon, var x: Int = 0, var y: Int 
     override var selected = false
 
     override var disabled = false
+
+    override var opacity = 1f
 
     override fun hide() {
         visible = false

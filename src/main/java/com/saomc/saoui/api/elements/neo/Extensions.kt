@@ -2,8 +2,8 @@ package com.saomc.saoui.api.elements.neo
 
 import com.saomc.saoui.api.screens.IIcon
 import com.saomc.saoui.config.OptionCore
+import com.saomc.saoui.neo.screens.NeoGui
 import com.saomc.saoui.util.IconCore
-import com.teamwizardry.librarianlib.features.animator.Animator
 import com.teamwizardry.librarianlib.features.animator.Easing
 import com.teamwizardry.librarianlib.features.animator.animations.BasicAnimation
 
@@ -16,8 +16,8 @@ class NeoTLCategoryButton(icon: IIcon, x: Int = 0, y: Int = 0) : NeoIconElement(
 
     init {
         onClick {
-            elements.forEach(if (selected) NeoElement::hide else NeoElement::show)
-            if (elements.isNotEmpty()) selected = !selected
+            if (elements.isNotEmpty() && !selected) open()
+            else close()
 
             true
         }
@@ -33,21 +33,41 @@ class NeoTLCategoryButton(icon: IIcon, x: Int = 0, y: Int = 0) : NeoIconElement(
         appearAnim.from = 0
         appearAnim.repeatCount = 1
         appearAnim.easing = Easing.easeInOutQuint
-        Animator().add(appearAnim)
+        NeoGui.animator.add(appearAnim)
+    }
+
+    private fun open() {
+        selected = true
+
+        openAnim = IndexedScheduledCounter(3f, maxIdx = elements.size - 1) {
+            if (selected) elements[it].show()
+        }
+        NeoGui.animator.add(openAnim!!)
+    }
+
+    private fun close() { // TODO: fancy animation
+        elements.forEach(NeoElement::hide)
+        selected = false
+        if (openAnim?.isInAnimator == true) {
+            openAnim?.cancel()
+            openAnim = null
+        }
     }
 
     override fun plusAssign(element: NeoElement) {
         super.plusAssign(element)
         element.hide()
     }
+
+    private var openAnim: IndexedScheduledCounter? = null
 }
 
 class NeoCategoryButton(icon: IIcon, label: String, width: Int = 84, height: Int = 18, x: Int = 0, y: Int = 0) : NeoIconLabelElement(icon, label, width, height, x, y) {
 
     init {
         onClick {
-            elements.forEach(if (selected) NeoElement::hide else NeoElement::show)
-            if (elements.isNotEmpty()) selected = !selected
+            if (elements.isNotEmpty() && !selected) open()
+            else close()
 
             true
         }
@@ -56,20 +76,32 @@ class NeoCategoryButton(icon: IIcon, label: String, width: Int = 84, height: Int
             if (selected) elements.forEach(NeoElement::hide)
             selected = false
         }
+    }
 
-        val appearAnim = BasicAnimation(this, "y")
+    private fun open() {
+        selected = true
 
-        appearAnim.duration = 15f
-        appearAnim.from = 0
-        appearAnim.repeatCount = 1
-        appearAnim.easing = Easing.easeInOutQuint
-        Animator().add(appearAnim)
+        openAnim = IndexedScheduledCounter(3f, maxIdx = elements.size - 1) {
+            if (selected) elements[it].show()
+        }
+        NeoGui.animator.add(openAnim!!)
+    }
+
+    private fun close() { // TODO: fancy animation
+        elements.forEach(NeoElement::hide)
+        selected = false
+        if (openAnim?.isInAnimator == true) {
+            openAnim?.cancel()
+            openAnim = null
+        }
     }
 
     override fun plusAssign(element: NeoElement) {
         super.plusAssign(element)
         element.hide()
     }
+
+    private var openAnim: IndexedScheduledCounter? = null
 }
 
 fun optionButton(option: OptionCore): NeoIconLabelElement {

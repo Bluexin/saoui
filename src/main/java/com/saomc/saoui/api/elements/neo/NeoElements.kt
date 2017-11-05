@@ -28,6 +28,9 @@ interface NeoElement {
     val disabled
         get() = false
 
+    val opacity
+        get() = 1f
+
     fun hide() = Unit
     fun show() = Unit
 }
