@@ -10,7 +10,9 @@ import com.saomc.saoui.themes.elements.ElementParent
 import gnu.jel.CompilationException
 import gnu.jel.Library
 import net.minecraft.client.resources.I18n
-import net.minecraft.world.World
+import net.minecraft.launchwrapper.Launch
+
+
 
 /**
  * Part of saoui by Bluexin.
@@ -34,14 +36,8 @@ object LibHelper {
     }
 
     val obfuscated: Boolean by lazy {
-        //        val ok = World::class.simpleName != "World"
-        val ok = try {
-            Class.forName("net.minecraft.world.World")
-            false
-        } catch (e: Throwable) {
-            true
-        }
-        SAOCore.LOGGER.warn("Obfuscated: $ok (${World::class.qualifiedName})")
-        ok
+        val obf = Launch.blackboard["fml.deobfuscatedEnvironment"] as Boolean
+        SAOCore.LOGGER.warn("Obfuscated: $obf")
+        obf
     }
 }
