@@ -363,11 +363,11 @@
                                         <srcX cache="STATIC">65</srcX>
                                         <srcW cache="STATIC">5</srcW>
                                         <srcY cache="STATIC">15</srcY>
-                                        <w cache="STATIC">30</w>
+                                        <w cache="STATIC">43</w>
                                         <h cache="STATIC">13</h>
                                     </glRectangle>
                                     <glRectangle>
-                                        <x cache="STATIC">44</x>
+                                        <x cache="STATIC">57</x>
                                         <y cache="NONE">15 * i</y>
                                         <srcX cache="STATIC">40</srcX>
                                         <srcY cache="STATIC">28</srcY>
@@ -375,7 +375,7 @@
                                         <h cache="STATIC">13</h>
                                     </glRectangle>
                                     <glRectangle>
-                                        <x cache="STATIC">144</x>
+                                        <x cache="STATIC">157</x>
                                         <y cache="NONE">15 * i</y>
                                         <srcX cache="STATIC">70</srcX>
                                         <srcY cache="STATIC">15</srcY>
@@ -400,11 +400,11 @@
                                 <srcY cache="STATIC">197</srcY>
                                 <w cache="NONE">98.0 * ptHpPct(i) + 1</w>
                                 <h cache="STATIC">3.0</h>
-                                <x cache="STATIC">45</x>
+                                <x cache="STATIC">58</x>
                                 <y cache="NONE">15 * i + 5</y>
                             </glRectangle>
                             <glString name="pName">
-                                <text>ptName(i).length > 5? ptName(i).substring(0, 5): ptName(i)</text>
+                                <text cache="NONE">ptName(i).length > 8? ptName(i).substring(0, 8): ptName(i)</text>
                                 <x cache="STATIC">13</x>
                                 <y cache="NONE">15 * i + 8</y>
                                 <rgba>0xFFFFFFFF</rgba>

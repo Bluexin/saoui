@@ -139,9 +139,9 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
         if (OptionCore.VANILLA_UI.isEnabled)
             super.renderHealth(width, height)
         else {
-            /*if (*/replaceEvent(HEALTH)/*) return*/
+//            /*if (*/replaceEvent(HEALTH)/*) return*/
             mc.profile("health") { ThemeLoader.HUD.draw(HudPartType.HEALTH_BOX, context) }
-            post(HEALTH)
+//            post(HEALTH)
         }
         renderParty()
     }
