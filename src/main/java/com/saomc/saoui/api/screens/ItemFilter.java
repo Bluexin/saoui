@@ -13,8 +13,8 @@ public interface ItemFilter {
      * this.
      *
      * @param stack The item stack to check
-     * @param isEquipped If the item is Equipped or not
+     * @param equipped If the item is Equipped or not
      * @return Returns true if the filter passes
      */
-    boolean isFine(ItemStack stack, boolean isEquipped);
+    boolean invoke(ItemStack stack, boolean equipped);
 }

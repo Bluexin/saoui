@@ -1,9 +1,7 @@
 package com.saomc.saoui.api.elements.neo
 
-import com.teamwizardry.librarianlib.features.animator.AnimatableProperty
-import com.teamwizardry.librarianlib.features.animator.Animation
-import com.teamwizardry.librarianlib.features.animator.Easing
-import com.teamwizardry.librarianlib.features.animator.LerperHandler
+import com.teamwizardry.librarianlib.features.animator.*
+import com.teamwizardry.librarianlib.features.animator.animations.BasicAnimation
 import com.teamwizardry.librarianlib.features.animator.animations.ScheduledEventAnimation
 
 /**
@@ -43,3 +41,13 @@ open class IndexedScheduledCounter(val delay: Float, maxIdx: Int = 0, private va
         }
     }
 }
+
+fun <T : Any> basicAnimation(target: T, property: AnimatableProperty<T>, init: (BasicAnimation<T>.() -> Unit)? = null): BasicAnimation<T> {
+    val anim = BasicAnimation(target, property)
+    if (init != null) anim.init()
+    return anim
+}
+
+fun <T : Any> basicAnimation(target: T, property: String, init: (BasicAnimation<T>.() -> Unit)? = null) = basicAnimation(target, AnimatableProperty.get(target.javaClass, property), init)
+
+operator fun Animator.plusAssign(animation: Animation<*>) = this.add(animation)

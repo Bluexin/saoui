@@ -1,5 +1,6 @@
 package com.saomc.saoui.api.screens;
 
+import com.teamwizardry.librarianlib.features.math.Vec2d;
 import net.minecraft.util.ResourceLocation;
 
 import javax.annotation.Nullable;
@@ -25,6 +26,10 @@ public interface IIcon {
 
     default void glDrawUnsafe(int x, int y) {
         this.glDraw(x, y);
+    }
+
+    default void glDrawUnsafe(Vec2d pos) {
+        glDrawUnsafe(pos.getXi(), pos.getYi());
     }
 
     default int getWidth() {

@@ -120,7 +120,7 @@ optionMountStatView=Show Mount Stats
 optionCustomFont=Use SAO Font
 optionDebugMode=Debug Mode
 optionCompatInv=Compact Inventory
-optionTextShadow = Text Shadow
+optionTextShadow= Text Shadow
 
 # Display
 displayLvShort=LV %1$d
@@ -137,6 +137,8 @@ displayName=Name
 formatHealth=%1$.0f / %2$.0f
 formatHealthAbsorb=%1$.0f (+%3$.0f) / %2$.0f
 formatHealthAbsorbAlt=(+%3$.0f) %1$.0f / %2$.0f
+saoui.formatItem=%s x%d
+sao.party.invite=Invite
 
 # PT
 ptLeave=You left your party.

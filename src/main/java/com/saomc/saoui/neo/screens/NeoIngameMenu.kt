@@ -1,10 +1,13 @@
 package com.saomc.saoui.neo.screens
 
-import com.saomc.saoui.api.elements.neo.category
 import com.saomc.saoui.api.elements.neo.optionCategory
 import com.saomc.saoui.config.OptionCore
 import com.saomc.saoui.events.EventCore
+import com.saomc.saoui.screens.inventory.BaseFilters
 import com.saomc.saoui.util.IconCore
+import com.teamwizardry.librarianlib.features.helpers.vec
+import com.teamwizardry.librarianlib.features.math.Vec2d
+import net.minecraft.client.gui.GuiIngameMenu
 import net.minecraft.client.gui.GuiMainMenu
 import net.minecraft.client.gui.GuiOptions
 import net.minecraft.client.resources.I18n.format
@@ -14,67 +17,77 @@ import net.minecraft.client.resources.I18n.format
  *
  * @author Bluexin
  */
-class NeoIngameMenu : NeoGui(0.0, 0.0) {
+class NeoIngameMenu : NeoGui(Vec2d.ZERO) {
 
     override fun initGui() {
         elements.clear()
 
         tlCategory(IconCore.PROFILE) {
             +category(IconCore.EQUIPMENT, format("sao.element.equipment")) {
-                +category(IconCore.EQUIPMENT, format("sao.element.equipment")) {
-                    +category(IconCore.EQUIPMENT, format("sao.element.equipment"))
-                    +category(IconCore.ITEMS, format("sao.element.items"))
-                    +category(IconCore.SKILLS, format("sao.element.skills"))
-                }
-                +category(IconCore.ITEMS, format("sao.element.items")) {
-                    +category(IconCore.EQUIPMENT, format("sao.element.equipment"))
-                    +category(IconCore.ITEMS, format("sao.element.items"))
-                    +category(IconCore.SKILLS, format("sao.element.skills"))
-                }
-                +category(IconCore.SKILLS, format("sao.element.skills")) {
-                    +category(IconCore.EQUIPMENT, format("sao.element.equipment"))
-                    +category(IconCore.ITEMS, format("sao.element.items"))
-                    +category(IconCore.SKILLS, format("sao.element.skills"))
+                +category(IconCore.ARMOR, format("sao.element.armor")) {
+                    itemList(mc.player.inventory, { BaseFilters.EQUIPMENT(it, false) })
                 }
             }
             +category(IconCore.ITEMS, format("sao.element.items")) {
-                +category(IconCore.EQUIPMENT, format("sao.element.equipment")) {
-                    +category(IconCore.EQUIPMENT, format("sao.element.equipment"))
-                    +category(IconCore.ITEMS, format("sao.element.items"))
-                    +category(IconCore.SKILLS, format("sao.element.skills"))
-                }
-                +category(IconCore.ITEMS, format("sao.element.items")) {
-                    +category(IconCore.EQUIPMENT, format("sao.element.equipment"))
-                    +category(IconCore.ITEMS, format("sao.element.items"))
-                    +category(IconCore.SKILLS, format("sao.element.skills"))
-                }
-                +category(IconCore.SKILLS, format("sao.element.skills")) {
-                    +category(IconCore.EQUIPMENT, format("sao.element.equipment"))
-                    +category(IconCore.ITEMS, format("sao.element.items"))
-                    +category(IconCore.SKILLS, format("sao.element.skills"))
-                }
+
             }
             +category(IconCore.SKILLS, format("sao.element.skills")) {
-                +category(IconCore.EQUIPMENT, format("sao.element.equipment")) {
-                    +category(IconCore.EQUIPMENT, format("sao.element.equipment"))
-                    +category(IconCore.ITEMS, format("sao.element.items"))
-                    +category(IconCore.SKILLS, format("sao.element.skills"))
+                +category(IconCore.SKILLS, "1") {
+                    +category(IconCore.SKILLS, "1.1") {
+                        +category(IconCore.SKILLS, "1.1.1")
+                        +category(IconCore.SKILLS, "1.1.2")
+                        +category(IconCore.SKILLS, "1.1.3")
+                    }
+                    +category(IconCore.SKILLS, "1.2") {
+                        +category(IconCore.SKILLS, "1.2.1")
+                        +category(IconCore.SKILLS, "1.2.2")
+                        +category(IconCore.SKILLS, "1.2.3")
+                    }
+                    +category(IconCore.SKILLS, "1.3") {
+                        +category(IconCore.SKILLS, "1.3.1")
+                        +category(IconCore.SKILLS, "1.3.2")
+                        +category(IconCore.SKILLS, "1.3.3")
+                    }
                 }
-                +category(IconCore.ITEMS, format("sao.element.items")) {
-                    +category(IconCore.EQUIPMENT, format("sao.element.equipment"))
-                    +category(IconCore.ITEMS, format("sao.element.items"))
-                    +category(IconCore.SKILLS, format("sao.element.skills"))
+                +category(IconCore.SKILLS, "2") {
+                    +category(IconCore.SKILLS, "2.1") {
+                        +category(IconCore.SKILLS, "2.1.1")
+                        +category(IconCore.SKILLS, "2.1.2")
+                        +category(IconCore.SKILLS, "2.1.3")
+                    }
+                    +category(IconCore.SKILLS, "2.2") {
+                        +category(IconCore.SKILLS, "2.2.1")
+                        +category(IconCore.SKILLS, "2.2.2")
+                        +category(IconCore.SKILLS, "2.2.3")
+                    }
+                    +category(IconCore.SKILLS, "2.3") {
+                        +category(IconCore.SKILLS, "2.3.1")
+                        +category(IconCore.SKILLS, "2.3.2")
+                        +category(IconCore.SKILLS, "2.3.3")
+                    }
                 }
-                +category(IconCore.SKILLS, format("sao.element.skills")) {
-                    +category(IconCore.EQUIPMENT, format("sao.element.equipment"))
-                    +category(IconCore.ITEMS, format("sao.element.items"))
-                    +category(IconCore.SKILLS, format("sao.element.skills"))
+                +category(IconCore.SKILLS, "3") {
+                    +category(IconCore.SKILLS, "3.1") {
+                        +category(IconCore.SKILLS, "3.1.1")
+                        +category(IconCore.SKILLS, "3.1.2")
+                        +category(IconCore.SKILLS, "3.1.3")
+                    }
+                    +category(IconCore.SKILLS, "3.2") {
+                        +category(IconCore.SKILLS, "3.2.1")
+                        +category(IconCore.SKILLS, "3.2.2")
+                        +category(IconCore.SKILLS, "3.2.3")
+                    }
+                    +category(IconCore.SKILLS, "3.3") {
+                        +category(IconCore.SKILLS, "3.3.1")
+                        +category(IconCore.SKILLS, "3.3.2")
+                        +category(IconCore.SKILLS, "3.3.3")
+                    }
                 }
             }
         }
         tlCategory(IconCore.SOCIAL) {
             +category(IconCore.GUILD, format("sao.element.guild"))
-            +category(IconCore.PARTY, format("sao.element.party"))
+            partyMenu(mc.player)
             +category(IconCore.FRIEND, format("sao.element.friends"))
         }
         tlCategory(IconCore.MESSAGE)
@@ -83,7 +96,7 @@ class NeoIngameMenu : NeoGui(0.0, 0.0) {
             +category(IconCore.OPTION, format("sao.element.options")) {
                 +category(IconCore.OPTION, format("guiOptions")) {
                     onClick {
-                        mc.displayGuiScreen(GuiOptions(EventCore.mc.currentScreen, EventCore.mc.gameSettings))
+                        mc.displayGuiScreen(GuiOptions(this@NeoIngameMenu, EventCore.mc.gameSettings))
                         true
                     }
                 }
@@ -91,10 +104,15 @@ class NeoIngameMenu : NeoGui(0.0, 0.0) {
                     +optionCategory(it)
                 }
             }
-            +category(IconCore.HELP, format("sao.element.menu"))
-            +category(IconCore.LOGOUT, if (OptionCore.LOGOUT.isEnabled) format("sao.element.logout") else "") {
+            +category(IconCore.HELP, format("sao.element.menu")) {
                 onClick {
-                    if (OptionCore.LOGOUT.isEnabled) {
+                    mc.displayGuiScreen(GuiIngameMenu())
+                    true
+                }
+            }
+            +category(IconCore.LOGOUT, if (OptionCore.LOGOUT()) format("sao.element.logout") else "") {
+                onClick {
+                    if (OptionCore.LOGOUT()) {
                         EventCore.mc.currentScreen!!.onGuiClosed()
                         EventCore.mc.world.sendQuittingDisconnectingPacket()
                         EventCore.mc.loadWorld(null)
@@ -105,9 +123,9 @@ class NeoIngameMenu : NeoGui(0.0, 0.0) {
             }
         }
 
-        // TODO: Gui should glide to the side when a category is opened to keep focus to the center as much as possible.
-        x = width / 2.0 - 10
-        y = (height - elements.size * 20) / 2.0
+        pos = vec(width / 2.0 - 10, (height - elements.size * 20) / 2.0)
+        destination = pos
     }
 
+    override fun doesGuiPauseGame() = false
 }

@@ -8,11 +8,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.*;
 import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
-@SideOnly(Side.CLIENT)
-public enum InventoryCore implements ItemFilter{ // Todo: support for TConstruct
+public enum InventoryCore implements ItemFilter { // Todo: support for TConstruct
 
     EQUIPMENT((stack, state) -> {
         final Item item = stack.getItem();
@@ -48,7 +45,7 @@ public enum InventoryCore implements ItemFilter{ // Todo: support for TConstruct
         );
     }),
 
-    ITEMS((stack, state) -> !state || (!EQUIPMENT.isFine(stack, state)));
+    ITEMS((stack, state) -> !state || (!EQUIPMENT.invoke(stack, state)));
 
     private final ItemFilter itemFilter;
 
@@ -65,12 +62,12 @@ public enum InventoryCore implements ItemFilter{ // Todo: support for TConstruct
     }
 
     public static boolean isBaublesLoaded() {
-        return Loader.isModLoaded("Baubles");
+        return Loader.isModLoaded("baubles");
     }
 
     @Override
-    public final boolean isFine(ItemStack stack, boolean isEquipped) {
-        return itemFilter.filter(stack, isEquipped);
+    public final boolean invoke(ItemStack stack, boolean equipped) {
+        return itemFilter.filter(stack, equipped);
     }
 
     @FunctionalInterface

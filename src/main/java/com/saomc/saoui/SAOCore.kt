@@ -22,13 +22,15 @@ object SAOCore {
     const val MODID = "saoui"
     const val NAME = "Sword Art Online UI"
     const val VERSION = "2.0.0.9"
-    const val DEPS = "required-before:" + MODID + "ntw;required-after:saomclib@[1.2,)"
+    const val DEPS = "required-before:" + MODID + "ntw;required-after:saomclib@[1.2.1,)"
+
+    // TODO: investigate toasts -> net.minecraft.client.gui.toasts
 
     @JvmStatic
     @Mod.InstanceFactory
     fun shenanigan() = this
 
-    val UNKNOWN_TIME_DELAY = -1f
+    const val UNKNOWN_TIME_DELAY = -1f
     val LOGGER: Logger = LogManager.getLogger(MODID)
 
     @Mod.EventHandler

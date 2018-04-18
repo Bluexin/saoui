@@ -52,12 +52,12 @@ class PartyHelper private constructor(private val party: IParty) {
         }
     }
 
-    fun listMembers(): List<EntityPlayer> {
+    fun listMembers(): Sequence<EntityPlayer> {
         return party.members
     }
 
     fun isMember(username: String): Boolean {
-        return username == StaticPlayerHelper.getName(Minecraft.getMinecraft()) || hasParty() && party.members.stream().anyMatch { player -> player.name == username }
+        return username == StaticPlayerHelper.getName(Minecraft.getMinecraft()) || hasParty() && party.members.any { player -> player.name == username }
     }
 
     private fun isLeader(username: String): Boolean {
@@ -73,8 +73,8 @@ class PartyHelper private constructor(private val party: IParty) {
             val mc = Minecraft.getMinecraft()
             mc.player.sendMessage(TextComponentTranslation("ptJoin", player.displayName))
             if (this.party.leader == mc.player) {
-                party.members.stream().filter { pl -> pl != mc.player }.forEach { member -> Communicator.send(CommandType.UPDATE_PARTY, member, '+' + player.displayNameString) }
-                party.members.stream().filter { pl -> pl != mc.player }.forEach { member -> Communicator.send(CommandType.UPDATE_PARTY, player, '+' + member.displayNameString) }
+                party.members.filter { pl -> pl != mc.player }.forEach { member -> Communicator.send(CommandType.UPDATE_PARTY, member, '+' + player.displayNameString) }
+                party.members.filter { pl -> pl != mc.player }.forEach { member -> Communicator.send(CommandType.UPDATE_PARTY, player, '+' + member.displayNameString) }
             }
         }
     }
@@ -84,7 +84,7 @@ class PartyHelper private constructor(private val party: IParty) {
             val mc = Minecraft.getMinecraft()
             mc.player.sendMessage(TextComponentTranslation("ptLeft", player.displayName))
             if (this.party.leader == mc.player)
-                party.members.stream().filter { pl -> pl == mc.player }.forEach { member -> Communicator.send(CommandType.UPDATE_PARTY, member, '-' + player.displayNameString) }
+                party.members.filter { pl -> pl == mc.player }.forEach { member -> Communicator.send(CommandType.UPDATE_PARTY, member, '-' + player.displayNameString) }
         }
     }
 
@@ -110,7 +110,7 @@ class PartyHelper private constructor(private val party: IParty) {
     fun sendDissolve(mc: Minecraft) {
         if (hasParty()) {
             if (party.leader == mc.player) {
-                party.members.stream().filter { pl -> pl == mc.player }.forEach { member -> Communicator.send(CommandType.DISSOLVE_PARTY, member) }
+                party.members.filter { pl -> pl == mc.player }.forEach { member -> Communicator.send(CommandType.DISSOLVE_PARTY, member) }
                 mc.player.sendMessage(TextComponentTranslation("ptDissolve"))
             } else {
                 Communicator.send(CommandType.DISSOLVE_PARTY, party.leader!!) // aka leave PT

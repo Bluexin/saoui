@@ -48,13 +48,13 @@ object SoundCore {
     }
 
     fun play(handler: SoundHandler?, name: String) {
-        if (OptionCore.SOUND_EFFECTS.isEnabled && handler != null) {
+        if (OptionCore.SOUND_EFFECTS() && handler != null) {
             handler.playSound(create(getResource(name)))
         }
     }
 
     private fun play(handler: SoundHandler?, name: String, x: Float, y: Float, z: Float) {
-        if (OptionCore.SOUND_EFFECTS.isEnabled && handler != null) {
+        if (OptionCore.SOUND_EFFECTS() && handler != null) {
             handler.playSound(create(getResource(name), x, y, z))
         }
     }

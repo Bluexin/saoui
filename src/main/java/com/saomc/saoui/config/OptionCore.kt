@@ -154,6 +154,8 @@ enum class OptionCore(
     val subOptions
         get() = OptionCore.values().filter { it.category == this }
 
+    operator fun invoke() = isEnabled
+
     companion object {
 
         fun fromString(str: String): OptionCore? {

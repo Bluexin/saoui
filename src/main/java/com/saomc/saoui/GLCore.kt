@@ -1,6 +1,7 @@
 package com.saomc.saoui
 
 import com.saomc.saoui.util.ColorUtil
+import com.teamwizardry.librarianlib.features.math.Vec2d
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.FontRenderer
 import net.minecraft.client.renderer.GlStateManager
@@ -19,8 +20,8 @@ import org.lwjgl.opengl.GL11
 object GLCore {
 
     private val mc = Minecraft.getMinecraft()
-    private val glFont = mc.fontRenderer
-    private val glTextureManager = mc.textureManager
+    private val glFont get() = mc.fontRenderer
+    private val glTextureManager get() = mc.textureManager
 
     fun glColor(red: Float, green: Float, blue: Float) {
         GlStateManager.color(red, green, blue)
@@ -60,6 +61,11 @@ object GLCore {
     @JvmOverloads
     fun glString(string: String, x: Int, y: Int, argb: Int, shadow: Boolean = false, centered: Boolean = false) {
         glString(glFont, string, x, y, argb, shadow, centered)
+    }
+
+    @JvmOverloads
+    fun glString(string: String, pos: Vec2d, argb: Int, shadow: Boolean = false, centered: Boolean = false) {
+        glString(string, pos.xi, pos.yi, argb, shadow, centered)
     }
 
     fun setFont(mc: Minecraft, custom: Boolean) {
@@ -112,12 +118,24 @@ object GLCore {
         glTexturedRect(x, y, z, width, height, srcX, srcY, width, height)
     }
 
+    fun glTexturedRect(pos: Vec2d, z: Double, srcX: Double, srcY: Double, width: Double, height: Double) {
+        glTexturedRect(pos.x, pos.y, z, srcX, srcY, width, height)
+    }
+
     fun glTexturedRect(x: Double, y: Double, width: Double, height: Double, srcX: Double, srcY: Double, srcWidth: Double, srcHeight: Double) {
         glTexturedRect(x, y, 0.0, width, height, srcX, srcY, srcWidth, srcHeight)
     }
 
+    fun glTexturedRect(pos: Vec2d, width: Double, height: Double, srcX: Double, srcY: Double, srcWidth: Double, srcHeight: Double) {
+        glTexturedRect(pos.y, pos.x, width, height, srcX, srcY, srcWidth, srcHeight)
+    }
+
     fun glTexturedRect(x: Double, y: Double, srcX: Double, srcY: Double, width: Double, height: Double) {
         glTexturedRect(x, y, 0.0, srcX, srcY, width, height)
+    }
+
+    fun glTexturedRect(pos: Vec2d, srcX: Double, srcY: Double, width: Double, height: Double) {
+        glTexturedRect(pos.x, pos.y, srcX, srcY, width, height)
     }
 
     fun addVertex(x: Double, y: Double, z: Double) {
