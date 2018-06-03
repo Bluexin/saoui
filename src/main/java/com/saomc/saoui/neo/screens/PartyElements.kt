@@ -12,13 +12,15 @@ import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.common.util.FakePlayer
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 
+@NeoGuiDsl
 fun NeoCategoryButton.partyMenu(player: EntityPlayer) {
-    +category(IconCore.PARTY, format("sao.element.party")) {
+    category(IconCore.PARTY, format("sao.element.party")) {
         partyList(player)
         partyExtras(player)
     }
 }
 
+@NeoGuiDsl
 fun NeoCategoryButton.partyList(player: EntityPlayer) {
     val partyCapability = player.getPartyCapability()
     val party = partyCapability.getOrCreatePT()
@@ -50,11 +52,12 @@ fun NeoCategoryButton.partyList(player: EntityPlayer) {
     })
 }
 
+@NeoGuiDsl
 fun NeoCategoryButton.partyExtras(player: EntityPlayer) {
     val partyCapability = player.getPartyCapability()
     val party = partyCapability.getOrCreatePT()
 
-    +category(IconCore.PARTY, format("sao.party.invite")) {
+    category(IconCore.PARTY, format("sao.party.invite")) {
         player.world.playerEntities.asSequence().filter { it != player && it !is FakePlayer && !party.isMember(it) }.forEach { player ->
             val b = NeoIconLabelElement(IconCore.INVITE, player.displayNameString)
             b.onClick {
@@ -65,7 +68,7 @@ fun NeoCategoryButton.partyExtras(player: EntityPlayer) {
         }
     }
     if (partyCapability.invitedTo != null) {
-        +category(IconCore.PARTY, format("sao.party.invited", partyCapability.invitedTo?.leader)) {
+        category(IconCore.PARTY, format("sao.party.invited", partyCapability.invitedTo?.leader)) {
             val accept = NeoIconLabelElement(IconCore.CONFIRM, format("sao.accept"))
             accept.onClick {
                 partyCapability.invitedTo?.acceptInvite(player)
@@ -82,6 +85,7 @@ fun NeoCategoryButton.partyExtras(player: EntityPlayer) {
     }
 }
 
+@NeoGuiDsl
 fun NeoCategoryButton.partyMemberButton(party: IParty, player: EntityPlayer, ourPlayer: EntityPlayer, invited: Boolean = false): NeoCategoryButton =
         NeoCategoryButton(NeoIconLabelElement(IconCore.FRIEND, player.displayNameString), this, {
             +NeoIconLabelElement(IconCore.HELP, format("sao."))

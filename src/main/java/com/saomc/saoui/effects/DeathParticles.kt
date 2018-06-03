@@ -11,15 +11,12 @@ import net.minecraft.util.EnumFacing
 import net.minecraft.world.World
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
-
-import java.util.ArrayDeque
-import java.util.Queue
+import java.util.*
 
 
 @SideOnly(Side.CLIENT)
 class DeathParticles private constructor(world: World, xCoord: Double, yCoord: Double, zCoord: Double, redValue: Float, greenValue: Float, blueVale: Float, scale: Float) : Particle(world, xCoord, yCoord, zCoord, 0.0, 0.0, 0.0) {
 
-    private val ParticleScale: Float
     private var time: Float = 0.toFloat()
     private var particleX: Float = 0.toFloat()
     private var particleY: Float = 0.toFloat()
@@ -41,7 +38,6 @@ class DeathParticles private constructor(world: World, xCoord: Double, yCoord: D
         this.particleGreen = greenValue
         this.particleBlue = blueVale
         this.particleScale *= scale
-        this.ParticleScale = this.particleScale
         this.particleMaxAge = (8.0 / (Math.random() * 0.8 + 0.2)).toInt()
         this.particleMaxAge = (this.particleMaxAge.toFloat() * scale).toInt()
     }
@@ -64,8 +60,7 @@ class DeathParticles private constructor(world: World, xCoord: Double, yCoord: D
 
         if (particle > 1.0f) particle = 1.0f
 
-        this.particleScale = this.ParticleScale * particle
-        val scale = 0.1f * this.particleScale
+        val scale = 0.1f * this.particleScale * particle
         val xPos = (this.prevPosX + (this.posX - this.prevPosX) * time.toDouble() - Particle.interpPosX).toFloat()
         val yPos = (this.prevPosY + (this.posY - this.prevPosY) * time.toDouble() - Particle.interpPosY).toFloat()
         val zPos = (this.prevPosZ + (this.posZ - this.prevPosZ) * time.toDouble() - Particle.interpPosZ).toFloat()

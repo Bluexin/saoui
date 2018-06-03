@@ -16,6 +16,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 /**
@@ -84,7 +85,7 @@ public class FriendsHandler {
             for (final String name : names)
                 if (!friendRequests.contains(new FriendRequest(name, 10000)) && !isFriend(name)) {
                     friendRequests.add(new FriendRequest(name, 10000));
-                    Communicator.INSTANCE.send(CommandType.ADD_FRIEND_REQUEST, StaticPlayerHelper.INSTANCE.findOnlinePlayer(mc, name));
+                    Communicator.INSTANCE.send(CommandType.ADD_FRIEND_REQUEST, Objects.requireNonNull(StaticPlayerHelper.INSTANCE.findOnlinePlayer(mc, name)));
                 }
         }
     }

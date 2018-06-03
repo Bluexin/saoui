@@ -26,7 +26,7 @@ import java.util.Map;
 public class SaouiNtw {
 
     @SidedProxy(clientSide = "be.bluexin.saouintw.proxy.ClientProxy", serverSide = "be.bluexin.saouintw.proxy.CommonProxy")
-    public static CommonProxy proxy; // Yeah I know people don' like hardcoded stuff. I don't care.
+    public static CommonProxy proxy;
 
     private static void initPackets() {
         PacketPipeline.INSTANCE.registerMessage(ReceiveCommand.class, ReceiveCommand.Handler.class);

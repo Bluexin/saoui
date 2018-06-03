@@ -78,7 +78,6 @@ public class SkillList {
     }
 
     public void hitInSkillRing(int index, Minecraft mc, GuiInventory parent, Actions action) {
-        ISkill s = SkillList.instance().stream().filter(ISkill::shouldShowInRing).skip(index).findFirst().orElse(null);
-        if (s != null) s.activate(mc, parent, action);
+        SkillList.instance().stream().filter(ISkill::shouldShowInRing).skip(index).findFirst().ifPresent(s -> s.activate(mc, parent, action));
     }
 }

@@ -14,6 +14,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import java.util.function.BiConsumer;
 import java.util.function.BooleanSupplier;
 
+@SuppressWarnings("unused") // TODO: Use this class again
 @SideOnly(Side.CLIENT)
 public enum DefaultSkills implements ISkill {
     SPRINTING(IconCore.SPRINTING, EventHandler.INSTANCE::getIS_SPRINTING, (mc, parent) -> EventHandler.INSTANCE.setIS_SPRINTING(!EventHandler.INSTANCE.getIS_SPRINTING())),

@@ -11,13 +11,13 @@ import net.minecraft.util.SoundCategory
 
 object SoundCore {
 
-    val CONFIRM = "sao.confirm"
-    val DIALOG_CLOSE = "sao.dialog.close"
-    val MENU_POPUP = "sao.menu.popup"
-    val MESSAGE = "sao.message"
-    val ORB_DROPDOWN = "sao.orb.dropdown"
-    val PARTICLES_DEATH = "sao.particles.death"
-    val LOW_HEALTH = "sao.low.health"
+    const val CONFIRM = "sao.confirm"
+    const val DIALOG_CLOSE = "sao.dialog.close"
+    const val MENU_POPUP = "sao.menu.popup"
+    const val MESSAGE = "sao.message"
+    const val ORB_DROPDOWN = "sao.orb.dropdown"
+    const val PARTICLES_DEATH = "sao.particles.death"
+    const val LOW_HEALTH = "sao.low.health"
 
     private fun getResource(name: String): ResourceLocation {
         return ResourceLocation(SAOCore.MODID, name)

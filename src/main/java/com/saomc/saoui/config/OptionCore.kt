@@ -39,7 +39,7 @@ enum class OptionCore(
     DEFAULT_DEBUG(I18n.format("optionDefaultDebug"), false, false, UI, false),
     FORCE_HUD(I18n.format("optionForceHud"), true, false, UI, false),
     LOGOUT(I18n.format("optionLogout"), false, false, UI, false),
-    GUI_PAUSE(I18n.format("optionGuiPause"), true, false, UI, false),
+    GUI_PAUSE(I18n.format("optionGuiPause"), false, false, UI, false),
     // Themes
     @Deprecated("") // TODO: way to load other xml-defined themes
     VANILLA_UI(I18n.format("optionDefaultUI"), false, false, THEME, true),

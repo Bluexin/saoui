@@ -4,13 +4,11 @@ import com.saomc.saoui.SoundCore
 import com.saomc.saoui.config.OptionCore
 import com.saomc.saoui.neo.screens.NeoGui
 import com.saomc.saoui.neo.screens.NeoIngameMenu
-import com.saomc.saoui.neo.screens.old.IngameMenuGUI
 import com.saomc.saoui.renders.StaticRenderer
 import com.saomc.saoui.screens.ingame.IngameGUI
 import com.saomc.saoui.screens.menu.StartupGUI
 import net.minecraft.client.gui.GuiIngameMenu
 import net.minecraft.client.gui.GuiMainMenu
-import net.minecraft.client.gui.GuiOptions
 import net.minecraft.client.gui.inventory.GuiContainerCreative
 import net.minecraft.client.gui.inventory.GuiInventory
 import net.minecraft.entity.EntityLivingBase
@@ -55,19 +53,16 @@ internal object RenderHandler {
 
     fun guiInstance(e: GuiOpenEvent) {
         if (!OptionCore.BUGGY_MENU.isEnabled) return
-        if (OptionCore.DEBUG_MODE.isEnabled) print(e.gui.toString() + " called GuiOpenEvent \n")
+        print("${e.gui} called GuiOpenEvent \n")
 
         if (e.gui is GuiIngameMenu) {
             if (OptionCore.NEO_MENU.isEnabled) {
-                if (EventCore.mc.currentScreen !is NeoGui) e.gui = NeoIngameMenu()
-            } else {
-                if (EventCore.mc.currentScreen !is IngameMenuGUI) e.gui = IngameMenuGUI()
+                if (EventCore.mc.currentScreen !is NeoGui<*>) e.gui = NeoIngameMenu()
             }
         }
         if (e.gui is GuiInventory && !OptionCore.DEFAULT_INVENTORY.isEnabled) {
             when {
                 EventCore.mc.playerController.isInCreativeMode -> e.gui = GuiContainerCreative(EventCore.mc.player)
-                EventCore.mc.currentScreen !is IngameMenuGUI -> e.gui = IngameMenuGUI(/*(GuiInventory) EventCore.mc.currentScreen*/)
                 else -> e.isCanceled = true
             }
         }
@@ -76,13 +71,6 @@ internal object RenderHandler {
                 e.setGui(new DeathScreen());
             }
         }*/
-        if (e.gui is IngameMenuGUI)
-            if (EventCore.mc.currentScreen is GuiOptions) {
-                e.isCanceled = true
-                EventCore.mc.currentScreen!!.onGuiClosed()
-                EventCore.mc.setIngameFocus()
-            }
-
     }
 
     fun deathCheck() {

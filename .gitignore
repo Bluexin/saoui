@@ -30,3 +30,4 @@ run
 *.ipr
 *.iws
 /classes/
+/tmp/

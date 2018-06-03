@@ -1,9 +1,8 @@
 package com.saomc.saoui.util
 
 import com.saomc.saoui.GLCore
+import com.saomc.saoui.SAOCore
 import com.saomc.saoui.api.screens.IIcon
-import com.saomc.saoui.config.OptionCore
-import com.saomc.saoui.resources.StringNames
 import net.minecraft.util.ResourceLocation
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
@@ -40,35 +39,21 @@ enum class IconCore : IIcon {
     SPRINTING,
     SNEAKING;
 
-    private val srcX: Int
-        get() = index() % 16 * SRC_SIZE
-
-    private val srcY: Int
-        get() = index() / 16 * SRC_SIZE
-
-    private fun index(): Int {
-        return ordinal - 1
-    }
-
     override fun glDraw(x: Int, y: Int) {
-        if (index() >= 0) {
-            GLCore.glColor(1f, 1f, 1f, 1f)
-            GLCore.glBlend(true)
-            GLCore.glBindTexture(if (OptionCore.SAO_UI.isEnabled) StringNames.icons else StringNames.iconsCustom)
-            GLCore.glTexturedRect(x.toDouble(), y.toDouble(), srcX.toDouble(), srcY.toDouble(), SRC_SIZE.toDouble(), SRC_SIZE.toDouble())
-            GLCore.glBlend(false)
-        }
+        GLCore.glColor(1f, 1f, 1f, 1f)
+        GLCore.glBlend(true)
+        GLCore.glBindTexture(rl)
+        GLCore.glTexturedRect(x.toDouble(), y.toDouble(), 16.0, 16.0, 0.0, 0.0, 256.0, 256.0)
+        GLCore.glBlend(false)
     }
 
     override fun glDrawUnsafe(x: Int, y: Int) {
-        GLCore.glTexturedRect(x.toDouble(), y.toDouble(), srcX.toDouble(), srcY.toDouble(), SRC_SIZE.toDouble(), SRC_SIZE.toDouble())
-    }
-
-    companion object {
-        private val SRC_SIZE = 16
+        GLCore.glTexturedRect(x.toDouble(), y.toDouble(), 16.0, 16.0, 0.0, 0.0, 256.0, 256.0)
     }
 
     override fun getRL(): ResourceLocation? {
-        return if (OptionCore.SAO_UI.isEnabled) StringNames.icons else StringNames.iconsCustom
+        return rl
     }
+
+    private val rl by lazy { ResourceLocation(SAOCore.MODID, "textures/menu/icons/${name.toLowerCase()}.png") }
 }

@@ -18,7 +18,7 @@ import javax.xml.bind.annotation.XmlSeeAlso
 abstract class Element {
 
     companion object {
-        val DEFAULT_NAME = "anonymous"
+        const val DEFAULT_NAME = "anonymous"
     }
 
     /**
@@ -44,7 +44,8 @@ abstract class Element {
     /**
      * Parent element for this element.
      */
-    @Transient lateinit protected var parent: WeakReference<ElementParent>
+    @Transient
+    protected lateinit var parent: WeakReference<ElementParent>
 
     /**
      * Friendly name for this element. Mostly used for debug purposes.

@@ -310,7 +310,7 @@
                         <w cache="STATIC">1.0</w>
                     </glRectangle>
                     <elementGroup>
-                        <enabled>false</enabled>
+                        <enabled cache="STATIC">false</enabled>
                         <!--<enabled>isEnabled(CROSS_HAIR)</enabled>-->
                         <children>
                             <glRectangle name="v">

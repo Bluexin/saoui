@@ -2,6 +2,7 @@ package com.saomc.saoui.api.elements.neo
 
 import com.saomc.saoui.api.screens.IIcon
 import com.saomc.saoui.config.OptionCore
+import com.saomc.saoui.neo.screens.NeoGuiDsl
 import com.saomc.saoui.neo.screens.unaryPlus
 import com.saomc.saoui.util.IconCore
 import com.teamwizardry.librarianlib.features.animator.Easing
@@ -46,9 +47,6 @@ class NeoCategoryButton(private val delegate: NeoIconElement, parent: INeoParent
     override fun contains(pos: Vec2d): Boolean {
         return delegate.contains(pos)
     }
-/*override fun move(delta: Vec2d) {
-        delegate.move(delta)
-    }*/
 
     override var pos: Vec2d
         get() = delegate.pos
@@ -64,8 +62,6 @@ class NeoCategoryButton(private val delegate: NeoIconElement, parent: INeoParent
 
     fun open() {
         selected = true
-
-        (parent as? NeoParent)?.elementsSequence?.mapNotNull { it as? NeoCategoryButton }?.filter { it.selected && it !== this }?.forEach(NeoCategoryButton::close)
 
         openAnim = IndexedScheduledCounter(3f, maxIdx = elements.size - 1) {
             if (selected) elements[it].show()
@@ -155,8 +151,11 @@ class NeoCategoryButton(private val delegate: NeoIconElement, parent: INeoParent
         delegate.show()
     }
 
+    @NeoGuiDsl
     fun category(icon: IIcon, label: String, body: (NeoCategoryButton.() -> Unit)? = null): NeoCategoryButton {
-        return NeoCategoryButton(NeoIconLabelElement(icon, label), this, body)
+        val cat = NeoCategoryButton(NeoIconLabelElement(icon, label), this, body)
+        +cat
+        return cat
     }
 
     fun init() {

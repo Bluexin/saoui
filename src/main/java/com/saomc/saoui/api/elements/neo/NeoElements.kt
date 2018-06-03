@@ -3,7 +3,6 @@ package com.saomc.saoui.api.elements.neo
 import com.saomc.saoui.neo.screens.NeoGui
 import com.saomc.saoui.neo.screens.unaryPlus
 import com.teamwizardry.librarianlib.features.animator.Easing
-import com.teamwizardry.librarianlib.features.helpers.vec
 import com.teamwizardry.librarianlib.features.kotlin.plus
 import com.teamwizardry.librarianlib.features.math.BoundingBox2D
 import com.teamwizardry.librarianlib.features.math.Vec2d
@@ -15,17 +14,16 @@ import java.util.*
  * @author Bluexin
  */
 interface INeoParent {
-    val parent: INeoParent?
+    var parent: INeoParent?
         get() = null
+        set(value) {}
 
     val tlParent: INeoParent
         get() = parent?.tlParent ?: this
 
     fun move(delta: Vec2d) {
-        println("Initial destination: $destination. Delta: $delta")
         NeoGui.animator.removeAnimationsFor(this)
         destination += delta
-        println("Moving from $pos to $destination")
         +basicAnimation(this, "pos") {
             to = destination
             duration = 10f
@@ -79,7 +77,7 @@ abstract class NeoParent : NeoElement {
         this@NeoParent += this
     }
 
-    override operator fun contains(pos: Vec2d) = super.contains(pos) ||
+    override operator fun contains(pos: Vec2d) = super.contains(pos) /*||
             with(pos + vec(childrenXOffset, childrenYOffset)) {
                 var npos = this
                 elementsSequence.filter(NeoElement::visible).any {
@@ -87,7 +85,7 @@ abstract class NeoParent : NeoElement {
                     npos += vec(childrenXSeparator, childrenYSeparator)
                     r
                 }
-            }
+            }*/
 
     open val childrenXOffset = 0
     open val childrenYOffset = 0

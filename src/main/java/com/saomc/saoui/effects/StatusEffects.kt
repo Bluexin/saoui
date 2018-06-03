@@ -1,16 +1,14 @@
 package com.saomc.saoui.effects
 
 import com.saomc.saoui.GLCore
-import com.saomc.saoui.resources.StringNames
-import com.saomc.saoui.config.OptionCore
+import com.saomc.saoui.SAOCore
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.init.MobEffects
+import net.minecraft.util.ResourceLocation
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
-
-import java.util.ArrayList
-import java.util.Objects
+import java.util.*
 
 @SideOnly(Side.CLIENT)
 enum class StatusEffects {
@@ -42,75 +40,66 @@ enum class StatusEffects {
     REGEN,
     RESIST;
 
-    private val srcX: Int
-        get() = SRC_X + ordinal % 14 * SRC_WIDTH
+    val resource by lazy { ResourceLocation(SAOCore.MODID, "textures/hud/status_icons/${name.toLowerCase()}.png") }
 
-    private val srcY: Int
-        get() = SRC_Y + ordinal / 14 * SRC_HEIGHT
-
+    @Suppress("unused")
     fun glDraw(x: Int, y: Int, z: Float) {
-        GLCore.glBindTexture(if (OptionCore.SAO_UI.isEnabled) StringNames.effects else StringNames.effectsCustom)
-        GLCore.glTexturedRect(x.toDouble(), y.toDouble(), z.toDouble(), srcX.toDouble(), srcY.toDouble(), SRC_WIDTH.toDouble(), SRC_HEIGHT.toDouble())
+        GLCore.glBindTexture(resource)
+        GLCore.glTexturedRect(x.toDouble(), y.toDouble(), z.toDouble(), 16.0, 16.0, 0.0, 0.0, 256.0, 256.0)
     }
 
+    @Suppress("unused")
     fun glDraw(x: Int, y: Int) {
-        GLCore.glBindTexture(if (OptionCore.SAO_UI.isEnabled) StringNames.effects else StringNames.effectsCustom)
-        GLCore.glTexturedRect(x.toDouble(), y.toDouble(), srcX.toDouble(), srcY.toDouble(), SRC_WIDTH.toDouble(), SRC_HEIGHT.toDouble())
+        GLCore.glBindTexture(resource)
+        GLCore.glTexturedRect(x.toDouble(), y.toDouble(), 16.0, 16.0, 0.0, 0.0, 256.0, 256.0)
     }
 
     companion object {
-
-        private val SRC_X = 0
-        private val SRC_Y = 135
-        private val SRC_WIDTH = 15
-        private val SRC_HEIGHT = 10
-
         fun getEffects(entity: EntityLivingBase): List<StatusEffects> {
-            val effects = ArrayList<StatusEffects>()
+            val effects = LinkedList<StatusEffects>()
 
-            entity.activePotionEffects.filter{ Objects.nonNull(it) }.forEach { potionEffect0 ->
-
-                if (potionEffect0.potion === MobEffects.SLOWNESS && potionEffect0.amplifier > 5)
+            entity.activePotionEffects.filterNotNull().forEach {
+                if (it.potion === MobEffects.SLOWNESS && it.amplifier > 5)
                     effects.add(PARALYZED)
-                else if (potionEffect0.potion === MobEffects.POISON)
+                else if (it.potion === MobEffects.POISON)
                     effects.add(POISONED)
-                else if (potionEffect0.potion === MobEffects.HUNGER)
+                else if (it.potion === MobEffects.HUNGER)
                     effects.add(ROTTEN)
-                else if (potionEffect0.potion === MobEffects.NAUSEA)
+                else if (it.potion === MobEffects.NAUSEA)
                     effects.add(ILL)
-                else if (potionEffect0.potion === MobEffects.WEAKNESS)
+                else if (it.potion === MobEffects.WEAKNESS)
                     effects.add(WEAK)
-                else if (potionEffect0.potion === MobEffects.WITHER)
+                else if (it.potion === MobEffects.WITHER)
                     effects.add(CURSED)
-                else if (potionEffect0.potion === MobEffects.BLINDNESS)
+                else if (it.potion === MobEffects.BLINDNESS)
                     effects.add(BLIND)
-                else if (potionEffect0.potion === MobEffects.SATURATION)
+                else if (it.potion === MobEffects.SATURATION)
                     effects.add(SATURATION)
-                else if (potionEffect0.potion === MobEffects.SPEED)
+                else if (it.potion === MobEffects.SPEED)
                     effects.add(SPEED_BOOST)
-                else if (potionEffect0.potion === MobEffects.WATER_BREATHING)
+                else if (it.potion === MobEffects.WATER_BREATHING)
                     effects.add(WATER_BREATH)
-                else if (potionEffect0.potion === MobEffects.STRENGTH)
+                else if (it.potion === MobEffects.STRENGTH)
                     effects.add(STRENGTH)
-                else if (potionEffect0.potion === MobEffects.ABSORPTION)
+                else if (it.potion === MobEffects.ABSORPTION)
                     effects.add(ABSORPTION)
-                else if (potionEffect0.potion === MobEffects.FIRE_RESISTANCE)
+                else if (it.potion === MobEffects.FIRE_RESISTANCE)
                     effects.add(FIRE_RES)
-                else if (potionEffect0.potion === MobEffects.HASTE)
+                else if (it.potion === MobEffects.HASTE)
                     effects.add(HASTE)
-                else if (potionEffect0.potion === MobEffects.HEALTH_BOOST)
+                else if (it.potion === MobEffects.HEALTH_BOOST)
                     effects.add(HEALTH_BOOST)
-                else if (potionEffect0.potion === MobEffects.INSTANT_HEALTH)
+                else if (it.potion === MobEffects.INSTANT_HEALTH)
                     effects.add(INST_HEALTH)
-                else if (potionEffect0.potion === MobEffects.INVISIBILITY)
+                else if (it.potion === MobEffects.INVISIBILITY)
                     effects.add(INVISIBILITY)
-                else if (potionEffect0.potion === MobEffects.JUMP_BOOST)
+                else if (it.potion === MobEffects.JUMP_BOOST)
                     effects.add(JUMP_BOOST)
-                else if (potionEffect0.potion === MobEffects.NIGHT_VISION)
+                else if (it.potion === MobEffects.NIGHT_VISION)
                     effects.add(NIGHT_VISION)
-                else if (potionEffect0.potion === MobEffects.REGENERATION)
+                else if (it.potion === MobEffects.REGENERATION)
                     effects.add(REGEN)
-                else if (potionEffect0.potion === MobEffects.RESISTANCE) effects.add(RESIST)
+                else if (it.potion === MobEffects.RESISTANCE) effects.add(RESIST)
             }
 
             if (entity is EntityPlayer) {

@@ -3,6 +3,7 @@ package com.saomc.saoui
 import com.saomc.saoui.api.events.EventInitStatsProvider
 import com.saomc.saoui.config.ConfigHandler
 import com.saomc.saoui.events.EventCore
+import com.saomc.saoui.neo.screens.NeoGui
 import com.saomc.saoui.themes.ThemeLoader
 import com.saomc.saoui.util.DefaultStatsProvider
 import com.saomc.saoui.util.PlayerStats
@@ -53,6 +54,7 @@ object SAOCore {
         val s = EventInitStatsProvider(DefaultStatsProvider())
         MinecraftForge.EVENT_BUS.post(s)
         PlayerStats.init(s.implementation)
+        NeoGui.animator // Let's force things to init early
     }
 
 }

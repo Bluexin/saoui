@@ -11,6 +11,7 @@ import net.minecraft.client.resources.I18n
 import net.minecraft.inventory.IInventory
 import net.minecraft.item.ItemStack
 
+@NeoGuiDsl
 fun NeoCategoryButton.itemList(inventory: IInventory, filter: (iss: ItemStack) -> Boolean) {
     inventory.asSequence().filter(filter).forEach {
         +ItemStackElement(it, vec(0, 0)) // TODO: pack similar stacks together

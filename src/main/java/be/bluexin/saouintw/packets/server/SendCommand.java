@@ -12,6 +12,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Stream;
 
@@ -55,7 +56,7 @@ public class SendCommand implements IMessage {
         @Nullable
         @Override
         public IMessage handleServerPacket(EntityPlayer player, SendCommand message, MessageContext ctx, IThreadListener iThreadListener) {
-            PacketPipeline.INSTANCE.sendTo(new ReceiveCommand(message.cmd, player, message.args), (EntityPlayerMP) player.world.getPlayerEntityByUUID(message.target));
+            PacketPipeline.INSTANCE.sendTo(new ReceiveCommand(message.cmd, player, message.args), (EntityPlayerMP) Objects.requireNonNull(player.world.getPlayerEntityByUUID(message.target)));
             return null;
         }
     }

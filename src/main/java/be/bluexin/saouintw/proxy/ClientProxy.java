@@ -9,6 +9,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
  *
  * @author Bluexin
  */
+@SuppressWarnings("unused")
 public class ClientProxy extends CommonProxy {
 
     @Override

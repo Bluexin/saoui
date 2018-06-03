@@ -12,7 +12,6 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -157,7 +156,7 @@ public class HudDrawContext implements IHudDrawContext {
 
     @Override
     public boolean offhandEmpty(int slot) {
-        return player.inventory.offHandInventory.get(0) == ItemStack.EMPTY;
+        return player.inventory.offHandInventory.get(0).isEmpty();
     }
 
     @Override

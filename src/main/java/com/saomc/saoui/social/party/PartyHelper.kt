@@ -3,7 +3,6 @@ package com.saomc.saoui.social.party
 import be.bluexin.saomclib.party.IParty
 import be.bluexin.saouintw.communication.CommandType
 import be.bluexin.saouintw.communication.Communicator
-import com.saomc.saoui.screens.menu.Categories
 import com.saomc.saoui.social.StaticPlayerHelper
 import net.minecraft.client.Minecraft
 import net.minecraft.client.resources.I18n
@@ -144,10 +143,6 @@ class PartyHelper private constructor(private val party: IParty) {
 
     fun hasParty(): Boolean {
         return party.isParty
-    }
-
-    fun shouldHighlight(id: Categories): Boolean {
-        return if (id == Categories.DISSOLVE) hasParty() else id == Categories.INVITE_LIST && (!hasParty() || isLeader(StaticPlayerHelper.getName(Minecraft.getMinecraft())))
     }
 
     fun clean() {

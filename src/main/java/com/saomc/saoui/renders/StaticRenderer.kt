@@ -23,11 +23,11 @@ import org.lwjgl.opengl.GL11
 @SideOnly(Side.CLIENT)
 object StaticRenderer { // TODO: add usage of scale, offset etc from capability
 
-    private val HEALTH_COUNT = 32
-    private val HEALTH_ANGLE = 0.35
-    private val HEALTH_RANGE = 0.975
-    private val HEALTH_OFFSET = 0.75f
-    private val HEALTH_HEIGHT = 0.21
+    private const val HEALTH_COUNT = 32
+    private const val HEALTH_ANGLE = 0.35
+    private const val HEALTH_RANGE = 0.975
+    private const val HEALTH_OFFSET = 0.75f
+    private const val HEALTH_HEIGHT = 0.21
 
     fun render(renderManager: RenderManager, living: EntityLivingBase, x: Double, y: Double, z: Double) {
         val mc = Minecraft.getMinecraft()
@@ -147,10 +147,10 @@ object StaticRenderer { // TODO: add usage of scale, offset etc from capability
             val y0 = y + sizeMult * living.height * HEALTH_OFFSET
             val z0 = z + sizeMult.toDouble() * living.width.toDouble() * HEALTH_RANGE * Math.sin(rad)
 
-            val uv_value = value - (HEALTH_COUNT - hitPoints).toDouble() / HEALTH_COUNT
+            val uv = value - (HEALTH_COUNT - hitPoints).toDouble() / HEALTH_COUNT
 
-            GLCore.addVertex(x0, y0 + HEALTH_HEIGHT, z0, 1.0 - uv_value, 0.0)
-            GLCore.addVertex(x0, y0, z0, 1.0 - uv_value, 0.125)
+            GLCore.addVertex(x0, y0 + HEALTH_HEIGHT, z0, 1.0 - uv, 0.0)
+            GLCore.addVertex(x0, y0, z0, 1.0 - uv, 0.125)
         }
 
         GLCore.draw()

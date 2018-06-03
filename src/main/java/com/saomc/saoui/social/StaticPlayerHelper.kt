@@ -15,7 +15,7 @@ import java.util.*
  * @author Bluexin
  */
 object StaticPlayerHelper {
-    private val HEALTH_ANIMATION_FACTOR = 0.075f
+    private const val HEALTH_ANIMATION_FACTOR = 0.075f
     private val HEALTH_FRAME_FACTOR = HEALTH_ANIMATION_FACTOR * HEALTH_ANIMATION_FACTOR * 0x40f * 0x64f
     private val healthSmooth = HashMap<UUID, Float>()
     private val hungerSmooth = HashMap<UUID, Float>()
@@ -80,7 +80,7 @@ object StaticPlayerHelper {
                 var healthValue: Float = healthSmooth[uuid]!!
                 if (healthValue > healthReal) {
                     healthValue = healthReal
-                    healthSmooth.put(uuid, healthReal)
+                    healthSmooth[uuid] = healthReal
                 }
 
                 if (healthReal <= 0 && entity is EntityLivingBase) {
@@ -94,10 +94,10 @@ object StaticPlayerHelper {
                 else
                     healthValue = healthReal
 
-                healthSmooth.put(uuid, healthValue)
+                healthSmooth[uuid] = healthValue
                 return Math.max(0.0f, healthValue)
             } else {
-                healthSmooth.put(uuid, healthReal)
+                healthSmooth[uuid] = healthReal
                 return Math.max(0.0f, healthReal)
             }
         } else
@@ -124,7 +124,7 @@ object StaticPlayerHelper {
                 var hungerValue: Float = hungerSmooth[uuid]!!
                 if (hungerValue > hungerReal) {
                     hungerValue = hungerReal
-                    hungerSmooth.put(uuid, hungerReal)
+                    hungerSmooth[uuid] = hungerReal
                 }
 
                 when {
@@ -138,10 +138,10 @@ object StaticPlayerHelper {
                     else -> hungerValue = hungerReal
                 }
 
-                hungerSmooth.put(uuid, hungerValue)
+                hungerSmooth[uuid] = hungerValue
                 return hungerValue
             } else {
-                hungerSmooth.put(uuid, hungerReal)
+                hungerSmooth[uuid] = hungerReal
                 return hungerReal
             }
         } else return entity.foodStats.foodLevel.toFloat()

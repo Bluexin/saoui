@@ -5,7 +5,6 @@ import be.bluexin.saomclib.profile
 import com.saomc.saoui.GLCore
 import com.saomc.saoui.config.ConfigHandler
 import com.saomc.saoui.config.OptionCore
-import com.saomc.saoui.neo.screens.old.ScreenGUI
 import com.saomc.saoui.social.StaticPlayerHelper
 import com.saomc.saoui.themes.ThemeLoader
 import com.saomc.saoui.themes.elements.HudPartType
@@ -75,7 +74,6 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
 
     override fun renderCrosshairs(partialTicks: Float) {
         /*if (*/pre(CROSSHAIRS)/*) return*/
-        if (mc.currentScreen is ScreenGUI) return
         if (OptionCore.CROSS_HAIR.isEnabled) {
             if (OptionCore.VANILLA_UI.isEnabled)
                 super.renderCrosshairs(partialTicks)
@@ -126,11 +124,15 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
 
     override fun renderPotionEffects(resolution: ScaledResolution) {
         if (OptionCore.VANILLA_UI.isEnabled) super.renderPotionEffects(resolution)
-        // todo: move effects to here?
+        else {
+            mc.profile("effects") {
+                ThemeLoader.HUD.draw(HudPartType.EFFECTS, context)
+            }
+        }
     }
 
     override fun renderPotionIcons(resolution: ScaledResolution) {
-        /*if (*/pre(POTION_ICONS)/*) return*/
+        if (pre(POTION_ICONS)) return
         this.renderPotionEffects(resolution)
         post(POTION_ICONS)
     }
@@ -171,8 +173,7 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
         if (OptionCore.VANILLA_UI.isEnabled) {
             GLCore.glBindTexture(Gui.ICONS)
             super.renderFood(width, height)
-        }
-        else {
+        } else {
             /*if (*/replaceEvent(FOOD)/*) return*/
             GLCore.glAlphaTest(true)
             GLCore.glBlend(true)

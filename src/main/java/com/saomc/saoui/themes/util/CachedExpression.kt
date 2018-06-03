@@ -30,9 +30,9 @@ class FrameCachedExpression<T>(expression: CompiledExpressionWrapper<T>) : Cache
 }
 
 class StaticCachedExpression<out T>(expression: CompiledExpressionWrapper<T>) : CachedExpression<T>(expression) {
-    override val cache: T by lazy { expression.invoke(stub) }
+    override val cache: T by lazy { expression.invoke(StubContext) }
 
-    object stub : IHudDrawContext {
+    companion object StubContext : IHudDrawContext {
         override fun ptHealthStep(index: Int) = HealthStep.CREATIVE
         override fun ptName(index: Int) = ""
         override fun ptHp(index: Int) = 0f
