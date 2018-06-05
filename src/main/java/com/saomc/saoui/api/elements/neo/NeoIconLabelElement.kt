@@ -2,10 +2,9 @@ package com.saomc.saoui.api.elements.neo
 
 import com.saomc.saoui.GLCore
 import com.saomc.saoui.api.screens.IIcon
-import com.saomc.saoui.neo.screens.NeoGui
+import com.saomc.saoui.neo.screens.unaryPlus
 import com.saomc.saoui.resources.StringNames
 import com.saomc.saoui.util.ColorUtil
-import com.teamwizardry.librarianlib.features.animator.animations.BasicAnimation
 import com.teamwizardry.librarianlib.features.helpers.vec
 import com.teamwizardry.librarianlib.features.kotlin.plus
 import com.teamwizardry.librarianlib.features.math.BoundingBox2D
@@ -22,7 +21,9 @@ open class NeoIconLabelElement(icon: IIcon, open val label: String = "", var wid
     override val boundingBox get() = BoundingBox2D(pos, pos + vec(width, height))
 
     override fun draw(mouse: Vec2d, partialTicks: Float) { // TODO: scrolling if too many elements
+        if (opacity < 0.03 || scale == Vec2d.ZERO) return
         GlStateManager.pushMatrix()
+        if (scale != Vec2d.ONE) GLCore.glScalef(scale.xf, scale.yf, 1f)
         GLCore.glColorRGBA(ColorUtil.multiplyAlpha(getColor(mouse), opacity))
         GLCore.glBindTexture(StringNames.slot)
         GLCore.glTexturedRect(pos, width.toDouble(), height.toDouble(), 0.0, 40.0, 84.0, 18.0)
@@ -44,10 +45,11 @@ open class NeoIconLabelElement(icon: IIcon, open val label: String = "", var wid
             super.visible = value
             if (value) {
                 opacity = 0f
-                val appear = BasicAnimation(this, "opacity")
-                appear.to = 1f
-                appear.duration = 4f
-                NeoGui.animator.add(appear)
+                +basicAnimation(this, "opacity") {
+                    from = 0f
+                    to = 1f
+                    duration = 4f
+                }
             }
         }
 }

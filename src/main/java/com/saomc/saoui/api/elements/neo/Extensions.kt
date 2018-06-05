@@ -36,7 +36,6 @@ class NeoCategoryButton(private val delegate: NeoIconElement, parent: INeoParent
             +basicAnimation(this, "pos") {
                 duration = 10f
                 from = Vec2d.ZERO
-                repeatCount = 1
                 easing = Easing.easeInOutQuint
             }
         }
@@ -133,6 +132,11 @@ class NeoCategoryButton(private val delegate: NeoIconElement, parent: INeoParent
         get() = delegate.opacity
         set(value) {
             delegate.opacity = value
+        }
+    override var scale: Vec2d
+        get() = delegate.scale
+        set(value) {
+            delegate.scale = value
         }
 
     override fun onClick(body: (Vec2d) -> Boolean) {

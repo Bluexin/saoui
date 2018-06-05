@@ -46,7 +46,9 @@ open class NeoIconElement(val icon: IIcon, override var pos: Vec2d = Vec2d.ZERO,
     }
 
     override fun draw(mouse: Vec2d, partialTicks: Float) { // TODO: scrolling if too many elements
+        if (opacity < 0.03 || scale == Vec2d.ZERO) return
         GlStateManager.pushMatrix()
+        if (scale != Vec2d.ONE) GLCore.glScalef(scale.xf, scale.yf, 1f)
         GLCore.glColorRGBA(ColorUtil.multiplyAlpha(getColor(mouse), opacity))
         GLCore.glBindTexture(StringNames.gui)
         GLCore.glTexturedRect(pos, 1.0, 26.0, 19.0, 19.0)
@@ -142,6 +144,8 @@ open class NeoIconElement(val icon: IIcon, override var pos: Vec2d = Vec2d.ZERO,
     override var disabled = false
 
     override var opacity = 1f
+
+    override var scale = Vec2d.ONE
 
     override fun hide() {
         visible = false

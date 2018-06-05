@@ -27,7 +27,6 @@ interface INeoParent {
         +basicAnimation(this, "pos") {
             to = destination
             duration = 10f
-            repeatCount = 1
             easing = Easing.easeInOutQuint
         }
     }
@@ -57,6 +56,9 @@ interface NeoElement : INeoParent {
 
     val opacity
         get() = 1f
+
+    val scale
+        get() = Vec2d.ONE
 
     fun hide() = Unit
     fun show() = Unit

@@ -37,16 +37,7 @@ class NeoIngameMenu : NeoGui<Unit>(Vec2d.ZERO) {
             category(IconCore.SKILLS, format("sao.element.skills")) {
                 category(IconCore.SKILLS, "Test 1") {
                     category(IconCore.SKILLS, "1.1") {
-                        category(IconCore.SKILLS, "1.1.1") {
-                            onClick {
-                                selected = true
-                                openGui(PopupYesNo("Confirm", "Yes or No?")) += {
-                                    mc.player.message("Result: $it")
-                                    selected = false
-                                }
-                                true
-                            }
-                        }
+                        category(IconCore.SKILLS, "1.1.1")
                         category(IconCore.SKILLS, "1.1.2")
                         category(IconCore.SKILLS, "1.1.3")
                     }
@@ -61,21 +52,14 @@ class NeoIngameMenu : NeoGui<Unit>(Vec2d.ZERO) {
                         category(IconCore.SKILLS, "1.3.3")
                     }
                 }
-                category(IconCore.SKILLS, "2") {
-                    category(IconCore.SKILLS, "2.1") {
-                        category(IconCore.SKILLS, "2.1.1")
-                        category(IconCore.SKILLS, "2.1.2")
-                        category(IconCore.SKILLS, "2.1.3")
-                    }
-                    category(IconCore.SKILLS, "2.2") {
-                        category(IconCore.SKILLS, "2.2.1")
-                        category(IconCore.SKILLS, "2.2.2")
-                        category(IconCore.SKILLS, "2.2.3")
-                    }
-                    category(IconCore.SKILLS, "2.3") {
-                        category(IconCore.SKILLS, "2.3.1")
-                        category(IconCore.SKILLS, "2.3.2")
-                        category(IconCore.SKILLS, "2.3.3")
+                category(IconCore.SKILLS, "解散") {
+                    onClick {
+                        selected = true
+                        openGui(PopupYesNo("Disolve", "パーチイを解散しますか？")) += {
+                            mc.player.message("Result: $it")
+                            selected = false
+                        }
+                        true
                     }
                 }
                 category(IconCore.SKILLS, "3") {
