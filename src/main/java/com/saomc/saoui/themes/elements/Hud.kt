@@ -11,6 +11,8 @@ import javax.xml.bind.annotation.XmlRootElement
  */
 @XmlRootElement(namespace = "http://www.bluexin.be/com/saomc/saoui/hud-schema")
 open class Hud protected constructor(override val name: String = "MenuDefs") : ElementParent {
+    val version = "1.0"
+
     override fun getX(ctx: IHudDrawContext) = 0.0
 
     override fun getY(ctx: IHudDrawContext) = 0.0

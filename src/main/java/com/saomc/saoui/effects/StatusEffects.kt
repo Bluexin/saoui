@@ -38,20 +38,16 @@ enum class StatusEffects {
     JUMP_BOOST,
     NIGHT_VISION,
     REGEN,
-    RESIST;
+    RESIST,
+    SLOWNESS;
 
     val resource by lazy { ResourceLocation(SAOCore.MODID, "textures/hud/status_icons/${name.toLowerCase()}.png") }
 
+    @JvmOverloads
     @Suppress("unused")
-    fun glDraw(x: Int, y: Int, z: Float) {
+    fun glDraw(x: Int, y: Int, z: Float = 0f) {
         GLCore.glBindTexture(resource)
-        GLCore.glTexturedRect(x.toDouble(), y.toDouble(), z.toDouble(), 16.0, 16.0, 0.0, 0.0, 256.0, 256.0)
-    }
-
-    @Suppress("unused")
-    fun glDraw(x: Int, y: Int) {
-        GLCore.glBindTexture(resource)
-        GLCore.glTexturedRect(x.toDouble(), y.toDouble(), 16.0, 16.0, 0.0, 0.0, 256.0, 256.0)
+        GLCore.glTexturedRectV2(x.toDouble(), y.toDouble(), z.toDouble(), 16.0, 16.0, srcWidth = 64.0, srcHeight = 64.0, textureW = 64, textureH = 64)
     }
 
     companion object {
@@ -59,8 +55,8 @@ enum class StatusEffects {
             val effects = LinkedList<StatusEffects>()
 
             entity.activePotionEffects.filterNotNull().forEach {
-                if (it.potion === MobEffects.SLOWNESS && it.amplifier > 5)
-                    effects.add(PARALYZED)
+                if (it.potion === MobEffects.SLOWNESS)
+                    effects.add(if (it.amplifier > 5) PARALYZED else SLOWNESS)
                 else if (it.potion === MobEffects.POISON)
                     effects.add(POISONED)
                 else if (it.potion === MobEffects.HUNGER)
@@ -99,7 +95,8 @@ enum class StatusEffects {
                     effects.add(NIGHT_VISION)
                 else if (it.potion === MobEffects.REGENERATION)
                     effects.add(REGEN)
-                else if (it.potion === MobEffects.RESISTANCE) effects.add(RESIST)
+                else if (it.potion === MobEffects.RESISTANCE)
+                    effects.add(RESIST)
             }
 
             if (entity is EntityPlayer) {

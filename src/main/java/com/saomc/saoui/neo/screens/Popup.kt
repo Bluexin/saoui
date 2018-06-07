@@ -106,7 +106,7 @@ open class Popup<T : Any>(var title: String, var text: String, private val butto
         val step3 = max(h * 0.125 - h * 0.375 * (1 - expansion), 0.0) // * lines // TODO: handle multiline text
         val step5 = h * 0.375
 
-        if (shadows < 20.0) SAOCore.LOGGER.info("h=$h; shadows=$shadows; step3=$step3; expansion=$expansion")
+//        if (shadows < 20.0) SAOCore.LOGGER.info("h=$h; shadows=$shadows; step3=$step3; expansion=$expansion")
 
         val h = h - h * 0.375 * (1 - expansion)
 

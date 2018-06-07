@@ -1,6 +1,7 @@
 package com.saomc.saoui
 
 import com.saomc.saoui.util.ColorUtil
+import com.teamwizardry.librarianlib.features.helpers.vec
 import com.teamwizardry.librarianlib.features.math.Vec2d
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.FontRenderer
@@ -12,6 +13,7 @@ import net.minecraft.client.renderer.vertex.VertexFormat
 import net.minecraft.client.resources.IReloadableResourceManager
 import net.minecraft.util.ResourceLocation
 import net.minecraft.util.math.AxisAlignedBB
+import net.minecraft.util.math.Vec3d
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
 import org.lwjgl.opengl.GL11
@@ -102,9 +104,19 @@ object GLCore {
         glBindTexture(glTextureManager, location)
     }
 
-    fun glTexturedRect(x: Double, y: Double, z: Double, width: Double, height: Double, srcX: Double, srcY: Double, srcWidth: Double, srcHeight: Double) {
-        val f = 0.00390625f
-        val f1 = 0.00390625f
+    fun glTexturedRectV2(pos: Vec3d, size: Vec2d, srcPos: Vec2d = Vec2d.ZERO, srcSize: Vec2d = size, textureSize: Vec2d = vec(256, 256)) {
+        glTexturedRectV2(
+                x = pos.x, y = pos.y, z = pos.z,
+                width = size.x, height = size.y,
+                srcX = srcPos.x, srcY = srcPos.y,
+                srcWidth = srcSize.x, srcHeight = srcSize.y,
+                textureW = textureSize.xi, textureH = textureSize.yi
+        )
+    }
+
+    fun glTexturedRectV2(x: Double, y: Double, z: Double = 0.0, width: Double, height: Double, srcX: Double = 0.0, srcY: Double = 0.0, srcWidth: Double = width, srcHeight: Double = height, textureW: Int = 256, textureH: Int = 256) {
+        val f = 1f / textureW
+        val f1 = 1f / textureH
         val tessellator = Tessellator.getInstance()
         tessellator.buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX)
         tessellator.buffer.pos(x, y + height, z).tex((srcX.toFloat() * f).toDouble(), ((srcY + srcHeight).toFloat() * f1).toDouble()).endVertex()
@@ -115,15 +127,11 @@ object GLCore {
     }
 
     fun glTexturedRect(x: Double, y: Double, z: Double, srcX: Double, srcY: Double, width: Double, height: Double) {
-        glTexturedRect(x, y, z, width, height, srcX, srcY, width, height)
-    }
-
-    fun glTexturedRect(pos: Vec2d, z: Double, srcX: Double, srcY: Double, width: Double, height: Double) {
-        glTexturedRect(pos.x, pos.y, z, srcX, srcY, width, height)
+        glTexturedRectV2(x, y, z, width, height, srcX, srcY, width, height)
     }
 
     fun glTexturedRect(x: Double, y: Double, width: Double, height: Double, srcX: Double, srcY: Double, srcWidth: Double, srcHeight: Double) {
-        glTexturedRect(x, y, 0.0, width, height, srcX, srcY, srcWidth, srcHeight)
+        glTexturedRectV2(x, y, 0.0, width, height, srcX, srcY, srcWidth, srcHeight)
     }
 
     fun glTexturedRect(pos: Vec2d, width: Double, height: Double, srcX: Double, srcY: Double, srcWidth: Double, srcHeight: Double) {

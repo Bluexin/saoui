@@ -46,6 +46,9 @@ repositories {
 reobf {
     jar {
         extraLines += ["PK: gnu/jel saoui/shade/gnu/jel"]
+        extraLines += ["PK: com/helger saoui/shade/com/helger"]
+//        extraLines += ["PK: edu/umd saoui/shade/edu/umd"]
+        extraLines += ["PK: org/slf4j saoui/shade/org/slf4j"]
     }
 }
 
@@ -58,6 +61,7 @@ dependencies {
     compile "be.bluexin:saomc-lib:1.12.2-1.2.1.0-SNAPSHOT:deobf"
     compile "com.teamwizardry.librarianlib:librarianlib-1.12.2:4.3-SNAPSHOT:deobf"
     shade files('lib/jel-2_1_1/lib/jel.jar')
+    shade 'com.helger:ph-css:6.1.1'
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
 
@@ -115,7 +119,9 @@ artifacts {
 jar {
     for (dep in configurations.shade) {
         from(project.zipTree(dep)) {
-            exclude 'META-INF', 'META-INF/**'
+//            include '*/**.class'
+            exclude 'META-INF', 'META-INF/**', 'LICENSE*', 'changelog*', 'NOTICE*',
+                    'javax/annotation/**', 'edu/umd/cs/findbugs/annotations/**'
         }
     }
 }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <bl:hud xmlns:bl="http://www.bluexin.be/com/saomc/saoui/hud-schema">
+    <version>1.0</version>
     <parts>
         <entry>
             <key>HEALTH_BOX</key>
