@@ -23,7 +23,7 @@ object LibHelper {
     val LIB: Library by lazy {
         val staticLib = arrayOf(Math::class.java, HealthStep::class.java, OptionCore::class.java, I18n::class.java)
         val dynLib = arrayOf(IHudDrawContext::class.java, ElementParent::class.java)
-        val dotClasses = arrayOf(String::class.java, IOption::class.java, List::class.java, StatusEffects::class.java)
+        val dotClasses = arrayOf(String::class.java, IOption::class.java, List::class.java, StatusEffects::class.java, HealthStep::class.java)
         Library(staticLib, dynLib, dotClasses, null, null)
     }
 
