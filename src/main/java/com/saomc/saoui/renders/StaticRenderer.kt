@@ -73,7 +73,7 @@ object StaticRenderer { // TODO: add usage of scale, offset etc from capability
                 GLCore.tryBlendFuncSeparate(770, 771, 1, 0)
 
                 GLCore.glBindTexture(if (OptionCore.SAO_UI.isEnabled) StringNames.entities else StringNames.entitiesCustom)
-                GLCore.glColorRGBA(RenderCapability.get(entity).colorStateHandler.colorState.rgba())
+                GLCore.glColorRGBA(RenderCapability.get(entity).colorStateHandler.colorState.rgba)
                 GLCore.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX)
 
                 if (OptionCore.SPINNING_CRYSTALS.isEnabled) {

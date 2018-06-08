@@ -102,3 +102,60 @@ If Alpha is omitted, it will default to FF (opaque).
 .hp .creative {
     background-color: #B32DE3FF;
 }
+
+/*
+ * Used for passive mobs, friendly NPCs and nice players by default.
+ */
+.cursor .innocent {
+    background-color: #93F43EFF;
+}
+
+/*
+ * Used for mobs not targeting you, and harmful players by default.
+ */
+.cursor .violent {
+    background-color: #F49B00FF;
+}
+
+/*
+ * Used for mobs targeting you, and criminal players by default.
+ */
+.cursor .killer {
+    background-color: #B91111FF;
+}
+
+/*
+ * Used for bosses by default.
+ */
+.cursor .boss {
+    background-color: #BD0000FF;
+}
+
+/*
+ * Used for creative players by default.
+ */
+.cursor .creative {
+    background-color: #4CEDC5FF;
+}
+
+/*
+ * Used for GM players by default (OP mode on servers).
+ */
+.cursor .op {
+    background-color: #000000FF;
+}
+
+/*
+ * Grey.
+ * Used for errors by default.
+ */
+.cursor .invalid {
+    background-color: #8B8B8BFF;
+}
+
+/*
+ * Used for devs of the SAOUI by default.
+ */
+.cursor .gamemaster {
+    background-color: #79139EFF;
+}

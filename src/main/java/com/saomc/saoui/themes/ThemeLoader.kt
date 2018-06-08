@@ -7,6 +7,7 @@ import com.helger.css.decl.visit.CSSVisitor
 import com.helger.css.decl.visit.DefaultCSSVisitor
 import com.helger.css.reader.CSSReader
 import com.saomc.saoui.SAOCore
+import com.saomc.saoui.api.entity.rendering.ColorState
 import com.saomc.saoui.screens.ingame.HealthStep
 import com.saomc.saoui.themes.elements.Hud
 import com.saomc.saoui.util.ColorUtil
@@ -130,6 +131,30 @@ object ThemeLoader {
                             }
                             ".hp .creative" -> {
                                 if (bg != null) HealthStep.CREATIVE.rgba = bg
+                            }
+                            ".cursor .innocent" -> {
+                                if (bg != null) ColorState.INNOCENT.rgba = bg
+                            }
+                            ".cursor .violent" -> {
+                                if (bg != null) ColorState.VIOLENT.rgba = bg
+                            }
+                            ".cursor .killer" -> {
+                                if (bg != null) ColorState.KILLER.rgba = bg
+                            }
+                            ".cursor .boss" -> {
+                                if (bg != null) ColorState.BOSS.rgba = bg
+                            }
+                            ".cursor .creative" -> {
+                                if (bg != null) ColorState.CREATIVE.rgba = bg
+                            }
+                            ".cursor .op" -> {
+                                if (bg != null) ColorState.OP.rgba = bg
+                            }
+                            ".cursor .invalid" -> {
+                                if (bg != null) ColorState.INVALID.rgba = bg
+                            }
+                            ".cursor .gamemaster" -> {
+                                if (bg != null) ColorState.GAMEMASTER.rgba = bg
                             }
                         }
                     }

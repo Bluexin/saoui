@@ -53,7 +53,6 @@ internal object RenderHandler {
 
     fun guiInstance(e: GuiOpenEvent) {
         if (!OptionCore.BUGGY_MENU.isEnabled) return
-        print("${e.gui} called GuiOpenEvent \n")
 
         if (e.gui is GuiIngameMenu) {
             if (OptionCore.NEO_MENU.isEnabled) {
