@@ -39,16 +39,7 @@
                     <glRectangle name="health bar">
                         <texture>saoui:textures/guiedt.png</texture>
                         <h cache="STATIC">9.0</h>
-                        <rgba>
-                            healthStep == VERY_LOW? 0xBD0000FF:
-                            healthStep == LOW? 0xF40000FF:
-                            healthStep == VERY_DAMAGED? 0xF47800FF:
-                            healthStep == DAMAGED? 0xF4BD00FF:
-                            healthStep == OKAY? 0xEDEB38FF:
-                            healthStep == GOOD? 0x93F43EFF:
-                            healthStep == CREATIVE? 0xB32DE3FF:
-                            0xFFFFFFFF
-                        </rgba>
+                        <rgba>healthStep.rgba</rgba>
                         <srcH cache="STATIC">9.0</srcH>
                         <srcW>215.0 * hpPct</srcW>
                         <srcY cache="STATIC">188.0</srcY>
@@ -387,16 +378,7 @@
                             </elementGroup>
                             <glRectangle name="health bar">
                                 <texture>saoui:textures/guiedt.png</texture>
-                                <rgba>
-                                    ptHealthStep(i) == VERY_LOW? 0xBD0000FF:
-                                    ptHealthStep(i) == LOW? 0xF40000FF:
-                                    ptHealthStep(i) == VERY_DAMAGED? 0xF47800FF:
-                                    ptHealthStep(i) == DAMAGED? 0xF4BD00FF:
-                                    ptHealthStep(i) == OKAY? 0xEDEB38FF:
-                                    ptHealthStep(i) == GOOD? 0x93F43EFF:
-                                    ptHealthStep(i) == CREATIVE? 0xB32DE3FF:
-                                    0xFFFFFFFF
-                                </rgba>
+                                <rgba cache="NONE">ptHealthStep(i).rgba</rgba>
                                 <srcX cache="STATIC">117</srcX>
                                 <srcY cache="STATIC">197</srcY>
                                 <w cache="NONE">98.0 * ptHpPct(i) + 1</w>

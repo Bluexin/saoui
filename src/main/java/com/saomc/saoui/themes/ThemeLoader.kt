@@ -7,6 +7,7 @@ import com.helger.css.decl.visit.CSSVisitor
 import com.helger.css.decl.visit.DefaultCSSVisitor
 import com.helger.css.reader.CSSReader
 import com.saomc.saoui.SAOCore
+import com.saomc.saoui.screens.ingame.HealthStep
 import com.saomc.saoui.themes.elements.Hud
 import com.saomc.saoui.util.ColorUtil
 import net.minecraft.client.Minecraft
@@ -109,7 +110,27 @@ object ThemeLoader {
                             ".hardcore-dead" -> {
                                 if (bg != null) ColorUtil.HARDCORE_DEAD_COLOR.rgba = bg
                             }
-
+                            ".hp .very_low" -> {
+                                if (bg != null) HealthStep.VERY_LOW.rgba = bg
+                            }
+                            ".hp .low" -> {
+                                if (bg != null) HealthStep.LOW.rgba = bg
+                            }
+                            ".hp .very_damaged" -> {
+                                if (bg != null) HealthStep.VERY_DAMAGED.rgba = bg
+                            }
+                            ".hp .damaged" -> {
+                                if (bg != null) HealthStep.DAMAGED.rgba = bg
+                            }
+                            ".hp .okay" -> {
+                                if (bg != null) HealthStep.OKAY.rgba = bg
+                            }
+                            ".hp .good" -> {
+                                if (bg != null) HealthStep.GOOD.rgba = bg
+                            }
+                            ".hp .creative" -> {
+                                if (bg != null) HealthStep.CREATIVE.rgba = bg
+                            }
                         }
                     }
                 })

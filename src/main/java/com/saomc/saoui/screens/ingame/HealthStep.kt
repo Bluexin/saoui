@@ -9,7 +9,7 @@ import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
 
 @SideOnly(Side.CLIENT)
-enum class HealthStep constructor(private val limit: Float, var color: Int) { // Could be loaded from file. Currently the HPBar loads it's own colors.
+enum class HealthStep constructor(private val limit: Float, var rgba: Int) { // Could be loaded from file. Currently the HPBar loads it's own colors.
 
     VERY_LOW(0.1f, 0xBD0000FF.toInt()),
     LOW(0.2f, 0xF40000FF.toInt()),
@@ -24,7 +24,7 @@ enum class HealthStep constructor(private val limit: Float, var color: Int) { //
     }
 
     fun glColor() {
-        GLCore.glColorRGBA(color)
+        GLCore.glColorRGBA(rgba)
     }
 
     companion object {

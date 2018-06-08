@@ -63,3 +63,42 @@ If Alpha is omitted, it will default to FF (opaque).
 .hardcore-dead {
     background-color: #990000FF;
 }
+
+/* These are used for mob hp bars.
+   To use them in HUD, you can use `<rgba>healthStep.rgba</rgba>` and it will get styled accordingly.
+ */
+
+/* [0.0f, 0.1f] */
+.hp .very_low {
+    background-color: #BD0000FF;
+}
+
+/* ]0.1f, 0.2f] */
+.hp .low {
+    background-color: #F40000FF;
+}
+
+/* ]0.2f, 0.3f] */
+.hp .very_damaged {
+    background-color: #F47800FF;
+}
+
+/* ]0.3f, 0.4f] */
+.hp .damaged {
+    background-color: #F4BD00FF;
+}
+
+/* ]0.4f, 0.5f] */
+.hp .okay {
+    background-color: #EDEB38FF;
+}
+
+/* ]0.5f, 1.0f] */
+.hp .good {
+    background-color: #93F43EFF;
+}
+
+/* creative */
+.hp .creative {
+    background-color: #B32DE3FF;
+}
