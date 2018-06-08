@@ -1,8 +1,10 @@
 package com.saomc.saoui.api.elements.neo
 
+import com.saomc.saoui.neo.screens.MouseButton
 import com.saomc.saoui.neo.screens.NeoGui
 import com.saomc.saoui.neo.screens.unaryPlus
 import com.teamwizardry.librarianlib.features.animator.Easing
+import com.teamwizardry.librarianlib.features.helpers.vec
 import com.teamwizardry.librarianlib.features.kotlin.plus
 import com.teamwizardry.librarianlib.features.math.BoundingBox2D
 import com.teamwizardry.librarianlib.features.math.Vec2d
@@ -41,11 +43,21 @@ interface NeoElement : INeoParent {
 
     val boundingBox: BoundingBox2D
 
+    var idealBoundingBox
+        get() = boundingBox
+        /**
+         * The set method is used to apply changes. Not ideal but idk between this and [boundingBox]
+         */
+        set(value) {}
+
     operator fun contains(pos: Vec2d) = pos in boundingBox
 
-    fun click(pos: Vec2d) = false
+    fun click(pos: Vec2d, button: MouseButton) = false
 
     val visible
+        get() = true
+
+    val valid
         get() = true
 
     val selected
@@ -71,8 +83,26 @@ abstract class NeoParent : NeoElement {
 
     open val elementsSequence by lazy { elements.asSequence() }
 
+    open val validElementsSequence by lazy { elementsSequence.filter(NeoElement::valid) }
+
+    open val visibleElementsSequence by lazy { validElementsSequence.filter(NeoElement::visible) }
+
     open operator fun plusAssign(element: NeoElement) {
+        if (elements.isNotEmpty()) {
+            val bb1 = elements[0].idealBoundingBox
+            val bbNew = element.idealBoundingBox
+            if (bb1.widthI() >= bbNew.widthI()) {
+                element.idealBoundingBox = BoundingBox2D(bbNew.min, vec(bb1.width(), bbNew.height()))
+            } else {
+                elements.forEach {
+                    val bb = it.idealBoundingBox
+                    it.idealBoundingBox = BoundingBox2D(bb.min, vec(bbNew.width(), bb.height()))
+                }
+                element.idealBoundingBox = bbNew
+            }
+        }
         elements += element
+        element.parent = this
     }
 
     open operator fun NeoElement.unaryPlus() {

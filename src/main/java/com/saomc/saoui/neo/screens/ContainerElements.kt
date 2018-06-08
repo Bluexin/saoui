@@ -3,34 +3,55 @@ package com.saomc.saoui.neo.screens
 import com.saomc.saoui.api.elements.neo.NeoCategoryButton
 import com.saomc.saoui.api.elements.neo.NeoIconLabelElement
 import com.saomc.saoui.api.screens.IIcon
-import com.teamwizardry.librarianlib.features.helpers.vec
+import com.saomc.saoui.events.EventCore.mc
+import com.teamwizardry.librarianlib.features.kotlin.isNotEmpty
 import com.teamwizardry.librarianlib.features.math.Vec2d
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.GlStateManager
+import net.minecraft.client.renderer.RenderHelper
 import net.minecraft.client.resources.I18n
+import net.minecraft.client.util.ITooltipFlag
 import net.minecraft.inventory.IInventory
 import net.minecraft.item.ItemStack
 
 @NeoGuiDsl
-fun NeoCategoryButton.itemList(inventory: IInventory, filter: (iss: ItemStack) -> Boolean) {
-    inventory.asSequence().filter(filter).forEach {
-        +ItemStackElement(it, vec(0, 0)) // TODO: pack similar stacks together
+fun NeoCategoryButton.itemList(inventory: IInventory, filter: (iss: ItemStack) -> Boolean, vararg equippedRange: IntRange = arrayOf(-1..-1)) {
+    (0..inventory.sizeInventory).forEach {
+        +ItemStackElement(inventory, it, Vec2d.ZERO, equippedRange.any { r -> it in r }, filter)
     }
 }
 
-class ItemStackElement(private val itemStack: ItemStack, pos: Vec2d) :
-        NeoIconLabelElement(icon = ItemIcon(itemStack), pos = pos) {
+class ItemStackElement(private val inventoryIn: IInventory, private val slot: Int, pos: Vec2d, override var selected: Boolean, private val filter: (iss: ItemStack) -> Boolean) :
+        NeoIconLabelElement(icon = ItemIcon({ inventoryIn.getStackInSlot(slot) }), pos = pos) {
+
+    init {
+        onClick { _, button ->
+            if (button == MouseButton.LEFT) (tlParent as? NeoGui<*>)?.openGui(PopupYesNo(label, itemStack.getTooltip(mc.player, if (mc.gameSettings.advancedItemTooltips) ITooltipFlag.TooltipFlags.ADVANCED else ITooltipFlag.TooltipFlags.NORMAL)))
+            true
+        }
+    }
+
+    private val itemStack
+        get() = with(inventoryIn.getStackInSlot(slot)) {
+            return@with if (filter(this)) this
+            else ItemStack.EMPTY
+        }
+
+    override val valid: Boolean
+        get() = itemStack.isNotEmpty
 
     override val label: String
-        get() = I18n.format("saoui.formatItem", itemStack.displayName, itemStack.count)
+        get() = if (itemStack.isNotEmpty) {
+            if (itemStack.count > 1) I18n.format("saoui.formatItems", itemStack.displayName, itemStack.count)
+            else I18n.format("saoui.formatItem", itemStack.displayName)
+        } else I18n.format("gui.empty")
 }
 
-class ItemIcon(private val itemStack: ItemStack) : IIcon {
+class ItemIcon(private val itemStack: () -> ItemStack) : IIcon {
     private val itemRenderer by lazy { Minecraft.getMinecraft().renderItem }
-    private val fontRenderer by lazy { Minecraft.getMinecraft().fontRenderer }
 
     override fun glDraw(x: Int, y: Int) {
-        val f = itemStack.animationsToGo.toFloat()/* - partialTicks*/
+        val f = itemStack().animationsToGo.toFloat()/* - partialTicks*/
 
         if (f > 0.0f) {
             GlStateManager.pushMatrix()
@@ -40,7 +61,9 @@ class ItemIcon(private val itemStack: ItemStack) : IIcon {
             GlStateManager.translate((-(x + 8)).toFloat(), (-(y + 12)).toFloat(), 0.0f)
         }
 
-        itemRenderer.renderItemAndEffectIntoGUI(itemStack, x, y)
+        RenderHelper.enableGUIStandardItemLighting()
+        itemRenderer.renderItemAndEffectIntoGUI(itemStack(), x, y)
+        GlStateManager.disableDepth()
 
         if (f > 0.0f) GlStateManager.popMatrix()
 
@@ -59,6 +82,22 @@ fun IInventory.asSequence(): Sequence<ItemStack> {
             override fun next(): ItemStack {
                 if (!hasNext()) throw IndexOutOfBoundsException("index: $index, size: $size")
                 return this@asSequence[index++]
+            }
+        }
+    }
+}
+
+fun IInventory.asNumberedSequence(): Sequence<Pair<ItemStack, Int>> {
+    return Sequence {
+        object : Iterator<Pair<ItemStack, Int>> {
+            private var index = 0
+            private val size get() = this@asNumberedSequence.sizeInventory - 1
+
+            override fun hasNext() = index < size
+
+            override fun next(): Pair<ItemStack, Int> {
+                if (!hasNext()) throw IndexOutOfBoundsException("index: $index, size: $size")
+                return this@asNumberedSequence[index] to index++
             }
         }
     }

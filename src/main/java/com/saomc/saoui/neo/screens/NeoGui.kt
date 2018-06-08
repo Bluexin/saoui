@@ -46,7 +46,8 @@ abstract class NeoGui<T : Any>(override var pos: Vec2d, override var destination
 
     override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int) {
         val mouse = vec(mouseX, mouseY) - pos
-        subGui?.mouseClicked(mouseX, mouseY, mouseButton) ?: elements.forEach { it.click(mouse) }
+        subGui?.mouseClicked(mouseX, mouseY, mouseButton)
+                ?: elements.forEach { it.click(mouse, MouseButton.fromInt(mouseButton)) }
     }
 
     override fun doesGuiPauseGame() = OptionCore.GUI_PAUSE.isEnabled
@@ -113,6 +114,19 @@ abstract class NeoGui<T : Any>(override var pos: Vec2d, override var destination
 
     companion object {
         val animator = Animator()
+    }
+}
+
+enum class MouseButton {
+    LEFT,
+    RIGHT,
+    MIDDLE,
+    BACK,
+    FORWARD,
+    INVALID;
+
+    companion object {
+        fun fromInt(button: Int): MouseButton = values().getOrNull(button) ?: INVALID
     }
 }
 

@@ -2,6 +2,7 @@ package com.saomc.saoui.api.elements.neo
 
 import com.saomc.saoui.api.screens.IIcon
 import com.saomc.saoui.config.OptionCore
+import com.saomc.saoui.neo.screens.MouseButton
 import com.saomc.saoui.neo.screens.NeoGuiDsl
 import com.saomc.saoui.neo.screens.unaryPlus
 import com.saomc.saoui.util.IconCore
@@ -21,14 +22,14 @@ class NeoCategoryButton(private val delegate: NeoIconElement, parent: INeoParent
         this.parent = parent
         delegate.parent = this
 
-        delegate.onClick {
+        delegate.onClick { _, _ ->
             if (elements.isNotEmpty() && !selected) open()
             else if (selected) close()
 
             true
         }
 
-        delegate.onClickOut {
+        delegate.onClickOut { _, _ ->
             if (selected) close()
         }
 
@@ -62,15 +63,23 @@ class NeoCategoryButton(private val delegate: NeoIconElement, parent: INeoParent
     fun open() {
         selected = true
 
-        openAnim = IndexedScheduledCounter(3f, maxIdx = elements.size - 1) {
-            if (selected) elements[it].show()
+        val children = validElementsSequence.toList()
+        openAnim = IndexedScheduledCounter(3f, maxIdx = children.count() - 1) {
+            if (selected) children.elementAt(it).show()
         }
+        elementsSequence.filter { !it.valid }.forEach(NeoElement::show)
         +openAnim!!
         tlParent.move(vec(-boundingBox.width(), 0))
     }
 
     override val boundingBox: BoundingBox2D
         get() = delegate.boundingBox
+
+    override var idealBoundingBox: BoundingBox2D
+        get() = delegate.idealBoundingBox
+        set(value) {
+            delegate.idealBoundingBox = value
+        }
 
     fun close() {
         elements.forEach {
@@ -109,8 +118,8 @@ class NeoCategoryButton(private val delegate: NeoIconElement, parent: INeoParent
         element.hide()
     }
 
-    override fun click(pos: Vec2d): Boolean {
-        return delegate.click(pos)
+    override fun click(pos: Vec2d, button: MouseButton): Boolean {
+        return delegate.click(pos, button)
     }
 
     override var visible: Boolean
@@ -139,11 +148,11 @@ class NeoCategoryButton(private val delegate: NeoIconElement, parent: INeoParent
             delegate.scale = value
         }
 
-    override fun onClick(body: (Vec2d) -> Boolean) {
+    override fun onClick(body: (Vec2d, MouseButton) -> Boolean) {
         delegate.onClick(body)
     }
 
-    override fun onClickOut(body: (Vec2d) -> Unit) {
+    override fun onClickOut(body: (Vec2d, MouseButton) -> Unit) {
         delegate.onClickOut(body)
     }
 
@@ -173,7 +182,7 @@ fun INeoParent.optionButton(option: OptionCore): NeoIconLabelElement {
             get() = option.isEnabled
             set(value) = if (value) option.enable() else option.disable()
     }
-    but.onClick {
+    but.onClick { _, _ ->
         option.flip()
         true
     }

@@ -66,6 +66,7 @@ object ConfigHandler {
     fun saveVersion(version: String) {
         config!!.get(Configuration.CATEGORY_GENERAL, "last.update", lastVersion).set(version)
         config!!.save()
+        config!!.save()
     }
 
     fun setIgnoreVersion(value: Boolean) {

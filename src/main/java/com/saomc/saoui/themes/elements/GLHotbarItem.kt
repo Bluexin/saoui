@@ -27,6 +27,7 @@ open class GLHotbarItem: GLRectangle() {
     From net.minecraft.client.gui.GuiIngame
      */
     private fun renderHotbarItem(x: Int, y: Int, partialTicks: Float, player: EntityPlayer, stack: ItemStack, ctx: IHudDrawContext) {
+        if (stack.isEmpty) return
         val f = stack.animationsToGo.toFloat() - partialTicks
 
         if (f > 0.0f) {

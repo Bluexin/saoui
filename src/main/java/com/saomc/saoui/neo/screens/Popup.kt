@@ -14,7 +14,7 @@ import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.util.ResourceLocation
 import kotlin.math.max
 
-open class Popup<T : Any>(var title: String, var text: String, private val buttons: Map<NeoIconElement, T>) : NeoGui<T>(Vec2d.ZERO) {
+open class Popup<T : Any>(var title: String, var text: List<String>, private val buttons: Map<NeoIconElement, T>) : NeoGui<T>(Vec2d.ZERO) {
 
     private val rl = ResourceLocation(SAOCore.MODID, "textures/menu/parts/alertbg.png")
     internal /*private*/ var expansion = 0f
@@ -36,11 +36,11 @@ open class Popup<T : Any>(var title: String, var text: String, private val butto
 
         val childrenXSeparator = w / buttons.size
         val childrenXOffset = -childrenXSeparator / buttons.size - 9
-        val childrenYOffset = h * 0.3125 - 9
+        val childrenYOffset = h * 0.1875 - 9 + h * 0.0625 * text.size
 
         var i = 0
         buttons.forEach { button, result ->
-            button.onClick {
+            button.onClick { _, _ ->
                 this@Popup.result = result
                 onGuiClosed()
                 true
@@ -103,12 +103,12 @@ open class Popup<T : Any>(var title: String, var text: String, private val butto
         }
 
         val step1 = h * 0.250
-        val step3 = max(h * 0.125 - h * 0.375 * (1 - expansion), 0.0) // * lines // TODO: handle multiline text
+        val step3 = max(h * 0.125 - h * 0.375 * (1 - expansion), 0.0) * text.size // TODO: handle multiline text
         val step5 = h * 0.375
 
 //        if (shadows < 20.0) SAOCore.LOGGER.info("h=$h; shadows=$shadows; step3=$step3; expansion=$expansion")
 
-        val h = h - h * 0.375 * (1 - expansion)
+        val h = h - h * 0.250 * (1 - expansion) + h * 0.125 * text.size
 
         val alpha = if (expansion < 1f) expansion else eol
 
@@ -121,7 +121,9 @@ open class Popup<T : Any>(var title: String, var text: String, private val butto
         GLCore.glTexturedRect(-w / 2.0, -h / 2.0 + step1 + shadows + step3 + shadows, w, step5, 0.0, 160.0, 256.0, 96.0) // Button bar
 
         if (alpha > 0.03f) GLCore.glString(title, -GLCore.glStringWidth(title) / 2, (-h / 2.0 + step1 / 2).toInt(), ColorUtil.DEFAULT_BOX_FONT_COLOR.multiplyAlpha(alpha), centered = true)
-        if (alpha > 0.56f) GLCore.glString(text, -GLCore.glStringWidth(text) / 2, (-h / 2.0 + step1 + shadows + step3 / 2).toInt(), ColorUtil.DEFAULT_FONT_COLOR.multiplyAlpha((alpha - 0.5f) / 0.5f), centered = true)
+        (0 until text.size).forEach {
+            if (alpha > 0.56f) GLCore.glString(text[it], -GLCore.glStringWidth(text[it]) / 2, (-h / 2.0 + step1 + shadows + step3 / text.size * (it + 0.5)).toInt(), ColorUtil.DEFAULT_FONT_COLOR.multiplyAlpha((alpha - 0.5f) / 0.5f), centered = true)
+        }
 
         // Guides
         /*GLCore.glBindTexture(StringNames.gui)
@@ -168,7 +170,7 @@ open class Popup<T : Any>(var title: String, var text: String, private val butto
     }
 }
 
-class PopupYesNo(title: String, text: String) : Popup<PopupYesNo.Result>(title, text, mapOf(
+class PopupYesNo(title: String, text: List<String>) : Popup<PopupYesNo.Result>(title, text, mapOf(
         NeoIconElement(IconCore.CONFIRM)
                 .setBgColor(ColorIntent.NORMAL, ColorUtil.CONFIRM_COLOR)
                 .setBgColor(ColorIntent.HOVERED, ColorUtil.CONFIRM_COLOR_LIGHT)
@@ -182,6 +184,8 @@ class PopupYesNo(title: String, text: String) : Popup<PopupYesNo.Result>(title, 
                 .setFontColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
                 to Result.NO
 )) {
+
+    constructor(title: String, text: String) : this(title, listOf(text))
 
     init {
         result = Result.NO

@@ -2,6 +2,7 @@ package com.saomc.saoui.api.elements.neo
 
 import com.saomc.saoui.GLCore
 import com.saomc.saoui.api.screens.IIcon
+import com.saomc.saoui.neo.screens.MouseButton
 import com.saomc.saoui.resources.StringNames
 import com.saomc.saoui.util.ColorIntent
 import com.saomc.saoui.util.ColorUtil
@@ -19,8 +20,8 @@ import net.minecraft.client.renderer.GlStateManager
  */
 open class NeoIconElement(val icon: IIcon, override var pos: Vec2d = Vec2d.ZERO, override var destination: Vec2d = pos) : NeoParent() {
 
-    private var onClickBody: (Vec2d) -> Boolean = { true }
-    private var onClickOutBody: (Vec2d) -> Unit = { Unit }
+    private var onClickBody: (Vec2d, MouseButton) -> Boolean = { _, _ -> true }
+    private var onClickOutBody: (Vec2d, MouseButton) -> Unit = { _, _ -> Unit }
 
     val bgColorScheme = mutableMapOf(
             ColorIntent.NORMAL to ColorUtil.DEFAULT_COLOR.rgba,
@@ -37,12 +38,12 @@ open class NeoIconElement(val icon: IIcon, override var pos: Vec2d = Vec2d.ZERO,
     override val boundingBox get() = BoundingBox2D(pos, pos + vec(20, 20))
 
     protected fun childrenOrderedForRendering(): Sequence<NeoElement> {
-        val selectedIdx = if (elementsSequence.any { it is NeoCategoryButton }) elements.indexOfFirst { it.selected } else -1
+        val selectedIdx = if (visibleElementsSequence.any { it is NeoCategoryButton }) visibleElementsSequence.indexOfFirst { it.selected } else -1
+        val s = visibleElementsSequence.count()
         val skipFront =
-                if (selectedIdx >= 0) (selectedIdx - (elements.size / 2 - (elements.size + 1) % 2) + elements.size) % elements.size
+                if (selectedIdx >= 0) (selectedIdx - (s / 2 - (s + 1) % 2) + s) % s
                 else 0
-        val seq = elementsSequence.filter(NeoElement::visible)
-        return seq.drop(skipFront) + seq.take(skipFront)
+        return visibleElementsSequence.drop(skipFront) + visibleElementsSequence.take(skipFront)
     }
 
     override fun draw(mouse: Vec2d, partialTicks: Float) { // TODO: scrolling if too many elements
@@ -61,7 +62,8 @@ open class NeoIconElement(val icon: IIcon, override var pos: Vec2d = Vec2d.ZERO,
     }
 
     protected open fun drawChildren(mouse: Vec2d, partialTicks: Float) {
-        val centering = ((elements.size + elements.size % 2 - 2) * childrenYSeparator) / 2.0
+        val children = validElementsSequence
+        val centering = ((children.count() + children.count() % 2 - 2) * childrenYSeparator) / 2.0
         GlStateManager.translate(pos.x + childrenXOffset, pos.y + childrenYOffset - centering, 0.0)
         var nmouse = mouse - pos - vec(childrenXOffset, childrenYOffset - centering)
         childrenOrderedForRendering().forEach {
@@ -89,24 +91,19 @@ open class NeoIconElement(val icon: IIcon, override var pos: Vec2d = Vec2d.ZERO,
                 ?: ColorUtil.DISABLED_MASK.rgba) else base
     }
 
-    override fun click(pos: Vec2d): Boolean {
+    override fun click(pos: Vec2d, button: MouseButton): Boolean {
         return if (pos in this) {
-            onClickBody(pos)
+            onClickBody(pos, button)
         } else {
-            var npos = pos - this.pos - vec(childrenXOffset, childrenYOffset - ((elements.count(NeoElement::visible) - 1) * childrenYSeparator) / 2.0)
+            var npos = pos - this.pos - vec(childrenXOffset, childrenYOffset - ((validElementsSequence.count() - 1) * childrenYSeparator) / 2.0)
             var ok = false
             childrenOrderedForRendering().forEach {
-                ok = it.click(npos) || ok
+                ok = it.click(npos, button) || ok
                 npos -= vec(childrenXSeparator, childrenYSeparator)
             }
-            /*childrenOrderedForRendering().any {
-                val r = it.click(npos)
-                npos -= vec(childrenXSeparator, childrenYSeparator)
-                r
-            }*/
             if (ok) true
             else {
-                onClickOutBody(pos)
+                onClickOutBody(pos, button)
                 false
             }
         }
@@ -129,11 +126,11 @@ open class NeoIconElement(val icon: IIcon, override var pos: Vec2d = Vec2d.ZERO,
     override val childrenXOffset = 25
     override val childrenYSeparator = 20
 
-    open fun onClick(body: (Vec2d) -> Boolean) {
+    open fun onClick(body: (Vec2d, MouseButton) -> Boolean) {
         onClickBody = body
     }
 
-    open fun onClickOut(body: (Vec2d) -> Unit) {
+    open fun onClickOut(body: (Vec2d, MouseButton) -> Unit) {
         onClickOutBody = body
     }
 

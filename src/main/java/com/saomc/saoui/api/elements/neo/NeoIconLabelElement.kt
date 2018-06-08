@@ -10,6 +10,7 @@ import com.teamwizardry.librarianlib.features.kotlin.plus
 import com.teamwizardry.librarianlib.features.math.BoundingBox2D
 import com.teamwizardry.librarianlib.features.math.Vec2d
 import net.minecraft.client.renderer.GlStateManager
+import kotlin.math.max
 
 /**
  * Part of saoui by Bluexin, released under GNU GPLv3.
@@ -19,6 +20,12 @@ import net.minecraft.client.renderer.GlStateManager
 open class NeoIconLabelElement(icon: IIcon, open val label: String = "", var width: Int = 84, var height: Int = 18, pos: Vec2d = Vec2d.ZERO) : NeoIconElement(icon, pos) {
 
     override val boundingBox get() = BoundingBox2D(pos, pos + vec(width, height))
+
+    override var idealBoundingBox: BoundingBox2D
+        get() = BoundingBox2D(pos, pos + vec(max(26 + GLCore.glStringWidth(label), width), height))
+        set(value) {
+            width = value.widthI()
+        }
 
     override fun draw(mouse: Vec2d, partialTicks: Float) { // TODO: scrolling if too many elements
         if (opacity < 0.03 || scale == Vec2d.ZERO) return
@@ -37,7 +44,7 @@ open class NeoIconLabelElement(icon: IIcon, open val label: String = "", var wid
         GlStateManager.popMatrix()
     }
 
-    override val childrenXOffset = width + 5
+    override val childrenXOffset get() = width + 5
 
     override var visible: Boolean
         get() = super.visible

@@ -60,7 +60,7 @@ fun NeoCategoryButton.partyExtras(player: EntityPlayer) {
     category(IconCore.PARTY, format("sao.party.invite")) {
         player.world.playerEntities.asSequence().filter { it != player && it !is FakePlayer && !party.isMember(it) }.forEach { player ->
             val b = NeoIconLabelElement(IconCore.INVITE, player.displayNameString)
-            b.onClick {
+            b.onClick { _, _ ->
                 party.invite(player)
                 true
             }
@@ -70,13 +70,13 @@ fun NeoCategoryButton.partyExtras(player: EntityPlayer) {
     if (partyCapability.invitedTo != null) {
         category(IconCore.PARTY, format("sao.party.invited", partyCapability.invitedTo?.leader)) {
             val accept = NeoIconLabelElement(IconCore.CONFIRM, format("sao.accept"))
-            accept.onClick {
+            accept.onClick { _, _ ->
                 partyCapability.invitedTo?.acceptInvite(player)
                 true
             }
             +accept
             val decline = NeoIconLabelElement(IconCore.CANCEL, format("sao.decline"))
-            decline.onClick {
+            decline.onClick { _, _ ->
                 partyCapability.invitedTo?.cancel(player)
                 true
             }
@@ -91,7 +91,7 @@ fun NeoCategoryButton.partyMemberButton(party: IParty, player: EntityPlayer, our
             +NeoIconLabelElement(IconCore.HELP, format("sao."))
             if (party.leader == ourPlayer) {
                 val kickButton = NeoIconLabelElement(IconCore.CANCEL, format("sao.party.kick"))
-                kickButton.onClick {
+                kickButton.onClick { _, _ ->
                     if (invited) party.removeMember(player)
                     else party.cancel(player)
                 }
