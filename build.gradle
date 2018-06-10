@@ -41,6 +41,10 @@ repositories {
         url = "http://maven.bluexin.be/repository/releases/"
         url = "http://maven.bluexin.be/repository/snapshots/"
     }
+    maven {
+        name = "TCons & Mantle"
+        url = "http://dvs1.progwml6.com/files/maven/"
+    }
 }
 
 reobf {
@@ -63,6 +67,8 @@ dependencies {
     shade files('lib/jel-2_1_1/lib/jel.jar')
     shade 'com.helger:ph-css:6.1.1'
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    deobfCompile "slimeknights:TConstruct:1.12.2-2.10.1.85"
+    deobfCompile "slimeknights.mantle:Mantle:1.12-1.3.2.25"
 }
 
 processResources {

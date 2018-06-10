@@ -10,20 +10,23 @@ import com.saomc.saoui.util.PlayerStats
 import net.minecraft.client.Minecraft
 import net.minecraft.client.resources.IReloadableResourceManager
 import net.minecraftforge.common.MinecraftForge
+import net.minecraftforge.fml.common.Loader
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.common.event.FMLInitializationEvent
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent
+import net.minecraftforge.fml.common.eventhandler.EventBus
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-
+import java.util.concurrent.ConcurrentHashMap
 import javax.xml.bind.JAXBException
 
 @Mod(modid = SAOCore.MODID, name = SAOCore.NAME, version = SAOCore.VERSION, clientSideOnly = true, dependencies = SAOCore.DEPS, acceptableSaveVersions = "*", canBeDeactivated = true)
 object SAOCore {
     const val MODID = "saoui"
     const val NAME = "Sword Art Online UI"
-    const val VERSION = "2.0.0.9"
-    const val DEPS = "required-before:" + MODID + "ntw;required-after:saomclib@[1.2.1,)"
+    const val VERSION = "2.0.0.10"
+    const val DEPS = "required-before:" + MODID + "ntw;required-after:saomclib@[1.2.1,);after:mantle"
 
     // TODO: investigate toasts -> net.minecraft.client.gui.toasts
 
@@ -55,6 +58,19 @@ object SAOCore {
         MinecraftForge.EVENT_BUS.post(s)
         PlayerStats.init(s.implementation)
         NeoGui.animator // Let's force things to init early
+    }
+
+    @Mod.EventHandler
+    fun postInit(event: FMLPostInitializationEvent) {
+        if (Loader.isModLoaded("mantle")) {
+            LOGGER.info("Unregistering Mantle health renderer.")
+            val f = EventBus::class.java.getDeclaredField("listeners")
+            f.isAccessible = true
+            val listeners = f.get(MinecraftForge.EVENT_BUS) as ConcurrentHashMap<*, *>
+            val handler = listeners.keys.firstOrNull { it.javaClass.canonicalName == "slimeknights.mantle.client.ExtraHeartRenderHandler" }
+            if (handler == null) LOGGER.warn("Unable to unregister Mantle health renderer!")
+            else MinecraftForge.EVENT_BUS.unregister(handler)
+        }
     }
 
 }

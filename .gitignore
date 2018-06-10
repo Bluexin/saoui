@@ -31,3 +31,4 @@ run
 *.iws
 /classes/
 /tmp/
+/libs/

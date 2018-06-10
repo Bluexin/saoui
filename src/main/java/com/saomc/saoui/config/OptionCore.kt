@@ -44,8 +44,6 @@ enum class OptionCore(
     @Deprecated("") // TODO: way to load other xml-defined themes
     VANILLA_UI(I18n.format("optionDefaultUI"), false, false, THEME, true),
     @Deprecated("") // TODO: way to load other xml-defined themes
-    ALO_UI(I18n.format("optionALOUI"), false, false, THEME, true),
-    @Deprecated("") // TODO: way to load other xml-defined themes
     SAO_UI(I18n.format("optionSAOUI"), true, false, THEME, true),
     // Health Options
     SMOOTH_HEALTH(I18n.format("optionSmoothHealth"), true, false, HEALTH_OPTIONS, false),
@@ -66,7 +64,6 @@ enum class OptionCore(
     LESS_VISUALS(I18n.format("optionLessVis"), false, false, EFFECTS, false),
     SOUND_EFFECTS(I18n.format("optionSounds"), true, false, EFFECTS, false),
     //Misc
-    CROSS_HAIR(I18n.format("optionCrossHair"), false, false, MISC, false),
     AGGRO_SYSTEM(I18n.format("optionAggro"), true, false, MISC, false),
     CLIENT_CHAT_PACKETS(I18n.format("optionCliChatPacks"), true, false, MISC, false),
     MOUNT_STAT_VIEW(I18n.format("optionMountStatView"), true, false, MISC, false),

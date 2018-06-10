@@ -55,5 +55,15 @@ enum class HudPartType {
     /**
      * Key for the HudPart rendering potion effects.
      */
-    EFFECTS
+    EFFECTS,
+
+    /**
+     * Key for the HudPart rendering air bubbles.
+     */
+    AIR,
+
+    /**
+     * Key for the HudPart rendering mount health.
+     */
+    MOUNT_HEALTH
 }

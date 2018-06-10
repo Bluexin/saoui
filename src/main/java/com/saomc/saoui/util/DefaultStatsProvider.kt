@@ -2,6 +2,7 @@ package com.saomc.saoui.util
 
 import com.saomc.saoui.api.info.IPlayerStatsProvider
 import com.saomc.saoui.config.OptionCore
+import com.teamwizardry.librarianlib.features.kotlin.isNotEmpty
 import net.minecraft.client.resources.I18n
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.SharedMonsterAttributes
@@ -64,13 +65,13 @@ class DefaultStatsProvider : IPlayerStatsProvider {
 
             var itemDamage = 0.0f
 
-            if (player.heldItemMainhand != null) {
+            if (player.heldItemMainhand.isNotEmpty) {
                 val itemAttackMain = player.heldItemMainhand.getAttributeModifiers(EntityEquipmentSlot.MAINHAND).get(SharedMonsterAttributes.ATTACK_DAMAGE.name)
 
                 itemDamage += itemAttackMain.filter { value -> value is AttributeModifier }.map { value -> value }
                         .filter { mod -> mod.name == "Weapon modifier" }.sumByDouble { it.amount }.toFloat()
             }
-            if (player.heldItemOffhand != null) {
+            if (player.heldItemOffhand.isNotEmpty) {
                 val itemAttackOff = player.heldItemOffhand.getAttributeModifiers(EntityEquipmentSlot.OFFHAND).get(SharedMonsterAttributes.ATTACK_DAMAGE.name)
 
                 itemDamage += itemAttackOff.filter { value -> value is AttributeModifier }.map { value -> value }
