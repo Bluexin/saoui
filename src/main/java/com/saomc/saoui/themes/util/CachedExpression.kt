@@ -33,6 +33,12 @@ class StaticCachedExpression<out T>(expression: CompiledExpressionWrapper<T>) : 
     override val cache: T by lazy { expression.invoke(StubContext) }
 
     companion object StubContext : IHudDrawContext {
+        override fun hasMount() = false
+        override fun mountHp() = 0f
+        override fun mountMaxHp() = 1f
+        override fun inWater() = false
+        override fun air() = 0
+        override fun armor() = 1
         override fun ptHealthStep(index: Int) = HealthStep.CREATIVE
         override fun ptName(index: Int) = ""
         override fun ptHp(index: Int) = 0f

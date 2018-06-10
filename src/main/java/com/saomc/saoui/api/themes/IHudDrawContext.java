@@ -13,6 +13,9 @@ import java.util.List;
  * <p>
  * These are accessible in the HUD xml.
  *
+ * Everywhere "percent" or "scale of 1" is mentioned, it means the value will be a decimal ranging from 0.0 (included)
+ * to 1.0 (included).
+ *
  * @author Bluexin
  */
 @SuppressWarnings("unused") // Used to get access in JEL
@@ -95,57 +98,180 @@ public interface IHudDrawContext {
      */
     float experience();
 
+    /**
+     * @return z value. Shouldn't be needed in theme
+     */
     float getZ();
 
+    /**
+     * @return current font renderer. Useless in themes for now
+     */
     FontRenderer getFontRenderer();
 
+    /**
+     * @return current item renderer. Useless in themes for now
+     */
     RenderItem getItemRenderer();
 
+    /**
+     * @return current player. Useless in themes for now
+     */
     EntityPlayer getPlayer();
 
+    /**
+     * @return partial ticks
+     */
     float getPartialTicks();
 
+    /**
+     * @return horse jump value (on a scale of 1)
+     */
     float horsejump();
 
+    /**
+     * Internal
+     */
     void setI(int i);
 
+    /**
+     * @return index in repetition groups
+     */
     int i();
 
+    /**
+     * @param index the index of the party member to check
+     * @return username of the party member at given index
+     */
     String ptName(int index);
 
+    /**
+     * @param index the index of the party member to check
+     * @return hp of the party member at given index
+     */
     float ptHp(int index);
 
+    /**
+     * @param index the index of the party member to check
+     * @return max hp of the party member at given index
+     */
     float ptMaxHp(int index);
 
+    /**
+     * @param index the index of the party member to check
+     * @return hp percent of the party member at given index
+     */
     float ptHpPct(int index);
 
-    int ptSize();
-
+    /**
+     * @param index the index of the party member to check
+     * @return health step of the party member at given index
+     */
     HealthStep ptHealthStep(int index);
 
+    /**
+     * @return current party size
+     */
+    int ptSize();
+
+    /**
+     * @return player food level
+     */
     float foodLevel();
 
+    /**
+     * @return player food max value
+     */
     default float foodMax() {
         return 20.0f;
     }
 
+    /**
+     * @return player food percentage
+     */
     default float foodPct() {
         return Math.min(foodLevel() / foodMax(), 1.0f);
     }
 
+    /**
+     * @return player saturation level
+     */
     float saturationLevel();
 
+    /**
+     * @return player saturation max value
+     */
     default float saturationMax() {
         return 20.0f;
     }
 
+    /**
+     * @return player saturation percentage
+     */
     default float saturationPct() {
         return Math.min(saturationLevel() / saturationMax(), 1.0f);
     }
 
+    /**
+     * @return player's current status effects
+     */
     List<StatusEffects> statusEffects();
 
+    /**
+     * @param i index to check
+     * @return status effect at given index
+     */
     default StatusEffects statusEffect(int i) {
         return statusEffects().get(i);
     }
+
+    /**
+     * @return whether the current player is riding an entity
+     */
+    boolean hasMount();
+
+    /**
+     * @return current mount hp (or 0 if none)
+     */
+    float mountHp();
+
+    /**
+     * @return mount max hp (or 1 if none)
+     */
+    float mountMaxHp();
+
+    /**
+     * @return mount hp percentage (or 1 if none)
+     */
+    default float mountHpPct() {
+        return hasMount() ? Math.min(mountHp() / mountMaxHp(), 1.0f) : 1.0f;
+    }
+
+    /**
+     * @return whether the player is under water
+     */
+    boolean inWater();
+
+    /**
+     * @return current air level
+     */
+    int air();
+
+    /**
+     * @return max air level
+     */
+    default int airMax() {
+        return 300;
+    }
+
+    /**
+     * @return air level percentage
+     */
+    default float airPct() {
+        return Math.min(air() / airMax(), 1.0f);
+    }
+
+    /**
+     * @return armor value
+     */
+    int armor();
 }

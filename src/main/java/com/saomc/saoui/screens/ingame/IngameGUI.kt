@@ -3,6 +3,7 @@ package com.saomc.saoui.screens.ingame
 import be.bluexin.saomclib.capabilities.PartyCapability
 import be.bluexin.saomclib.profile
 import com.saomc.saoui.GLCore
+import com.saomc.saoui.SAOCore
 import com.saomc.saoui.config.ConfigHandler
 import com.saomc.saoui.config.OptionCore
 import com.saomc.saoui.themes.ThemeLoader
@@ -14,7 +15,6 @@ import net.minecraft.client.gui.GuiOverlayDebug
 import net.minecraft.client.gui.ScaledResolution
 import net.minecraft.client.renderer.OpenGlHelper
 import net.minecraft.client.resources.I18n
-import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.util.StringUtils
 import net.minecraftforge.client.GuiIngameForge
@@ -139,6 +139,7 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
     }
 
     override fun renderHealth(width: Int, height: Int) {
+        SAOCore.LOGGER.info("Air: ${context.air()}")
         if (OptionCore.VANILLA_UI.isEnabled)
             super.renderHealth(width, height)
         else {
@@ -217,9 +218,6 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
         if (OptionCore.VANILLA_UI.isEnabled)
             super.renderHealthMount(width, height)
         else {
-            val player = mc.renderViewEntity as EntityPlayer? ?: return
-            val tmp = player.ridingEntity as? EntityLivingBase ?: return
-
             if (pre(HEALTHMOUNT)) return
             ThemeLoader.HUD.draw(HudPartType.MOUNT_HEALTH, context)
             post(HEALTHMOUNT)

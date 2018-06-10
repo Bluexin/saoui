@@ -6,12 +6,16 @@ import com.saomc.saoui.effects.StatusEffects;
 import com.saomc.saoui.screens.ingame.HealthStep;
 import com.saomc.saoui.social.StaticPlayerHelper;
 import com.saomc.saoui.util.PlayerStats;
+import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.RenderItem;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -241,6 +245,42 @@ public class HudDrawContext implements IHudDrawContext {
     @Override
     public List<StatusEffects> statusEffects() {
         return effects;
+    }
+
+    @Override
+    public boolean hasMount() {
+        return player.isRiding();
+    }
+
+    @Override
+    public float mountHp() {
+        Entity t = player.getRidingEntity();
+        if (t instanceof EntityLivingBase) {
+            return ((EntityLivingBase) t).getHealth();
+        } else return 0f;
+    }
+
+    @Override
+    public float mountMaxHp() {
+        Entity t = player.getRidingEntity();
+        if (t instanceof EntityLivingBase) {
+            return ((EntityLivingBase) t).getMaxHealth();
+        } else return 1f;
+    }
+
+    @Override
+    public boolean inWater() {
+        return player.isInsideOfMaterial(Material.WATER);
+    }
+
+    @Override
+    public int air() {
+        return player.getAir();
+    }
+
+    @Override
+    public int armor() {
+        return ForgeHooks.getTotalArmorValue(player);
     }
 
     private boolean validatePtIndex(int index) {
