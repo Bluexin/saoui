@@ -31,6 +31,8 @@ object ThemeLoader {
 
     @Throws(JAXBException::class)
     fun load() {
+        loadCss()
+
         val start = System.currentTimeMillis()
         val hudRL = ResourceLocation(SAOCore.MODID, "themes/hud.xml")
 
@@ -46,11 +48,9 @@ object ThemeLoader {
         HUD.setup()
 
         SAOCore.LOGGER.info("Loaded theme and set it up in " + (System.currentTimeMillis() - start) + "ms.")
-
-        test()
     }
 
-    fun test() {
+    fun loadCss() {
         val start = System.currentTimeMillis()
         val cssRl = ResourceLocation(SAOCore.MODID, "themes/style.css")
 
