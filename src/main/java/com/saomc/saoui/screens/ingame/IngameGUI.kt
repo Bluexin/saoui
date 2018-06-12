@@ -3,7 +3,6 @@ package com.saomc.saoui.screens.ingame
 import be.bluexin.saomclib.capabilities.PartyCapability
 import be.bluexin.saomclib.profile
 import com.saomc.saoui.GLCore
-import com.saomc.saoui.SAOCore
 import com.saomc.saoui.config.ConfigHandler
 import com.saomc.saoui.config.OptionCore
 import com.saomc.saoui.themes.ThemeLoader
@@ -139,7 +138,6 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
     }
 
     override fun renderHealth(width: Int, height: Int) {
-        SAOCore.LOGGER.info("Air: ${context.air()}")
         if (OptionCore.VANILLA_UI.isEnabled)
             super.renderHealth(width, height)
         else {
