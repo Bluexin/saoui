@@ -267,7 +267,7 @@ public interface IHudDrawContext {
      * @return air level percentage
      */
     default float airPct() {
-        return Math.min(air() / airMax(), 1.0f);
+        return Math.min(air() / (float) airMax(), 1.0f);
     }
 
     /**

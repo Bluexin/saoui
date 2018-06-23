@@ -63,7 +63,7 @@ configurations {
 
 dependencies {
     compile "be.bluexin:saomc-lib:1.12.2-1.2.1.0-SNAPSHOT:deobf"
-    compile "com.teamwizardry.librarianlib:librarianlib-1.12.2:4.3-SNAPSHOT:deobf"
+    compile "com.teamwizardry.librarianlib:librarianlib-1.12.2:4.11-SNAPSHOT:deobf"
     shade files('lib/jel-2_1_1/lib/jel.jar')
     shade 'com.helger:ph-css:6.1.1'
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
