@@ -3,7 +3,6 @@ package com.saomc.saoui.themes.elements
 import com.saomc.saoui.GLCore
 import com.saomc.saoui.api.themes.IHudDrawContext
 import com.saomc.saoui.themes.util.CInt
-import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.renderer.RenderHelper
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.ItemStack
@@ -31,16 +30,16 @@ open class GLHotbarItem: GLRectangle() {
         val f = stack.animationsToGo.toFloat() - partialTicks
 
         if (f > 0.0f) {
-            GlStateManager.pushMatrix()
+            GLCore.pushMatrix()
             val f1 = 1.0f + f / 5.0f
-            GlStateManager.translate((x + 8).toFloat(), (y + 12).toFloat(), 0.0f)
-            GlStateManager.scale(1.0f / f1, (f1 + 1.0f) / 2.0f, 1.0f)
-            GlStateManager.translate((-(x + 8)).toFloat(), (-(y + 12)).toFloat(), 0.0f)
+            GLCore.translate((x + 8).toFloat(), (y + 12).toFloat(), 0.0f)
+            GLCore.scale(1.0f / f1, (f1 + 1.0f) / 2.0f, 1.0f)
+            GLCore.translate((-(x + 8)).toFloat(), (-(y + 12)).toFloat(), 0.0f)
         }
 
         ctx.itemRenderer.renderItemAndEffectIntoGUI(player, stack, x, y)
 
-        if (f > 0.0f) GlStateManager.popMatrix()
+        if (f > 0.0f) GLCore.popMatrix()
 
         ctx.itemRenderer.renderItemOverlays(ctx.fontRenderer, stack, x, y)
     }
@@ -67,6 +66,5 @@ open class GLHotbarItem: GLRectangle() {
         GLCore.glRescaleNormal(false)
         RenderHelper.disableStandardItemLighting()
         GLCore.glBlend(true)
-
     }
 }

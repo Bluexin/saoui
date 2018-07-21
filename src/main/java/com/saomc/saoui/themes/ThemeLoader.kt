@@ -25,7 +25,9 @@ import javax.xml.bind.JAXBException
  */
 object ThemeLoader {
 
-    //TODO: tests
+    // TODO: tests
+    // TODO: theme versions
+    // TODO: loading reporter (amount of issues, details, missing keys, ..?)
 
     lateinit var HUD: Hud
 

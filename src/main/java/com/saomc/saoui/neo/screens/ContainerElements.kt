@@ -1,5 +1,6 @@
 package com.saomc.saoui.neo.screens
 
+import com.saomc.saoui.GLCore
 import com.saomc.saoui.api.elements.neo.NeoCategoryButton
 import com.saomc.saoui.api.elements.neo.NeoIconLabelElement
 import com.saomc.saoui.api.screens.IIcon
@@ -7,7 +8,6 @@ import com.saomc.saoui.events.EventCore.mc
 import com.teamwizardry.librarianlib.features.kotlin.isNotEmpty
 import com.teamwizardry.librarianlib.features.math.Vec2d
 import net.minecraft.client.Minecraft
-import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.renderer.RenderHelper
 import net.minecraft.client.resources.I18n
 import net.minecraft.client.util.ITooltipFlag
@@ -54,18 +54,18 @@ class ItemIcon(private val itemStack: () -> ItemStack) : IIcon {
         val f = itemStack().animationsToGo.toFloat()/* - partialTicks*/
 
         if (f > 0.0f) {
-            GlStateManager.pushMatrix()
+            GLCore.pushMatrix()
             val f1 = 1.0f + f / 5.0f
-            GlStateManager.translate((x + 8).toFloat(), (y + 12).toFloat(), 0.0f)
-            GlStateManager.scale(1.0f / f1, (f1 + 1.0f) / 2.0f, 1.0f)
-            GlStateManager.translate((-(x + 8)).toFloat(), (-(y + 12)).toFloat(), 0.0f)
+            GLCore.translate((x + 8).toFloat(), (y + 12).toFloat(), 0.0f)
+            GLCore.scale(1.0f / f1, (f1 + 1.0f) / 2.0f, 1.0f)
+            GLCore.translate((-(x + 8)).toFloat(), (-(y + 12)).toFloat(), 0.0f)
         }
 
         RenderHelper.enableGUIStandardItemLighting()
         itemRenderer.renderItemAndEffectIntoGUI(itemStack(), x, y)
-        GlStateManager.disableDepth()
+        GLCore.depth(false)
 
-        if (f > 0.0f) GlStateManager.popMatrix()
+        if (f > 0.0f) GLCore.popMatrix()
 
 //        itemRenderer.renderItemOverlays(fontRenderer, itemStack, x, y)
     }

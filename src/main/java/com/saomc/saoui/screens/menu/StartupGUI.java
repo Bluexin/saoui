@@ -6,7 +6,6 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.text.TextFormatting;
 
 import java.util.List;
@@ -71,9 +70,6 @@ public class StartupGUI extends GuiScreen {
 
     @Override
     public void drawScreen(int par1, int par2, float par3) {
-        GlStateManager.disableTexture2D();
-        GlStateManager.enableTexture2D();
-
         drawDefaultBackground();
         drawCenteredString(this.fontRenderer, TextFormatting.YELLOW + "NOTICE" + TextFormatting.RESET, this.width / 2, this.height / 2 - 100, 0xFFFFFF);
 

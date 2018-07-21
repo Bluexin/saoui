@@ -262,7 +262,7 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
                     //                        (res.getScaledHeight() - (slotCount * 22)) / 2;
 
                     /*for (int i = 0; i < slotCount; i++) {
-                    GLCore.glColorRGBA(i == inv.currentItem ? 0xFFBA66AA : 0xCDCDCDAA);
+                    GLCore.color(i == inv.currentItem ? 0xFFBA66AA : 0xCDCDCDAA);
                     GLCore.glTexturedRect(res.getScaledWidth() - 24, slotsY + (22 * i), zLevel, 0, 25, 20, 20);
                 }*/
 

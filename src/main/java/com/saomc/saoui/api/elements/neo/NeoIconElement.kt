@@ -11,7 +11,6 @@ import com.teamwizardry.librarianlib.features.kotlin.minus
 import com.teamwizardry.librarianlib.features.kotlin.plus
 import com.teamwizardry.librarianlib.features.math.BoundingBox2D
 import com.teamwizardry.librarianlib.features.math.Vec2d
-import net.minecraft.client.renderer.GlStateManager
 
 /**
  * Part of saoui by Bluexin, released under GNU GPLv3.
@@ -48,27 +47,27 @@ open class NeoIconElement(val icon: IIcon, override var pos: Vec2d = Vec2d.ZERO,
 
     override fun draw(mouse: Vec2d, partialTicks: Float) { // TODO: scrolling if too many elements
         if (opacity < 0.03 || scale == Vec2d.ZERO) return
-        GlStateManager.pushMatrix()
+        GLCore.pushMatrix()
         if (scale != Vec2d.ONE) GLCore.glScalef(scale.xf, scale.yf, 1f)
-        GLCore.glColorRGBA(ColorUtil.multiplyAlpha(getColor(mouse), opacity))
+        GLCore.color(ColorUtil.multiplyAlpha(getColor(mouse), opacity))
         GLCore.glBindTexture(StringNames.gui)
-        GLCore.glTexturedRect(pos, 1.0, 26.0, 19.0, 19.0)
-        GLCore.glColorRGBA(ColorUtil.multiplyAlpha(getTextColor(mouse), opacity))
+        GLCore.glTexturedRectV2(pos.x, pos.y, width = 19.0, height = 19.0, srcX = 1.0, srcY = 26.0)
+        GLCore.color(ColorUtil.multiplyAlpha(getTextColor(mouse), opacity))
         if (icon.rl != null) GLCore.glBindTexture(icon.rl!!)
         icon.glDrawUnsafe(pos + vec(1, 1))
 
         drawChildren(mouse, partialTicks)
-        GlStateManager.popMatrix()
+        GLCore.popMatrix()
     }
 
     protected open fun drawChildren(mouse: Vec2d, partialTicks: Float) {
         val children = validElementsSequence
         val centering = ((children.count() + children.count() % 2 - 2) * childrenYSeparator) / 2.0
-        GlStateManager.translate(pos.x + childrenXOffset, pos.y + childrenYOffset - centering, 0.0)
+        GLCore.translate(pos.x + childrenXOffset, pos.y + childrenYOffset - centering, 0.0)
         var nmouse = mouse - pos - vec(childrenXOffset, childrenYOffset - centering)
         childrenOrderedForRendering().forEach {
             it.draw(nmouse, partialTicks)
-            GlStateManager.translate(childrenXSeparator.toDouble(), childrenYSeparator.toDouble(), 0.0)
+            GLCore.translate(childrenXSeparator.toDouble(), childrenYSeparator.toDouble(), 0.0)
             nmouse -= vec(childrenXSeparator, childrenYSeparator)
         }
     }

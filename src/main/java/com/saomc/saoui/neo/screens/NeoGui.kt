@@ -1,5 +1,6 @@
 package com.saomc.saoui.neo.screens
 
+import com.saomc.saoui.GLCore
 import com.saomc.saoui.api.elements.neo.*
 import com.saomc.saoui.api.screens.IIcon
 import com.saomc.saoui.config.OptionCore
@@ -11,7 +12,6 @@ import com.teamwizardry.librarianlib.features.math.Vec2d
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiScreen
 import net.minecraft.client.gui.ScaledResolution
-import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.settings.KeyBinding
 import org.lwjgl.input.Keyboard
 import org.lwjgl.input.Mouse
@@ -29,13 +29,14 @@ abstract class NeoGui<T : Any>(override var pos: Vec2d, override var destination
     override var parent: INeoParent? = null
 
     override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
-        GlStateManager.pushMatrix()
-        GlStateManager.translate(pos.x, pos.y, 0.0)
+        GLCore.glBlend(true)
+        GLCore.pushMatrix()
+        GLCore.translate(pos.x, pos.y, 0.0)
 
-        val mousePos = vec(mouseX, mouseY) - pos
+        val mousePos = if (subGui == null) vec(mouseX, mouseY) - pos else Vec2d.NEG_INFINITY
         elements.forEach { it.draw(mousePos, partialTicks) }
 
-        GlStateManager.popMatrix()
+        GLCore.popMatrix()
 
         subGui?.drawScreen(mouseX, mouseY, partialTicks)
     }

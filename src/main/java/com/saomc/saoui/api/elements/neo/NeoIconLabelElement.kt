@@ -9,7 +9,6 @@ import com.teamwizardry.librarianlib.features.helpers.vec
 import com.teamwizardry.librarianlib.features.kotlin.plus
 import com.teamwizardry.librarianlib.features.math.BoundingBox2D
 import com.teamwizardry.librarianlib.features.math.Vec2d
-import net.minecraft.client.renderer.GlStateManager
 import kotlin.math.max
 
 /**
@@ -29,19 +28,19 @@ open class NeoIconLabelElement(icon: IIcon, open val label: String = "", var wid
 
     override fun draw(mouse: Vec2d, partialTicks: Float) { // TODO: scrolling if too many elements
         if (opacity < 0.03 || scale == Vec2d.ZERO) return
-        GlStateManager.pushMatrix()
+        GLCore.pushMatrix()
         if (scale != Vec2d.ONE) GLCore.glScalef(scale.xf, scale.yf, 1f)
-        GLCore.glColorRGBA(ColorUtil.multiplyAlpha(getColor(mouse), opacity))
+        GLCore.color(ColorUtil.multiplyAlpha(getColor(mouse), opacity))
         GLCore.glBindTexture(StringNames.slot)
-        GLCore.glTexturedRect(pos, width.toDouble(), height.toDouble(), 0.0, 40.0, 84.0, 18.0)
+        GLCore.glTexturedRectV2(pos.x, pos.y, width = width.toDouble(), height = height.toDouble(), srcX = 0.0, srcY = 40.0, srcWidth = 84.0, srcHeight = 18.0)
         val color = ColorUtil.multiplyAlpha(getTextColor(mouse), opacity)
-        GLCore.glColorRGBA(color)
+        GLCore.color(color)
         if (icon.rl != null) GLCore.glBindTexture(icon.rl!!)
         icon.glDrawUnsafe(pos + vec(1, 1))
         GLCore.glString(label, pos + vec(22, height / 2), color, centered = true)
 
         drawChildren(mouse, partialTicks)
-        GlStateManager.popMatrix()
+        GLCore.popMatrix()
     }
 
     override val childrenXOffset get() = width + 5

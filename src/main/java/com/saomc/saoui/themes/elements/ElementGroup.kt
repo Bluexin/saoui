@@ -21,10 +21,14 @@ open class ElementGroup : Element(), ElementParent {
     protected var rl: ResourceLocation? = null
     private val texture: String? = null
 
-    @XmlTransient protected var cachedX = 0.0
-    @XmlTransient protected var cachedY = 0.0
-    @XmlTransient protected var cachedZ = 0.0
-    @XmlTransient protected var latestTicks = -1.0F
+    @XmlTransient
+    protected var cachedX = 0.0
+    @XmlTransient
+    protected var cachedY = 0.0
+    @XmlTransient
+    protected var cachedZ = 0.0
+    @XmlTransient
+    protected var latestTicks = -1.0F
 
     /**
      * Returns true if the element should update it's position. Can be extremely useful in huge groups
@@ -32,7 +36,6 @@ open class ElementGroup : Element(), ElementParent {
     protected fun checkUpdate(ctx: IHudDrawContext) = if (latestTicks == ctx.partialTicks) false else {
         latestTicks = ctx.partialTicks; true
     }
-
 
     override fun getX(ctx: IHudDrawContext): Double {
         updateCache(ctx)
@@ -50,8 +53,13 @@ open class ElementGroup : Element(), ElementParent {
     }
 
     override fun draw(ctx: IHudDrawContext) {
+        GLCore.glBlend(true)
+        GLCore.color(1f, 1f, 1f, 1f)
+
+        if (enabled?.invoke(ctx) == false) return
         if (this.rl != null) GLCore.glBindTexture(this.rl!!)
-        if (enabled?.invoke(ctx) != false) this.elements.forEach { it.draw(ctx) }
+
+        this.elements.forEach { it.draw(ctx) }
     }
 
     override fun setup(parent: ElementParent): Boolean {

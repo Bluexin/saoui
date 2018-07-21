@@ -2,6 +2,7 @@ package com.saomc.saoui.effects
 
 import com.saomc.saoui.GLCore
 import com.saomc.saoui.SAOCore
+import com.saomc.saoui.api.screens.IIcon
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.init.MobEffects
@@ -11,7 +12,7 @@ import net.minecraftforge.fml.relauncher.SideOnly
 import java.util.*
 
 @SideOnly(Side.CLIENT)
-enum class StatusEffects {
+enum class StatusEffects : IIcon {
 
     PARALYZED,
     POISONED,
@@ -43,11 +44,10 @@ enum class StatusEffects {
 
     val resource by lazy { ResourceLocation(SAOCore.MODID, "textures/hud/status_icons/${name.toLowerCase()}.png") }
 
-    @JvmOverloads
     @Suppress("unused")
-    fun glDraw(x: Int, y: Int, z: Float = 0f) {
+    override fun glDraw(x: Int, y: Int) {
         GLCore.glBindTexture(resource)
-        GLCore.glTexturedRectV2(x.toDouble(), y.toDouble(), z.toDouble(), 16.0, 16.0, srcWidth = 64.0, srcHeight = 64.0, textureW = 64, textureH = 64)
+        GLCore.glTexturedRectV2(x.toDouble(), y.toDouble(), 0.0, 16.0, 16.0, srcWidth = 64.0, srcHeight = 64.0, textureW = 64, textureH = 64)
     }
 
     companion object {
@@ -55,48 +55,29 @@ enum class StatusEffects {
             val effects = LinkedList<StatusEffects>()
 
             entity.activePotionEffects.filterNotNull().forEach {
-                if (it.potion === MobEffects.SLOWNESS)
-                    effects.add(if (it.amplifier > 5) PARALYZED else SLOWNESS)
-                else if (it.potion === MobEffects.POISON)
-                    effects.add(POISONED)
-                else if (it.potion === MobEffects.HUNGER)
-                    effects.add(ROTTEN)
-                else if (it.potion === MobEffects.NAUSEA)
-                    effects.add(ILL)
-                else if (it.potion === MobEffects.WEAKNESS)
-                    effects.add(WEAK)
-                else if (it.potion === MobEffects.WITHER)
-                    effects.add(CURSED)
-                else if (it.potion === MobEffects.BLINDNESS)
-                    effects.add(BLIND)
-                else if (it.potion === MobEffects.SATURATION)
-                    effects.add(SATURATION)
-                else if (it.potion === MobEffects.SPEED)
-                    effects.add(SPEED_BOOST)
-                else if (it.potion === MobEffects.WATER_BREATHING)
-                    effects.add(WATER_BREATH)
-                else if (it.potion === MobEffects.STRENGTH)
-                    effects.add(STRENGTH)
-                else if (it.potion === MobEffects.ABSORPTION)
-                    effects.add(ABSORPTION)
-                else if (it.potion === MobEffects.FIRE_RESISTANCE)
-                    effects.add(FIRE_RES)
-                else if (it.potion === MobEffects.HASTE)
-                    effects.add(HASTE)
-                else if (it.potion === MobEffects.HEALTH_BOOST)
-                    effects.add(HEALTH_BOOST)
-                else if (it.potion === MobEffects.INSTANT_HEALTH)
-                    effects.add(INST_HEALTH)
-                else if (it.potion === MobEffects.INVISIBILITY)
-                    effects.add(INVISIBILITY)
-                else if (it.potion === MobEffects.JUMP_BOOST)
-                    effects.add(JUMP_BOOST)
-                else if (it.potion === MobEffects.NIGHT_VISION)
-                    effects.add(NIGHT_VISION)
-                else if (it.potion === MobEffects.REGENERATION)
-                    effects.add(REGEN)
-                else if (it.potion === MobEffects.RESISTANCE)
-                    effects.add(RESIST)
+                when (it.potion) {
+                    MobEffects.SLOWNESS -> effects.add(if (it.amplifier > 5) PARALYZED else SLOWNESS)
+                    MobEffects.POISON -> effects.add(POISONED)
+                    MobEffects.HUNGER -> effects.add(ROTTEN)
+                    MobEffects.NAUSEA -> effects.add(ILL)
+                    MobEffects.WEAKNESS -> effects.add(WEAK)
+                    MobEffects.WITHER -> effects.add(CURSED)
+                    MobEffects.BLINDNESS -> effects.add(BLIND)
+                    MobEffects.SATURATION -> effects.add(SATURATION)
+                    MobEffects.SPEED -> effects.add(SPEED_BOOST)
+                    MobEffects.WATER_BREATHING -> effects.add(WATER_BREATH)
+                    MobEffects.STRENGTH -> effects.add(STRENGTH)
+                    MobEffects.ABSORPTION -> effects.add(ABSORPTION)
+                    MobEffects.FIRE_RESISTANCE -> effects.add(FIRE_RES)
+                    MobEffects.HASTE -> effects.add(HASTE)
+                    MobEffects.HEALTH_BOOST -> effects.add(HEALTH_BOOST)
+                    MobEffects.INSTANT_HEALTH -> effects.add(INST_HEALTH)
+                    MobEffects.INVISIBILITY -> effects.add(INVISIBILITY)
+                    MobEffects.JUMP_BOOST -> effects.add(JUMP_BOOST)
+                    MobEffects.NIGHT_VISION -> effects.add(NIGHT_VISION)
+                    MobEffects.REGENERATION -> effects.add(REGEN)
+                    MobEffects.RESISTANCE -> effects.add(RESIST)
+                }
             }
 
             if (entity is EntityPlayer) {
@@ -118,4 +99,5 @@ enum class StatusEffects {
         }
     }
 
+    override fun getRL() = resource
 }

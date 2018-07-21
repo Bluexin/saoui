@@ -25,25 +25,21 @@ object GLCore {
     private val glFont get() = mc.fontRenderer
     private val glTextureManager get() = mc.textureManager
 
-    fun glColor(red: Float, green: Float, blue: Float) {
-        GlStateManager.color(red, green, blue)
-    }
-
-    fun glColor(red: Float, green: Float, blue: Float, alpha: Float) {
+    fun color(red: Float, green: Float, blue: Float, alpha: Float = 1f) {
         GlStateManager.color(red, green, blue, alpha)
     }
 
-    fun glColorRGBA(color: ColorUtil) {
-        glColorRGBA(color.rgba)
+    fun color(color: ColorUtil) {
+        color(color.rgba)
     }
 
-    fun glColorRGBA(rgba: Int) {
+    fun color(rgba: Int) {
         val red = (rgba shr 24 and 0xFF).toFloat() / 0xFF
         val green = (rgba shr 16 and 0xFF).toFloat() / 0xFF
         val blue = (rgba shr 8 and 0xFF).toFloat() / 0xFF
         val alpha = (rgba and 0xFF).toFloat() / 0xFF
 
-        glColor(red, green, blue, alpha)
+        color(red, green, blue, alpha)
     }
 
     private fun glFontColor(rgba: Int): Int {
@@ -126,26 +122,6 @@ object GLCore {
         tessellator.draw()
     }
 
-    fun glTexturedRect(x: Double, y: Double, z: Double, srcX: Double, srcY: Double, width: Double, height: Double) {
-        glTexturedRectV2(x, y, z, width, height, srcX, srcY, width, height)
-    }
-
-    fun glTexturedRect(x: Double, y: Double, width: Double, height: Double, srcX: Double, srcY: Double, srcWidth: Double, srcHeight: Double) {
-        glTexturedRectV2(x, y, 0.0, width, height, srcX, srcY, srcWidth, srcHeight)
-    }
-
-    fun glTexturedRect(pos: Vec2d, width: Double, height: Double, srcX: Double, srcY: Double, srcWidth: Double, srcHeight: Double) {
-        glTexturedRect(pos.y, pos.x, width, height, srcX, srcY, srcWidth, srcHeight)
-    }
-
-    fun glTexturedRect(x: Double, y: Double, srcX: Double, srcY: Double, width: Double, height: Double) {
-        glTexturedRect(x, y, 0.0, srcX, srcY, width, height)
-    }
-
-    fun glTexturedRect(pos: Vec2d, srcX: Double, srcY: Double, width: Double, height: Double) {
-        glTexturedRect(pos.x, pos.y, srcX, srcY, width, height)
-    }
-
     fun addVertex(x: Double, y: Double, z: Double) {
         Tessellator.getInstance().buffer.pos(x, y, z).endVertex()
     }
@@ -206,7 +182,7 @@ object GLCore {
         GlStateManager.depthMask(flag)
     }
 
-    fun glDepthTest(flag: Boolean) {
+    fun depth(flag: Boolean) {
         if (flag)
             GlStateManager.enableDepth()
         else
@@ -261,19 +237,11 @@ object GLCore {
             GlStateManager.disableLighting()
     }
 
-    fun glStartUI(mc: Minecraft) {
-        mc.mcProfiler.startSection(SAOCore.MODID + "[ '" + SAOCore.NAME + "' ]")
-    }
-
-    fun glEndUI(mc: Minecraft) {
-        mc.mcProfiler.endSection()
-    }
-
-    fun start() {
+    fun pushMatrix() {
         GlStateManager.pushMatrix()
     }
 
-    fun end() {
+    fun popMatrix() {
         GlStateManager.popMatrix()
     }
 
@@ -289,5 +257,21 @@ object GLCore {
         val d4 = Math.max(y1, y2)
         val d5 = Math.max(z1, z2)
         return AxisAlignedBB(d0, d1, d2, d3, d4, d5)
+    }
+
+    fun translate(x: Double, y: Double, z: Double) {
+        GlStateManager.translate(x, y, z)
+    }
+
+    fun translate(x: Float, y: Float, z: Float) {
+        GlStateManager.translate(x, y, z)
+    }
+
+    fun scale(x: Double, y: Double, z: Double) {
+        GlStateManager.scale(x, y, z)
+    }
+
+    fun scale(x: Float, y: Float, z: Float) {
+        GlStateManager.scale(x, y, z)
     }
 }

@@ -59,21 +59,21 @@ object StaticRenderer { // TODO: add usage of scale, offset etc from capability
                 val f = 1.6f
                 val f1 = 0.016666668f * f
 
-                GLCore.start()
+                GLCore.pushMatrix()
                 GLCore.glTranslatef(x.toFloat() + 0.0f, y.toFloat() + sizeMult * entity.height + sizeMult * 1.1f, z.toFloat())
                 GLCore.glNormal3f(0.0f, 1.0f, 0.0f)
                 GLCore.glRotatef(-renderManager.playerViewY, 0.0f, 1.0f, 0.0f)
                 GLCore.glScalef(-(f1 * sizeMult), -(f1 * sizeMult), f1 * sizeMult)
                 GLCore.lighting(false)
 
-                GLCore.glDepthTest(true)
+                GLCore.depth(true)
 
                 GLCore.glAlphaTest(true)
                 GLCore.glBlend(true)
                 GLCore.tryBlendFuncSeparate(770, 771, 1, 0)
 
                 GLCore.glBindTexture(if (OptionCore.SAO_UI.isEnabled) StringNames.entities else StringNames.entitiesCustom)
-                GLCore.glColorRGBA(RenderCapability.get(entity).colorStateHandler.colorState.rgba)
+                GLCore.color(RenderCapability.get(entity).colorStateHandler.colorState.rgba)
                 GLCore.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX)
 
                 if (OptionCore.SPINNING_CRYSTALS.isEnabled) {
@@ -114,7 +114,7 @@ object StaticRenderer { // TODO: add usage of scale, offset etc from capability
                 }
 
                 GLCore.lighting(true)
-                GLCore.end()
+                GLCore.popMatrix()
             }
         }
     }
@@ -126,8 +126,8 @@ object StaticRenderer { // TODO: add usage of scale, offset etc from capability
         if (!OptionCore.MOB_HEALTH.isEnabled || Loader.isModLoaded("neat")) return
 
         GLCore.glBindTexture(if (OptionCore.SAO_UI.isEnabled) StringNames.entities else StringNames.entitiesCustom)
-        GLCore.start()
-        GLCore.glDepthTest(true)
+        GLCore.pushMatrix()
+        GLCore.depth(true)
         GLCore.glCullFace(false)
         GLCore.glBlend(true)
 
@@ -155,7 +155,7 @@ object StaticRenderer { // TODO: add usage of scale, offset etc from capability
 
         GLCore.draw()
 
-        GLCore.glColor(1f, 1f, 1f, 1f)
+        GLCore.color(1f, 1f, 1f, 1f)
         GLCore.begin(GL11.GL_TRIANGLE_STRIP, DefaultVertexFormats.POSITION_TEX)
 
         for (i in 0..HEALTH_COUNT) {
@@ -173,7 +173,7 @@ object StaticRenderer { // TODO: add usage of scale, offset etc from capability
         GLCore.draw()
 
         GLCore.glCullFace(true)
-        GLCore.end()
+        GLCore.popMatrix()
     }
 
     fun doSpawnDeathParticles(mc: Minecraft, living: Entity) {

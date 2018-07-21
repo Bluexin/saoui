@@ -1,6 +1,7 @@
 package com.saomc.saoui.neo.screens
 
 import com.saomc.saoui.GLCore
+import com.saomc.saoui.GLCore.glTexturedRectV2
 import com.saomc.saoui.SAOCore
 import com.saomc.saoui.api.elements.neo.NeoIconElement
 import com.saomc.saoui.api.elements.neo.basicAnimation
@@ -10,7 +11,6 @@ import com.saomc.saoui.util.IconCore
 import com.teamwizardry.librarianlib.features.animator.Easing
 import com.teamwizardry.librarianlib.features.helpers.vec
 import com.teamwizardry.librarianlib.features.math.Vec2d
-import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.util.ResourceLocation
 import kotlin.math.max
 
@@ -87,8 +87,8 @@ open class Popup<T : Any>(var title: String, var text: List<String>, private val
     override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
         // TODO: these could be moved to Liblib's Sprites. Maybe.
 
-        GlStateManager.pushMatrix()
-        GlStateManager.translate(pos.x, pos.y, 0.0)
+        GLCore.pushMatrix()
+        GLCore.translate(pos.x, pos.y, 0.0)
         if (expansion < 0.2f) {
             GLCore.glScalef(expansion * 4 + 0.2f, expansion * 4 + 0.2f, 1f)
         }
@@ -113,12 +113,12 @@ open class Popup<T : Any>(var title: String, var text: List<String>, private val
         val alpha = if (expansion < 1f) expansion else eol
 
         GLCore.glBindTexture(rl)
-        GLCore.glColorRGBA(ColorUtil.DEFAULT_COLOR.multiplyAlpha(alpha))
-        GLCore.glTexturedRect(-w / 2.0, -h / 2.0, w, step1, 0.0, 0.0, 256.0, 64.0) // Title bar
-        GLCore.glTexturedRect(-w / 2.0, -h / 2.0 + step1, w, shadows, 0.0, 64.0, 256.0, 32.0) // Top shadow
-        GLCore.glTexturedRect(-w / 2.0, -h / 2.0 + step1 + shadows, w, step3, 0.0, 96.0, 256.0, 32.0) // Text lines
-        GLCore.glTexturedRect(-w / 2.0, -h / 2.0 + step1 + shadows + step3, w, shadows, 0.0, 128.0, 256.0, 32.0) // Bottom shadowr
-        GLCore.glTexturedRect(-w / 2.0, -h / 2.0 + step1 + shadows + step3 + shadows, w, step5, 0.0, 160.0, 256.0, 96.0) // Button bar
+        GLCore.color(ColorUtil.DEFAULT_COLOR.multiplyAlpha(alpha))
+        glTexturedRectV2(-w / 2.0, -h / 2.0, width = w, height = step1, srcX = 0.0, srcY = 0.0, srcWidth = 256.0, srcHeight = 64.0) // Title bar
+        glTexturedRectV2(-w / 2.0, -h / 2.0 + step1, width = w, height = shadows, srcX = 0.0, srcY = 64.0, srcWidth = 256.0, srcHeight = 32.0) // Top shadow
+        glTexturedRectV2(-w / 2.0, -h / 2.0 + step1 + shadows, width = w, height = step3, srcX = 0.0, srcY = 96.0, srcWidth = 256.0, srcHeight = 32.0) // Text lines
+        glTexturedRectV2(-w / 2.0, -h / 2.0 + step1 + shadows + step3, width = w, height = shadows, srcX = 0.0, srcY = 128.0, srcWidth = 256.0, srcHeight = 32.0) // Bottom shadowr
+        glTexturedRectV2(-w / 2.0, -h / 2.0 + step1 + shadows + step3 + shadows, width = w, height = step5, srcX = 0.0, srcY = 160.0, srcWidth = 256.0, srcHeight = 96.0) // Button bar
 
         if (alpha > 0.03f) GLCore.glString(title, -GLCore.glStringWidth(title) / 2, (-h / 2.0 + step1 / 2).toInt(), ColorUtil.DEFAULT_BOX_FONT_COLOR.multiplyAlpha(alpha), centered = true)
         (0 until text.size).forEach {
@@ -127,12 +127,12 @@ open class Popup<T : Any>(var title: String, var text: List<String>, private val
 
         // Guides
         /*GLCore.glBindTexture(StringNames.gui)
-        GLCore.glColorRGBA(ColorUtil.DEAD_COLOR.multiplyAlpha(0.5f))
+        GLCore.color(ColorUtil.DEAD_COLOR.multiplyAlpha(0.5f))
         for (i in 1..15) {
             GLCore.glTexturedRect(-w / 2.0 + i * w / 16, -h / 2.0, 1.0, h, 5.0, 120.0, 2.0, 2.0)
             GLCore.glTexturedRect(-w / 2.0, -h / 2.0 + i * h / 16.0, w, 1.0, 5.0, 120.0, 2.0, 2.0)
         }
-        GLCore.glColor(0f, 1f, 0f, 0.5f)
+        GLCore.color(0f, 1f, 0f, 0.5f)
         GLCore.glTexturedRect(-w / 2.0, h * 0.3125, w, 1.0, 5.0, 120.0, 2.0, 2.0)
 
         val childrenXSeparator = w / buttons.size
@@ -141,7 +141,7 @@ open class Popup<T : Any>(var title: String, var text: List<String>, private val
         GLCore.glTexturedRect(childrenXOffset, -h / 2, 1.0, h, 5.0, 120.0, 2.0, 2.0)
         GLCore.glTexturedRect(childrenXOffset + childrenXSeparator, -h / 2, 1.0, h, 5.0, 120.0, 2.0, 2.0)*/
 
-        GlStateManager.popMatrix()
+        GLCore.popMatrix()
 
         super.drawScreen(mouseX, mouseY, partialTicks)
     }

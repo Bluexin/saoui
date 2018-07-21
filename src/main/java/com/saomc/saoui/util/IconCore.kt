@@ -1,6 +1,7 @@
 package com.saomc.saoui.util
 
 import com.saomc.saoui.GLCore
+import com.saomc.saoui.GLCore.glTexturedRectV2
 import com.saomc.saoui.SAOCore
 import com.saomc.saoui.api.screens.IIcon
 import net.minecraft.util.ResourceLocation
@@ -40,15 +41,15 @@ enum class IconCore : IIcon {
     SNEAKING;
 
     override fun glDraw(x: Int, y: Int) {
-        GLCore.glColor(1f, 1f, 1f, 1f)
+        GLCore.color(1f, 1f, 1f, 1f)
         GLCore.glBlend(true)
         GLCore.glBindTexture(rl)
-        GLCore.glTexturedRect(x.toDouble(), y.toDouble(), 16.0, 16.0, 0.0, 0.0, 256.0, 256.0)
+        glTexturedRectV2(x.toDouble(), y.toDouble(), width = 16.0, height = 16.0, srcX = 0.0, srcY = 0.0, srcWidth = 256.0, srcHeight = 256.0)
         GLCore.glBlend(false)
     }
 
     override fun glDrawUnsafe(x: Int, y: Int) {
-        GLCore.glTexturedRect(x.toDouble(), y.toDouble(), 16.0, 16.0, 0.0, 0.0, 256.0, 256.0)
+        glTexturedRectV2(x.toDouble(), y.toDouble(), width = 16.0, height = 16.0, srcX = 0.0, srcY = 0.0, srcWidth = 256.0, srcHeight = 256.0)
     }
 
     override fun getRL(): ResourceLocation? {

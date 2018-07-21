@@ -26,7 +26,7 @@ enum class HealthStep constructor(private val limit: Float, var rgba: Int) {
     }
 
     fun glColor() {
-        GLCore.glColorRGBA(rgba)
+        GLCore.color(rgba)
     }
 
     companion object {
