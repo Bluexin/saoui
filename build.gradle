@@ -11,14 +11,14 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 
 apply plugin: 'maven-publish'
 apply plugin: 'kotlin'
-apply plugin: 'net.minecraftforge.gradle.forge'
+apply plugin: 'forge'
 
 version = "${mc_version}-${mod_version}"
 group = "com.saomc" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
@@ -55,13 +55,11 @@ repositories {
     }
 }
 
-reobf {
-    jar {
-        extraLines += ["PK: gnu/jel saoui/shade/gnu/jel"]
-        extraLines += ["PK: com/helger saoui/shade/com/helger"]
-//        extraLines += ["PK: edu/umd saoui/shade/edu/umd"]
-        extraLines += ["PK: org/slf4j saoui/shade/org/slf4j"]
-    }
+minecraft {
+    srgExtra "PK: gnu/jel saoui/shade/gnu/jel"
+    srgExtra "PK: com/helger saoui/shade/com/helger"
+//        srgExtra "PK: edu/umd saoui/shade/edu/umd"
+    srgExtra "PK: org/slf4j saoui/shade/org/slf4j"
 }
 
 configurations {
