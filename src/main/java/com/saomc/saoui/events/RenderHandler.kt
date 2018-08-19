@@ -83,7 +83,7 @@ internal object RenderHandler {
     fun renderPlayer(e: RenderPlayerEvent.Post) {
         if (!OptionCore.UI_ONLY.isEnabled) {
             if (e.entityPlayer != null) {
-                StaticRenderer.render(e.renderer.renderManager, e.entityPlayer, e.entityPlayer.posX, e.entityPlayer.posY, e.entityPlayer.posZ)
+                StaticRenderer.render(e.renderer.renderManager, e.entityPlayer, e.x, e.y, e.z)
             }
         }
     }
