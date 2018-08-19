@@ -62,6 +62,15 @@ object SAOCore {
 
     @Mod.EventHandler
     fun postInit(event: FMLPostInitializationEvent) {
+        // Attempt to fix 1st menu opening freeze, doesn't seem enough :<
+        /*GLCore.glBindTexture(StringNames.gui)
+        GLCore.glBindTexture(StringNames.slot)
+        GLCore.glBindTexture(StringNames.entities)
+        GLCore.glBindTexture(StringNames.entitiesCustom)
+        GLCore.glBindTexture(StringNames.particleLarge)
+        IconCore.values().forEach { GLCore.glBindTexture(it.rl!!) }
+        NeoIngameMenu()//.initGui()*/
+
         if (Loader.isModLoaded("mantle")) {
             LOGGER.info("Unregistering Mantle health renderer.")
             val f = EventBus::class.java.getDeclaredField("listeners")

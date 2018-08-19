@@ -76,30 +76,22 @@ object GLCore {
         (mc.resourceManager as IReloadableResourceManager).registerReloadListener(mc.fontRenderer)
     }
 
-    private fun glStringWidth(font: FontRenderer?, string: String): Int {
+    @JvmOverloads
+    fun glStringWidth(string: String, font: FontRenderer? = glFont): Int {
         return font?.getStringWidth(string) ?: 0
     }
 
-    fun glStringWidth(string: String): Int {
-        return glStringWidth(glFont, string)
-    }
-
-    private fun glStringHeight(font: FontRenderer?): Int {
+    @JvmOverloads
+    fun glStringHeight(font: FontRenderer? = glFont): Int {
         return font?.FONT_HEIGHT ?: 0
     }
 
-    fun glStringHeight(): Int {
-        return glStringHeight(glFont)
+    @JvmOverloads
+    fun glBindTexture(location: ResourceLocation, textureManager: TextureManager = glTextureManager) {
+        textureManager.bindTexture(location)
     }
 
-    private fun glBindTexture(textureManager: TextureManager?, location: ResourceLocation) {
-        textureManager?.bindTexture(location)
-    }
-
-    fun glBindTexture(location: ResourceLocation) {
-        glBindTexture(glTextureManager, location)
-    }
-
+    @JvmOverloads
     fun glTexturedRectV2(pos: Vec3d, size: Vec2d, srcPos: Vec2d = Vec2d.ZERO, srcSize: Vec2d = size, textureSize: Vec2d = vec(256, 256)) {
         glTexturedRectV2(
                 x = pos.x, y = pos.y, z = pos.z,
@@ -110,6 +102,7 @@ object GLCore {
         )
     }
 
+    @JvmOverloads
     fun glTexturedRectV2(x: Double, y: Double, z: Double = 0.0, width: Double, height: Double, srcX: Double = 0.0, srcY: Double = 0.0, srcWidth: Double = width, srcHeight: Double = height, textureW: Int = 256, textureH: Int = 256) {
         val f = 1f / textureW
         val f1 = 1f / textureH
@@ -134,7 +127,8 @@ object GLCore {
         Tessellator.getInstance().buffer.pos(x, y, z).tex(srcX, srcY).color(red, green, blue, alpha).endVertex()
     }
 
-    @JvmOverloads fun begin(glMode: Int = GL11.GL_QUADS, format: VertexFormat = DefaultVertexFormats.POSITION_TEX_COLOR) {
+    @JvmOverloads
+    fun begin(glMode: Int = GL11.GL_QUADS, format: VertexFormat = DefaultVertexFormats.POSITION_TEX_COLOR) {
         Tessellator.getInstance().buffer.begin(glMode, format)
     }
 

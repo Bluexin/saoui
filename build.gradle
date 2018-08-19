@@ -27,6 +27,10 @@ archivesBaseName = "saoui"
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
+configurations.all {
+    resolutionStrategy.cacheChangingModulesFor 10, 'minutes'
+}
+
 minecraft {
     version = "${mc_version}-${forge_version}"
     runDir = "run"
@@ -140,10 +144,6 @@ task apiArtifact(type: Jar, dependsOn: compileJava) {
 
 tasks.withType(Copy) {
     includeEmptyDirs = false
-}
-
-configurations.all {
-    resolutionStrategy.cacheChangingModulesFor 10, 'minutes'
 }
 
 kotlin {

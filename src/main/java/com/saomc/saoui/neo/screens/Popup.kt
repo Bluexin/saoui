@@ -117,7 +117,7 @@ open class Popup<T : Any>(var title: String, var text: List<String>, private val
         glTexturedRectV2(-w / 2.0, -h / 2.0, width = w, height = step1, srcX = 0.0, srcY = 0.0, srcWidth = 256.0, srcHeight = 64.0) // Title bar
         glTexturedRectV2(-w / 2.0, -h / 2.0 + step1, width = w, height = shadows, srcX = 0.0, srcY = 64.0, srcWidth = 256.0, srcHeight = 32.0) // Top shadow
         glTexturedRectV2(-w / 2.0, -h / 2.0 + step1 + shadows, width = w, height = step3, srcX = 0.0, srcY = 96.0, srcWidth = 256.0, srcHeight = 32.0) // Text lines
-        glTexturedRectV2(-w / 2.0, -h / 2.0 + step1 + shadows + step3, width = w, height = shadows, srcX = 0.0, srcY = 128.0, srcWidth = 256.0, srcHeight = 32.0) // Bottom shadowr
+        glTexturedRectV2(-w / 2.0, -h / 2.0 + step1 + shadows + step3, width = w, height = shadows, srcX = 0.0, srcY = 128.0, srcWidth = 256.0, srcHeight = 32.0) // Bottom shadow
         glTexturedRectV2(-w / 2.0, -h / 2.0 + step1 + shadows + step3 + shadows, width = w, height = step5, srcX = 0.0, srcY = 160.0, srcWidth = 256.0, srcHeight = 96.0) // Button bar
 
         if (alpha > 0.03f) GLCore.glString(title, -GLCore.glStringWidth(title) / 2, (-h / 2.0 + step1 / 2).toInt(), ColorUtil.DEFAULT_BOX_FONT_COLOR.multiplyAlpha(alpha), centered = true)

@@ -22,7 +22,7 @@ class NeoIngameMenu : NeoGui<Unit>(Vec2d.ZERO) {
 
     override var result: Unit
         get() = Unit
-        set(value) {}
+        set(_) {}
 
     override fun initGui() {
         elements.clear()

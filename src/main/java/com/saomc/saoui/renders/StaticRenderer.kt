@@ -53,7 +53,7 @@ object StaticRenderer { // TODO: add usage of scale, offset etc from capability
         if (entity.world.isRemote) {
             val d3 = entity.getDistanceSq(renderManager.renderViewEntity)
 
-            if (d3 <= (distance * distance).toDouble()) {
+            if (d3 <= distance * distance) {
                 val sizeMult = if (entity.isChild && entity is EntityMob) 0.5f else 1.0f
 
                 val f = 1.6f
@@ -104,14 +104,13 @@ object StaticRenderer { // TODO: add usage of scale, offset etc from capability
                         GLCore.addVertex(-9.0 * sin, 17.0, 9.0 * cos, 0.125, 0.375)
                         GLCore.addVertex(-9.0 * sin, -1.0, 9.0 * cos, 0.125, 0.25)
                     }
-                    GLCore.draw()
                 } else {
                     GLCore.addVertex(-9.0, -1.0, 0.0, 0.0, 0.25)
                     GLCore.addVertex(-9.0, 17.0, 0.0, 0.0, 0.375)
                     GLCore.addVertex(9.0, 17.0, 0.0, 0.125, 0.375)
                     GLCore.addVertex(9.0, -1.0, 0.0, 0.125, 0.25)
-                    GLCore.draw()
                 }
+                GLCore.draw()
 
                 GLCore.lighting(true)
                 GLCore.popMatrix()
