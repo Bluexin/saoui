@@ -18,7 +18,7 @@ import java.util.*
 interface INeoParent {
     var parent: INeoParent?
         get() = null
-        set(value) {}
+        set(_) = Unit
 
     val tlParent: INeoParent
         get() = parent?.tlParent ?: this
@@ -36,6 +36,12 @@ interface INeoParent {
     var pos: Vec2d
 
     var destination: Vec2d
+
+    var scroll
+        get() = 0
+        set(_) = Unit
+
+    fun mouseClicked(pos: Vec2d, mouseButton: MouseButton) = false
 }
 
 interface NeoElement : INeoParent {
@@ -48,11 +54,9 @@ interface NeoElement : INeoParent {
         /**
          * The set method is used to apply changes. Not ideal but idk between this and [boundingBox]
          */
-        set(value) {}
+        set(_) {}
 
     operator fun contains(pos: Vec2d) = pos in boundingBox
-
-    fun click(pos: Vec2d, button: MouseButton) = false
 
     val visible
         get() = true
@@ -66,8 +70,9 @@ interface NeoElement : INeoParent {
     val disabled
         get() = false
 
-    val opacity
+    var opacity
         get() = 1f
+        set(_) = Unit
 
     val scale
         get() = Vec2d.ONE
@@ -79,6 +84,14 @@ interface NeoElement : INeoParent {
 }
 
 abstract class NeoParent : NeoElement {
+
+    override var scroll = -3
+        set(value) {
+            val c = validElementsSequence.count()
+            if (c > 6) field = (value /*+ c*/) % (c)
+//            SAOCore.LOGGER.info("Result: $field (tried $value)")
+        }
+
     open val elements = mutableListOf<NeoElement>()
 
     open val elementsSequence by lazy { elements.asSequence() }

@@ -10,6 +10,9 @@ import com.teamwizardry.librarianlib.features.animator.Easing
 import com.teamwizardry.librarianlib.features.helpers.vec
 import com.teamwizardry.librarianlib.features.math.BoundingBox2D
 import com.teamwizardry.librarianlib.features.math.Vec2d
+import java.lang.ref.WeakReference
+import kotlin.math.max
+import kotlin.math.min
 
 /**
  * Part of saoui by Bluexin, released under GNU GPLv3.
@@ -63,13 +66,14 @@ class NeoCategoryButton(private val delegate: NeoIconElement, parent: INeoParent
     fun open() {
         selected = true
 
-        val children = validElementsSequence.toList()
-        openAnim = IndexedScheduledCounter(3f, maxIdx = children.count() - 1) {
-            if (selected) children.elementAt(it).show()
+        val children = childrenOrderedForAppearing().toList()
+        val anim = IndexedScheduledCounter(3f, maxIdx = children.count() - 1) {
+            children.elementAt(it).show()
             @Suppress("NestedLambdaShadowedImplicitParameter")
-            if (it == children.count() - 1) elementsSequence.filter { !it.valid }.forEach(NeoElement::show)
+            if (it == children.count() - 1) elementsSequence.forEach(NeoElement::show)
         }
-        +openAnim!!
+        +anim
+        openAnim = WeakReference(anim)
         tlParent.move(vec(-boundingBox.width(), 0))
     }
 
@@ -83,6 +87,7 @@ class NeoCategoryButton(private val delegate: NeoIconElement, parent: INeoParent
         }
 
     fun close() {
+        delegate.scroll = -3
         elements.forEach {
             it.hide()
             if (it is NeoCategoryButton && it.selected) {
@@ -91,13 +96,11 @@ class NeoCategoryButton(private val delegate: NeoIconElement, parent: INeoParent
         }
         selected = false
         tlParent.move(vec(boundingBox.width(), 0))
-//        if (openAnim?.isInAnimator == true) {
-//            openAnim?.cancel()
-//            openAnim = null
-//        }
+        openAnim?.get()?.terminated = true
+        openAnim = null
     }
 
-    private var openAnim: IndexedScheduledCounter? = null
+    private var openAnim: WeakReference<IndexedScheduledCounter>? = null
 
     override val elements: MutableList<NeoElement>
         get() = delegate.elements
@@ -119,8 +122,27 @@ class NeoCategoryButton(private val delegate: NeoIconElement, parent: INeoParent
         element.hide()
     }
 
-    override fun click(pos: Vec2d, button: MouseButton): Boolean {
-        return delegate.click(pos, button)
+    override fun mouseClicked(pos: Vec2d, mouseButton: MouseButton): Boolean {
+        return if ((mouseButton == MouseButton.SCROLL_DOWN || mouseButton == MouseButton.SCROLL_UP) && openAnim?.get()?.finished == false) true else delegate.mouseClicked(pos, mouseButton)
+    }
+
+    protected fun childrenOrderedForAppearing(): Sequence<NeoElement> {
+        val count = validElementsSequence.count()
+        return if (count == 0) emptySequence()
+        else {
+            val selectedIdx = if (validElementsSequence.any { it is NeoCategoryButton }) validElementsSequence.indexOfFirst { it.selected } else -1
+            when {
+                selectedIdx >= 0 -> {
+                    val skipFront = (selectedIdx - (count / 2 - (count + 1) % 2) + count) % count
+                    validElementsSequence.drop(skipFront) + validElementsSequence.take(skipFront)
+                }
+                count >= 7 -> {
+                    val s = validElementsSequence + validElementsSequence
+                    s.drop(min(max((scroll + count) % count, 0), count)).take(7)
+                }
+                else -> validElementsSequence
+            }
+        }
     }
 
     override var visible: Boolean
@@ -174,6 +196,10 @@ class NeoCategoryButton(private val delegate: NeoIconElement, parent: INeoParent
 
     fun init() {
         this.init?.invoke(this)
+    }
+
+    override fun toString(): String {
+        return "NeoCategoryButton(delegate=$delegate)"
     }
 }
 

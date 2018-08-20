@@ -57,19 +57,13 @@ class NeoIngameMenu : NeoGui<Unit>(Vec2d.ZERO) {
             category(IconCore.SKILLS, format("sao.element.skills")) {
                 category(IconCore.SKILLS, "Test 1") {
                     category(IconCore.SKILLS, "1.1") {
-                        category(IconCore.SKILLS, "1.1.1")
-                        category(IconCore.SKILLS, "1.1.2")
-                        category(IconCore.SKILLS, "1.1.3")
+                        for (i in 1..3) category(IconCore.SKILLS, "1.1.$i")
                     }
                     category(IconCore.SKILLS, "1.2") {
-                        category(IconCore.SKILLS, "1.2.1")
-                        category(IconCore.SKILLS, "1.2.2")
-                        category(IconCore.SKILLS, "1.2.3")
+                        for (i in 1..3) category(IconCore.SKILLS, "1.2.$i")
                     }
                     category(IconCore.SKILLS, "1.3") {
-                        category(IconCore.SKILLS, "1.3.1")
-                        category(IconCore.SKILLS, "1.3.2")
-                        category(IconCore.SKILLS, "1.3.3")
+                        for (i in 1..3) category(IconCore.SKILLS, "1.3.$i")
                     }
                 }
                 category(IconCore.SKILLS, "解散") {
@@ -84,19 +78,13 @@ class NeoIngameMenu : NeoGui<Unit>(Vec2d.ZERO) {
                 }
                 category(IconCore.SKILLS, "3") {
                     category(IconCore.SKILLS, "3.1") {
-                        category(IconCore.SKILLS, "3.1.1")
-                        category(IconCore.SKILLS, "3.1.2")
-                        category(IconCore.SKILLS, "3.1.3")
+                        for (i in 1..6) category(IconCore.SKILLS, "3.1.$i")
                     }
                     category(IconCore.SKILLS, "3.2") {
-                        category(IconCore.SKILLS, "3.2.1")
-                        category(IconCore.SKILLS, "3.2.2")
-                        category(IconCore.SKILLS, "3.2.3")
+                        for (i in 1..7) category(IconCore.SKILLS, "3.2.$i")
                     }
                     category(IconCore.SKILLS, "3.3") {
-                        category(IconCore.SKILLS, "3.3.1")
-                        category(IconCore.SKILLS, "3.3.2")
-                        category(IconCore.SKILLS, "3.3.3")
+                        for (i in 1..10) category(IconCore.SKILLS, "3.3.$i")
                     }
                 }
             }

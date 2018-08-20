@@ -7,10 +7,13 @@ import com.saomc.saoui.resources.StringNames
 import com.saomc.saoui.util.ColorIntent
 import com.saomc.saoui.util.ColorUtil
 import com.teamwizardry.librarianlib.features.helpers.vec
+import com.teamwizardry.librarianlib.features.kotlin.clamp
 import com.teamwizardry.librarianlib.features.kotlin.minus
 import com.teamwizardry.librarianlib.features.kotlin.plus
 import com.teamwizardry.librarianlib.features.math.BoundingBox2D
 import com.teamwizardry.librarianlib.features.math.Vec2d
+import kotlin.math.max
+import kotlin.math.min
 
 /**
  * Part of saoui by Bluexin, released under GNU GPLv3.
@@ -37,15 +40,25 @@ open class NeoIconElement(val icon: IIcon, override var pos: Vec2d = Vec2d.ZERO,
     override val boundingBox get() = BoundingBox2D(pos, pos + vec(20, 20))
 
     protected fun childrenOrderedForRendering(): Sequence<NeoElement> {
-        val selectedIdx = if (visibleElementsSequence.any { it is NeoCategoryButton }) visibleElementsSequence.indexOfFirst { it.selected } else -1
-        val s = visibleElementsSequence.count()
-        val skipFront =
-                if (selectedIdx >= 0) (selectedIdx - (s / 2 - (s + 1) % 2) + s) % s
-                else 0
-        return visibleElementsSequence.drop(skipFront) + visibleElementsSequence.take(skipFront)
+        val count = visibleElementsSequence.count()
+        return if (count == 0) emptySequence()
+        else {
+            val selectedIdx = if (visibleElementsSequence.any { it is NeoCategoryButton }) visibleElementsSequence.indexOfFirst { it.selected } else -1
+            when {
+                selectedIdx >= 0 -> {
+                    val skipFront = (selectedIdx - (count / 2 - (count + 1) % 2) + count) % count
+                    visibleElementsSequence.drop(skipFront) + visibleElementsSequence.take(skipFront)
+                }
+                validElementsSequence.count() < 7 -> visibleElementsSequence
+                else -> {
+                    val s = visibleElementsSequence + visibleElementsSequence
+                    s.drop(min(max((scroll + count) % count, 0), count)).take(min(7, count))
+                }
+            }
+        }
     }
 
-    override fun draw(mouse: Vec2d, partialTicks: Float) { // TODO: scrolling if too many elements
+    override fun draw(mouse: Vec2d, partialTicks: Float) {
         if (opacity < 0.03 || scale == Vec2d.ZERO) return
         GLCore.pushMatrix()
         if (scale != Vec2d.ONE) GLCore.glScalef(scale.xf, scale.yf, 1f)
@@ -53,22 +66,33 @@ open class NeoIconElement(val icon: IIcon, override var pos: Vec2d = Vec2d.ZERO,
         GLCore.glBindTexture(StringNames.gui)
         GLCore.glTexturedRectV2(pos.x, pos.y, width = 19.0, height = 19.0, srcX = 1.0, srcY = 26.0)
         GLCore.color(ColorUtil.multiplyAlpha(getTextColor(mouse), opacity))
-        if (icon.rl != null) GLCore.glBindTexture(icon.rl!!)
-        icon.glDrawUnsafe(pos + vec(1, 1))
+        if (icon.rl != null) {
+            GLCore.glBindTexture(icon.rl!!)
+            icon.glDrawUnsafe(pos + vec(1, 1))
+        }
+
+        /*GlStateManager.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE)
+        GLCore.glBindTexture(StringNames.gui)
+        val bb = boundingBox
+        GLCore.color(0xFF0000FF.toInt())
+        GLCore.glTexturedRectV2(pos = Vec3d(bb.pos.x, bb.pos.y, 0.0), size = bb.size, srcPos = vec(0, 61), srcSize = vec(4, 4))
+        GlStateManager.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL)*/
 
         drawChildren(mouse, partialTicks)
         GLCore.popMatrix()
     }
 
     protected open fun drawChildren(mouse: Vec2d, partialTicks: Float) {
-        val children = validElementsSequence
-        val centering = ((children.count() + children.count() % 2 - 2) * childrenYSeparator) / 2.0
+        val c = validElementsSequence.take(7).count()
+        val centering = ((c + c % 2 - 2) * childrenYSeparator) / 2.0
         GLCore.translate(pos.x + childrenXOffset, pos.y + childrenYOffset - centering, 0.0)
         var nmouse = mouse - pos - vec(childrenXOffset, childrenYOffset - centering)
-        childrenOrderedForRendering().forEach {
+        childrenOrderedForRendering().forEachIndexed { i, it ->
+            if (c == 7 && (i == 0 || i == 6)) it.opacity /= 2
             it.draw(nmouse, partialTicks)
             GLCore.translate(childrenXSeparator.toDouble(), childrenYSeparator.toDouble(), 0.0)
             nmouse -= vec(childrenXSeparator, childrenYSeparator)
+            if (c == 7 && (i == 0 || i == 6)) it.opacity *= 2
         }
     }
 
@@ -80,24 +104,43 @@ open class NeoIconElement(val icon: IIcon, override var pos: Vec2d = Vec2d.ZERO,
     }
 
     open fun getTextColor(mouse: Vec2d): Int {
-        return if (disabled) fontColorScheme[ColorIntent.DISABLED] ?: ColorUtil.DISABLED_FONT_COLOR.rgba else if (selected || mouse in this) {
+        return if (disabled) fontColorScheme[ColorIntent.DISABLED]
+                ?: ColorUtil.DISABLED_FONT_COLOR.rgba else if (selected || mouse in this) {
             fontColorScheme[ColorIntent.HOVERED] ?: ColorUtil.HOVER_FONT_COLOR.rgba
         } else fontColorScheme[ColorIntent.NORMAL] ?: ColorUtil.DEFAULT_FONT_COLOR.rgba
     }
 
-    override fun click(pos: Vec2d, button: MouseButton): Boolean {
-        return if (pos in this) {
-            onClickBody(pos, button)
-        } else {
-            var npos = pos - this.pos - vec(childrenXOffset, childrenYOffset - ((validElementsSequence.count() - 1) * childrenYSeparator) / 2.0)
+    override fun mouseClicked(pos: Vec2d, mouseButton: MouseButton): Boolean {
+//        SAOCore.LOGGER.info("$pos $mouseButton Checking $this")
+        if (this.parent is NeoCategoryButton && this.selected && this.elementsSequence.none { it is NeoCategoryButton && it.selected }) {
+            @Suppress("NON_EXHAUSTIVE_WHEN")
+            when (mouseButton) {
+                MouseButton.SCROLL_UP -> {
+                    --scroll
+//                    SAOCore.LOGGER.info("Scroll: $scroll")
+                    return true
+                }
+                MouseButton.SCROLL_DOWN -> {
+                    ++scroll
+//                    SAOCore.LOGGER.info("Scroll: $scroll")
+                    return true
+                }
+            }
+        }
+        return if (mouseButton == MouseButton.LEFT && pos in this) onClickBody(pos, mouseButton)
+        else {
+            val children = childrenOrderedForRendering() // childrenOrderedForAppearing
+            val c = validElementsSequence.take(7).count()
+//            val c = children.count()
+            var npos = pos - this.pos - vec(childrenXOffset, childrenYOffset - (c + c % 2 - 2) * childrenYSeparator / 2.0)
             var ok = false
-            childrenOrderedForRendering().forEach {
-                ok = it.click(npos, button) || ok
+            children.forEach {
+                ok = it.mouseClicked(npos, mouseButton) || ok
                 npos -= vec(childrenXSeparator, childrenYSeparator)
             }
             if (ok) true
             else {
-                onClickOutBody(pos, button)
+                onClickOutBody(pos, mouseButton)
                 false
             }
         }
@@ -135,6 +178,9 @@ open class NeoIconElement(val icon: IIcon, override var pos: Vec2d = Vec2d.ZERO,
     override var disabled = false
 
     override var opacity = 1f
+        set(value) {
+            field = value.clamp(0f, 1f)
+        }
 
     override var scale = Vec2d.ONE
 
@@ -144,5 +190,10 @@ open class NeoIconElement(val icon: IIcon, override var pos: Vec2d = Vec2d.ZERO,
 
     override fun show() {
         visible = true
+//        SAOCore.LOGGER.info("Showing $this")
+    }
+
+    override fun toString(): String {
+        return "NeoIconElement(icon=$icon, pos=$pos, destination=$destination, visible=$visible, selected=$selected, disabled=$disabled, opacity=$opacity)"
     }
 }

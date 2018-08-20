@@ -26,7 +26,7 @@ open class NeoIconLabelElement(icon: IIcon, open val label: String = "", var wid
             width = value.widthI()
         }
 
-    override fun draw(mouse: Vec2d, partialTicks: Float) { // TODO: scrolling if too many elements
+    override fun draw(mouse: Vec2d, partialTicks: Float) {
         if (opacity < 0.03 || scale == Vec2d.ZERO) return
         GLCore.pushMatrix()
         if (scale != Vec2d.ONE) GLCore.glScalef(scale.xf, scale.yf, 1f)
@@ -39,8 +39,19 @@ open class NeoIconLabelElement(icon: IIcon, open val label: String = "", var wid
         icon.glDrawUnsafe(pos + vec(1, 1))
         GLCore.glString(label, pos + vec(22, height / 2), color, centered = true)
 
+        /*GlStateManager.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE)
+        GLCore.glBindTexture(StringNames.gui)
+        val bb = boundingBox
+        GLCore.color(0xFF0000FF.toInt())
+        GLCore.glTexturedRectV2(pos = Vec3d(bb.pos.x, bb.pos.y, 0.0), size = bb.size, srcPos = vec(0, 61), srcSize = vec(4, 4))
+        GlStateManager.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL)*/
+
         drawChildren(mouse, partialTicks)
         GLCore.popMatrix()
+    }
+
+    override fun toString(): String {
+        return "NeoIconLabelElement(label='$label', width=$width, height=$height)\n\t${super.toString()}"
     }
 
     override val childrenXOffset get() = width + 5
@@ -48,8 +59,7 @@ open class NeoIconLabelElement(icon: IIcon, open val label: String = "", var wid
     override var visible: Boolean
         get() = super.visible
         set(value) {
-            super.visible = value
-            if (value) {
+            if (value && !super.visible) {
                 opacity = 0f
                 +basicAnimation(this, "opacity") {
                     from = 0f
@@ -57,5 +67,8 @@ open class NeoIconLabelElement(icon: IIcon, open val label: String = "", var wid
                     duration = 4f
                 }
             }
+            super.visible = value
         }
+
+
 }

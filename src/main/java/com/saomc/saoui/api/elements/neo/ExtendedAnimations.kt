@@ -9,13 +9,7 @@ import com.teamwizardry.librarianlib.features.animator.animations.ScheduledEvent
  *
  * @author Bluexin
  */
-abstract class CancelableAnimation<T : Any>(target: T, property: AnimatableProperty<T>) : Animation<T>(target, property) {
-    fun cancel() {
-        duration = 0f
-    }
-}
-
-open class IndexedScheduledCounter(val delay: Float, maxIdx: Int = 0, private val callBack: (Int) -> Unit) : CancelableAnimation<ScheduledEventAnimation.PointlessAnimatableObject>(ScheduledEventAnimation.PointlessAnimatableObject,
+open class IndexedScheduledCounter(val delay: Float, maxIdx: Int = 0, private val callBack: (Int) -> Unit) : Animation<ScheduledEventAnimation.PointlessAnimatableObject>(ScheduledEventAnimation.PointlessAnimatableObject,
         AnimatableProperty.get(ScheduledEventAnimation.PointlessAnimatableObject::class.java, "field")) {
 
     init {
