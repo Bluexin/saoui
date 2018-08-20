@@ -18,9 +18,10 @@ If Alpha is omitted, it will default to FF (opaque).
     color: #FFFFFFFF;
 }
 
-/* Defaults used for most stuff when disabled (not actually used yet). Acts as a mask (so multiplied with base color) */
+/* Defaults used for most stuff when disabled */
 :disabled {
-    background-color: #FFFFFF42;
+    background-color: #7C7C7CFF;
+    color: #FFFFFFFF;
 }
 
 /* Confirm button */

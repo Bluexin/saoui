@@ -13,7 +13,8 @@ enum class ColorUtil constructor(var rgba: Int) {
     HOVER_COLOR(0xC99B13FF.toInt()),
     HOVER_FONT_COLOR(0xFFFFFFFF.toInt()),
 
-    DISABLED_MASK(0xFFFFFF42.toInt()),
+    DISABLED_COLOR(0x7C7C7CFF),
+    DISABLED_FONT_COLOR(0xFFFFFFFF.toInt()),
 
     CONFIRM_COLOR(0x4782E3FF),
     CONFIRM_COLOR_LIGHT(0x629DFFFF),
@@ -60,5 +61,5 @@ enum class ColorUtil constructor(var rgba: Int) {
 enum class ColorIntent {
     NORMAL,
     HOVERED,
-    DISABLED_MASK
+    DISABLED
 }

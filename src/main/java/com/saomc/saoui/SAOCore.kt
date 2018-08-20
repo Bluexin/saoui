@@ -68,7 +68,7 @@ object SAOCore {
         GLCore.glBindTexture(StringNames.entities)
         GLCore.glBindTexture(StringNames.entitiesCustom)
         GLCore.glBindTexture(StringNames.particleLarge)
-        IconCore.values().forEach { GLCore.glBindTexture(it.rl!!) }
+        IconCore.values().forEach { if (it.rl != null) GLCore.glBindTexture(it.rl!!) }
         NeoIngameMenu()//.initGui()*/
 
         if (Loader.isModLoaded("mantle")) {

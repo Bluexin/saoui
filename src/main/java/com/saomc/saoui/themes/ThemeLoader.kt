@@ -86,7 +86,8 @@ object ThemeLoader {
                                 if (fg != null) ColorUtil.HOVER_FONT_COLOR.rgba = fg
                             }
                             ":disabled" -> {
-                                if (bg != null) ColorUtil.DISABLED_MASK.rgba = bg
+                                if (bg != null) ColorUtil.DISABLED_COLOR.rgba = bg
+                                if (fg != null) ColorUtil.DISABLED_FONT_COLOR.rgba = fg
                             }
                             ".confirm" -> {
                                 if (bg != null) ColorUtil.CONFIRM_COLOR.rgba = bg

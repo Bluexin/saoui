@@ -5,6 +5,7 @@ import com.saomc.saoui.api.elements.neo.NeoCategoryButton
 import com.saomc.saoui.api.elements.neo.NeoIconLabelElement
 import com.saomc.saoui.api.screens.IIcon
 import com.saomc.saoui.events.EventCore.mc
+import com.saomc.saoui.util.IconCore
 import com.teamwizardry.librarianlib.features.kotlin.isNotEmpty
 import com.teamwizardry.librarianlib.features.math.Vec2d
 import net.minecraft.client.Minecraft
@@ -16,13 +17,29 @@ import net.minecraft.item.ItemStack
 
 @NeoGuiDsl
 fun NeoCategoryButton.itemList(inventory: IInventory, filter: (iss: ItemStack) -> Boolean, vararg equippedRange: IntRange = arrayOf(-1..-1)) {
-    (0..inventory.sizeInventory).forEach {
+    (0 until inventory.sizeInventory).forEach {
         +ItemStackElement(inventory, it, Vec2d.ZERO, equippedRange.any { r -> it in r }, filter)
+    }
+    +object : NeoIconLabelElement(icon = IconCore.NONE, label = I18n.format("gui.empty")) {
+        private var mark = false
+
+        override val valid: Boolean
+            get() {
+                if (mark) return false
+                mark = true
+                val r = !this@itemList.validElementsSequence.any()
+                mark = false
+                return r
+            }
+
+        override var disabled: Boolean
+            get() = true
+            set(_) {}
     }
 }
 
 class ItemStackElement(private val inventoryIn: IInventory, private val slot: Int, pos: Vec2d, override var selected: Boolean, private val filter: (iss: ItemStack) -> Boolean) :
-        NeoIconLabelElement(icon = ItemIcon({ inventoryIn.getStackInSlot(slot) }), pos = pos) {
+        NeoIconLabelElement(icon = ItemIcon { inventoryIn.getStackInSlot(slot) }, pos = pos) {
 
     init {
         onClick { _, button ->

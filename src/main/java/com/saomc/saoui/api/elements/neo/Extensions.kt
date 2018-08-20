@@ -66,8 +66,9 @@ class NeoCategoryButton(private val delegate: NeoIconElement, parent: INeoParent
         val children = validElementsSequence.toList()
         openAnim = IndexedScheduledCounter(3f, maxIdx = children.count() - 1) {
             if (selected) children.elementAt(it).show()
+            @Suppress("NestedLambdaShadowedImplicitParameter")
+            if (it == children.count() - 1) elementsSequence.filter { !it.valid }.forEach(NeoElement::show)
         }
-        elementsSequence.filter { !it.valid }.forEach(NeoElement::show)
         +openAnim!!
         tlParent.move(vec(-boundingBox.width(), 0))
     }

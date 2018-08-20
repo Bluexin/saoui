@@ -25,13 +25,13 @@ open class NeoIconElement(val icon: IIcon, override var pos: Vec2d = Vec2d.ZERO,
     val bgColorScheme = mutableMapOf(
             ColorIntent.NORMAL to ColorUtil.DEFAULT_COLOR.rgba,
             ColorIntent.HOVERED to ColorUtil.HOVER_COLOR.rgba,
-            ColorIntent.DISABLED_MASK to ColorUtil.DISABLED_MASK.rgba
+            ColorIntent.DISABLED to ColorUtil.DISABLED_COLOR.rgba
     )
 
     val fontColorScheme = mutableMapOf(
             ColorIntent.NORMAL to ColorUtil.DEFAULT_FONT_COLOR.rgba,
             ColorIntent.HOVERED to ColorUtil.HOVER_FONT_COLOR.rgba,
-            ColorIntent.DISABLED_MASK to ColorUtil.DISABLED_MASK.rgba
+            ColorIntent.DISABLED to ColorUtil.DISABLED_FONT_COLOR.rgba
     )
 
     override val boundingBox get() = BoundingBox2D(pos, pos + vec(20, 20))
@@ -73,21 +73,16 @@ open class NeoIconElement(val icon: IIcon, override var pos: Vec2d = Vec2d.ZERO,
     }
 
     open fun getColor(mouse: Vec2d): Int {
-        val base = if (selected || mouse in this) {
+        return if (disabled) bgColorScheme[ColorIntent.DISABLED] ?: ColorUtil.DISABLED_COLOR.rgba
+        else if (selected || mouse in this) {
             bgColorScheme[ColorIntent.HOVERED] ?: ColorUtil.DEFAULT_COLOR.rgba
         } else bgColorScheme[ColorIntent.NORMAL] ?: ColorUtil.HOVER_COLOR.rgba
-
-        return if (disabled) base and (bgColorScheme[ColorIntent.DISABLED_MASK]
-                ?: ColorUtil.DISABLED_MASK.rgba) else base
     }
 
     open fun getTextColor(mouse: Vec2d): Int {
-        val base = if (selected || mouse in this) {
+        return if (disabled) fontColorScheme[ColorIntent.DISABLED] ?: ColorUtil.DISABLED_FONT_COLOR.rgba else if (selected || mouse in this) {
             fontColorScheme[ColorIntent.HOVERED] ?: ColorUtil.HOVER_FONT_COLOR.rgba
         } else fontColorScheme[ColorIntent.NORMAL] ?: ColorUtil.DEFAULT_FONT_COLOR.rgba
-
-        return if (disabled) base and (fontColorScheme[ColorIntent.DISABLED_MASK]
-                ?: ColorUtil.DISABLED_MASK.rgba) else base
     }
 
     override fun click(pos: Vec2d, button: MouseButton): Boolean {

@@ -11,7 +11,11 @@ import net.minecraftforge.fml.relauncher.SideOnly
 @SideOnly(Side.CLIENT)
 enum class IconCore : IIcon {
 
-    NONE,
+    NONE {
+        override fun glDraw(x: Int, y: Int)  = Unit
+        override fun glDrawUnsafe(x: Int, y: Int) = Unit
+        override fun getRL(): ResourceLocation? = null
+    },
     OPTION,
     HELP,
     LOGOUT,
