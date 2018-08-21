@@ -41,9 +41,9 @@ enum class OptionCore(
     LOGOUT(I18n.format("optionLogout"), false, false, UI, false),
     GUI_PAUSE(I18n.format("optionGuiPause"), false, false, UI, false),
     // Themes
-    @Deprecated("") // TODO: way to load other xml-defined themes
+    @Deprecated("Themes are a thing now")
     VANILLA_UI(I18n.format("optionDefaultUI"), false, false, THEME, true),
-    @Deprecated("") // TODO: way to load other xml-defined themes
+    @Deprecated("Themes are a thing now")
     SAO_UI(I18n.format("optionSAOUI"), true, false, THEME, true),
     // Health Options
     SMOOTH_HEALTH(I18n.format("optionSmoothHealth"), true, false, HEALTH_OPTIONS, false),

@@ -15,6 +15,7 @@ import java.util.*
 
  * @author Bluexin
  */
+@Deprecated("Use SAOMCLib's party system instead.")
 class PartyHelper private constructor(private val party: IParty) {
     private val invited = ArrayList<EntityPlayer>()
 

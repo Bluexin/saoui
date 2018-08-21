@@ -7,8 +7,8 @@ import com.saomc.saoui.neo.screens.NeoGuiDsl
 import com.saomc.saoui.neo.screens.unaryPlus
 import com.saomc.saoui.util.IconCore
 import com.teamwizardry.librarianlib.features.animator.Easing
+import com.teamwizardry.librarianlib.features.gui.component.supporting.delegate
 import com.teamwizardry.librarianlib.features.helpers.vec
-import com.teamwizardry.librarianlib.features.math.BoundingBox2D
 import com.teamwizardry.librarianlib.features.math.Vec2d
 import java.lang.ref.WeakReference
 import kotlin.math.max
@@ -47,22 +47,6 @@ class NeoCategoryButton(private val delegate: NeoIconElement, parent: INeoParent
         init?.invoke(this)
     }
 
-    override fun contains(pos: Vec2d): Boolean {
-        return delegate.contains(pos)
-    }
-
-    override var pos: Vec2d
-        get() = delegate.pos
-        set(value) {
-            delegate.pos = value
-        }
-
-    override var destination: Vec2d
-        get() = delegate.destination
-        set(value) {
-            delegate.destination = value
-        }
-
     fun open() {
         selected = true
 
@@ -77,14 +61,6 @@ class NeoCategoryButton(private val delegate: NeoIconElement, parent: INeoParent
         tlParent.move(vec(-boundingBox.width(), 0))
     }
 
-    override val boundingBox: BoundingBox2D
-        get() = delegate.boundingBox
-
-    override var idealBoundingBox: BoundingBox2D
-        get() = delegate.idealBoundingBox
-        set(value) {
-            delegate.idealBoundingBox = value
-        }
 
     fun close() {
         delegate.scroll = -3
@@ -101,21 +77,6 @@ class NeoCategoryButton(private val delegate: NeoIconElement, parent: INeoParent
     }
 
     private var openAnim: WeakReference<IndexedScheduledCounter>? = null
-
-    override val elements: MutableList<NeoElement>
-        get() = delegate.elements
-    override val childrenXOffset: Int
-        get() = delegate.childrenXOffset
-    override val childrenYOffset: Int
-        get() = delegate.childrenYOffset
-    override val childrenXSeparator: Int
-        get() = delegate.childrenXSeparator
-    override val childrenYSeparator: Int
-        get() = delegate.childrenYSeparator
-
-    override fun draw(mouse: Vec2d, partialTicks: Float) {
-        delegate.draw(mouse, partialTicks)
-    }
 
     override operator fun plusAssign(element: NeoElement) {
         delegate += element
@@ -145,48 +106,6 @@ class NeoCategoryButton(private val delegate: NeoIconElement, parent: INeoParent
         }
     }
 
-    override var visible: Boolean
-        get() = delegate.visible
-        set(value) {
-            delegate.visible = value
-        }
-    override var selected: Boolean
-        get() = delegate.selected
-        set(value) {
-            delegate.selected = value
-        }
-    override var disabled: Boolean
-        get() = delegate.disabled
-        set(value) {
-            delegate.selected = value
-        }
-    override var opacity: Float
-        get() = delegate.opacity
-        set(value) {
-            delegate.opacity = value
-        }
-    override var scale: Vec2d
-        get() = delegate.scale
-        set(value) {
-            delegate.scale = value
-        }
-
-    override fun onClick(body: (Vec2d, MouseButton) -> Boolean) {
-        delegate.onClick(body)
-    }
-
-    override fun onClickOut(body: (Vec2d, MouseButton) -> Unit) {
-        delegate.onClickOut(body)
-    }
-
-    override fun hide() {
-        delegate.hide()
-    }
-
-    override fun show() {
-        delegate.show()
-    }
-
     @NeoGuiDsl
     fun category(icon: IIcon, label: String, body: (NeoCategoryButton.() -> Unit)? = null): NeoCategoryButton {
         val cat = NeoCategoryButton(NeoIconLabelElement(icon, label), this, body)
@@ -197,6 +116,27 @@ class NeoCategoryButton(private val delegate: NeoIconElement, parent: INeoParent
     fun init() {
         this.init?.invoke(this)
     }
+
+    override var pos by delegate::pos.delegate
+    override var destination by delegate::destination.delegate
+    override val boundingBox by delegate::boundingBox.delegate
+    override var idealBoundingBox by delegate::idealBoundingBox.delegate
+    override val elements by delegate::elements.delegate
+    override val childrenXOffset by delegate::childrenXOffset.delegate
+    override val childrenYOffset by delegate::childrenYOffset.delegate
+    override val childrenXSeparator by delegate::childrenXSeparator.delegate
+    override val childrenYSeparator by delegate::childrenYSeparator.delegate
+    override var visible by delegate::visible.delegate
+    override var selected by delegate::selected.delegate
+    override var disabled by delegate::disabled.delegate
+    override var opacity by delegate::opacity.delegate
+    override var scale by delegate::scale.delegate
+    override fun onClick(body: (Vec2d, MouseButton) -> Boolean) = delegate.onClick(body)
+    override fun onClickOut(body: (Vec2d, MouseButton) -> Unit) = delegate.onClickOut(body)
+    override fun hide() = delegate.hide()
+    override fun show() = delegate.show()
+    override fun draw(mouse: Vec2d, partialTicks: Float) = delegate.draw(mouse, partialTicks)
+    override fun contains(pos: Vec2d) = delegate.contains(pos)
 
     override fun toString(): String {
         return "NeoCategoryButton(delegate=$delegate)"
