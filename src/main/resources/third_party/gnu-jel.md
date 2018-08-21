@@ -4,9 +4,7 @@
 
 Licensed under [GNU GPLv3](https://www.gnu.org/software/jel/license.txt).
 
-Source & binaries can be downloaded
-    [here (tgz)](http://ftp.gnu.org/gnu/jel/jel-2.1.1.tar.gz) and
-    [here (zip)](http://ftp.gnu.org/gnu/jel/jel-2_1_1.zip).
+Using [this fork](https://github.com/Bluexin/gnu-jel).
 
 ## Summary
 (from the official documentation)
