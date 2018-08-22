@@ -1,5 +1,6 @@
 package com.saomc.saoui.events
 
+import be.bluexin.saomclib.player
 import com.saomc.saoui.SoundCore
 import com.saomc.saoui.config.OptionCore
 import com.saomc.saoui.neo.screens.NeoGui
@@ -7,16 +8,17 @@ import com.saomc.saoui.neo.screens.NeoIngameMenu
 import com.saomc.saoui.renders.StaticRenderer
 import com.saomc.saoui.screens.ingame.IngameGUI
 import com.saomc.saoui.screens.menu.StartupGUI
+import cpw.mods.fml.relauncher.Side
+import cpw.mods.fml.relauncher.SideOnly
 import net.minecraft.client.gui.GuiIngameMenu
 import net.minecraft.client.gui.GuiMainMenu
 import net.minecraft.client.gui.inventory.GuiContainerCreative
 import net.minecraft.client.gui.inventory.GuiInventory
+import net.minecraft.client.renderer.entity.RenderManager
 import net.minecraft.entity.EntityLivingBase
 import net.minecraftforge.client.event.GuiOpenEvent
 import net.minecraftforge.client.event.RenderLivingEvent
 import net.minecraftforge.client.event.RenderPlayerEvent
-import net.minecraftforge.fml.relauncher.Side
-import net.minecraftforge.fml.relauncher.SideOnly
 import java.util.*
 
 @SideOnly(Side.CLIENT)
@@ -83,15 +85,15 @@ internal object RenderHandler {
     fun renderPlayer(e: RenderPlayerEvent.Post) {
         if (!OptionCore.UI_ONLY.isEnabled) {
             if (e.entityPlayer != null) {
-                StaticRenderer.render(e.renderer.renderManager, e.entityPlayer, e.x, e.y, e.z)
+                StaticRenderer.render(RenderManager.instance, e.entityPlayer, e.entityPlayer.posX, e.entityPlayer.posY, e.entityPlayer.posZ)
             }
         }
     }
 
-    fun renderEntity(e: RenderLivingEvent.Post<*>) {
+    fun renderEntity(e: RenderLivingEvent.Post) {
         if (!OptionCore.UI_ONLY.isEnabled) {
             if (e.entity !== EventCore.mc.player) {
-                StaticRenderer.render(e.renderer.renderManager, e.entity, e.x, e.y, e.z)
+                StaticRenderer.render(RenderManager.instance, e.entity, e.x, e.y, e.z)
             }
         }
     }

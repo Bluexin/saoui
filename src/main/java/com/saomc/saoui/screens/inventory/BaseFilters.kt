@@ -3,12 +3,12 @@ package com.saomc.saoui.screens.inventory
 import baubles.api.BaublesApi
 import baubles.api.IBauble
 import com.saomc.saoui.api.screens.ItemFilter
-import com.teamwizardry.librarianlib.features.kotlin.isNotEmpty
+import com.saomc.saoui.util.isNotEmpty
+import cpw.mods.fml.common.Loader
 import net.minecraft.block.BlockPumpkin
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.inventory.IInventory
 import net.minecraft.item.*
-import net.minecraftforge.fml.common.Loader
 
 /**
  * TODO: use [ItemTool.getToolClasses] for moar modded compat
@@ -17,7 +17,7 @@ enum class BaseFilters(val filter: (ItemStack, Boolean) -> Boolean) : ItemFilter
 
     EQUIPMENT({ stack, _ ->
         val item = stack.item
-        item is ItemArmor || item is ItemBlock && item.block is BlockPumpkin
+        item is ItemArmor || item is ItemBlock && item.blockInstance is BlockPumpkin
     }),
 
     SWORDS({ stack, _ -> stack.item is ItemSword }),
@@ -33,8 +33,6 @@ enum class BaseFilters(val filter: (ItemStack, Boolean) -> Boolean) : ItemFilter
 
     SHOVELS({ stack, _ -> stack.item is ItemSpade }),
 
-    SHIELDS({ stack, _ -> stack.item.isShield(stack, null) || stack.item is com.teamwizardry.librarianlib.features.base.item.IShieldItem }),
-
     COMPATTOOLS({ stack, _ ->
         val item = stack.item
         item is ItemTool || item is ItemHoe || item is ItemShears
@@ -44,14 +42,14 @@ enum class BaseFilters(val filter: (ItemStack, Boolean) -> Boolean) : ItemFilter
 
     CONSUMABLES({ stack, _ ->
         val action = stack.itemUseAction
-        action == EnumAction.DRINK || action == EnumAction.EAT
+        action == EnumAction.drink || action == EnumAction.eat
     }),
 
     ITEMS({ stack, equipped ->
         stack.isNotEmpty &&
                 !EQUIPMENT(stack, equipped) && !SWORDS(stack, equipped) && !BOWS(stack, equipped) && !WEAPONS(stack, equipped) &&
                 !ACCESSORY(stack, equipped) && !PICKAXES(stack, equipped) && !AXES(stack, equipped) && !SHOVELS(stack, equipped) &&
-                !SHIELDS(stack, equipped) && !COMPATTOOLS(stack, equipped) && !ACCESSORY(stack, equipped)
+                !COMPATTOOLS(stack, equipped) && !ACCESSORY(stack, equipped)
     });
 
     override fun invoke(stack: ItemStack, equipped: Boolean) = filter(stack, equipped)

@@ -1,5 +1,6 @@
 package com.saomc.saoui
 
+import be.bluexin.saomclib.capabilities.CapabilitiesHandler
 import com.saomc.saoui.api.events.EventInitStatsProvider
 import com.saomc.saoui.config.ConfigHandler
 import com.saomc.saoui.events.EventCore
@@ -7,21 +8,21 @@ import com.saomc.saoui.neo.screens.NeoGui
 import com.saomc.saoui.themes.ThemeLoader
 import com.saomc.saoui.util.DefaultStatsProvider
 import com.saomc.saoui.util.PlayerStats
+import cpw.mods.fml.common.Loader
+import cpw.mods.fml.common.Mod
+import cpw.mods.fml.common.event.FMLInitializationEvent
+import cpw.mods.fml.common.event.FMLPostInitializationEvent
+import cpw.mods.fml.common.event.FMLPreInitializationEvent
+import cpw.mods.fml.common.eventhandler.EventBus
 import net.minecraft.client.Minecraft
 import net.minecraft.client.resources.IReloadableResourceManager
 import net.minecraftforge.common.MinecraftForge
-import net.minecraftforge.fml.common.Loader
-import net.minecraftforge.fml.common.Mod
-import net.minecraftforge.fml.common.event.FMLInitializationEvent
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent
-import net.minecraftforge.fml.common.eventhandler.EventBus
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import java.util.concurrent.ConcurrentHashMap
 import javax.xml.bind.JAXBException
 
-@Mod(modid = SAOCore.MODID, name = SAOCore.NAME, version = SAOCore.VERSION, clientSideOnly = true, dependencies = SAOCore.DEPS, acceptableSaveVersions = "*", canBeDeactivated = true)
+@Mod(modid = SAOCore.MODID, name = SAOCore.NAME, version = SAOCore.VERSION, /*clientSideOnly = true, */dependencies = SAOCore.DEPS, acceptableSaveVersions = "*", canBeDeactivated = true)
 object SAOCore {
     const val MODID = "saoui"
     const val NAME = "Sword Art Online UI"
@@ -43,7 +44,7 @@ object SAOCore {
         MinecraftForge.EVENT_BUS.register(EventCore)
         ConfigHandler.preInit(event)
 
-        (Minecraft.getMinecraft().resourceManager as IReloadableResourceManager).registerReloadListener { resourceManager ->
+        (Minecraft.getMinecraft().resourceManager as IReloadableResourceManager).registerReloadListener { _ ->
             try {
                 ThemeLoader.load()
             } catch (e: JAXBException) {

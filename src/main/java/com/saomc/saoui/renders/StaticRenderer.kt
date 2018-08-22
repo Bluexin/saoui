@@ -1,5 +1,7 @@
 package com.saomc.saoui.renders
 
+import be.bluexin.saomclib.player
+import be.bluexin.saomclib.world
 import com.saomc.saoui.GLCore
 import com.saomc.saoui.SAOCore
 import com.saomc.saoui.api.entity.rendering.RenderCapability
@@ -8,16 +10,15 @@ import com.saomc.saoui.effects.DeathParticles
 import com.saomc.saoui.resources.StringNames
 import com.saomc.saoui.screens.ingame.HealthStep
 import com.saomc.saoui.social.StaticPlayerHelper
+import cpw.mods.fml.common.Loader
+import cpw.mods.fml.relauncher.Side
+import cpw.mods.fml.relauncher.SideOnly
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.entity.RenderManager
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats
 import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.monster.EntityMob
 import net.minecraft.entity.monster.IMob
-import net.minecraftforge.fml.common.Loader
-import net.minecraftforge.fml.relauncher.Side
-import net.minecraftforge.fml.relauncher.SideOnly
 import org.lwjgl.opengl.GL11
 
 @SideOnly(Side.CLIENT)
@@ -37,10 +38,10 @@ object StaticRenderer { // TODO: add usage of scale, offset etc from capability
         if (living.deathTime == 1) living.deathTime++
 
         if (!dead && !living.isInvisibleToPlayer(mc.player)) {
-            if (OptionCore.COLOR_CURSOR.isEnabled && living.hasCapability(RenderCapability.RENDER_CAPABILITY, null))
+            if (OptionCore.COLOR_CURSOR.isEnabled/* && living.hasCapability(RenderCapability.RENDER_CAPABILITY, null)*/)
                 doRenderColorCursor(renderManager, mc, living, x, y, z, 64)
 
-            if (OptionCore.HEALTH_BARS.isEnabled && living != mc.player && living.hasCapability(RenderCapability.RENDER_CAPABILITY, null))
+            if (OptionCore.HEALTH_BARS.isEnabled && living != mc.player/* && living.hasCapability(RenderCapability.RENDER_CAPABILITY, null)*/)
                 doRenderHealthBar(renderManager, mc, living, x, y, z)
         }
     }
@@ -51,7 +52,7 @@ object StaticRenderer { // TODO: add usage of scale, offset etc from capability
             return
 
         if (entity.world.isRemote) {
-            val d3 = entity.getDistanceSq(renderManager.renderViewEntity)
+            val d3 = entity.getDistanceSqToEntity(mc.renderViewEntity)
 
             if (d3 <= distance * distance) {
                 val sizeMult = if (entity.isChild && entity is EntityMob) 0.5f else 1.0f
@@ -74,7 +75,7 @@ object StaticRenderer { // TODO: add usage of scale, offset etc from capability
 
                 GLCore.glBindTexture(if (OptionCore.SAO_UI.isEnabled) StringNames.entities else StringNames.entitiesCustom)
                 GLCore.color(RenderCapability.get(entity).colorStateHandler.colorState.rgba)
-                GLCore.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX)
+                GLCore.begin()
 
                 if (OptionCore.SPINNING_CRYSTALS.isEnabled) {
                     val a = entity.world.totalWorldTime % 40 / 20.0 * Math.PI
@@ -137,7 +138,7 @@ object StaticRenderer { // TODO: add usage of scale, offset etc from capability
 
         val sizeMult = if (living.isChild && living is EntityMob) 0.5f else 1.0f
 
-        GLCore.begin(GL11.GL_TRIANGLE_STRIP, DefaultVertexFormats.POSITION_TEX)
+        GLCore.begin(GL11.GL_TRIANGLE_STRIP)
         for (i in 0..hitPoints) {
             val value = (i + HEALTH_COUNT - hitPoints).toDouble() / HEALTH_COUNT
             val rad = Math.toRadians((renderManager.playerViewY - 135).toDouble()) + (value - 0.5) * Math.PI * HEALTH_ANGLE
@@ -155,7 +156,7 @@ object StaticRenderer { // TODO: add usage of scale, offset etc from capability
         GLCore.draw()
 
         GLCore.color(1f, 1f, 1f, 1f)
-        GLCore.begin(GL11.GL_TRIANGLE_STRIP, DefaultVertexFormats.POSITION_TEX)
+        GLCore.begin(GL11.GL_TRIANGLE_STRIP)
 
         for (i in 0..HEALTH_COUNT) {
             val value = i.toDouble() / HEALTH_COUNT

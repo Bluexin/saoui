@@ -1,18 +1,13 @@
 package com.saomc.saoui.api.entity.rendering;
 
+import be.bluexin.saomclib.capabilities.*;
 import com.saomc.saoui.SAOCore;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.CapabilityInject;
-import net.minecraftforge.common.capabilities.CapabilityManager;
-import net.minecraftforge.common.capabilities.ICapabilitySerializable;
-import net.minecraftforge.event.AttachCapabilitiesEvent;
 
 import java.lang.ref.WeakReference;
 
@@ -28,8 +23,6 @@ public class RenderCapability {
 
     /**
      * Unique instance for the capability (for registering).
-     * Use {@link net.minecraft.entity.Entity#hasCapability(Capability, EnumFacing)} to know if an entity has this capability
-     * and {@link net.minecraft.entity.Entity#getCapability(Capability, EnumFacing)} to get the actual capability instance.
      */
     @CapabilityInject(RenderCapability.class)
     public static final Capability<RenderCapability> RENDER_CAPABILITY = null;
@@ -74,39 +67,6 @@ public class RenderCapability {
     }
 
     /**
-     * Adds the capability to the entity the event refers to.
-     * Will be called automatically by the SAOUI for all entities.
-     *
-     * @param event the event to add the capability to
-     */
-    @SuppressWarnings("ConstantConditions")
-    public static void register(final AttachCapabilitiesEvent<Entity> event) {
-        event.addCapability(KEY, new ICapabilitySerializable<NBTBase>() {
-            final RenderCapability inst = new RenderCapability((EntityLivingBase) event.getObject());
-
-            @Override
-            public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-                return capability == RENDER_CAPABILITY;
-            }
-
-            @Override
-            public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-                return capability == RENDER_CAPABILITY ? RENDER_CAPABILITY.<T>cast(inst) : null;
-            }
-
-            @Override
-            public NBTBase serializeNBT() {
-                return RENDER_CAPABILITY.getStorage().writeNBT(RENDER_CAPABILITY, this.inst, null);
-            }
-
-            @Override
-            public void deserializeNBT(NBTBase nbt) {
-                RENDER_CAPABILITY.getStorage().readNBT(RENDER_CAPABILITY, this.inst, null, nbt);
-            }
-        });
-    }
-
-    /**
      * Gets the capability for an entity.
      *
      * @param ent the entity to get the capability for
@@ -114,7 +74,7 @@ public class RenderCapability {
      */
     public static RenderCapability get(EntityLivingBase ent) {
         //noinspection ConstantConditions
-        return ent.getCapability(RENDER_CAPABILITY, null);
+        return CapabilitiesExtendedPropertyKt.getCapability(ent, RENDER_CAPABILITY, null);
     }
 
     /**

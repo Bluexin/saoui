@@ -4,8 +4,8 @@ import com.saomc.saoui.GLCore
 import com.saomc.saoui.api.info.IOption
 import net.minecraft.client.Minecraft
 import net.minecraft.client.resources.I18n
-import net.minecraftforge.fml.relauncher.Side
-import net.minecraftforge.fml.relauncher.SideOnly
+import cpw.mods.fml.relauncher.Side
+import cpw.mods.fml.relauncher.SideOnly
 
 @SideOnly(Side.CLIENT)
 enum class OptionCore(

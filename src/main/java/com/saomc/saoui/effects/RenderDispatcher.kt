@@ -1,10 +1,10 @@
 package com.saomc.saoui.effects
 
 import com.saomc.saoui.GLCore
+import cpw.mods.fml.relauncher.Side
+import cpw.mods.fml.relauncher.SideOnly
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.Tessellator
-import net.minecraftforge.fml.relauncher.Side
-import net.minecraftforge.fml.relauncher.SideOnly
 import org.lwjgl.opengl.GL11
 
 /**
@@ -17,7 +17,7 @@ object RenderDispatcher {
     var particleFxCount = 0
 
     fun dispatch() {
-        val tessellator = Tessellator.getInstance()
+        val tessellator = Tessellator.instance
 
         val profiler = Minecraft.getMinecraft().mcProfiler
 

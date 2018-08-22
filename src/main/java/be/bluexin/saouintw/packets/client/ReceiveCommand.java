@@ -4,10 +4,11 @@ import be.bluexin.saouintw.communication.CommandType;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.IThreadListener;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import cpw.mods.fml.common.network.ByteBufUtils;
+import cpw.mods.fml.common.network.simpleimpl.IMessage;
+import cpw.mods.fml.common.network.simpleimpl.MessageContext;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 import java.util.stream.Stream;
@@ -49,9 +50,10 @@ public class ReceiveCommand implements IMessage {
     }
 
     public static class Handler extends be.bluexin.saomclib.packets.AbstractClientPacketHandler<ReceiveCommand> {
+        @Nullable
         @Override
-        public IMessage handleClientPacket(EntityPlayer player, ReceiveCommand message, MessageContext ctx, IThreadListener iThreadListener) {
-            iThreadListener.addScheduledTask(() -> message.cmd.action(Minecraft.getMinecraft().world.getPlayerEntityByUUID(message.sender), message.args));
+        public IMessage handleClientPacket(@NotNull EntityPlayer player, @NotNull ReceiveCommand message, @NotNull MessageContext ctx) {
+            message.cmd.action(Minecraft.getMinecraft().theWorld.getPlayerEntityByUUID(message.sender), message.args);
             return null;
         }
     }

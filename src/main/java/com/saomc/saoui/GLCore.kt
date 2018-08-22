@@ -1,32 +1,31 @@
 package com.saomc.saoui
 
 import com.saomc.saoui.util.ColorUtil
-import com.teamwizardry.librarianlib.features.helpers.vec
 import com.teamwizardry.librarianlib.features.math.Vec2d
+import cpw.mods.fml.relauncher.Side
+import cpw.mods.fml.relauncher.SideOnly
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.FontRenderer
-import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.renderer.Tessellator
 import net.minecraft.client.renderer.texture.TextureManager
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats
-import net.minecraft.client.renderer.vertex.VertexFormat
 import net.minecraft.client.resources.IReloadableResourceManager
+import net.minecraft.util.AxisAlignedBB
 import net.minecraft.util.ResourceLocation
-import net.minecraft.util.math.AxisAlignedBB
-import net.minecraft.util.math.Vec3d
-import net.minecraftforge.fml.relauncher.Side
-import net.minecraftforge.fml.relauncher.SideOnly
-import org.lwjgl.opengl.GL11
+import org.lwjgl.opengl.*
 
 @SideOnly(Side.CLIENT)
 object GLCore {
 
     private val mc = Minecraft.getMinecraft()
-    private val glFont get() = mc.fontRenderer
-    private val glTextureManager get() = mc.textureManager
+    val glFont get() = mc.fontRendererObj!!
+    val glTextureManager get() = mc.textureManager!!
+
+    private val contextcapabilities by lazy { GLContext.getCapabilities() }
+    private val openGL14 by lazy { contextcapabilities.OpenGL14 || contextcapabilities.GL_EXT_blend_func_separate }
+    private val extBlendFuncSeparate by lazy { contextcapabilities.GL_EXT_blend_func_separate && !contextcapabilities.OpenGL14 }
 
     fun color(red: Float, green: Float, blue: Float, alpha: Float = 1f) {
-        GlStateManager.color(red, green, blue, alpha)
+        Tessellator.instance.setColorRGBA_F(red, green, blue, alpha)
     }
 
     fun color(color: ColorUtil) {
@@ -53,7 +52,7 @@ object GLCore {
 
     @JvmOverloads
     fun glString(font: FontRenderer?, string: String, x: Int, y: Int, argb: Int, shadow: Boolean = false, centered: Boolean = false) {
-        font?.drawString(string, x.toFloat(), y.toFloat() - if (centered) font.FONT_HEIGHT / 2f else 0f, glFontColor(argb), shadow)
+        font?.drawString(string, x, y - if (centered) font.FONT_HEIGHT / 2 else 0, glFontColor(argb), shadow)
     }
 
     @JvmOverloads
@@ -68,12 +67,12 @@ object GLCore {
 
     fun setFont(mc: Minecraft, custom: Boolean) {
         val fontLocation = if (custom) ResourceLocation(SAOCore.MODID, "textures/ascii.png") else ResourceLocation("textures/font/ascii.png")
-        mc.fontRenderer = FontRenderer(mc.gameSettings, fontLocation, mc.textureManager, false)
+        mc.fontRendererObj = FontRenderer(mc.gameSettings, fontLocation, mc.textureManager, false)
         if (mc.gameSettings.language != null) {
-            mc.fontRenderer.unicodeFlag = mc.isUnicode
-            mc.fontRenderer.bidiFlag = mc.languageManager.isCurrentLanguageBidirectional
+            mc.fontRendererObj.unicodeFlag = mc.isUnicode
+            mc.fontRendererObj.bidiFlag = mc.languageManager.isCurrentLanguageBidirectional
         }
-        (mc.resourceManager as IReloadableResourceManager).registerReloadListener(mc.fontRenderer)
+        (mc.resourceManager as IReloadableResourceManager).registerReloadListener(mc.fontRendererObj)
     }
 
     @JvmOverloads
@@ -91,7 +90,7 @@ object GLCore {
         textureManager.bindTexture(location)
     }
 
-    @JvmOverloads
+    /*@JvmOverloads
     fun glTexturedRectV2(pos: Vec3d, size: Vec2d, srcPos: Vec2d = Vec2d.ZERO, srcSize: Vec2d = size, textureSize: Vec2d = vec(256, 256)) {
         glTexturedRectV2(
                 x = pos.x, y = pos.y, z = pos.z,
@@ -100,87 +99,90 @@ object GLCore {
                 srcWidth = srcSize.x, srcHeight = srcSize.y,
                 textureW = textureSize.xi, textureH = textureSize.yi
         )
-    }
+    }*/
 
     @JvmOverloads
     fun glTexturedRectV2(x: Double, y: Double, z: Double = 0.0, width: Double, height: Double, srcX: Double = 0.0, srcY: Double = 0.0, srcWidth: Double = width, srcHeight: Double = height, textureW: Int = 256, textureH: Int = 256) {
         val f = 1f / textureW
         val f1 = 1f / textureH
-        val tessellator = Tessellator.getInstance()
-        tessellator.buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX)
-        tessellator.buffer.pos(x, y + height, z).tex((srcX.toFloat() * f).toDouble(), ((srcY + srcHeight).toFloat() * f1).toDouble()).endVertex()
-        tessellator.buffer.pos(x + width, y + height, z).tex(((srcX + srcWidth).toFloat() * f).toDouble(), ((srcY + srcHeight).toFloat() * f1).toDouble()).endVertex()
-        tessellator.buffer.pos(x + width, y, z).tex(((srcX + srcWidth).toFloat() * f).toDouble(), (srcY.toFloat() * f1).toDouble()).endVertex()
-        tessellator.buffer.pos(x, y, z).tex((srcX.toFloat() * f).toDouble(), (srcY.toFloat() * f1).toDouble()).endVertex()
+        val tessellator = Tessellator.instance
+        begin()
+        tessellator.addVertexWithUV(x, y + height, z, (srcX.toFloat() * f).toDouble(), ((srcY + srcHeight).toFloat() * f1).toDouble())
+        tessellator.addVertexWithUV(x + width, y + height, z, ((srcX + srcWidth).toFloat() * f).toDouble(), ((srcY + srcHeight).toFloat() * f1).toDouble())
+        tessellator.addVertexWithUV(x + width, y, z, ((srcX + srcWidth).toFloat() * f).toDouble(), (srcY.toFloat() * f1).toDouble())
+        tessellator.addVertexWithUV(x, y, z, (srcX.toFloat() * f).toDouble(), (srcY.toFloat() * f1).toDouble())
         tessellator.draw()
     }
 
     fun addVertex(x: Double, y: Double, z: Double) {
-        Tessellator.getInstance().buffer.pos(x, y, z).endVertex()
+        Tessellator.instance.addVertex(x, y, z)
     }
 
     fun addVertex(x: Double, y: Double, z: Double, srcX: Double, srcY: Double) {
-        Tessellator.getInstance().buffer.pos(x, y, z).tex(srcX, srcY).endVertex()
+        Tessellator.instance.addVertexWithUV(x, y, z, srcX, srcY)
     }
 
     fun addVertex(x: Double, y: Double, z: Double, srcX: Double, srcY: Double, red: Float, green: Float, blue: Float, alpha: Float) {
-        Tessellator.getInstance().buffer.pos(x, y, z).tex(srcX, srcY).color(red, green, blue, alpha).endVertex()
+        Tessellator.instance.setColorRGBA_F(red, green, blue, alpha)
+        Tessellator.instance.addVertexWithUV(x, y, z, srcX, srcY)
     }
 
     @JvmOverloads
-    fun begin(glMode: Int = GL11.GL_QUADS, format: VertexFormat = DefaultVertexFormats.POSITION_TEX_COLOR) {
-        Tessellator.getInstance().buffer.begin(glMode, format)
+    fun begin(glMode: Int = GL11.GL_QUADS) {
+        Tessellator.instance.startDrawing(glMode)
     }
 
     fun draw() {
-        Tessellator.getInstance().draw()
+        Tessellator.instance.draw()
     }
 
     fun glRect(x: Int, y: Int, width: Int, height: Int) {
-        val tessellator = Tessellator.getInstance()
-        tessellator.buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION)
-        tessellator.buffer.pos(x.toDouble(), (y + height).toDouble(), 0.0)
-        tessellator.buffer.pos((x + width).toDouble(), (y + height).toDouble(), 0.0)
-        tessellator.buffer.pos((x + width).toDouble(), y.toDouble(), 0.0)
-        tessellator.buffer.pos(x.toDouble(), y.toDouble(), 0.0)
+        val tessellator = Tessellator.instance
+        begin()
+        tessellator.addVertex(x.toDouble(), (y + height).toDouble(), 0.0)
+        tessellator.addVertex((x + width).toDouble(), (y + height).toDouble(), 0.0)
+        tessellator.addVertex((x + width).toDouble(), y.toDouble(), 0.0)
+        tessellator.addVertex(x.toDouble(), y.toDouble(), 0.0)
         tessellator.draw()
     }
 
     fun glAlphaTest(flag: Boolean) {
-        if (flag)
-            GlStateManager.enableAlpha()
-        else
-            GlStateManager.disableAlpha()
+        if (flag) GL11.glEnable(GL11.GL_ALPHA_TEST)
+        else GL11.glEnable(GL11.GL_ALPHA_TEST)
     }
 
     fun alphaFunc(src: Int, dst: Int) {
-        GlStateManager.alphaFunc(src, dst.toFloat())
+        GL11.glAlphaFunc(src, dst.toFloat())
     }
 
     fun glBlend(flag: Boolean) {
-        if (flag)
-            GlStateManager.enableBlend()
-        else
-            GlStateManager.disableBlend()
+        if (flag) GL11.glEnable(GL11.GL_BLEND)
+        else GL11.glEnable(GL11.GL_BLEND)
     }
 
     fun blendFunc(src: Int, dst: Int) {
-        GlStateManager.blendFunc(src, dst)
+        GL11.glBlendFunc(src, dst)
     }
 
-    fun tryBlendFuncSeparate(a: Int, b: Int, c: Int, d: Int) {
-        GlStateManager.tryBlendFuncSeparate(a, b, c, d)
+    fun tryBlendFuncSeparate(sFactorRGB: Int, dFactorRGB: Int, sfactorAlpha: Int, dfactorAlpha: Int) {
+        if (openGL14) {
+            if (extBlendFuncSeparate) {
+                EXTBlendFuncSeparate.glBlendFuncSeparateEXT(sFactorRGB, dFactorRGB, sfactorAlpha, dfactorAlpha)
+            } else {
+                GL14.glBlendFuncSeparate(sFactorRGB, dFactorRGB, sfactorAlpha, dfactorAlpha)
+            }
+        } else {
+            GL11.glBlendFunc(sFactorRGB, dFactorRGB)
+        }
     }
 
     fun depthMask(flag: Boolean) {
-        GlStateManager.depthMask(flag)
+        GL11.glDepthMask(flag)
     }
 
     fun depth(flag: Boolean) {
-        if (flag)
-            GlStateManager.enableDepth()
-        else
-            GlStateManager.disableDepth()
+        if (flag) GL11.glEnable(GL11.GL_DEPTH_TEST)
+        else GL11.glEnable(GL11.GL_DEPTH_TEST)
     }
 
     fun glDepthFunc(flag: Int) {
@@ -188,24 +190,18 @@ object GLCore {
     }
 
     fun glRescaleNormal(flag: Boolean) {
-        if (flag)
-            GlStateManager.enableRescaleNormal()
-        else
-            GlStateManager.disableRescaleNormal()
+        if (flag) GL11.glEnable(GL12.GL_RESCALE_NORMAL)
+        else GL11.glEnable(GL12.GL_RESCALE_NORMAL)
     }
 
     fun glTexture2D(flag: Boolean) {
-        if (flag)
-            GL11.glEnable(GL11.GL_TEXTURE_2D)
-        else
-            GL11.glDisable(GL11.GL_TEXTURE_2D)
+        if (flag) GL11.glEnable(GL11.GL_TEXTURE_2D)
+        else GL11.glDisable(GL11.GL_TEXTURE_2D)
     }
 
     fun glCullFace(flag: Boolean) {
-        if (flag)
-            GlStateManager.enableCull()
-        else
-            GlStateManager.disableCull()
+        if (flag) GL11.glEnable(GL11.GL_CULL_FACE)
+        else GL11.glDisable(GL11.GL_CULL_FACE)
     }
 
     @Deprecated("Use overloaded method instead", replaceWith = ReplaceWith("translate(x, y, z)"))
@@ -216,27 +212,24 @@ object GLCore {
     }
 
     fun glRotatef(angle: Float, x: Float, y: Float, z: Float) {
-        GlStateManager.rotate(angle, x, y, z)
+        GL11.glRotatef(angle, x, y, z)
     }
 
     @Deprecated("Use overloaded method instead", replaceWith = ReplaceWith("scale(x, y, z)"))
     fun glScalef(x: Float, y: Float, z: Float) = scale(x, y, z)
 
     fun lighting(flag: Boolean) {
-        if (flag)
-            GlStateManager.enableLighting()
-        else
-            GlStateManager.disableLighting()
+        if (flag) GL11.glEnable(GL11.GL_LIGHTING)
+        else GL11.glDisable(GL11.GL_LIGHTING)
     }
 
     fun pushMatrix() {
-        GlStateManager.pushMatrix()
+        GL11.glPushMatrix()
     }
 
     fun popMatrix() {
-        GlStateManager.popMatrix()
+        GL11.glPopMatrix()
     }
-
 
     /**
      * returns an AABB with corners x1, y1, z1 and x2, y2, z2
@@ -248,22 +241,22 @@ object GLCore {
         val d3 = Math.max(x1, x2)
         val d4 = Math.max(y1, y2)
         val d5 = Math.max(z1, z2)
-        return AxisAlignedBB(d0, d1, d2, d3, d4, d5)
+        return AxisAlignedBB.getBoundingBox(d0, d1, d2, d3, d4, d5)
     }
 
     fun translate(x: Double, y: Double, z: Double) {
-        GlStateManager.translate(x, y, z)
+        GL11.glTranslated(x, y, z)
     }
 
     fun translate(x: Float, y: Float, z: Float) {
-        GlStateManager.translate(x, y, z)
+        GL11.glTranslatef(x, y, z)
     }
 
     fun scale(x: Double, y: Double, z: Double) {
-        GlStateManager.scale(x, y, z)
+        GL11.glScaled(x, y, z)
     }
 
     fun scale(x: Float, y: Float, z: Float) {
-        GlStateManager.scale(x, y, z)
+        GL11.glScalef(x, y, z)
     }
 }

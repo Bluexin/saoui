@@ -1,7 +1,7 @@
 package com.saomc.saoui.social.friends
 
-import net.minecraftforge.fml.relauncher.Side
-import net.minecraftforge.fml.relauncher.SideOnly
+import cpw.mods.fml.relauncher.Side
+import cpw.mods.fml.relauncher.SideOnly
 
 @SideOnly(Side.CLIENT)
 class FriendRequest(private val friendName: String, var ticks: Int) {

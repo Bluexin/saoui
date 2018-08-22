@@ -3,10 +3,10 @@ package com.saomc.saoui.themes.elements
 import com.saomc.saoui.GLCore
 import com.saomc.saoui.api.themes.IHudDrawContext
 import com.saomc.saoui.themes.util.CInt
+import com.saomc.saoui.util.isNotEmpty
 import net.minecraft.client.renderer.RenderHelper
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.item.ItemStack
-import net.minecraft.util.EnumHandSide
 import javax.xml.bind.annotation.XmlRootElement
 
 /**
@@ -15,7 +15,7 @@ import javax.xml.bind.annotation.XmlRootElement
  * @author Bluexin
  */
 @XmlRootElement
-open class GLHotbarItem: GLRectangle() {
+open class GLHotbarItem : GLRectangle() {
 
     protected lateinit var slot: CInt
     protected lateinit var itemXoffset: CInt
@@ -25,9 +25,9 @@ open class GLHotbarItem: GLRectangle() {
     /*
     From net.minecraft.client.gui.GuiIngame
      */
-    private fun renderHotbarItem(x: Int, y: Int, partialTicks: Float, player: EntityPlayer, stack: ItemStack, ctx: IHudDrawContext) {
-        if (stack.isEmpty) return
-        val f = stack.animationsToGo.toFloat() - partialTicks
+    private fun renderHotbarItem(x: Int, y: Int, partialTicks: Float, player: EntityPlayer, stack: ItemStack?, ctx: IHudDrawContext) {
+        if (!stack.isNotEmpty) return
+        val f = stack!!.animationsToGo.toFloat() - partialTicks
 
         if (f > 0.0f) {
             GLCore.pushMatrix()
@@ -37,22 +37,21 @@ open class GLHotbarItem: GLRectangle() {
             GLCore.translate((-(x + 8)).toFloat(), (-(y + 12)).toFloat(), 0.0f)
         }
 
-        ctx.itemRenderer.renderItemAndEffectIntoGUI(player, stack, x, y)
+        ctx.itemRenderer.renderItemAndEffectIntoGUI(ctx.fontRenderer, GLCore.glTextureManager, stack, x, y)
 
         if (f > 0.0f) GLCore.popMatrix()
 
-        ctx.itemRenderer.renderItemOverlays(ctx.fontRenderer, stack, x, y)
+        ctx.itemRenderer.renderItemOverlayIntoGUI(ctx.fontRenderer, GLCore.glTextureManager, stack, x, y)
     }
 
     override fun draw(ctx: IHudDrawContext) {
-        if (enabled?.invoke(ctx) == false || hand == ctx.player.primaryHand) return
+        if (enabled?.invoke(ctx) == false || hand != null) return
         super.draw(ctx)
 
         val p: ElementParent? = this.parent.get()
-        val it: ItemStack = if (hand == null) ctx.player.inventory.mainInventory[slot(ctx)]
-        else ctx.player.inventory.offHandInventory[slot(ctx)]
+        val it: ItemStack? = ctx.player.inventory.mainInventory[slot(ctx)]
 
-        if (it == ItemStack.EMPTY) return
+        if (!it.isNotEmpty) return
 
         GLCore.glBlend(false)
         GLCore.glRescaleNormal(true)
@@ -68,3 +67,5 @@ open class GLHotbarItem: GLRectangle() {
         GLCore.glBlend(true)
     }
 }
+
+enum class EnumHandSide { LEFT, RIGHT }

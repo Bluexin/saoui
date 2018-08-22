@@ -1,21 +1,21 @@
 package com.saomc.saoui.effects
 
+import be.bluexin.saomclib.player
 import com.saomc.saoui.GLCore
 import com.saomc.saoui.resources.StringNames
+import com.saomc.saoui.util.horizontalFacing
+import cpw.mods.fml.relauncher.Side
+import cpw.mods.fml.relauncher.SideOnly
 import net.minecraft.client.Minecraft
-import net.minecraft.client.particle.Particle
-import net.minecraft.client.renderer.BufferBuilder
+import net.minecraft.client.particle.EntityFX
 import net.minecraft.client.renderer.Tessellator
-import net.minecraft.entity.Entity
 import net.minecraft.util.EnumFacing
 import net.minecraft.world.World
-import net.minecraftforge.fml.relauncher.Side
-import net.minecraftforge.fml.relauncher.SideOnly
 import java.util.*
 
 
 @SideOnly(Side.CLIENT)
-class DeathParticles private constructor(world: World, xCoord: Double, yCoord: Double, zCoord: Double, redValue: Float, greenValue: Float, blueVale: Float, scale: Float) : Particle(world, xCoord, yCoord, zCoord, 0.0, 0.0, 0.0) {
+class DeathParticles private constructor(world: World, xCoord: Double, yCoord: Double, zCoord: Double, redValue: Float, greenValue: Float, blueVale: Float, scale: Float) : EntityFX(world, xCoord, yCoord, zCoord, 0.0, 0.0, 0.0) {
 
     private var time: Float = 0.toFloat()
     private var particleX: Float = 0.toFloat()
@@ -42,7 +42,7 @@ class DeathParticles private constructor(world: World, xCoord: Double, yCoord: D
         this.particleMaxAge = (this.particleMaxAge.toFloat() * scale).toInt()
     }
 
-    override fun renderParticle(worldrender: BufferBuilder, entity: Entity?, time: Float, x: Float, y: Float, z: Float, f0: Float, f1: Float) {
+    override fun renderParticle(worldrender: Tessellator,  time: Float, x: Float, y: Float, z: Float, f0: Float, f1: Float) {
         this.time = time
         this.particleX = x
         this.particleY = y
@@ -53,7 +53,7 @@ class DeathParticles private constructor(world: World, xCoord: Double, yCoord: D
         queuedRenders.add(this)
     }
 
-    private fun renderQueued(tessellator: Tessellator) {
+    private fun renderQueued() {
         var particle = (this.particleAge.toFloat() + time) / this.particleMaxAge.toFloat() * 32.0f
 
         if (particle < 0.0f) particle = 0.0f
@@ -61,9 +61,9 @@ class DeathParticles private constructor(world: World, xCoord: Double, yCoord: D
         if (particle > 1.0f) particle = 1.0f
 
         val scale = 0.1f * this.particleScale * particle
-        val xPos = (this.prevPosX + (this.posX - this.prevPosX) * time.toDouble() - Particle.interpPosX).toFloat()
-        val yPos = (this.prevPosY + (this.posY - this.prevPosY) * time.toDouble() - Particle.interpPosY).toFloat()
-        val zPos = (this.prevPosZ + (this.posZ - this.prevPosZ) * time.toDouble() - Particle.interpPosZ).toFloat()
+        val xPos = (this.prevPosX + (this.posX - this.prevPosX) * time.toDouble() - EntityFX.interpPosX).toFloat()
+        val yPos = (this.prevPosY + (this.posY - this.prevPosY) * time.toDouble() - EntityFX.interpPosY).toFloat()
+        val zPos = (this.prevPosZ + (this.posZ - this.prevPosZ) * time.toDouble() - EntityFX.interpPosZ).toFloat()
         val colorIntensity = 1.0f
 
         val x1: Double
@@ -91,7 +91,7 @@ class DeathParticles private constructor(world: World, xCoord: Double, yCoord: D
         x4 = ((this.particleX - f0) * scale).toDouble()
         y4 = (-this.particleY * scale).toDouble()
         z4 = ((this.particleZ - f1) * scale).toDouble()
-        val e = Minecraft.getMinecraft().player.horizontalFacing
+        val e = Minecraft.getMinecraft().player?.horizontalFacing
         val q = e == EnumFacing.NORTH || e == EnumFacing.SOUTH
         val a = (if (q) if (rotationY < 1.5f && rotationY > 0.5f) rotationY - 1.0f else rotationY + 1.0f else rotationY) * Math.PI
         val cos = Math.cos(a)
@@ -120,10 +120,10 @@ class DeathParticles private constructor(world: World, xCoord: Double, yCoord: D
         this.prevPosY = this.posY
         this.prevPosZ = this.posZ
 
-        if (this.particleAge++ >= this.particleMaxAge) this.isExpired = true
+        if (this.particleAge++ >= this.particleMaxAge) this.setDead()
 
         this.motionY += 0.004
-        this.move(this.motionX, this.motionY, this.motionZ)
+        this.moveEntity(this.motionX, this.motionY, this.motionZ)
         this.motionX *= 0.8999999761581421
         this.motionY *= 0.8999999761581421
         this.motionZ *= 0.8999999761581421
@@ -148,7 +148,7 @@ class DeathParticles private constructor(world: World, xCoord: Double, yCoord: D
             GLCore.glAlphaTest(true)
             GLCore.glBlend(true)
             GLCore.begin()
-            queuedRenders.forEach { p -> p.renderQueued(tessellator) }
+            queuedRenders.forEach { p -> p.renderQueued() }
             GLCore.draw()
             GLCore.glBlend(false)
 

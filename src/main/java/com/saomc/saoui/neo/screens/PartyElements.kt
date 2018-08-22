@@ -1,16 +1,18 @@
 package com.saomc.saoui.neo.screens
 
 import be.bluexin.saomclib.capabilities.getPartyCapability
+import be.bluexin.saomclib.displayNameString
 import be.bluexin.saomclib.events.PartyEvent
 import be.bluexin.saomclib.party.IParty
+import be.bluexin.saomclib.world
 import com.saomc.saoui.api.elements.neo.NeoCategoryButton
 import com.saomc.saoui.api.elements.neo.NeoIconLabelElement
 import com.saomc.saoui.util.IconCore
+import cpw.mods.fml.common.eventhandler.SubscribeEvent
 import net.minecraft.client.resources.I18n.format
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.common.util.FakePlayer
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 
 @NeoGuiDsl
 fun NeoCategoryButton.partyMenu(player: EntityPlayer) {
@@ -58,8 +60,9 @@ fun NeoCategoryButton.partyExtras(player: EntityPlayer) {
     val party = partyCapability.getOrCreatePT()
 
     category(IconCore.PARTY, format("sao.party.invite")) {
-        player.world.playerEntities.asSequence().filter { it != player && it !is FakePlayer && !party.isMember(it) }.forEach { player ->
-            val b = NeoIconLabelElement(IconCore.INVITE, player.displayNameString)
+        @Suppress("UNCHECKED_CAST")
+        (player.world.playerEntities as List<EntityPlayer>).asSequence().filter { it != player && it !is FakePlayer && !party.isMember(it) }.forEach { player ->
+            val b = NeoIconLabelElement(IconCore.INVITE, player.displayName)
             b.onClick { _, _ ->
                 party.invite(player)
                 true
@@ -87,7 +90,7 @@ fun NeoCategoryButton.partyExtras(player: EntityPlayer) {
 
 @NeoGuiDsl
 fun NeoCategoryButton.partyMemberButton(party: IParty, player: EntityPlayer, ourPlayer: EntityPlayer, invited: Boolean = false): NeoCategoryButton =
-        NeoCategoryButton(NeoIconLabelElement(IconCore.FRIEND, player.displayNameString), this, {
+        NeoCategoryButton(NeoIconLabelElement(IconCore.FRIEND, player.displayNameString), this) {
             +NeoIconLabelElement(IconCore.HELP, format("sao."))
             if (party.leader == ourPlayer) {
                 val kickButton = NeoIconLabelElement(IconCore.CANCEL, format("sao.party.kick"))
@@ -97,4 +100,4 @@ fun NeoCategoryButton.partyMemberButton(party: IParty, player: EntityPlayer, our
                 }
                 +kickButton
             }
-        })
+        }

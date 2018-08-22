@@ -3,12 +3,13 @@ package com.saomc.saoui.effects
 import com.saomc.saoui.GLCore
 import com.saomc.saoui.SAOCore
 import com.saomc.saoui.api.screens.IIcon
+import cpw.mods.fml.relauncher.Side
+import cpw.mods.fml.relauncher.SideOnly
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
-import net.minecraft.init.MobEffects
+import net.minecraft.potion.Potion
+import net.minecraft.potion.PotionEffect
 import net.minecraft.util.ResourceLocation
-import net.minecraftforge.fml.relauncher.Side
-import net.minecraftforge.fml.relauncher.SideOnly
 import java.util.*
 
 @SideOnly(Side.CLIENT)
@@ -54,29 +55,30 @@ enum class StatusEffects : IIcon {
         fun getEffects(entity: EntityLivingBase): List<StatusEffects> {
             val effects = LinkedList<StatusEffects>()
 
-            entity.activePotionEffects.filterNotNull().forEach {
-                when (it.potion) {
-                    MobEffects.SLOWNESS -> effects.add(if (it.amplifier > 5) PARALYZED else SLOWNESS)
-                    MobEffects.POISON -> effects.add(POISONED)
-                    MobEffects.HUNGER -> effects.add(ROTTEN)
-                    MobEffects.NAUSEA -> effects.add(ILL)
-                    MobEffects.WEAKNESS -> effects.add(WEAK)
-                    MobEffects.WITHER -> effects.add(CURSED)
-                    MobEffects.BLINDNESS -> effects.add(BLIND)
-                    MobEffects.SATURATION -> effects.add(SATURATION)
-                    MobEffects.SPEED -> effects.add(SPEED_BOOST)
-                    MobEffects.WATER_BREATHING -> effects.add(WATER_BREATH)
-                    MobEffects.STRENGTH -> effects.add(STRENGTH)
-                    MobEffects.ABSORPTION -> effects.add(ABSORPTION)
-                    MobEffects.FIRE_RESISTANCE -> effects.add(FIRE_RES)
-                    MobEffects.HASTE -> effects.add(HASTE)
-                    MobEffects.HEALTH_BOOST -> effects.add(HEALTH_BOOST)
-                    MobEffects.INSTANT_HEALTH -> effects.add(INST_HEALTH)
-                    MobEffects.INVISIBILITY -> effects.add(INVISIBILITY)
-                    MobEffects.JUMP_BOOST -> effects.add(JUMP_BOOST)
-                    MobEffects.NIGHT_VISION -> effects.add(NIGHT_VISION)
-                    MobEffects.REGENERATION -> effects.add(REGEN)
-                    MobEffects.RESISTANCE -> effects.add(RESIST)
+            @Suppress("UNCHECKED_CAST")
+            (entity.activePotionEffects as Collection<PotionEffect?>).filterNotNull().forEach {
+                when (it.potionID) {
+                    Potion.moveSlowdown.id -> effects.add(if (it.amplifier > 5) PARALYZED else SLOWNESS)
+                    Potion.poison.id -> effects.add(POISONED)
+                    Potion.hunger.id -> effects.add(ROTTEN)
+                    Potion.confusion.id -> effects.add(ILL)
+                    Potion.weakness.id -> effects.add(WEAK)
+                    Potion.wither.id -> effects.add(CURSED)
+                    Potion.blindness.id -> effects.add(BLIND)
+                    Potion.saturation.id -> effects.add(SATURATION)
+                    Potion.moveSpeed.id -> effects.add(SPEED_BOOST)
+                    Potion.waterBreathing.id -> effects.add(WATER_BREATH)
+                    Potion.damageBoost.id -> effects.add(STRENGTH)
+                    Potion.absorption.id -> effects.add(ABSORPTION)
+                    Potion.fireResistance.id -> effects.add(FIRE_RES)
+                    Potion.digSpeed.id -> effects.add(HASTE)
+                    Potion.healthBoost.id -> effects.add(HEALTH_BOOST)
+                    Potion.heal.id -> effects.add(INST_HEALTH)
+                    Potion.invisibility.id -> effects.add(INVISIBILITY)
+                    Potion.jump.id -> effects.add(JUMP_BOOST)
+                    Potion.nightVision.id -> effects.add(NIGHT_VISION)
+                    Potion.regeneration.id -> effects.add(REGEN)
+                    Potion.resistance.id -> effects.add(RESIST)
                 }
             }
 

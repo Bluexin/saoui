@@ -1,13 +1,16 @@
 package com.saomc.saoui.social.party
 
+import be.bluexin.saomclib.displayNameString
+import be.bluexin.saomclib.name
 import be.bluexin.saomclib.party.IParty
+import be.bluexin.saomclib.player
 import be.bluexin.saouintw.communication.CommandType
 import be.bluexin.saouintw.communication.Communicator
 import com.saomc.saoui.social.StaticPlayerHelper
 import net.minecraft.client.Minecraft
 import net.minecraft.client.resources.I18n
 import net.minecraft.entity.player.EntityPlayer
-import net.minecraft.util.text.TextComponentTranslation
+import net.minecraft.util.ChatComponentTranslation
 import java.util.*
 
 /**
@@ -71,7 +74,7 @@ class PartyHelper private constructor(private val party: IParty) {
     private fun addPlayer(player: EntityPlayer) {
         if (this.party.addMember(player)) {
             val mc = Minecraft.getMinecraft()
-            mc.player.sendMessage(TextComponentTranslation("ptJoin", player.displayName))
+            mc.player!!.addChatMessage(ChatComponentTranslation("ptJoin", player.displayName))
             if (this.party.leader == mc.player) {
                 party.members.filter { pl -> pl != mc.player }.forEach { member -> Communicator.send(CommandType.UPDATE_PARTY, member, '+' + player.displayNameString) }
                 party.members.filter { pl -> pl != mc.player }.forEach { member -> Communicator.send(CommandType.UPDATE_PARTY, player, '+' + member.displayNameString) }
@@ -82,7 +85,7 @@ class PartyHelper private constructor(private val party: IParty) {
     private fun removePlayer(player: EntityPlayer) { // TODO: kick member
         if (this.party.removeMember(player)) {
             val mc = Minecraft.getMinecraft()
-            mc.player.sendMessage(TextComponentTranslation("ptLeft", player.displayName))
+            mc.player!!.addChatMessage(ChatComponentTranslation("ptLeft", player.displayName))
             if (this.party.leader == mc.player)
                 party.members.filter { pl -> pl == mc.player }.forEach { member -> Communicator.send(CommandType.UPDATE_PARTY, member, '-' + player.displayNameString) }
         }
@@ -111,10 +114,10 @@ class PartyHelper private constructor(private val party: IParty) {
         if (hasParty()) {
             if (party.leader == mc.player) {
                 party.members.filter { pl -> pl == mc.player }.forEach { member -> Communicator.send(CommandType.DISSOLVE_PARTY, member) }
-                mc.player.sendMessage(TextComponentTranslation("ptDissolve"))
+                mc.player!!.addChatMessage(ChatComponentTranslation("ptDissolve"))
             } else {
                 Communicator.send(CommandType.DISSOLVE_PARTY, party.leader!!) // aka leave PT
-                mc.player.sendMessage(TextComponentTranslation("ptLeave"))
+                mc.player!!.addChatMessage(ChatComponentTranslation("ptLeave"))
             }
         }
     }

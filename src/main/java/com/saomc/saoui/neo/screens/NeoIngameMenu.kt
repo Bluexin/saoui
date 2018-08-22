@@ -1,6 +1,7 @@
 package com.saomc.saoui.neo.screens
 
 import be.bluexin.saomclib.message
+import be.bluexin.saomclib.player
 import com.saomc.saoui.api.elements.neo.optionCategory
 import com.saomc.saoui.config.OptionCore
 import com.saomc.saoui.events.EventCore
@@ -30,29 +31,26 @@ class NeoIngameMenu : NeoGui<Unit>(Vec2d.ZERO) {
         tlCategory(IconCore.PROFILE) {
             category(IconCore.EQUIPMENT, format("sao.element.equipment")) {
                 category(IconCore.ARMOR, format("sao.element.armor")) {
-                    itemList(mc.player.inventory, BaseFilters.EQUIPMENT, 36..39)
+                    itemList(mc.player!!.inventory, BaseFilters.EQUIPMENT, 36..39)
                 }
                 category(IconCore.EQUIPMENT, format("sao.element.weapons")) {
-                    itemList(mc.player.inventory, BaseFilters.WEAPONS, 0..8)
+                    itemList(mc.player!!.inventory, BaseFilters.WEAPONS, 0..8)
                 }
                 category(IconCore.EQUIPMENT, format("sao.element.tools")) {
-                    itemList(mc.player.inventory, BaseFilters.COMPATTOOLS, 0..8, 40..40)
+                    itemList(mc.player!!.inventory, BaseFilters.COMPATTOOLS, 0..8, 40..40)
                 }
                 category(IconCore.EQUIPMENT, format("sao.element.consumables")) {
-                    itemList(mc.player.inventory, BaseFilters.CONSUMABLES, 0..8)
-                }
-                category(IconCore.EQUIPMENT, format("sao.element.shields")) {
-                    itemList(mc.player.inventory, BaseFilters.SHIELDS, 40..40)
+                    itemList(mc.player!!.inventory, BaseFilters.CONSUMABLES, 0..8)
                 }
                 if (BaseFilters.baublesLoaded) {
                     category(IconCore.ACCESSORY, format("sao.element.accessories")) {
-                        itemList(BaseFilters.getBaubles(mc.player)!!, BaseFilters.ACCESSORY, 0..10000)
-                        itemList(mc.player.inventory, filter = BaseFilters.ACCESSORY)
+                        itemList(BaseFilters.getBaubles(mc.player!!)!!, BaseFilters.ACCESSORY, 0..10000)
+                        itemList(mc.player!!.inventory, filter = BaseFilters.ACCESSORY)
                     }
                 }
             }
             category(IconCore.ITEMS, format("sao.element.items")) {
-                itemList(mc.player.inventory, BaseFilters.ITEMS, 0..8, 40..40)
+                itemList(mc.player!!.inventory, BaseFilters.ITEMS, 0..8, 40..40)
             }
             category(IconCore.SKILLS, format("sao.element.skills")) {
                 category(IconCore.SKILLS, "Test 1") {
@@ -70,7 +68,7 @@ class NeoIngameMenu : NeoGui<Unit>(Vec2d.ZERO) {
                     onClick { _, _ ->
                         selected = true
                         openGui(PopupYesNo("Disolve", "パーチイを解散しますか？")) += {
-                            mc.player.message("Result: $it")
+                            mc.player!!.message("Result: $it")
                             selected = false
                         }
                         true
@@ -91,7 +89,7 @@ class NeoIngameMenu : NeoGui<Unit>(Vec2d.ZERO) {
         }
         tlCategory(IconCore.SOCIAL) {
             category(IconCore.GUILD, format("sao.element.guild"))
-            partyMenu(mc.player)
+            partyMenu(mc.player!!)
             category(IconCore.FRIEND, format("sao.element.friends"))
         }
         tlCategory(IconCore.MESSAGE)
@@ -118,7 +116,7 @@ class NeoIngameMenu : NeoGui<Unit>(Vec2d.ZERO) {
                 onClick { _, _ ->
                     if (OptionCore.LOGOUT()) {
                         EventCore.mc.currentScreen!!.onGuiClosed()
-                        EventCore.mc.world.sendQuittingDisconnectingPacket()
+                        EventCore.mc.theWorld.sendQuittingDisconnectingPacket()
                         EventCore.mc.loadWorld(null)
                         EventCore.mc.displayGuiScreen(GuiMainMenu())
                         true

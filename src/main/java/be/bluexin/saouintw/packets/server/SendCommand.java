@@ -6,10 +6,10 @@ import be.bluexin.saouintw.packets.client.ReceiveCommand;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.util.IThreadListener;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import cpw.mods.fml.common.network.ByteBufUtils;
+import cpw.mods.fml.common.network.simpleimpl.IMessage;
+import cpw.mods.fml.common.network.simpleimpl.MessageContext;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
@@ -55,8 +55,8 @@ public class SendCommand implements IMessage {
     public static class Handler extends be.bluexin.saomclib.packets.AbstractServerPacketHandler<SendCommand> {
         @Nullable
         @Override
-        public IMessage handleServerPacket(EntityPlayer player, SendCommand message, MessageContext ctx, IThreadListener iThreadListener) {
-            PacketPipeline.INSTANCE.sendTo(new ReceiveCommand(message.cmd, player, message.args), (EntityPlayerMP) Objects.requireNonNull(player.world.getPlayerEntityByUUID(message.target)));
+        public IMessage handleServerPacket(@NotNull EntityPlayer player, @NotNull SendCommand message, @NotNull MessageContext ctx) {
+            PacketPipeline.INSTANCE.sendTo(new ReceiveCommand(message.cmd, player, message.args), (EntityPlayerMP) Objects.requireNonNull(player.worldObj.getPlayerEntityByUUID(message.target)));
             return null;
         }
     }

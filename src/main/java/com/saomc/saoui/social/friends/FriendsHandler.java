@@ -8,7 +8,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -94,7 +94,7 @@ public class FriendsHandler {
         friends = listFriends();
         final ArrayList<String> newNames = new ArrayList<>();
 
-        Stream.of(players).map(EntityPlayer::getDisplayNameString).forEach(player -> {
+        Stream.of(players).map(EntityPlayer::getDisplayName).forEach(player -> {
             if (Stream.of(friends).noneMatch(friend -> friend.equals(player))) newNames.add(player);
         });
 
@@ -158,7 +158,7 @@ public class FriendsHandler {
             int index = -1;
 
             for (int i = 0; i < friendRequests.size(); i++)
-                if (friendRequests.get(i).equals(player.getDisplayNameString())) {
+                if (friendRequests.get(i).equals(player.getDisplayName())) {
                     index = i;
                     break;
                 }
@@ -172,7 +172,7 @@ public class FriendsHandler {
             int index = -1;
 
             for (int i = 0; i < friendRequests.size(); i++)
-                if (friendRequests.get(i).equals(player.getDisplayNameString())) {
+                if (friendRequests.get(i).equals(player.getDisplayName())) {
                     index = i;
                     break;
                 }
@@ -187,7 +187,7 @@ public class FriendsHandler {
             final GuiScreen keepScreen = mc.currentScreen;
             final boolean ingameFocus = mc.inGameHasFocus;
 
-            final String text = I18n.format("friend.request.text", player.getDisplayNameString());
+            final String text = I18n.format("friend.request.text", player.getDisplayName());
 /*
             mc.displayGuiScreen(WindowView.viewConfirm(ConfigHandler._FRIEND_REQUEST_TITLE, text, (element, action, data) -> {
                 final Categories id = element.ID();

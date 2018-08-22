@@ -1,13 +1,15 @@
 package com.saomc.saoui.events
 
+import be.bluexin.saomclib.player
+import be.bluexin.saomclib.world
 import com.saomc.saoui.effects.RenderDispatcher
+import cpw.mods.fml.common.eventhandler.SubscribeEvent
+import cpw.mods.fml.common.gameevent.TickEvent
+import cpw.mods.fml.common.network.FMLNetworkEvent
 import net.minecraft.client.Minecraft
 import net.minecraft.client.settings.GameSettings
 import net.minecraftforge.client.event.*
 import net.minecraftforge.event.entity.living.LivingDeathEvent
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
-import net.minecraftforge.fml.common.gameevent.TickEvent
-import net.minecraftforge.fml.common.network.FMLNetworkEvent
 
 /**
  * This is the core for all event handlers, listening to events then passing on to the other events that need it.
@@ -49,13 +51,13 @@ object EventCore {
     }
 
     @SubscribeEvent
-    fun renderEntityListener(e: RenderLivingEvent.Post<*>) {
+    fun renderEntityListener(e: RenderLivingEvent.Post) {
         RenderHandler.renderEntity(e)
     }
 
     @SubscribeEvent
-    fun renderEntityListener(e: RenderLivingEvent.Pre<*>) {
-        if (e.entity.getDistanceSq(mc.player) > Math.pow((mc.gameSettings.getOptionFloatValue(GameSettings.Options.RENDER_DISTANCE) * 16).toDouble(), 2.0))
+    fun renderEntityListener(e: RenderLivingEvent.Pre) {
+        if (e.entity.getDistanceSqToEntity(mc.player) > Math.pow((mc.gameSettings.getOptionFloatValue(GameSettings.Options.RENDER_DISTANCE) * 16).toDouble(), 2.0))
             e.isCanceled = true
     }
 

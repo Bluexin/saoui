@@ -2,11 +2,11 @@ package com.saomc.saoui.screens.ingame
 
 import com.saomc.saoui.GLCore
 import com.saomc.saoui.social.StaticPlayerHelper
+import cpw.mods.fml.relauncher.Side
+import cpw.mods.fml.relauncher.SideOnly
 import net.minecraft.client.Minecraft
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
-import net.minecraftforge.fml.relauncher.Side
-import net.minecraftforge.fml.relauncher.SideOnly
 
 @SideOnly(Side.CLIENT)
 enum class HealthStep constructor(private val limit: Float, var rgba: Int) {
@@ -36,7 +36,7 @@ enum class HealthStep constructor(private val limit: Float, var rgba: Int) {
         }
 
         fun getStep(entity: EntityLivingBase, health: Double): HealthStep {
-            return if (entity is EntityPlayer && (entity.capabilities.isCreativeMode || entity.isSpectator)) CREATIVE else getStep(health)
+            return if (entity is EntityPlayer && entity.capabilities.isCreativeMode) CREATIVE else getStep(health)
         }
 
         fun getStep(health: Double): HealthStep {

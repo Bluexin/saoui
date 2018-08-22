@@ -1,13 +1,15 @@
 package com.saomc.saoui.events
 
+import be.bluexin.saomclib.displayNameString
+import be.bluexin.saomclib.player
 import be.bluexin.saouintw.communication.Command
 import com.saomc.saoui.SoundCore
 import com.saomc.saoui.events.EventCore.mc
+import cpw.mods.fml.relauncher.Side
+import cpw.mods.fml.relauncher.SideOnly
 import net.minecraft.client.multiplayer.GuiConnecting
 import net.minecraft.client.settings.KeyBinding
 import net.minecraftforge.client.event.ClientChatReceivedEvent
-import net.minecraftforge.fml.relauncher.Side
-import net.minecraftforge.fml.relauncher.SideOnly
 
 @SideOnly(Side.CLIENT)
 object EventHandler {
@@ -16,7 +18,7 @@ object EventHandler {
     var IS_SNEAKING = false
 
     internal fun nameNotification(e: ClientChatReceivedEvent) {
-        if (mc.currentScreen !is GuiConnecting && e.message.unformattedText.contains(mc.player.displayNameString))
+        if (mc.currentScreen !is GuiConnecting && e.message.unformattedText.contains(mc.player!!.displayNameString))
             SoundCore.play(mc, SoundCore.MESSAGE)
     }
 

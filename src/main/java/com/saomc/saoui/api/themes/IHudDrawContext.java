@@ -3,7 +3,7 @@ package com.saomc.saoui.api.themes;
 import com.saomc.saoui.effects.StatusEffects;
 import com.saomc.saoui.screens.ingame.HealthStep;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.RenderItem;
+import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.entity.player.EntityPlayer;
 
 import java.util.List;

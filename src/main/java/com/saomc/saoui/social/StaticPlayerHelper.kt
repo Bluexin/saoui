@@ -1,7 +1,9 @@
 package com.saomc.saoui.social
 
 import be.bluexin.saomclib.capabilities.getPartyCapability
+import be.bluexin.saomclib.displayNameString
 import be.bluexin.saomclib.party.IParty
+import be.bluexin.saomclib.player
 import com.saomc.saoui.config.OptionCore
 import net.minecraft.client.Minecraft
 import net.minecraft.entity.Entity
@@ -14,6 +16,7 @@ import java.util.*
 
  * @author Bluexin
  */
+@Suppress("UNCHECKED_CAST")
 object StaticPlayerHelper {
     private const val HEALTH_ANIMATION_FACTOR = 0.075f
     private val HEALTH_FRAME_FACTOR = HEALTH_ANIMATION_FACTOR * HEALTH_ANIMATION_FACTOR * 0x40f * 0x64f
@@ -21,15 +24,15 @@ object StaticPlayerHelper {
     private val hungerSmooth = HashMap<UUID, Float>()
 
     fun listOnlinePlayers(mc: Minecraft, range: Double): List<EntityPlayer> {
-        return mc.world.getPlayers(EntityPlayer::class.java) { p -> mc.player.getDistance(p!!) <= range }
+        return (mc.theWorld.playerEntities as List<EntityPlayer>).filter { p -> mc.player!!.getDistanceToEntity(p) <= range }
     }
 
     private fun listOnlinePlayers(mc: Minecraft): List<EntityPlayer> {
-        return mc.world.playerEntities
+        return mc.theWorld.playerEntities as List<EntityPlayer>
     }
 
     fun findOnlinePlayer(mc: Minecraft, username: String): EntityPlayer? {
-        return mc.world.getPlayerEntityByName(username)
+        return mc.theWorld.getPlayerEntityByName(username)
     }
 
     private fun isOnline(mc: Minecraft, names: Array<String>): BooleanArray { // TODO: update a boolean[] upon player join server? (/!\ client-side)
@@ -159,12 +162,8 @@ object StaticPlayerHelper {
         return mc.limitFramerate
     }
 
-    fun thePlayer(): EntityPlayer {
-        return Minecraft.getMinecraft().player
-    }
-
     fun getIParty(): IParty {
-        return Minecraft.getMinecraft().player.getPartyCapability().getOrCreatePT()
+        return Minecraft.getMinecraft().player!!.getPartyCapability().getOrCreatePT()
     }
 
     fun getIParty(player: EntityPlayer): IParty {

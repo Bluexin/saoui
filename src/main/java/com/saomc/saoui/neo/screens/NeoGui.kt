@@ -86,7 +86,7 @@ abstract class NeoGui<T : Any>(override var pos: Vec2d, override var destination
         while (Mouse.next());
         while (Keyboard.next());
 
-        val sr = ScaledResolution(mc)
+        val sr = ScaledResolution(mc, mc.displayWidth, mc.displayHeight)
         gui.setWorldAndResolution(mc, sr.scaledWidth, sr.scaledHeight)
 
         gui += { subGui = null }

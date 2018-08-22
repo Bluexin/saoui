@@ -1,7 +1,7 @@
 package com.saomc.saoui.screens.menu;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 @SuppressWarnings("unused") // TODO: remove this enum. Used for future ref only.
 @SideOnly(Side.CLIENT)

@@ -1,17 +1,17 @@
 package com.saomc.saoui.neo.screens
 
+import be.bluexin.saomclib.player
 import com.saomc.saoui.GLCore
 import com.saomc.saoui.api.elements.neo.NeoCategoryButton
 import com.saomc.saoui.api.elements.neo.NeoIconLabelElement
 import com.saomc.saoui.api.screens.IIcon
 import com.saomc.saoui.events.EventCore.mc
 import com.saomc.saoui.util.IconCore
-import com.teamwizardry.librarianlib.features.kotlin.isNotEmpty
+import com.saomc.saoui.util.isNotEmpty
 import com.teamwizardry.librarianlib.features.math.Vec2d
-import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.RenderHelper
+import net.minecraft.client.renderer.entity.RenderItem
 import net.minecraft.client.resources.I18n
-import net.minecraft.client.util.ITooltipFlag
 import net.minecraft.inventory.IInventory
 import net.minecraft.item.ItemStack
 
@@ -43,15 +43,16 @@ class ItemStackElement(private val inventoryIn: IInventory, private val slot: In
 
     init {
         onClick { _, button ->
-            if (button == MouseButton.LEFT) (tlParent as? NeoGui<*>)?.openGui(PopupYesNo(label, itemStack.getTooltip(mc.player, if (mc.gameSettings.advancedItemTooltips) ITooltipFlag.TooltipFlags.ADVANCED else ITooltipFlag.TooltipFlags.NORMAL)))
+            @Suppress("UNCHECKED_CAST")
+            if (button == MouseButton.LEFT) (tlParent as? NeoGui<*>)?.openGui(PopupYesNo(label, itemStack?.getTooltip(mc.player, mc.gameSettings.advancedItemTooltips) as List<String>))
             true
         }
     }
 
     private val itemStack
         get() = with(inventoryIn.getStackInSlot(slot)) {
-            return@with if (filter(this)) this
-            else ItemStack.EMPTY
+            return@with if (this.isNotEmpty && filter(this)) this
+            else null
         }
 
     override val valid: Boolean
@@ -59,16 +60,16 @@ class ItemStackElement(private val inventoryIn: IInventory, private val slot: In
 
     override val label: String
         get() = if (itemStack.isNotEmpty) {
-            if (itemStack.count > 1) I18n.format("saoui.formatItems", itemStack.displayName, itemStack.count)
-            else I18n.format("saoui.formatItem", itemStack.displayName)
+            if (itemStack!!.stackSize > 1) I18n.format("saoui.formatItems", itemStack!!.displayName, itemStack!!.stackSize)
+            else I18n.format("saoui.formatItem", itemStack!!.displayName)
         } else I18n.format("gui.empty")
 }
 
-class ItemIcon(private val itemStack: () -> ItemStack) : IIcon {
-    private val itemRenderer by lazy { Minecraft.getMinecraft().renderItem }
+class ItemIcon(private val itemStack: () -> ItemStack?) : IIcon {
+    private val itemRenderer by lazy { RenderItem() }
 
     override fun glDraw(x: Int, y: Int) {
-        val f = itemStack().animationsToGo.toFloat()/* - partialTicks*/
+        val f = itemStack()?.animationsToGo?.toFloat()/* - partialTicks*/?: return
 
         if (f > 0.0f) {
             GLCore.pushMatrix()
@@ -79,7 +80,7 @@ class ItemIcon(private val itemStack: () -> ItemStack) : IIcon {
         }
 
         RenderHelper.enableGUIStandardItemLighting()
-        itemRenderer.renderItemAndEffectIntoGUI(itemStack(), x, y)
+        itemRenderer.renderItemAndEffectIntoGUI(GLCore.glFont, GLCore.glTextureManager, itemStack(), x, y)
         GLCore.depth(false)
 
         if (f > 0.0f) GLCore.popMatrix()

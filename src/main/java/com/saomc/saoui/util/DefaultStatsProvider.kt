@@ -2,15 +2,12 @@ package com.saomc.saoui.util
 
 import com.saomc.saoui.api.info.IPlayerStatsProvider
 import com.saomc.saoui.config.OptionCore
-import com.teamwizardry.librarianlib.features.kotlin.isNotEmpty
 import net.minecraft.client.resources.I18n
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.SharedMonsterAttributes
 import net.minecraft.entity.ai.attributes.AttributeModifier
 import net.minecraft.entity.passive.EntityHorse
 import net.minecraft.entity.player.EntityPlayer
-import net.minecraft.inventory.EntityEquipmentSlot
-
 import java.text.DecimalFormat
 
 /**
@@ -29,11 +26,11 @@ class DefaultStatsProvider : IPlayerStatsProvider {
         val mount = player.ridingEntity as EntityLivingBase?
 
         if (player.isRiding && OptionCore.MOUNT_STAT_VIEW.isEnabled) {
-            val name = mount!!.name
+            val name = mount!!.commandSenderName
             val maxHealth = attr(mount.maxHealth.toDouble()).toDouble()
             var health = attr(mount.health.toDouble()).toDouble()
             val resistance = attr(mount.totalArmorValue.toDouble()).toDouble()
-            val speed = attr(mount.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).attributeValue).toDouble()
+            val speed = attr(mount.getEntityAttribute(SharedMonsterAttributes.movementSpeed).attributeValue).toDouble()
             val jump: Double
             val df3 = DecimalFormat("0.000")
             val df1 = DecimalFormat("0.0")
@@ -58,26 +55,19 @@ class DefaultStatsProvider : IPlayerStatsProvider {
 
             val health = attr(player.health.toDouble())
 
-            val maxHealth = attr(player.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).attributeValue)
-            val attackDamage = attr(player.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).attributeValue)
+            val maxHealth = attr(player.getEntityAttribute(SharedMonsterAttributes.maxHealth).attributeValue)
+            val attackDamage = attr(player.getEntityAttribute(SharedMonsterAttributes.attackDamage).attributeValue)
             // final float movementSpeed = attr(player.getEntityAttribute(SharedMonsterAttributes.movementSpeed).getAttributeValue());
             // final float knocbackResistance = attr(player.getEntityAttribute(SharedMonsterAttributes.knockbackResistance).getAttributeValue());
 
             var itemDamage = 0.0f
 
-            if (player.heldItemMainhand.isNotEmpty) {
-                val itemAttackMain = player.heldItemMainhand.getAttributeModifiers(EntityEquipmentSlot.MAINHAND).get(SharedMonsterAttributes.ATTACK_DAMAGE.name)
+            if (player.heldItem.isNotEmpty) {
+                val itemAttackMain = player.heldItem.attributeModifiers.get(SharedMonsterAttributes.attackDamage.attributeUnlocalizedName)
 
-                itemDamage += itemAttackMain.filter { value -> value is AttributeModifier }.map { value -> value }
+                itemDamage += itemAttackMain.map { value -> value as? AttributeModifier }.filterNotNull()
                         .filter { mod -> mod.name == "Weapon modifier" }.sumByDouble { it.amount }.toFloat()
             }
-            if (player.heldItemOffhand.isNotEmpty) {
-                val itemAttackOff = player.heldItemOffhand.getAttributeModifiers(EntityEquipmentSlot.OFFHAND).get(SharedMonsterAttributes.ATTACK_DAMAGE.name)
-
-                itemDamage += itemAttackOff.filter { value -> value is AttributeModifier }.map { value -> value }
-                        .filter { mod -> mod.name == "Weapon modifier" }.sumByDouble { it.amount }.toFloat()
-            }
-
 
             val strength = attr((attackDamage + itemDamage).toDouble())
             val agility = attr(player.aiMoveSpeed.toDouble()) * 10

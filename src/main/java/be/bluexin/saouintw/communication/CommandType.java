@@ -1,12 +1,12 @@
 package be.bluexin.saouintw.communication;
 
-import com.saomc.saoui.social.StaticPlayerHelper;
 import com.saomc.saoui.social.friends.FriendsHandler;
 import com.saomc.saoui.social.party.PartyHelper;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.text.TextComponentTranslation;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.util.ChatComponentTranslation;
 
 import java.util.function.BiConsumer;
 import java.util.stream.Stream;
@@ -18,7 +18,7 @@ public enum CommandType {
     UPDATE_PARTY((target, args) -> PartyHelper.Companion.instance().receiveUpdate(target, args)),
 
     CONFIRM_INVITE_PARTY((target, args) -> PartyHelper.Companion.instance().receiveConfirmation(target, args)),
-    CANCEL_INVITE_PARTY((target, args) -> StaticPlayerHelper.INSTANCE.thePlayer().sendMessage(new TextComponentTranslation("ptDecline", target.getDisplayName()))),
+    CANCEL_INVITE_PARTY((target, args) -> Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentTranslation("ptDecline", target.getDisplayName()))),
 
     ADD_FRIEND_REQUEST((target, args) -> FriendsHandler.instance().addFriendRequest(target)),
 

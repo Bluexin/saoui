@@ -2,12 +2,10 @@ package com.saomc.saoui
 
 import com.saomc.saoui.config.OptionCore
 import net.minecraft.client.Minecraft
-import net.minecraft.client.audio.ISound
 import net.minecraft.client.audio.PositionedSoundRecord
 import net.minecraft.client.audio.SoundHandler
 import net.minecraft.entity.Entity
 import net.minecraft.util.ResourceLocation
-import net.minecraft.util.SoundCategory
 
 object SoundCore {
 
@@ -36,13 +34,13 @@ object SoundCore {
     fun playAtEntity(entity: Entity, name: String) {
         val mc = Minecraft.getMinecraft()
 
-        if (mc.world != null && mc.world.isRemote) {
+        if (mc.theWorld != null && mc.theWorld.isRemote) {
             play(mc.soundHandler, name, entity.posX.toFloat(), entity.posY.toFloat(), entity.posZ.toFloat())
         }
     }
 
     fun play(mc: Minecraft?, name: String) {
-        if (mc?.world != null && mc.world.isRemote) {
+        if (mc?.theWorld != null && mc.theWorld.isRemote) {
             play(mc.soundHandler, name)
         }
     }
@@ -65,10 +63,10 @@ object SoundCore {
 
     //Helper functions - 1.8.8 mirror
     private fun create(soundResource: ResourceLocation): PositionedSoundRecord {
-        return PositionedSoundRecord(soundResource, SoundCategory.MASTER, 1.0f, 1.0f, false, 0, ISound.AttenuationType.NONE, 0.0f, 0.0f, 0.0f)
+        return PositionedSoundRecord.createPositionedSoundRecord(soundResource)
     }
 
     private fun create(soundResource: ResourceLocation, xPosition: Float, yPosition: Float, zPosition: Float): PositionedSoundRecord {
-        return PositionedSoundRecord(soundResource, SoundCategory.MASTER, 4.0f, 1.0f, false, 0, ISound.AttenuationType.LINEAR, xPosition, yPosition, zPosition)
+        return PositionedSoundRecord.createRecordSoundAtPosition(soundResource, xPosition, yPosition, zPosition)
     }
 }

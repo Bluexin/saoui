@@ -1,7 +1,7 @@
 package com.saomc.saoui.api.events;
 
 import com.saomc.saoui.api.entity.ISkill;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import cpw.mods.fml.common.eventhandler.Event;
 
 import java.util.List;
 

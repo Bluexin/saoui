@@ -1,23 +1,24 @@
 package com.saomc.saoui.themes.util;
 
+import com.saomc.saoui.GLCore;
 import com.saomc.saoui.api.info.IPlayerStatsProvider;
 import com.saomc.saoui.api.themes.IHudDrawContext;
 import com.saomc.saoui.effects.StatusEffects;
 import com.saomc.saoui.screens.ingame.HealthStep;
 import com.saomc.saoui.social.StaticPlayerHelper;
 import com.saomc.saoui.util.PlayerStats;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.RenderItem;
+import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.common.ForgeHooks;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.util.List;
 
@@ -49,13 +50,13 @@ public class HudDrawContext implements IHudDrawContext {
     private List<StatusEffects> effects;
 
     public HudDrawContext(EntityPlayer player, Minecraft mc, RenderItem itemRenderer) {
-        this.username = player.getDisplayNameString();
+        this.username = player.getDisplayName();
         this.mc = mc;
         this.player = player;
         this.itemRenderer = itemRenderer;
         this.stats = PlayerStats.Companion.instance().getStats();
 
-        this.usernameWidth = (1 + (mc.fontRenderer.getStringWidth(username) + 4) / 5) * 5;
+        this.usernameWidth = (1 + (GLCore.INSTANCE.getGlFont().getStringWidth(username) + 4) / 5.0) * 5;
     }
 
     public void setPt(List<EntityPlayer> pt) {
@@ -82,7 +83,7 @@ public class HudDrawContext implements IHudDrawContext {
 
     @Override
     public FontRenderer getFontRenderer() {
-        return mc.fontRenderer;
+        return GLCore.INSTANCE.getGlFont();
     }
 
     @Override
@@ -160,12 +161,12 @@ public class HudDrawContext implements IHudDrawContext {
 
     @Override
     public boolean offhandEmpty(int slot) {
-        return player.inventory.offHandInventory.get(0).isEmpty();
+        return true;
     }
 
     @Override
     public int strWidth(String s) {
-        return mc.fontRenderer.getStringWidth(s);
+        return GLCore.INSTANCE.getGlFont().getStringWidth(s);
     }
 
     @Override
@@ -204,7 +205,7 @@ public class HudDrawContext implements IHudDrawContext {
 
     @Override
     public String ptName(int index) {
-        return validatePtIndex(index) ? pt.get(index).getDisplayNameString() : "???";
+        return validatePtIndex(index) ? pt.get(index).getDisplayName() : "???";
     }
 
     @Override
@@ -254,7 +255,7 @@ public class HudDrawContext implements IHudDrawContext {
 
     @Override
     public float mountHp() {
-        Entity t = player.getRidingEntity();
+        Entity t = player.ridingEntity;
         if (t instanceof EntityLivingBase) {
             return ((EntityLivingBase) t).getHealth();
         } else return 0f;
@@ -262,7 +263,7 @@ public class HudDrawContext implements IHudDrawContext {
 
     @Override
     public float mountMaxHp() {
-        Entity t = player.getRidingEntity();
+        Entity t = player.ridingEntity;
         if (t instanceof EntityLivingBase) {
             return ((EntityLivingBase) t).getMaxHealth();
         } else return 1f;
@@ -270,7 +271,7 @@ public class HudDrawContext implements IHudDrawContext {
 
     @Override
     public boolean inWater() {
-        return player.isInsideOfMaterial(Material.WATER);
+        return player.isInsideOfMaterial(Material.water);
     }
 
     @Override
