@@ -96,12 +96,23 @@ processResources {
 
 idea { module { inheritOutputDirs = true } }
 
-def releaseJar = artifacts.add('archives', file(configurations.archives.allArtifacts.getFiles().files[0])) {
-    builtBy reobfJar
+uploadArchives {
+    if (System.getenv('REPO_PWD') != null) {
+        repositories.mavenDeployer { // Note: SSL could be enabled using maven-publish plugin, however this old forgegradle plugin is shit
+            repository(url: "http://maven.bluexin.be/repository/" + (((String) project.version).contains("SNAPSHOT")? "snapshots": "releases") + "/") {
+                authentication(userName: "CI", password: System.getenv('REPO_PWD'))
+            }
+        }
+    } else {
+        println("No password set up! Uploading to local.")
+        repositories.mavenDeployer {
+            repository(url: 'file://G:/saoui/build/mvn')
+        }
+    }
 }
 
-task sourceJar(type: Jar, dependsOn: 'sourceMainJava', overwrite: true) {
-    from 'build/sources/main/java'
+task sourceJar(type: Jar, dependsOn: "sourceMainJava", overwrite: true) {
+    from "build/sources/main/java"
     classifier = 'sources'
 }
 
@@ -110,29 +121,9 @@ task deobfJar(type: Jar) {
     classifier = 'deobf'
 }
 
-publishing {
-    publications {
-        saoui(MavenPublication) {
-            artifact releaseJar
-            artifact deobfJar
-            artifact sourceJar
-        }
-    }
-
-    repositories {
-        def remote = System.getenv('REPO_PWD') != null
-        maven {
-            def remoteURL = "https://maven.bluexin.be/repository/" + ((String) project.version).contains("SNAPSHOT")? "snapshots": "releases"
-            def localURL = "file://${buildDir}/repo"
-            url = remote? remoteURL: localURL
-            if (remote) {
-                credentials(PasswordCredentials) {
-                    username = 'CI'
-                    password = System.getenv('REPO_PWD')
-                }
-            }
-        }
-    }
+artifacts {
+    archives sourceJar
+    archives deobfJar
 }
 
 jar {
