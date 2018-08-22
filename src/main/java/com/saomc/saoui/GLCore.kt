@@ -208,9 +208,8 @@ object GLCore {
             GlStateManager.disableCull()
     }
 
-    fun glTranslatef(x: Float, y: Float, z: Float) {
-        GlStateManager.translate(x, y, z)
-    }
+    @Deprecated("Use overloaded method instead", replaceWith = ReplaceWith("translate(x, y, z)"))
+    fun glTranslatef(x: Float, y: Float, z: Float) = translate(x, y, z)
 
     fun glNormal3f(x: Float, y: Float, z: Float) {
         GL11.glNormal3f(x, y, z)
@@ -220,9 +219,8 @@ object GLCore {
         GlStateManager.rotate(angle, x, y, z)
     }
 
-    fun glScalef(x: Float, y: Float, z: Float) {
-        GlStateManager.scale(x, y, z)
-    }
+    @Deprecated("Use overloaded method instead", replaceWith = ReplaceWith("scale(x, y, z)"))
+    fun glScalef(x: Float, y: Float, z: Float) = scale(x, y, z)
 
     fun lighting(flag: Boolean) {
         if (flag)
