@@ -7,8 +7,8 @@ import com.saomc.saoui.neo.screens.NeoGuiDsl
 import com.saomc.saoui.neo.screens.unaryPlus
 import com.saomc.saoui.util.IconCore
 import com.teamwizardry.librarianlib.features.animator.Easing
-import com.teamwizardry.librarianlib.features.gui.component.supporting.delegate
 import com.teamwizardry.librarianlib.features.helpers.vec
+import com.teamwizardry.librarianlib.features.kotlin.delegate
 import com.teamwizardry.librarianlib.features.math.Vec2d
 import java.lang.ref.WeakReference
 import kotlin.math.max
