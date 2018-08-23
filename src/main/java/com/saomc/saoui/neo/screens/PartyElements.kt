@@ -95,8 +95,8 @@ fun NeoCategoryButton.partyMemberButton(party: IParty, player: EntityPlayer, our
             if (party.leader == ourPlayer) {
                 val kickButton = NeoIconLabelElement(IconCore.CANCEL, format("sao.party.kick"))
                 kickButton.onClick { _, _ ->
-                    if (invited) party.removeMember(player)
-                    else party.cancel(player)
+                    if (invited) party.cancel(player)
+                    else party.removeMember(player)
                 }
                 +kickButton
             }
