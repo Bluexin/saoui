@@ -25,7 +25,7 @@ object GLCore {
     private val extBlendFuncSeparate by lazy { contextcapabilities.GL_EXT_blend_func_separate && !contextcapabilities.OpenGL14 }
 
     fun color(red: Float, green: Float, blue: Float, alpha: Float = 1f) {
-        Tessellator.instance.setColorRGBA_F(red, green, blue, alpha)
+        GL11.glColor4f(red, green, blue, alpha)
     }
 
     fun color(color: ColorUtil) {
