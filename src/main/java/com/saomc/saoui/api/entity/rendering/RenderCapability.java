@@ -8,8 +8,7 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
-
-import java.lang.ref.WeakReference;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Part of saoui
@@ -19,7 +18,7 @@ import java.lang.ref.WeakReference;
  *
  * @author Bluexin
  */
-public class RenderCapability {
+public class RenderCapability extends AbstractEntityCapability {
 
     /**
      * Unique instance for the capability (for registering).
@@ -27,27 +26,27 @@ public class RenderCapability {
     @CapabilityInject(RenderCapability.class)
     public static final Capability<RenderCapability> RENDER_CAPABILITY = null;
 
-    private static final ResourceLocation KEY = new ResourceLocation(SAOCore.MODID, "renders");
+    @Key
+    public static final ResourceLocation KEY = new ResourceLocation(SAOCore.MODID, "renders");
 
     /**
      * Where this capability is getting it's customization settings from.
      */
-    public final ICustomizationProvider customizationProvider;
+    public /*lateinit*/ ICustomizationProvider customizationProvider;
 
     /**
      * Where this capability is getting it's Color State data from.
      */
-    public final IColorStateHandler colorStateHandler;
+    public /*lateinit*/ IColorStateHandler colorStateHandler;
 
-    /**
-     * The entity this capability refers to.
-     */
-    private final WeakReference<EntityLivingBase> theEnt;
-
-    private RenderCapability(EntityLivingBase ent) {
-        this.theEnt = new WeakReference<>(ent);
+    @NotNull
+    @Override
+    public AbstractCapability setup(@NotNull Object param) {
+        super.setup(param);
+        EntityLivingBase ent = (EntityLivingBase) param;
         this.customizationProvider = getProvider(ent);
         this.colorStateHandler = getColorState(ent);
+        return this;
     }
 
     /**
@@ -55,7 +54,7 @@ public class RenderCapability {
      * This should only be called by the SAOUI!
      */
     public static void registerCapability() {
-        CapabilityManager.INSTANCE.register(RenderCapability.class, new RenderCapability.Storage(), RenderCapability.class);
+        CapabilitiesHandler.INSTANCE.registerEntityCapability(RenderCapability.class, new RenderCapability.Storage(), (it) -> it instanceof EntityLivingBase);
     }
 
     private static ICustomizationProvider getProvider(EntityLivingBase ent) {
