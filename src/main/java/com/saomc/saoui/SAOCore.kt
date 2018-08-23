@@ -14,6 +14,7 @@ import cpw.mods.fml.common.event.FMLInitializationEvent
 import cpw.mods.fml.common.event.FMLPostInitializationEvent
 import cpw.mods.fml.common.event.FMLPreInitializationEvent
 import cpw.mods.fml.common.eventhandler.EventBus
+import cpw.mods.fml.relauncher.Side
 import net.minecraft.client.Minecraft
 import net.minecraft.client.resources.IReloadableResourceManager
 import net.minecraftforge.common.MinecraftForge
@@ -41,6 +42,7 @@ object SAOCore {
     @Mod.EventHandler
     @Throws(Exception::class)
     fun preInit(event: FMLPreInitializationEvent) {
+        if (FMLCommonHandler.instance().side != Side.CLIENT) return
         MinecraftForge.EVENT_BUS.register(EventCore)
         FMLCommonHandler.instance().bus().register(EventCore)
         ConfigHandler.preInit(event)
@@ -56,6 +58,7 @@ object SAOCore {
 
     @Mod.EventHandler
     fun init(event: FMLInitializationEvent) {
+        if (FMLCommonHandler.instance().side != Side.CLIENT) return
         val s = EventInitStatsProvider(DefaultStatsProvider())
         MinecraftForge.EVENT_BUS.post(s)
         PlayerStats.init(s.implementation)
@@ -64,6 +67,7 @@ object SAOCore {
 
     @Mod.EventHandler
     fun postInit(event: FMLPostInitializationEvent) {
+        if (FMLCommonHandler.instance().side != Side.CLIENT) return
         // Attempt to fix 1st menu opening freeze, doesn't seem enough :<
         /*GLCore.glBindTexture(StringNames.gui)
         GLCore.glBindTexture(StringNames.slot)
