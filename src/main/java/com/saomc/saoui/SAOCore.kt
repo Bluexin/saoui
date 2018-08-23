@@ -1,6 +1,5 @@
 package com.saomc.saoui
 
-import be.bluexin.saomclib.capabilities.CapabilitiesHandler
 import com.saomc.saoui.api.events.EventInitStatsProvider
 import com.saomc.saoui.config.ConfigHandler
 import com.saomc.saoui.events.EventCore
@@ -8,6 +7,7 @@ import com.saomc.saoui.neo.screens.NeoGui
 import com.saomc.saoui.themes.ThemeLoader
 import com.saomc.saoui.util.DefaultStatsProvider
 import com.saomc.saoui.util.PlayerStats
+import cpw.mods.fml.common.FMLCommonHandler
 import cpw.mods.fml.common.Loader
 import cpw.mods.fml.common.Mod
 import cpw.mods.fml.common.event.FMLInitializationEvent
@@ -42,6 +42,7 @@ object SAOCore {
     @Throws(Exception::class)
     fun preInit(event: FMLPreInitializationEvent) {
         MinecraftForge.EVENT_BUS.register(EventCore)
+        FMLCommonHandler.instance().bus().register(EventCore)
         ConfigHandler.preInit(event)
 
         (Minecraft.getMinecraft().resourceManager as IReloadableResourceManager).registerReloadListener { _ ->

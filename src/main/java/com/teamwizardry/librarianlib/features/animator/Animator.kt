@@ -1,11 +1,11 @@
 package com.teamwizardry.librarianlib.features.animator
 
 import com.teamwizardry.librarianlib.features.methodhandles.MethodHandleHelper
+import cpw.mods.fml.common.FMLCommonHandler
 import cpw.mods.fml.common.eventhandler.SubscribeEvent
 import cpw.mods.fml.common.gameevent.TickEvent
 import net.minecraft.client.Minecraft
 import net.minecraft.util.Timer
-import net.minecraftforge.common.MinecraftForge
 import java.util.*
 
 //val Minecraft.renderPartialTicksPaused by MethodHandleHelper.delegateForReadOnly<Minecraft, Float>(Minecraft::class.java, "renderPartialTicksPaused", "field_193996_ah")
@@ -194,7 +194,7 @@ class Animator {
         private var screenTicks = 0
 
         init {
-            MinecraftForge.EVENT_BUS.register(this)
+            FMLCommonHandler.instance().bus().register(this)
         }
 
         private val animators: MutableSet<Animator> = Collections.newSetFromMap(WeakHashMap<Animator, Boolean>())
