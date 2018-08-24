@@ -113,7 +113,7 @@ abstract class NeoParent : NeoElement {
                 }
                 element.idealBoundingBox = bbNew
             }
-        }
+        } else element.idealBoundingBox = element.idealBoundingBox
         elements += element
         element.parent = this
     }
