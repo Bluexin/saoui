@@ -100,6 +100,15 @@ abstract class NeoParent : NeoElement {
 
     open val visibleElementsSequence by lazy { validElementsSequence.filter(NeoElement::visible) }
 
+    override fun update() {
+        super.update()
+
+        this.elements.forEach(NeoElement::update)
+
+        this.futureOperations.forEach { it() }
+        this.futureOperations.clear()
+    }
+
     open operator fun plusAssign(element: NeoElement) {
         if (elements.isNotEmpty()) {
             val bb1 = elements[0].idealBoundingBox
