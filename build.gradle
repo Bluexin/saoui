@@ -70,12 +70,13 @@ configurations {
 }
 
 dependencies {
-    compile "be.bluexin:saomc-lib:1.12.2-1.2.1.9-SNAPSHOT:deobf"
+    compile "be.bluexin:saomc-lib:1.12.2-1.2.1.11-SNAPSHOT:deobf"
     compile "com.teamwizardry.librarianlib:librarianlib-1.12.2:4.15-SNAPSHOT:deobf"
     shade 'be.bluexin.gnu.jel:gnu-jel:2.1.3'
+    compile 'be.bluexin.gnu.jel:gnu-jel:2.1.3'
     shade 'com.helger:ph-css:6.1.1'
-    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-}
+    compile 'com.helger:ph-css:6.1.1'
+} // TODO: move to new shadow system so it doesn't break dependency info
 
 processResources {
     // this will ensure that this task is redone when the versions change.

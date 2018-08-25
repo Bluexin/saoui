@@ -41,10 +41,10 @@ internal object RenderHandler {
 
             if (deadExactly) {
                 StaticRenderer.doSpawnDeathParticles(EventCore.mc, ent)
-                ent.setDead()
+//                ent.setDead()
             }
         }
-        deadHandlers.removeIf { ent -> ent.isDead }
+        deadHandlers.removeIf { ent -> ent.deathTime >= 18 }
     }
 
     fun addDeadMob(ent: EntityLivingBase) {
