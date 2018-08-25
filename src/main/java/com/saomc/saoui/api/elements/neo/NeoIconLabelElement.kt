@@ -22,7 +22,7 @@ open class NeoIconLabelElement(icon: IIcon, open val label: String = "", var wid
 
     override var idealBoundingBox: BoundingBox2D
         get() = BoundingBox2D(pos, pos + vec(max(26 + GLCore.glStringWidth(label), width), height))
-        set(value) {
+        set(value) { // FIXME: this makes it so unintuitive :shock:
             width = value.widthI()
         }
 

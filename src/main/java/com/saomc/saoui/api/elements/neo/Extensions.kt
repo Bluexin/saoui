@@ -41,6 +41,10 @@ class NeoCategoryButton(private val delegate: NeoIconElement, parent: INeoParent
     override fun show() = delegate.show()
     override fun draw(mouse: Vec2d, partialTicks: Float) = delegate.draw(mouse, partialTicks)
     override fun contains(pos: Vec2d) = delegate.contains(pos)
+    override fun update() {
+        super.update()
+        delegate.update()
+    }
 
     init {
         this.parent = parent
@@ -68,22 +72,23 @@ class NeoCategoryButton(private val delegate: NeoIconElement, parent: INeoParent
         init?.invoke(this)
     }
 
-    fun open() {
+    fun open(reInit: Boolean = false) {
         selected = true
 
-        val children = childrenOrderedForAppearing().toList()
-        val anim = IndexedScheduledCounter(3f, maxIdx = children.count() - 1) {
-            children.elementAt(it).show()
-            @Suppress("NestedLambdaShadowedImplicitParameter")
-            if (it == children.count() - 1) elementsSequence.forEach(NeoElement::show)
+        if (reInit) elementsSequence.forEach(NeoElement::show) else {
+            val children = childrenOrderedForAppearing().toList()
+            val anim = IndexedScheduledCounter(3f, maxIdx = children.count() - 1) {
+                children.elementAt(it).show()
+                @Suppress("NestedLambdaShadowedImplicitParameter")
+                if (it == children.count() - 1) elementsSequence.forEach(NeoElement::show)
+            }
+            +anim
+            openAnim = WeakReference(anim)
+            tlParent.move(vec(-boundingBox.width(), 0))
         }
-        +anim
-        openAnim = WeakReference(anim)
-        tlParent.move(vec(-boundingBox.width(), 0))
     }
 
-
-    fun close() {
+    fun close(reInit: Boolean = false) {
         delegate.scroll = -3
         elements.forEach {
             it.hide()
@@ -92,7 +97,7 @@ class NeoCategoryButton(private val delegate: NeoIconElement, parent: INeoParent
             }
         }
         selected = false
-        tlParent.move(vec(boundingBox.width(), 0))
+        if (!reInit) tlParent.move(vec(boundingBox.width(), 0))
         openAnim?.get()?.terminated = true
         openAnim = null
     }
@@ -134,8 +139,13 @@ class NeoCategoryButton(private val delegate: NeoIconElement, parent: INeoParent
         return cat
     }
 
-    fun init() {
+    fun reInit() {
+        val wasOpen = this.selected
+        if (wasOpen) this.close(true)
+        this.elements.clear()
+        this.delegate.elements.clear()
         this.init?.invoke(this)
+        if (wasOpen) this.open()
     }
 
     override fun toString(): String {
