@@ -145,7 +145,7 @@ class NeoCategoryButton(private val delegate: NeoIconElement, parent: INeoParent
         this.elements.clear()
         this.delegate.elements.clear()
         this.init?.invoke(this)
-        if (wasOpen) this.open()
+        if (wasOpen) this.open(true)
     }
 
     override fun toString(): String {
