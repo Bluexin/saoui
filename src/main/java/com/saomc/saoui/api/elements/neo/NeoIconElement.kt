@@ -163,12 +163,14 @@ open class NeoIconElement(val icon: IIcon, override var pos: Vec2d = Vec2d.ZERO,
     override val childrenXOffset = 25
     override val childrenYSeparator = 20
 
-    open fun onClick(body: (Vec2d, MouseButton) -> Boolean) {
+    open fun onClick(body: (Vec2d, MouseButton) -> Boolean): NeoElement {
         onClickBody = body
+        return this
     }
 
-    open fun onClickOut(body: (Vec2d, MouseButton) -> Unit) {
+    open fun onClickOut(body: (Vec2d, MouseButton) -> Unit): NeoElement {
         onClickOutBody = body
+        return this
     }
 
     override var visible = true

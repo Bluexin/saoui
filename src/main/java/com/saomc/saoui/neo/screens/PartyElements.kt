@@ -13,6 +13,7 @@ import net.minecraft.client.resources.I18n.format
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.common.util.FakePlayer
+import java.lang.ref.WeakReference
 
 @NeoGuiDsl
 fun NeoCategoryButton.partyMenu(player: EntityPlayer) {
@@ -35,20 +36,13 @@ fun NeoCategoryButton.partyList(player: EntityPlayer) {
         +partyMemberButton(party, it, player, true)
     }
 
+    val ref = WeakReference(this)
     MinecraftForge.EVENT_BUS.register(object {
         @SubscribeEvent
-        fun onInvited(invitation: PartyEvent.Invited) {
+        fun onPartyEvent(event: PartyEvent) {
             MinecraftForge.EVENT_BUS.unregister(this)
-            performLater {
-                this@partyList.init()
-            }
-        }
-
-        @SubscribeEvent
-        fun onCanceled(invitation: PartyEvent.InviteCanceled) {
-            MinecraftForge.EVENT_BUS.unregister(this)
-            performLater {
-                this@partyList.init()
+            ref.get()?.performLater {
+                ref.get()?.reInit()
             }
         }
     })
@@ -59,45 +53,40 @@ fun NeoCategoryButton.partyExtras(player: EntityPlayer) {
     val partyCapability = player.getPartyCapability()
     val party = partyCapability.getOrCreatePT()
 
-    category(IconCore.PARTY, format("sao.party.invite")) {
+    if (party.isLeader(player)) category(IconCore.PARTY, format("sao.party.invite")) {
         @Suppress("UNCHECKED_CAST")
         (player.world.playerEntities as List<EntityPlayer>).asSequence().filter { it != player && it !is FakePlayer && !party.isMember(it) }.forEach { player ->
-            val b = NeoIconLabelElement(IconCore.INVITE, player.displayName)
-            b.onClick { _, _ ->
+            +NeoIconLabelElement(IconCore.INVITE, player.displayNameString).onClick { _, _ ->
                 party.invite(player)
                 true
             }
-            +b
         }
     }
+    if (party.isParty) +NeoIconLabelElement(IconCore.CANCEL, format("sao.party.leave")).onClick { _, _ ->
+        party.removeMember(player)
+    }
     if (partyCapability.invitedTo != null) {
-        category(IconCore.PARTY, format("sao.party.invited", partyCapability.invitedTo?.leader)) {
-            val accept = NeoIconLabelElement(IconCore.CONFIRM, format("sao.accept"))
-            accept.onClick { _, _ ->
+        category(IconCore.PARTY, format("sao.party.invited", partyCapability.invitedTo?.leader?.displayNameString)) {
+            +NeoIconLabelElement(IconCore.CONFIRM, format("sao.misc.accept")).onClick { _, _ ->
                 partyCapability.invitedTo?.acceptInvite(player)
                 true
             }
-            +accept
-            val decline = NeoIconLabelElement(IconCore.CANCEL, format("sao.decline"))
-            decline.onClick { _, _ ->
+            +NeoIconLabelElement(IconCore.CANCEL, format("sao.misc.decline")).onClick { _, _ ->
                 partyCapability.invitedTo?.cancel(player)
                 true
             }
-            +decline
         }
     }
 }
 
 @NeoGuiDsl
 fun NeoCategoryButton.partyMemberButton(party: IParty, player: EntityPlayer, ourPlayer: EntityPlayer, invited: Boolean = false): NeoCategoryButton =
-        NeoCategoryButton(NeoIconLabelElement(IconCore.FRIEND, player.displayNameString), this) {
-            +NeoIconLabelElement(IconCore.HELP, format("sao."))
+        NeoCategoryButton(NeoIconLabelElement(IconCore.FRIEND, if (invited) format("sao.party.player_invited", player.displayNameString) else player.displayNameString), this) {
+            +NeoIconLabelElement(IconCore.HELP, format("sao.element.inspect"))
             if (party.leader == ourPlayer) {
-                val kickButton = NeoIconLabelElement(IconCore.CANCEL, format("sao.party.kick"))
-                kickButton.onClick { _, _ ->
+                +NeoIconLabelElement(IconCore.CANCEL, format("sao.party.${if (invited) "cancel" else "kick"}")).onClick { _, _ ->
                     if (invited) party.cancel(player)
                     else party.removeMember(player)
                 }
-                +kickButton
             }
         }
