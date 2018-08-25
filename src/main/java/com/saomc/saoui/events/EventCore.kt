@@ -1,7 +1,9 @@
 package com.saomc.saoui.events
 
+import be.bluexin.saomclib.events.PartyEvent
 import com.saomc.saoui.effects.RenderDispatcher
 import net.minecraft.client.Minecraft
+import net.minecraft.client.resources.I18n
 import net.minecraft.client.settings.GameSettings
 import net.minecraftforge.client.event.*
 import net.minecraftforge.event.entity.living.LivingDeathEvent
@@ -73,6 +75,11 @@ object EventCore {
     fun guiOpenListener(e: GuiOpenEvent) {
         RenderHandler.guiInstance(e)
         RenderHandler.mainMenuGUI(e)
+    }
+
+    @SubscribeEvent
+    fun partyInvite(e: PartyEvent.Invited) {
+        if (e.party?.leader != mc.player) mc.ingameGUI.setRecordPlaying(I18n.format("saoui.invited", e.party?.leader?.displayName), true)
     }
 
     internal val mc = Minecraft.getMinecraft()
