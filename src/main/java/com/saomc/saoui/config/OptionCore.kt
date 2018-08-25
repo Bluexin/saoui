@@ -2,10 +2,10 @@ package com.saomc.saoui.config
 
 import com.saomc.saoui.GLCore
 import com.saomc.saoui.api.info.IOption
-import net.minecraft.client.Minecraft
-import net.minecraft.client.resources.I18n
 import cpw.mods.fml.relauncher.Side
 import cpw.mods.fml.relauncher.SideOnly
+import net.minecraft.client.Minecraft
+import net.minecraft.client.resources.I18n
 
 @SideOnly(Side.CLIENT)
 enum class OptionCore(
@@ -75,7 +75,7 @@ enum class OptionCore(
     DISABLE_TICKS(I18n.format("optionDisableTicks"), false, false, MISC, false),
     BUGGY_MENU(I18n.format("optionEnableMenus"), true, false, MISC, false),
     NOTICE(I18n.format("optionNotice"), true, false, MISC, false),
-    NEO_MENU(I18n.format("optionNeoMenu"), false, false, MISC, false);
+    NEO_MENU(I18n.format("optionNeoMenu"), true, false, MISC, false);
 
     // TODO: make a way for themes to register custom options?
 
