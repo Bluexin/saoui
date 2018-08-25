@@ -189,3 +189,6 @@ sao.party.kick=Kick Player
 sao.party.cancel=Cancel Invitation
 sao.party.leave=Leave party
 sao.party.player_invited=[?] %s
+
+# Temporary
+saoui.invited=You have been invited to %s's party. Open the menu to accept!
