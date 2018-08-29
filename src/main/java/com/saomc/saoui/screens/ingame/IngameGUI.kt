@@ -41,7 +41,7 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
     }
 
     override fun renderGameOverlay(partialTicks: Float) {
-        mc.mcProfiler.startSection("setup")
+        mc.profiler.startSection("setup")
         val username = mc.player.displayNameString
         val maxNameWidth = fontRenderer.getStringWidth(username)
         val usernameBoxes = 1 + (maxNameWidth + 4) / 5
@@ -55,7 +55,7 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
         context.z = zLevel
         context.player = mc.player
         GLCore.glBlend(true)
-        mc.mcProfiler.endSection()
+        mc.profiler.endSection()
 
         super.renderGameOverlay(partialTicks)
 
@@ -97,9 +97,9 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
             if (mc.playerController?.isSpectator == true)
                 this.spectatorGui.renderTooltip(res, partialTicks)
             else {
-                mc.mcProfiler.startSection("hotbar")
+                mc.profiler.startSection("hotbar")
                 ThemeLoader.HUD.draw(HudPartType.HOTBAR, context)
-                mc.mcProfiler.endSection()
+                mc.profiler.endSection()
             }
             post(HOTBAR)
         }
@@ -152,7 +152,7 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
         val pt = mc.player.getCapability(PartyCapability.CAP_INSTANCE, null)!!.party
         if ((pt == null || !pt.isParty) && ConfigHandler.debugFakePT == 0) return
 
-        mc.mcProfiler.startSection("party")
+        mc.profiler.startSection("party")
 
         GLCore.glAlphaTest(true)
         GLCore.glBlend(true)
@@ -166,7 +166,7 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
         context.setPt(members)
         ThemeLoader.HUD.draw(HudPartType.PARTY, context)
 
-        mc.mcProfiler.endSection()
+        mc.profiler.endSection()
     }
 
     override fun renderFood(width: Int, height: Int) {
@@ -186,11 +186,11 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
         else {
             if (pre(EXPERIENCE)) return
             if (!OptionCore.FORCE_HUD.isEnabled && !this.mc.playerController.shouldDrawHUD()) return
-            mc.mcProfiler.startSection("expLevel")
+            mc.profiler.startSection("expLevel")
 
             ThemeLoader.HUD.draw(HudPartType.EXPERIENCE, context)
 
-            mc.mcProfiler.endSection()
+            mc.profiler.endSection()
             post(EXPERIENCE)
         }
     }
@@ -204,9 +204,9 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
             renderFood(width, height)
 
             if (pre(JUMPBAR)) return
-            mc.mcProfiler.startSection("jumpBar")
+            mc.profiler.startSection("jumpBar")
             ThemeLoader.HUD.draw(HudPartType.JUMP_BAR, context)
-            mc.mcProfiler.endSection()
+            mc.profiler.endSection()
 
             post(JUMPBAR)
         }
@@ -226,7 +226,7 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
         if (OptionCore.VANILLA_UI.isEnabled || OptionCore.DEFAULT_DEBUG.isEnabled)
             super.renderHUDText(width, height)
         else {
-            mc.mcProfiler.startSection("forgeHudText")
+            mc.profiler.startSection("forgeHudText")
             OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0)
             val listL = ArrayList<String>()
             val listR = ArrayList<String>()
@@ -273,7 +273,7 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
                 }
             }
 
-            mc.mcProfiler.endSection()
+            mc.profiler.endSection()
             post(TEXT)
         }
     }

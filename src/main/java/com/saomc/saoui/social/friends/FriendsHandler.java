@@ -32,7 +32,7 @@ public class FriendsHandler {
     private String[] friends;
 
     private FriendsHandler(FMLPreInitializationEvent event) {
-        this.friendsFile = new File(Minecraft.getMinecraft().mcDataDir.getAbsolutePath() + "/saouifriends");
+        this.friendsFile = new File(Minecraft.getMinecraft().gameDir.getAbsolutePath(), "saouifriends");
         if (!friendsFile.exists()) writeFriends(friends);
         friends = loadFriends();
     }
