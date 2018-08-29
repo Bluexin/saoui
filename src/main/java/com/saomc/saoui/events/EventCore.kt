@@ -79,7 +79,7 @@ object EventCore {
 
     @SubscribeEvent
     fun partyInvite(e: PartyEvent.Invited) {
-        if (e.party?.leader != mc.player) mc.ingameGUI.setRecordPlaying(I18n.format("saoui.invited", e.party?.leader?.displayName), true)
+        if (e.party?.leader != mc.player) mc.ingameGUI.setRecordPlayingMessage(I18n.format("saoui.invited", e.party?.leader?.displayName))
     }
 
     internal val mc = Minecraft.getMinecraft()
