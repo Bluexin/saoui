@@ -130,7 +130,7 @@ jar {
     for (dep in configurations.shade) {
         from(project.zipTree(dep)) {
 //            include '*/**.class'
-            exclude 'META-INF', 'META-INF/**', 'LICENSE*', 'changelog*', 'NOTICE*',
+            exclude 'META-INF/MANIFEST.MF', 'LICENSE*', 'changelog*', 'NOTICE*',
                     'javax/annotation/**', 'edu/umd/cs/findbugs/annotations/**'
         }
     }
