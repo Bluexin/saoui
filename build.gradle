@@ -103,6 +103,9 @@ def releaseJar = artifacts.add('archives', file(configurations.archives.allArtif
     builtBy reobfJar
 }
 
+components.java.artifacts.clear()
+components.java.artifacts.add(releaseJar)
+
 task sourceJar(type: Jar, dependsOn: 'sourceMainJava', overwrite: true) {
     from 'build/sources/main/java'
     classifier = 'sources'
@@ -116,7 +119,7 @@ task deobfJar(type: Jar) {
 publishing {
     publications {
         saoui(MavenPublication) {
-            artifact releaseJar
+            from components.java
             artifact deobfJar
             artifact sourceJar
         }
