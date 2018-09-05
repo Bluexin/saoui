@@ -76,6 +76,7 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
         else {
             if (pre(CROSSHAIRS)) return
             ThemeLoader.HUD.draw(HudPartType.CROSS_HAIR, context)
+            this.renderAttackIndicator(partialTicks, resolution)
             post(CROSSHAIRS)
         }
     }
@@ -118,7 +119,10 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
     }
 
     override fun renderAttackIndicator(p_184045_1_: Float, p_184045_2_: ScaledResolution) {
-        if (OptionCore.VANILLA_UI.isEnabled) super.renderAttackIndicator(p_184045_1_, p_184045_2_)
+        if (true/*OptionCore.VANILLA_UI.isEnabled*/) {
+            GLCore.glBindTexture(Gui.ICONS)
+            super.renderAttackIndicator(p_184045_1_, p_184045_2_)
+        }
         // todo: implement
     }
 
