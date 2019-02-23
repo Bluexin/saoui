@@ -72,7 +72,7 @@ public class HudDrawContext implements IHudDrawContext {
         this.itemRenderer = itemRenderer;
         this.stats = PlayerStats.Companion.instance().getStats();
 
-        this.usernameWidth = (1 + (mc.fontRenderer.getStringWidth(username) + 4) / 5) * 5;
+        this.usernameWidth = (1 + (mc.fontRenderer.getStringWidth(username) + 4) / 5.0) * 5;
     }
 
     public void setPt(List<EntityPlayer> pt) {

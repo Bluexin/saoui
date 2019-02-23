@@ -33,7 +33,7 @@ import java.util.*
  */
 object StaticPlayerHelper {
     private const val HEALTH_ANIMATION_FACTOR = 0.075f
-    private val HEALTH_FRAME_FACTOR = HEALTH_ANIMATION_FACTOR * HEALTH_ANIMATION_FACTOR * 0x40f * 0x64f
+    private const val HEALTH_FRAME_FACTOR = HEALTH_ANIMATION_FACTOR * HEALTH_ANIMATION_FACTOR * 0x40f * 0x64f
     private val healthSmooth = HashMap<UUID, Float>()
     private val hungerSmooth = HashMap<UUID, Float>()
 

@@ -101,12 +101,9 @@ public class StartupGUI extends GuiScreen {
     @Override
     protected void actionPerformed(GuiButton button) {
         if (isDev())
-            switch (button.id) {
-                case 0: {
-                    buttonList.forEach(b -> b.enabled = false);
-                    this.mc.displayGuiScreen(null);
-                    break;
-                }
+            if (button.id == 0) {
+                buttonList.forEach(b -> b.enabled = false);
+                this.mc.displayGuiScreen(null);
             }
         /*else if (UpdateChecker.hasUpdate())
             switch (button.id) {

@@ -23,7 +23,6 @@ import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.inventory.GuiInventory
 import java.util.*
 import java.util.function.Consumer
-import java.util.function.Predicate
 import java.util.stream.Stream
 
 /**
@@ -67,7 +66,7 @@ class SkillList private constructor(skills: List<ISkill>, val isRingShown: Boole
     }
 
     fun stream(): Stream<ISkill> {
-        return skills.stream().filter(Predicate<ISkill> { it.visible() })
+        return skills.stream().filter{ it.visible() }
     }
 
     fun forEach(action: Consumer<in ISkill>) {
@@ -75,7 +74,7 @@ class SkillList private constructor(skills: List<ISkill>, val isRingShown: Boole
     }
 
     fun hitInSkillRing(index: Int, mc: Minecraft, parent: GuiInventory, action: Actions) {
-        SkillList.instance()!!.stream().filter(Predicate<ISkill> { it.shouldShowInRing() }).skip(index.toLong()).findFirst().ifPresent { s -> s.activate(mc, parent, action) }
+        SkillList.instance()!!.stream().filter{ it.shouldShowInRing() }.skip(index.toLong()).findFirst().ifPresent { s -> s.activate(mc, parent, action) }
     }
 
     companion object {
