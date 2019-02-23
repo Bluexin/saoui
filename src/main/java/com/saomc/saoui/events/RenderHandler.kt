@@ -19,11 +19,13 @@ package com.saomc.saoui.events
 
 import com.saomc.saoui.SoundCore
 import com.saomc.saoui.config.OptionCore
+import com.saomc.saoui.neo.screens.DeathGui
 import com.saomc.saoui.neo.screens.NeoGui
 import com.saomc.saoui.neo.screens.NeoIngameMenu
 import com.saomc.saoui.renders.StaticRenderer
 import com.saomc.saoui.screens.ingame.IngameGUI
 import com.saomc.saoui.screens.menu.StartupGUI
+import net.minecraft.client.gui.GuiGameOver
 import net.minecraft.client.gui.GuiIngameMenu
 import net.minecraft.client.gui.GuiMainMenu
 import net.minecraft.client.gui.inventory.GuiContainerCreative
@@ -76,17 +78,18 @@ internal object RenderHandler {
                 if (EventCore.mc.currentScreen !is NeoGui<*>) e.gui = NeoIngameMenu()
             }
         }
-        if (e.gui is GuiInventory && !OptionCore.DEFAULT_INVENTORY.isEnabled) {
+        else if (e.gui is GuiInventory && !OptionCore.DEFAULT_INVENTORY.isEnabled) {
             when {
                 EventCore.mc.playerController.isInCreativeMode -> e.gui = GuiContainerCreative(EventCore.mc.player)
                 else -> e.isCanceled = true
             }
         }
-        /*if (e.getGui() instanceof GuiGameOver && (!OptionCore.DEFAULT_DEATH_SCREEN.isEnabled())) {
-            if (!(e.getGui() instanceof DeathScreen)) {
-                e.setGui(new DeathScreen());
+        else if (e.gui is GuiGameOver && (!OptionCore.DEFAULT_DEATH_SCREEN.isEnabled)) {
+            if (EventCore.mc.currentScreen !is DeathGui) e.gui = DeathGui()
+            else {
+                e.isCanceled = true
             }
-        }*/
+        }
     }
 
     fun deathCheck() {

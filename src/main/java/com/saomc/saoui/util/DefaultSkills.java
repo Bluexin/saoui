@@ -91,4 +91,8 @@ public enum DefaultSkills implements ISkill {
         this.showOnRing = showOnRing;
     }
 
+    @Override
+    public boolean visible() {
+        return true;
+    }
 }

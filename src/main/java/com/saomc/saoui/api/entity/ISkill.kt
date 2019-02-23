@@ -15,22 +15,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.saomc.saoui.api.entity;
+package com.saomc.saoui.api.entity
 
-import com.saomc.saoui.api.events.EventInitSkills;
-import com.saomc.saoui.api.screens.Actions;
-import com.saomc.saoui.api.screens.IIcon;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.inventory.GuiInventory;
+import com.saomc.saoui.api.events.EventInitSkills
+import com.saomc.saoui.api.screens.Actions
+import com.saomc.saoui.api.screens.IIcon
+import net.minecraft.client.Minecraft
+import net.minecraft.client.gui.inventory.GuiInventory
 
 /**
  * Part of saoui
- * <p>
+ *
+ *
  * Skill to be shown in the "Skills" menu and/or in the skills ring if set so.
  *
  * @author Bluexin
  */
-public interface ISkill {
+interface ISkill {
 
     /**
      * Used when this skill is clicked on (with any mouse button).
@@ -38,15 +39,15 @@ public interface ISkill {
      * @param mc     The Minecraft instance
      * @param parent The parent gui
      */
-    void activate(Minecraft mc, GuiInventory parent, Actions action);
+    fun activate(mc: Minecraft, parent: GuiInventory, action: Actions)
 
     /**
      * Whether this skill should be visible to the player.
      *
      * @return should this skill be shown
      */
-    default boolean visible() {
-        return true;
+    fun visible(): Boolean {
+        return true
     }
 
     /**
@@ -54,24 +55,24 @@ public interface ISkill {
      *
      * @return whether it should be highlighted
      */
-    boolean shouldHighlight();
+    fun shouldHighlight(): Boolean
 
     /**
      * Whether this skill should be shown on the "Skills" ring (around the character).
      * Only 12 skills can be shown on the ring.
-     * For this to actually take effect, you need to specify it to {@link EventInitSkills}
+     * For this to actually take effect, you need to specify it to [EventInitSkills]
      *
      * @return whether this skill should be listed on the "Skills" ring
      */
-    default boolean shouldShowInRing() {
-        return true;
+    open fun shouldShowInRing(): Boolean {
+        return true
     }
 
     /**
      * Sets whether this skill should be shown on the "Skills" ring.
      * It is highly recommended to not silently ignore this.
      */
-    void setShowOnRing(boolean showOnRing);
+    fun setShowOnRing(showOnRing: Boolean)
 
     /**
      * Gets an end-user-friendly name for this skill.
@@ -79,13 +80,12 @@ public interface ISkill {
      *
      * @return a name for this skill to display to the end-user
      */
-    @Override
-    String toString();
+    override fun toString(): String
 
     /**
      * Gets an icon to be displayed with this skill.
      *
      * @return icon representing this skill
      */
-    IIcon getIcon();
+    val icon: IIcon
 }

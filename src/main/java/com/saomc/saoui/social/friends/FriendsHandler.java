@@ -17,13 +17,9 @@
 
 package com.saomc.saoui.social.friends;
 
-import be.bluexin.saouintw.communication.CommandType;
-import be.bluexin.saouintw.communication.Communicator;
 import com.saomc.saoui.config.ConfigHandler;
 import com.saomc.saoui.social.StaticPlayerHelper;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
@@ -33,7 +29,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Stream;
 
 /**
@@ -94,17 +89,6 @@ public class FriendsHandler {
         if (friends == null) friends = loadFriends();
 
         return friends;
-    }
-
-    public void addFriendRequests(String... names) {
-        synchronized (friendRequests) {
-            final Minecraft mc = Minecraft.getMinecraft();
-            for (final String name : names)
-                if (!friendRequests.contains(new FriendRequest(name, 10000)) && !isFriend(name)) {
-                    friendRequests.add(new FriendRequest(name, 10000));
-                    Communicator.INSTANCE.send(CommandType.ADD_FRIEND_REQUEST, Objects.requireNonNull(StaticPlayerHelper.INSTANCE.findOnlinePlayer(mc, name)));
-                }
-        }
     }
 
     public boolean addFriends(EntityPlayer... players) {
@@ -198,28 +182,4 @@ public class FriendsHandler {
         }
     }
 
-    public void addFriendRequest(EntityPlayer player) {
-        if (!FriendsHandler.instance().isFriend(player)) {
-            final Minecraft mc = Minecraft.getMinecraft();
-            final GuiScreen keepScreen = mc.currentScreen;
-            final boolean ingameFocus = mc.inGameHasFocus;
-
-            final String text = I18n.format("friend.request.text", player.getDisplayNameString());
-/*
-            mc.displayGuiScreen(WindowView.viewConfirm(ConfigHandler._FRIEND_REQUEST_TITLE, text, (element, action, data) -> {
-                final Categories id = element.ID();
-
-                if (id == Categories.CONFIRM && (FriendsHandler.instance().isFriend(player) || FriendsHandler.instance().addFriends(player)))
-                    Communicator.send(CommandType.ACCEPT_ADD_FRIEND, player);
-                else Communicator.send(CommandType.CANCEL_ADD_FRIEND, player);
-
-                mc.displayGuiScreen(keepScreen);
-
-                if (ingameFocus) mc.setIngameFocus();
-                else mc.setIngameNotInFocus();
-            }));*/
-
-            if (ingameFocus) mc.setIngameNotInFocus();
-        } else Communicator.INSTANCE.send(CommandType.ACCEPT_ADD_FRIEND, player);
-    }
 }

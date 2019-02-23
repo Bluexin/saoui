@@ -17,7 +17,6 @@
 
 package com.saomc.saoui.events
 
-import be.bluexin.saouintw.communication.Command
 import com.saomc.saoui.SoundCore
 import com.saomc.saoui.events.EventCore.mc
 import net.minecraft.client.multiplayer.GuiConnecting
@@ -46,11 +45,5 @@ object EventHandler {
             if (IS_SNEAKING) KeyBinding.setKeyBindState(mc.gameSettings.keyBindSneak.keyCode, true)
         }
     }
-
-    internal fun chatCommand(evt: ClientChatReceivedEvent) {
-        if (mc.currentScreen !is GuiConnecting && Command.processCommand(evt.message.unformattedText))
-            evt.isCanceled = true// TODO: add pm feature and PT chat
-    }
-
 }
 

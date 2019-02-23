@@ -49,47 +49,47 @@
                     </glRectangle>
                     <elementGroup name="hp bg and text">
                         <enabled>!isEnabled(REMOVE_HPXP)</enabled>
-                        <x>usernamewidth + 132</x>
-                        <y cache="STATIC">12</y>
+                        <x>usernamewidth + 132.0</x>
+                        <y cache="STATIC">12.0</y>
                         <children>
                             <glString name="hp text">
                                 <text>absorption > 0? format(isEnabled(ALT_ABSORB_POS)? "formatHealthAbsorbAlt":
                                     "formatHealthAbsorb", ceil(hp), ceil(maxHp), ceil(absorption)):
                                     format("formatHealth", ceil(hp), ceil(maxHp))
                                 </text>
-                                <x cache="STATIC">5</x>
-                                <y cache="STATIC">8</y>
+                                <x cache="STATIC">5.0</x>
+                                <y cache="STATIC">8.0</y>
                             </glString>
                             <elementGroup name="hp bg">
                                 <texture>saoui:textures/guiedt.png</texture>
                                 <children>
                                     <glRectangle>
-                                        <srcX cache="STATIC">60</srcX>
-                                        <srcY cache="STATIC">15</srcY>
-                                        <w cache="STATIC">5</w>
-                                        <h cache="STATIC">13</h>
+                                        <srcX cache="STATIC">60.0</srcX>
+                                        <srcY cache="STATIC">15.0</srcY>
+                                        <w cache="STATIC">5.0</w>
+                                        <h cache="STATIC">13.0</h>
                                     </glRectangle>
                                     <glRectangle>
-                                        <x cache="STATIC">5</x>
-                                        <srcX cache="STATIC">66</srcX>
-                                        <srcY cache="STATIC">15</srcY>
+                                        <x cache="STATIC">5.0</x>
+                                        <srcX cache="STATIC">66.0</srcX>
+                                        <srcY cache="STATIC">15.0</srcY>
                                         <w>strWidth(absorption > 0? format(isEnabled(ALT_ABSORB_POS)?
                                             "formatHealthAbsorbAlt": "formatHealthAbsorb", ceil(hp), ceil(maxHp),
                                             ceil(absorption)): format("formatHealth", ceil(hp), ceil(maxHp)))
                                         </w>
-                                        <h cache="STATIC">13</h>
-                                        <srcW cache="STATIC">5</srcW>
-                                        <srcH cache="STATIC">13</srcH>
+                                        <h cache="STATIC">13.0</h>
+                                        <srcW cache="STATIC">5.0</srcW>
+                                        <srcH cache="STATIC">13.0</srcH>
                                     </glRectangle>
                                     <glRectangle>
                                         <x>5 + strWidth(absorption > 0? format(isEnabled(ALT_ABSORB_POS)?
                                             "formatHealthAbsorbAlt": "formatHealthAbsorb", ceil(hp), ceil(maxHp),
                                             ceil(absorption)): format("formatHealth", ceil(hp), ceil(maxHp)))
                                         </x>
-                                        <srcX cache="STATIC">70</srcX>
-                                        <srcY cache="STATIC">15</srcY>
-                                        <w cache="STATIC">5</w>
-                                        <h cache="STATIC">13</h>
+                                        <srcX cache="STATIC">70.0</srcX>
+                                        <srcY cache="STATIC">15.0</srcY>
+                                        <w cache="STATIC">5.0</w>
+                                        <h cache="STATIC">13.0</h>
                                     </glRectangle>
                                 </children>
                             </elementGroup>
@@ -104,7 +104,7 @@
                 <children>
                     <elementGroup name="vertical">
                         <enabled>isEnabled(VER_HOTBAR)</enabled>
-                        <x cache="SIZE_CHANGE">scaledwidth - 24</x>
+                        <x cache="SIZE_CHANGE">scaledwidth - 24.0</x>
                         <y cache="SIZE_CHANGE">scaledheight / 2.0</y>
                         <children>
                             <repetitionGroup name="main inventory">
@@ -117,7 +117,7 @@
                                         <srcW cache="STATIC">20.0</srcW>
                                         <srcY cache="STATIC">25.0</srcY>
                                         <w cache="STATIC">20.0</w>
-                                        <y cache="NONE">-99 + 22 * i</y>
+                                        <y cache="NONE">-99.0 + 22.0 * i</y>
                                         <slot cache="NONE">i</slot>
                                         <itemXoffset cache="STATIC">2</itemXoffset>
                                         <itemYoffset cache="STATIC">2</itemYoffset>
@@ -135,7 +135,7 @@
                                         <srcW cache="STATIC">20.0</srcW>
                                         <srcY cache="STATIC">25.0</srcY>
                                         <w cache="STATIC">20.0</w>
-                                        <y cache="STATIC">121</y>
+                                        <y cache="STATIC">121.0</y>
                                         <slot cache="STATIC">0</slot>
                                         <itemXoffset cache="STATIC">2</itemXoffset>
                                         <itemYoffset cache="STATIC">2</itemYoffset>
@@ -149,7 +149,7 @@
                                         <srcW cache="STATIC">20.0</srcW>
                                         <srcY cache="STATIC">25.0</srcY>
                                         <w cache="STATIC">20.0</w>
-                                        <y cache="STATIC">121</y>
+                                        <y cache="STATIC">121.0</y>
                                         <slot cache="STATIC">0</slot>
                                         <itemXoffset cache="STATIC">2</itemXoffset>
                                         <itemYoffset cache="STATIC">2</itemYoffset>
@@ -162,8 +162,8 @@
                     </elementGroup>
                     <elementGroup name="horizontal">
                         <enabled>isEnabled(HOR_HOTBAR)</enabled>
-                        <x cache="SIZE_CHANGE">scaledwidth / 2 - 92</x>
-                        <y cache="SIZE_CHANGE">scaledheight - 23</y>
+                        <x cache="SIZE_CHANGE">scaledwidth / 2.0 - 92.0</x>
+                        <y cache="SIZE_CHANGE">scaledheight - 23.0</y>
                         <children>
                             <repetitionGroup name="main inventory">
                                 <amount cache="STATIC">9</amount>
