@@ -15,71 +15,49 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.saomc.saoui.api.entity.rendering;
+package com.saomc.saoui.api.entity.rendering
 
-import com.saomc.saoui.SAOCore;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ResourceLocation;
-
-import java.lang.ref.WeakReference;
-
-import static com.saomc.saoui.api.entity.rendering.ColorState.*;
+import com.saomc.saoui.SAOCore
+import com.saomc.saoui.api.entity.rendering.ColorState.*
+import net.minecraft.entity.player.EntityPlayer
+import net.minecraft.nbt.NBTTagCompound
+import net.minecraft.util.ResourceLocation
+import java.lang.ref.WeakReference
 
 /**
  * Part of saoui
  *
  * @author Bluexin
  */
-public class PlayerColorStateHandler implements IColorStateHandler {
+class PlayerColorStateHandler(thePlayer: EntityPlayer) : IColorStateHandler {
 
-    private static final String KEY = new ResourceLocation(SAOCore.MODID, "playerColorHandler").toString();
+    private val thePlayer: WeakReference<EntityPlayer>
+    private var ticksForRedemption: Long = 0
+    private var currentState = INNOCENT
 
-    /**
-     * How long a player's state will persist.
-     * <p>
-     * Example:
-     * player A (innocent) hits player B (innocent)
-     * player A gets VIOLENT status for set amount of ticks
-     * player A (violent) hits player B (innocent)
-     * player A's VIOLENT status will be <b>reset</b> to set amount of ticks
-     * player A (violent) kills player B (innocent)
-     * player A gets KILLER status for set amount of ticks
-     * player A (killer) kills player B (innocent) again
-     * player A's KILLER status duration will be <b>extended</b> by set amount of ticks
-     * player A (killer) hits player B (innocent)
-     * player A's status doesn't change
-     */
-    private static final long TICKS_PER_STATE = 12000;
-
-    private final WeakReference<EntityPlayer> thePlayer;
-    private long ticksForRedemption = 0;
-    private ColorState currentState = INNOCENT;
-
-    public PlayerColorStateHandler(EntityPlayer thePlayer) {
-        this.thePlayer = new WeakReference<>(thePlayer);
+    init {
+        this.thePlayer = WeakReference(thePlayer)
     }
 
     /**
      * @return the color state the entity should be showing.
      */
-    @Override
-    public ColorState getColorState() {
-        return this.currentState;
+    override fun getColorState(): ColorState {
+        return this.currentState
     }
 
     /**
      * Called every tick.
      * Use this to handle anything special.
      */
-    @Override
-    public void tick() {
+    override fun tick() {
         if (ticksForRedemption > 0) {
-            if (--ticksForRedemption == 0) {
-                if (currentState == VIOLENT) currentState = INNOCENT;
+            if (--ticksForRedemption == 0L) {
+                if (currentState === VIOLENT)
+                    currentState = INNOCENT
                 else {
-                    currentState = VIOLENT;
-                    ticksForRedemption = TICKS_PER_STATE;
+                    currentState = VIOLENT
+                    ticksForRedemption = TICKS_PER_STATE
                 }
             }
         }
@@ -90,11 +68,11 @@ public class PlayerColorStateHandler implements IColorStateHandler {
      *
      * @param target the player hit
      */
-    public void hit(EntityPlayer target) {
-        ColorState targetState = RenderCapability.Companion.get(target).getColorStateHandler().getColorState();
-        if (targetState != KILLER && targetState != VIOLENT && this.currentState != KILLER) {
-            this.currentState = VIOLENT;
-            this.ticksForRedemption = TICKS_PER_STATE;
+    fun hit(target: EntityPlayer) {
+        val targetState = target.getRenderData().colorStateHandler.colorState
+        if (targetState !== KILLER && targetState !== VIOLENT && this.currentState !== KILLER) {
+            this.currentState = VIOLENT
+            this.ticksForRedemption = TICKS_PER_STATE
         }
     }
 
@@ -103,13 +81,14 @@ public class PlayerColorStateHandler implements IColorStateHandler {
      *
      * @param target the player killed
      */
-    public void kill(EntityPlayer target) {
-        ColorState targetState = RenderCapability.Companion.get(target).getColorStateHandler().getColorState();
-        if (targetState != KILLER && targetState != VIOLENT) {
-            if (this.currentState == KILLER) this.ticksForRedemption += TICKS_PER_STATE;
+    fun kill(target: EntityPlayer) {
+        val targetState =target.getRenderData().colorStateHandler.colorState
+        if (targetState !== KILLER && targetState !== VIOLENT) {
+            if (this.currentState === KILLER)
+                this.ticksForRedemption += TICKS_PER_STATE
             else {
-                this.currentState = KILLER;
-                this.ticksForRedemption = TICKS_PER_STATE;
+                this.currentState = KILLER
+                this.ticksForRedemption = TICKS_PER_STATE
             }
         }
     }
@@ -121,12 +100,11 @@ public class PlayerColorStateHandler implements IColorStateHandler {
      *
      * @param tag the NBT tag to save to
      */
-    @Override
-    public void save(NBTTagCompound tag) {
-        NBTTagCompound atag = new NBTTagCompound();
-        atag.setLong("ticksForRedemption", this.ticksForRedemption);
-        atag.setInteger("state", this.currentState.ordinal());
-        tag.setTag(KEY, atag);
+    override fun save(tag: NBTTagCompound) {
+        val atag = NBTTagCompound()
+        atag.setLong("ticksForRedemption", this.ticksForRedemption)
+        atag.setInteger("state", this.currentState.ordinal)
+        tag.setTag(KEY, atag)
     }
 
     /**
@@ -136,10 +114,32 @@ public class PlayerColorStateHandler implements IColorStateHandler {
      *
      * @param tag the NBT tag to save to
      */
-    @Override
-    public void load(NBTTagCompound tag) {
-        NBTTagCompound atag = tag.getCompoundTag(KEY);
-        this.ticksForRedemption = atag.getLong("ticksForRedemption");
-        this.currentState = ColorState.values()[atag.getInteger("state")];
+    override fun load(tag: NBTTagCompound) {
+        val atag = tag.getCompoundTag(KEY)
+        this.ticksForRedemption = atag.getLong("ticksForRedemption")
+        this.currentState = ColorState.values()[atag.getInteger("state")]
+    }
+
+    companion object {
+
+        private val KEY = ResourceLocation(SAOCore.MODID, "playerColorHandler").toString()
+
+        /**
+         * How long a player's state will persist.
+         *
+         *
+         * Example:
+         * player A (innocent) hits player B (innocent)
+         * player A gets VIOLENT status for set amount of ticks
+         * player A (violent) hits player B (innocent)
+         * player A's VIOLENT status will be **reset** to set amount of ticks
+         * player A (violent) kills player B (innocent)
+         * player A gets KILLER status for set amount of ticks
+         * player A (killer) kills player B (innocent) again
+         * player A's KILLER status duration will be **extended** by set amount of ticks
+         * player A (killer) hits player B (innocent)
+         * player A's status doesn't change
+         */
+        private val TICKS_PER_STATE: Long = 12000
     }
 }
