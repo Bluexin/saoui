@@ -91,7 +91,7 @@ public class PlayerColorStateHandler implements IColorStateHandler {
      * @param target the player hit
      */
     public void hit(EntityPlayer target) {
-        ColorState targetState = RenderCapability.get(target).colorStateHandler.getColorState();
+        ColorState targetState = RenderCapability.Companion.get(target).getColorStateHandler().getColorState();
         if (targetState != KILLER && targetState != VIOLENT && this.currentState != KILLER) {
             this.currentState = VIOLENT;
             this.ticksForRedemption = TICKS_PER_STATE;
@@ -104,7 +104,7 @@ public class PlayerColorStateHandler implements IColorStateHandler {
      * @param target the player killed
      */
     public void kill(EntityPlayer target) {
-        ColorState targetState = RenderCapability.get(target).colorStateHandler.getColorState();
+        ColorState targetState = RenderCapability.Companion.get(target).getColorStateHandler().getColorState();
         if (targetState != KILLER && targetState != VIOLENT) {
             if (this.currentState == KILLER) this.ticksForRedemption += TICKS_PER_STATE;
             else {
