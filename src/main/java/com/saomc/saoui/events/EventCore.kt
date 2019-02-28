@@ -84,7 +84,7 @@ object EventCore {
 
     @SubscribeEvent
     fun partyInvite(e: PartyEvent.Invited) {
-        PopupYesNo("Party Invite", "Would you like to join ${e.party!!.leader}'s party?") += {
+        PopupYesNo("Party Invite", "Would you like to join ${e.party!!.leader}'s party?", "") += {
             if (it == PopupYesNo.Result.YES)
                 PacketPipeline.sendToServer(PTC2SPacket(PTC2SPacket.Type.JOIN, e.player))
             else PacketPipeline.sendToServer(PTC2SPacket(PTC2SPacket.Type.CANCEL, e.player))

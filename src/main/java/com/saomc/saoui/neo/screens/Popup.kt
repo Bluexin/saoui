@@ -31,7 +31,7 @@ import com.teamwizardry.librarianlib.features.math.Vec2d
 import net.minecraft.util.ResourceLocation
 import kotlin.math.max
 
-open class Popup<T : Any>(var title: String, var text: List<String>, private val buttons: Map<NeoIconElement, T>) : NeoGui<T>(Vec2d.ZERO) {
+open class Popup<T : Any>(var title: String, var text: List<String>, var footer: String, private val buttons: Map<NeoIconElement, T>) : NeoGui<T>(Vec2d.ZERO) {
 
     private val rl = ResourceLocation(SAOCore.MODID, "textures/menu/parts/alertbg.png")
     internal /*private*/ var expansion = 0f
@@ -141,6 +141,7 @@ open class Popup<T : Any>(var title: String, var text: List<String>, private val
         (0 until text.size).forEach {
             if (alpha > 0.56f) GLCore.glString(text[it], -GLCore.glStringWidth(text[it]) / 2, (-h / 2.0 + step1 + shadows + step3 / (text.size) * (it + 0.5)).toInt(), ColorUtil.DEFAULT_FONT_COLOR.multiplyAlpha((alpha - 0.5f) / 0.5f), centered = true)
         }
+        if (alpha > 0.03f) GLCore.glString(footer, -GLCore.glStringWidth(footer) / 2, (-h / 2.0 + step1 + shadows + step3 + (step5 / 2)).toInt(), ColorUtil.DEFAULT_BOX_FONT_COLOR.multiplyAlpha(alpha), centered = true)
 
         // Guides
         /*GLCore.glBindTexture(StringNames.gui)
@@ -187,7 +188,7 @@ open class Popup<T : Any>(var title: String, var text: List<String>, private val
     }
 }
 
-class PopupYesNo(title: String, text: List<String>) : Popup<PopupYesNo.Result>(title, text, mapOf(
+class PopupYesNo(title: String, text: List<String>, footer: String) : Popup<PopupYesNo.Result>(title, text, footer, mapOf(
         NeoIconElement(IconCore.CONFIRM)
                 .setBgColor(ColorIntent.NORMAL, ColorUtil.CONFIRM_COLOR)
                 .setBgColor(ColorIntent.HOVERED, ColorUtil.CONFIRM_COLOR_LIGHT)
@@ -202,7 +203,7 @@ class PopupYesNo(title: String, text: List<String>) : Popup<PopupYesNo.Result>(t
                 to Result.NO
 )) {
 
-    constructor(title: String, text: String) : this(title, listOf(text))
+    constructor(title: String, text: String, footer: String) : this(title, listOf(text), footer)
 
     init {
         result = Result.NO

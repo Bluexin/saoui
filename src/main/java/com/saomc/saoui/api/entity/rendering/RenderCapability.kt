@@ -46,12 +46,13 @@ class RenderCapability : AbstractEntityCapability() {
     /**
      * Where this capability is getting it's customization settings from.
      */
-    lateinit var customizationProvider: ICustomizationProvider
+     private lateinit var customizationProvider: ICustomizationProvider
+
 
     /**
      * Where this capability is getting it's Color State data from.
      */
-    lateinit var colorStateHandler: IColorStateHandler
+    private lateinit var colorStateHandler: IColorStateHandler
 
     /**
      * The entity this capability refers to.
@@ -74,6 +75,10 @@ class RenderCapability : AbstractEntityCapability() {
         return if (ent is IColorStatedEntity) (ent as IColorStatedEntity).colorState else (ent as? EntityPlayer)?.let { PlayerColorStateHandler(it) }
                 ?: MobColorStateHandler(ent) // TODO: implement with event or something
     }
+
+    fun getCustomizationProvider():ICustomizationProvider { return customizationProvider}
+
+    fun getColorStateHandler():IColorStateHandler { return colorStateHandler}
 
     class Storage : Capability.IStorage<RenderCapability> {
 

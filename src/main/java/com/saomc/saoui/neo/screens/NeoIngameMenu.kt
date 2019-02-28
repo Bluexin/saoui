@@ -86,7 +86,7 @@ class NeoIngameMenu : NeoGui<Unit>(Vec2d.ZERO) {
                 category(IconCore.SKILLS, "解散") {
                     onClick { _, _ ->
                         selected = true
-                        openGui(PopupYesNo("Disolve", "パーチイを解散しますか？")) += {
+                        openGui(PopupYesNo("Disolve", "パーチイを解散しますか？", "")) += {
                             mc.player.message("Result: $it")
                             selected = false
                         }
