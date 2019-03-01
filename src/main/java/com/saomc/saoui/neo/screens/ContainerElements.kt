@@ -146,7 +146,7 @@ fun ItemStack.itemDesc(): List<String> {
                     stringBuilder.add(I18n.format("itemDesc.toolClassSpace", s.capitalize(), item.getHarvestLevel(this, s, mc.player, null)))
             } else
                 stringBuilder.add(I18n.format("itemDesc.toolClass", s.capitalize(), item.getHarvestLevel(this, s, mc.player, null)))
-            stringBuilder.add("Enchantable: ${isItemEnchantable.toString().capitalize()}")
+            stringBuilder.add(I18n.format("itemDesc.enchantable", isItemEnchantable.toString().capitalize()))
         }
 
         //TODO Item tool
@@ -167,9 +167,9 @@ fun ItemStack.itemDesc(): List<String> {
         val block = (item as ItemBlock).block
         val state = block.getStateFromMeta(metadata)
         if (block.hasTileEntity(state))
-            stringBuilder.add(I18n.format("itemDesc.type", "itemDesc.tileEntity"))
+            stringBuilder.add(I18n.format("itemDesc.type", I18n.format("itemDesc.tileEntity")))
         else
-            stringBuilder.add(I18n.format("itemDesc.type", "itemDesc.block"))
+            stringBuilder.add(I18n.format("itemDesc.type", I18n.format("itemDesc.block")))
         stringBuilder.add(I18n.format("itemDesc.hardness", block.getBlockHardness(state, mc.player.world, mc.player.position)))
         stringBuilder.add(I18n.format("itemDesc.solid", state.material.isSolid.toString().capitalize()))
         if (state.material.isToolNotRequired)
@@ -178,7 +178,7 @@ fun ItemStack.itemDesc(): List<String> {
             stringBuilder.add(I18n.format("itemDesc.toolRequired.true"))
             stringBuilder.add(I18n.format("itemDesc.mostEffective",
                     mc.player.inventory.asSequence().filter { it.canHarvestBlock(state) }.maxBy { it.getDestroySpeed(state) }?.displayName
-                    ?: "itemDesc.none"))
+                    ?: I18n.format("itemDesc.none")))
 
         }
 
