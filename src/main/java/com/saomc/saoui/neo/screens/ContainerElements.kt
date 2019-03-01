@@ -173,7 +173,7 @@ fun ItemStack.itemDesc(): List<String> {
         stringBuilder.add(I18n.format("itemDesc.hardness", block.getBlockHardness(state, mc.player.world, mc.player.position)))
         stringBuilder.add(I18n.format("itemDesc.solid", state.material.isSolid.toString().capitalize()))
         if (state.material.isToolNotRequired)
-            stringBuilder.add(I18n.format("itemDesc.toolRequire.false"))
+            stringBuilder.add(I18n.format("itemDesc.toolRequired.false"))
         else {
             stringBuilder.add(I18n.format("itemDesc.toolRequired.true"))
             stringBuilder.add(I18n.format("itemDesc.mostEffective",
