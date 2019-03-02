@@ -52,17 +52,18 @@ open class Popup<T : Any>(var title: String, var text: List<String>, var footer:
         destination = pos
 
         val childrenXSeparator = w / buttons.size
-        val childrenXOffset = -childrenXSeparator / buttons.size - 9
+        val childrenXOffset = (-w / 2) + (childrenXSeparator / 2 - 9)
         val childrenYOffset = h * 0.1875 - 9 + h * 0.03125 * (text.size)
 
-        var i = 0
-        buttons.forEach { button, result ->
+        buttons.asSequence().forEachIndexed { index, entry ->
+            val button = entry.key
+            val result = entry.value
             button.onClick { _, _ ->
                 this@Popup.result = result
                 onGuiClosed()
                 true
             }
-            button.pos = vec(childrenXOffset + childrenXSeparator * i++, childrenYOffset)
+            button.pos = vec(childrenXOffset + childrenXSeparator * index, childrenYOffset)
             button.destination = button.pos
             +basicAnimation(button, "opacity") {
                 duration = animDuration
@@ -87,8 +88,8 @@ open class Popup<T : Any>(var title: String, var text: List<String>, var footer:
                 }
             }
             +button
-        }
 
+        }
         +basicAnimation(this, "expansion") {
             to = 1f
             duration = animDuration
@@ -212,5 +213,46 @@ class PopupYesNo(title: String, text: List<String>, footer: String) : Popup<Popu
     enum class Result {
         YES,
         NO
+    }
+}
+
+class PopupItem(title: String, text: List<String>, footer: String) : Popup<PopupItem.Result>(title, text, footer, mapOf(
+        NeoIconElement(IconCore.EQUIPMENT)
+                .setBgColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
+                .setBgColor(ColorIntent.HOVERED, ColorUtil.HOVER_COLOR)
+                .setFontColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
+                .setFontColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
+                to Result.EQUIP,
+        NeoIconElement(IconCore.CRAFTING)
+                .setBgColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
+                .setBgColor(ColorIntent.HOVERED, ColorUtil.HOVER_COLOR)
+                .setFontColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
+                .setFontColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
+                to Result.USE,
+        NeoIconElement(IconCore.CANCEL)
+                .setBgColor(ColorIntent.NORMAL, ColorUtil.CANCEL_COLOR)
+                .setBgColor(ColorIntent.HOVERED, ColorUtil.CANCEL_COLOR_LIGHT)
+                .setFontColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
+                .setFontColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
+                to Result.DROP,
+        NeoIconElement(IconCore.PARTY)
+                .setBgColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
+                .setBgColor(ColorIntent.HOVERED, ColorUtil.HOVER_COLOR)
+                .setFontColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
+                .setFontColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
+                to Result.TRADE
+)) {
+
+    constructor(title: String, text: String, footer: String) : this(title, listOf(text), footer)
+
+    init {
+        result = Result.EQUIP
+    }
+
+    enum class Result {
+        EQUIP,
+        USE,
+        DROP,
+        TRADE
     }
 }

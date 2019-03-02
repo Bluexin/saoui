@@ -67,7 +67,7 @@ class ItemStackElement(private val inventoryIn: IInventory, private val slot: In
         onClick { _, button ->
             if (button == MouseButton.LEFT)
                 (tlParent as? NeoGui<*>)?.
-                    openGui(PopupYesNo(label, itemStack.itemDesc(), if (mc.gameSettings.advancedItemTooltips) ForgeRegistries.ITEMS.getKey(itemStack.item).toString() else ""))
+                    openGui(PopupItem(label, itemStack.itemDesc(), if (mc.gameSettings.advancedItemTooltips) ForgeRegistries.ITEMS.getKey(itemStack.item).toString() else ""))
             true
         }
         //itemStack.getTooltip(mc.player, if (mc.gameSettings.advancedItemTooltips) ITooltipFlag.TooltipFlags.ADVANCED else ITooltipFlag.TooltipFlags.NORMAL)
@@ -131,8 +131,10 @@ fun ItemStack.itemDesc(): List<String> {
             }
         }
 
-        stringBuilder.add(I18n.format("itemDesc.enchantable", isItemEnchantable.toString().capitalize()))
-        stringBuilder.add(I18n.format("itemDesc.enchantability", (item as ItemTool).itemEnchantability))
+        if (isItemEnchantable)
+            stringBuilder.add(I18n.format("itemDesc.enchantability", (item as ItemTool).itemEnchantability))
+        else
+            stringBuilder.add(I18n.format("itemDesc.enchantable", isItemEnchantable.toString().capitalize()))
         stringBuilder.add(I18n.format("itemDesc.repairable",  (item as ItemTool).isRepairable.toString().capitalize()))
     }
 
@@ -159,8 +161,10 @@ fun ItemStack.itemDesc(): List<String> {
 
     else if (item is ItemSword) {
         stringBuilder.add(I18n.format("itemDesc.type", I18n.format("itemDesc.sword")))
-        stringBuilder.add(I18n.format("itemDesc.enchantable", isItemEnchantable.toString().capitalize()))
-        stringBuilder.add(I18n.format("itemDesc.enchantability", (item as ItemSword).itemEnchantability))
+        if (isItemEnchantable)
+            stringBuilder.add(I18n.format("itemDesc.enchantability", (item as ItemSword).itemEnchantability))
+        else
+            stringBuilder.add(I18n.format("itemDesc.enchantable", isItemEnchantable.toString().capitalize()))
     }
 
     else if (item is ItemBlock) {
@@ -207,11 +211,14 @@ fun ItemStack.itemDesc(): List<String> {
         stringBuilder.add(I18n.format("itemDesc.type", I18n.format("itemDesc.armor")))
         val equipSlot = (item as ItemArmor).getEquipmentSlot(this)?: (item as ItemArmor).equipmentSlot
         stringBuilder.add(I18n.format("itemDesc.slot", equipSlot.getName().capitalize()))
-        stringBuilder.add(I18n.format("itemDesc.enchantable", isItemEnchantable.toString().capitalize()))
-        stringBuilder.add(I18n.format("itemDesc.enchantability", (item as ItemArmor).itemEnchantability))
-        stringBuilder.add(I18n.format("itemDesc.repairable",  (item as ItemArmor).isRepairable.toString().capitalize()))
+        if (isItemEnchantable)
+            stringBuilder.add(I18n.format("itemDesc.enchantability", (item as ItemArmor).itemEnchantability))
+        else
+            stringBuilder.add(I18n.format("itemDesc.enchantable", isItemEnchantable.toString().capitalize()))
         if ((item as ItemArmor).isRepairable)
             stringBuilder.add(I18n.format("itemDesc.repairItem",  (item as ItemArmor).armorMaterial.repairItemStack.displayName))
+        else
+            stringBuilder.add(I18n.format("itemDesc.repairable",  (item as ItemArmor).isRepairable.toString().capitalize()))
         stringBuilder.add(I18n.format("itemDesc.toughness",  (item as ItemArmor).armorMaterial.toughness))
     }
 
