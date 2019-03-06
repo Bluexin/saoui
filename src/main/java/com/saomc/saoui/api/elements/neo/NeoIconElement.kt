@@ -19,6 +19,7 @@ package com.saomc.saoui.api.elements.neo
 
 import com.saomc.saoui.GLCore
 import com.saomc.saoui.api.screens.IIcon
+import com.saomc.saoui.neo.screens.ItemIcon
 import com.saomc.saoui.neo.screens.MouseButton
 import com.saomc.saoui.resources.StringNames
 import com.saomc.saoui.util.ColorIntent
@@ -87,6 +88,8 @@ open class NeoIconElement(val icon: IIcon, override var pos: Vec2d = Vec2d.ZERO,
             GLCore.glBindTexture(icon.rl!!)
             icon.glDrawUnsafe(pos + vec(1, 1))
         }
+        if (icon is ItemIcon)
+            icon.glDrawUnsafe(pos + vec(1, 1))
 
         /*GlStateManager.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE)
         GLCore.glBindTexture(StringNames.gui)

@@ -18,10 +18,12 @@
 package com.saomc.saoui.neo.screens
 
 import com.saomc.saoui.GLCore
+import com.saomc.saoui.SAOCore
 import com.saomc.saoui.api.elements.neo.NeoCategoryButton
 import com.saomc.saoui.api.elements.neo.NeoIconLabelElement
 import com.saomc.saoui.api.screens.IIcon
 import com.saomc.saoui.events.EventCore.mc
+import com.saomc.saoui.screens.inventory.BaseFilters
 import com.saomc.saoui.util.IconCore
 import com.teamwizardry.librarianlib.features.kotlin.get
 import com.teamwizardry.librarianlib.features.kotlin.isNotEmpty
@@ -31,7 +33,10 @@ import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.RenderHelper
 import net.minecraft.client.resources.I18n
 import net.minecraft.client.util.ITooltipFlag
+import net.minecraft.inventory.ClickType
+import net.minecraft.inventory.EntityEquipmentSlot
 import net.minecraft.inventory.IInventory
+import net.minecraft.inventory.Slot
 import net.minecraft.item.*
 import net.minecraft.util.ResourceLocation
 import net.minecraftforge.fml.common.registry.ForgeRegistries
@@ -40,7 +45,8 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries
 @NeoGuiDsl
 fun NeoCategoryButton.itemList(inventory: IInventory, filter: (iss: ItemStack) -> Boolean, vararg equippedRange: IntRange = arrayOf(-1..-1)) {
     (0 until inventory.sizeInventory).forEach {
-        +ItemStackElement(inventory, it, Vec2d.ZERO, equippedRange.any { r -> it in r }, filter)
+        val slot = mc.player.inventoryContainer.getSlotFromInventory(inventory, it)!!
+        +ItemStackElement(slot, Vec2d.ZERO, equippedRange.any { r -> it in r }, filter)
     }
     +object : NeoIconLabelElement(icon = IconCore.NONE, label = I18n.format("gui.empty")) {
         private var mark = false
@@ -60,24 +66,166 @@ fun NeoCategoryButton.itemList(inventory: IInventory, filter: (iss: ItemStack) -
     }
 }
 
-class ItemStackElement(private val inventoryIn: IInventory, private val slot: Int, pos: Vec2d, override var selected: Boolean, private val filter: (iss: ItemStack) -> Boolean) :
-        NeoIconLabelElement(icon = ItemIcon { inventoryIn.getStackInSlot(slot) }, pos = pos) {
+class ItemStackElement(private val slot: Slot, pos: Vec2d, override var selected: Boolean, private val filter: (iss: ItemStack) -> Boolean) :
+        NeoIconLabelElement(icon = ItemIcon { slot.stack }, pos = pos) {
 
     init {
         onClick { _, button ->
             if (button == MouseButton.LEFT)
-                (tlParent as? NeoGui<*>)?.
-                    openGui(PopupItem(label, itemStack.itemDesc(), if (mc.gameSettings.advancedItemTooltips) ForgeRegistries.ITEMS.getKey(itemStack.item).toString() else ""))
+                if (tlParent is NeoGui<*>)
+                    (tlParent as NeoGui<*>).openGui(PopupItem(label, itemStack.itemDesc(), if (mc.gameSettings.advancedItemTooltips) ForgeRegistries.ITEMS.getKey(itemStack.item).toString() else "")) += {
+                        when (it){
+                            PopupItem.Result.EQUIP -> handleEquip()
+                            PopupItem.Result.TRADE -> handleTrade()
+                            PopupItem.Result.DROP -> handleDrop()
+                            PopupItem.Result.USE -> handleUse()
+                            else -> {}
+                        }
+                        selected = false
+                    }
             true
         }
         //itemStack.getTooltip(mc.player, if (mc.gameSettings.advancedItemTooltips) ITooltipFlag.TooltipFlags.ADVANCED else ITooltipFlag.TooltipFlags.NORMAL)
     }
 
+    private fun handleEquip(){
+        if (BaseFilters.EQUIPMENT(itemStack)){
+            val equipSlot = (itemStack.item as ItemArmor).getEquipmentSlot(itemStack)?: (itemStack.item as ItemArmor).equipmentSlot
+            val otherSlot =
+                    when (equipSlot){
+                        EntityEquipmentSlot.HEAD -> 5
+                        EntityEquipmentSlot.CHEST -> 6
+                        EntityEquipmentSlot.LEGS -> 7
+                        EntityEquipmentSlot.FEET -> 8
+                        //Sanity Check
+                        else -> checkArmorSlots()
+                    }
+            val other = mc.player.inventoryContainer.getSlot(otherSlot).stack
+            SAOCore.LOGGER.info("$slotID Item Slot -> $otherSlot Other Slot")
+            mc.player.inventoryContainer.inventorySlots.forEach {
+                if (it.hasStack)
+                    SAOCore.LOGGER.info("${it.slotNumber} - ${it.stack}")
+            }
+            if (other.isNotEmpty) {
+                val otherLabel = I18n.format("saoui.formatItem", other.getTooltip(mc.player, ITooltipFlag.TooltipFlags.NORMAL)[0])
+                (tlParent as NeoGui<*>).openGui(PopupYesNo("$otherLabel -> $label", compare(other, 0), "Are you sure you want to replace this?")) += {
+                    if (it == PopupYesNo.Result.YES) {
+                        swapItems(otherSlot)
+                    }
+                }
+            }
+            else
+                swapItems(otherSlot)
+        }
+        else if (BaseFilters.SHIELDS(itemStack)){
+            val other = mc.player.inventoryContainer.getSlot(45).stack
+            if (other.isNotEmpty) {
+                val otherLabel = I18n.format("saoui.formatItem", other.getTooltip(mc.player, ITooltipFlag.TooltipFlags.NORMAL)[0])
+                (tlParent as NeoGui<*>).openGui(PopupYesNo("$otherLabel -> $label", compare(other, 0), "Are you sure you want to replace this?")) += {
+                    if (it == PopupYesNo.Result.YES) {
+                        swapItems(45)
+                    }
+                }
+            }
+            else
+                swapItems(45)
+
+        }
+        else
+            (tlParent as NeoGui<*>).openGui(PopupHotbarSelection(label, "Select a slot", "")) += {
+                if (it != PopupHotbarSelection.Result.CANCEL)
+                    if (it.slot != slotID)
+                        swapItems(it.slot)
+            }
+    }
+
+    private fun handleTrade(){
+
+    }
+
+    private fun handleDrop(){
+        (tlParent as NeoGui<*>).openGui(PopupYesNo(label, "Are you sure you want to discard this item?", "")) += {
+            if (it == PopupYesNo.Result.YES) {
+                throwItem()
+            }
+        }
+    }
+
+    private fun handleUse(){
+
+    }
+
+    fun swapItems(otherSlot: Int){
+        if (mc.player.inventory.isItemValidForSlot(otherSlot, itemStack)) {
+            mc.playerController.windowClick(mc.player.inventoryContainer.windowId, otherSlot, 0, ClickType.PICKUP, mc.player)
+            mc.playerController.windowClick(mc.player.inventoryContainer.windowId, slotID, 0, ClickType.PICKUP, mc.player)
+            mc.playerController.windowClick(mc.player.inventoryContainer.windowId, otherSlot, 0, ClickType.PICKUP, mc.player)
+        }
+    }
+
+    fun throwItem(){
+        mc.playerController.windowClick(mc.player.inventoryContainer.windowId, slotID, 0, ClickType.THROW, mc.player)
+    }
+
+    /**
+     * Compares two items together
+     * Types:   0 - Armor
+     *          1 - Weapons
+     *          2 - Tools
+     *          3 - Food
+     *          4 - Misc
+     */
+    fun compare(other: ItemStack, type: Int): List<String>{
+        val stringBuilder = mutableListOf<String>()
+        when (type){
+            0 -> {
+                val desc = itemStack.itemDesc()
+                other.itemDesc().forEachIndexed { index, s ->
+                    if (index <= 3)
+                        stringBuilder.add("$s -> ${desc[index]}")
+                }
+
+            }
+            else -> {
+
+            }
+        }
+        return stringBuilder
+    }
+
+    fun checkArmorSlots(): Int {
+        if (mc.player.inventory.isItemValidForSlot(37, itemStack)) {
+            return 37
+        }
+        else if (mc.player.inventory.isItemValidForSlot(38, itemStack)) {
+            return 38
+        }
+        else if (mc.player.inventory.isItemValidForSlot(39, itemStack)) {
+            return 39
+        }
+        else if (mc.player.inventory.isItemValidForSlot(40, itemStack)) {
+            return 40
+        }
+
+        else return findFreeHotbarSlot()
+    }
+
+    fun findFreeHotbarSlot(): Int {
+        for (i in 4..8){
+            if (mc.player.inventory.get(i).isEmpty)
+                return i
+        }
+        return 8
+    }
+
     private val itemStack
-        get() = with(inventoryIn.getStackInSlot(slot)) {
+        get() = with(slot.stack) {
             return@with if (filter(this)) this
             else ItemStack.EMPTY
         }
+
+    private val slotID
+        get() = slot.slotNumber
 
     override val valid: Boolean
         get() = itemStack.isNotEmpty
@@ -87,25 +235,32 @@ class ItemStackElement(private val inventoryIn: IInventory, private val slot: In
             if (itemStack.count > 1) I18n.format("saoui.formatItems", itemStack.getTooltip(mc.player, ITooltipFlag.TooltipFlags.NORMAL)[0], itemStack.count)
             else I18n.format("saoui.formatItem", itemStack.getTooltip(mc.player, ITooltipFlag.TooltipFlags.NORMAL)[0])
         } else I18n.format("gui.empty")
+
 }
 
 class ItemIcon(private val itemStack: () -> ItemStack) : IIcon {
     private val itemRenderer by lazy { Minecraft.getMinecraft().renderItem }
 
-    override fun glDraw(x: Int, y: Int) {
+    override fun glDraw(x: Int, y: Int, z: Float) {
         val f = itemStack().animationsToGo.toFloat()/* - partialTicks*/
+        RenderHelper.disableStandardItemLighting()
+        RenderHelper.enableGUIStandardItemLighting()
+
+        itemRenderer.zLevel += z
 
         if (f > 0.0f) {
             GLCore.pushMatrix()
             val f1 = 1.0f + f / 5.0f
-            GLCore.translate((x + 8).toFloat(), (y + 12).toFloat(), 0.0f)
-            GLCore.scale(1.0f / f1, (f1 + 1.0f) / 2.0f, 1.0f)
-            GLCore.translate((-(x + 8)).toFloat(), (-(y + 12)).toFloat(), 0.0f)
+            GLCore.translate((x + 8).toFloat(), (y + 12).toFloat(), z)
+            GLCore.scale(1.0f / f1, (f1 + 1.0f) / 2.0f, z.plus(1))
+            GLCore.translate((-(x + 8)).toFloat(), (-(y + 12)).toFloat(), z)
         }
 
         RenderHelper.enableGUIStandardItemLighting()
         itemRenderer.renderItemAndEffectIntoGUI(itemStack(), x, y)
         GLCore.depth(false)
+
+        itemRenderer.zLevel -= z
 
         if (f > 0.0f) GLCore.popMatrix()
 

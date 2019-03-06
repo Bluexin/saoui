@@ -28,6 +28,7 @@ import com.saomc.saoui.util.IconCore
 import com.teamwizardry.librarianlib.features.animator.Easing
 import com.teamwizardry.librarianlib.features.helpers.vec
 import com.teamwizardry.librarianlib.features.math.Vec2d
+import net.minecraft.client.Minecraft
 import net.minecraft.util.ResourceLocation
 import kotlin.math.max
 
@@ -246,13 +247,60 @@ class PopupItem(title: String, text: List<String>, footer: String) : Popup<Popup
     constructor(title: String, text: String, footer: String) : this(title, listOf(text), footer)
 
     init {
-        result = Result.EQUIP
+        result = Result.CANCEL
     }
 
     enum class Result {
         EQUIP,
         USE,
         DROP,
-        TRADE
+        TRADE,
+        CANCEL
+    }
+}
+
+/**
+ * This is used to select a slot on the hotbar
+ *
+ * TODO find better solution or allow user input
+ */
+class PopupHotbarSelection(title: String, text: List<String>, footer: String) : Popup<PopupHotbarSelection.Result>(title, text, footer, PopupHotbarSelection.getHotbarList()) {
+
+
+    constructor(title: String, text: String, footer: String) : this(title, listOf(text), footer)
+
+    init {
+        result = Result.CANCEL
+    }
+
+    enum class Result(val slot: Int) {
+        ONE(36),
+        TWO(37),
+        THREE(38),
+        FOUR(39),
+        FIVE(40),
+        SIX(41),
+        SEVEN(42),
+        EIGHT(43),
+        NEIN(44),
+        CANCEL(-1)
+    }
+
+    companion object {
+
+        fun getHotbarList():Map<NeoIconElement, PopupHotbarSelection.Result>{
+            val map = linkedMapOf<NeoIconElement, PopupHotbarSelection.Result>()
+            val inventory = Minecraft.getMinecraft().player.inventoryContainer
+            for (i in 36..44){
+                val stack = inventory.getSlot(i).stack
+                map.put(NeoIconElement(icon = ItemIcon{stack})
+                        .setBgColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
+                        .setBgColor(ColorIntent.HOVERED, ColorUtil.HOVER_COLOR)
+                        .setFontColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
+                        .setFontColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR),
+                        Result.values()[i - 36])
+            }
+            return map
+        }
     }
 }

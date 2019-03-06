@@ -147,7 +147,7 @@ optionTextShadow= Text Shadow
 
 # Display
 displayLvShort=LV %1$d
-displayLvLong=Level %1$d
+displayLvLong=Level
 displayXpShort=XP
 displayXpLong=Experience
 displayHpLong=Health

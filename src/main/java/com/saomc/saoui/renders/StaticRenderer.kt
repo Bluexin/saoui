@@ -54,7 +54,7 @@ object StaticRenderer { // TODO: add usage of scale, offset etc from capability
 
         if (living.deathTime == 1) living.deathTime++
 
-        if (!dead && !living.isInvisibleToPlayer(mc.player)) {
+        if (!dead && !living.isInvisibleToPlayer(mc.player) && living != mc.player) {
             if (OptionCore.COLOR_CURSOR.isEnabled && living.hasCapability(RenderCapability.RENDER_CAPABILITY, null))
                 doRenderColorCursor(renderManager, mc, living, x, y, z, 64)
 

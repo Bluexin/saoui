@@ -29,7 +29,7 @@ import net.minecraftforge.fml.relauncher.SideOnly
 enum class IconCore : IIcon {
 
     NONE {
-        override fun glDraw(x: Int, y: Int)  = Unit
+        override fun glDraw(x: Int, y: Int, z: Float)  = Unit
         override fun glDrawUnsafe(x: Int, y: Int) = Unit
         override fun getRL(): ResourceLocation? = null
     },
@@ -61,7 +61,7 @@ enum class IconCore : IIcon {
     SPRINTING,
     SNEAKING;
 
-    override fun glDraw(x: Int, y: Int) {
+    override fun glDraw(x: Int, y: Int, z: Float) {
         GLCore.color(1f, 1f, 1f, 1f)
         GLCore.glBlend(true)
         GLCore.glBindTexture(rl)
