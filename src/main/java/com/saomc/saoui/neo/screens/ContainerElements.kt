@@ -33,20 +33,16 @@ import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.RenderHelper
 import net.minecraft.client.resources.I18n
 import net.minecraft.client.util.ITooltipFlag
-import net.minecraft.inventory.ClickType
-import net.minecraft.inventory.EntityEquipmentSlot
-import net.minecraft.inventory.IInventory
-import net.minecraft.inventory.Slot
+import net.minecraft.inventory.*
 import net.minecraft.item.*
 import net.minecraft.util.ResourceLocation
 import net.minecraftforge.fml.common.registry.ForgeRegistries
 
 
 @NeoGuiDsl
-fun NeoCategoryButton.itemList(inventory: IInventory, filter: (iss: ItemStack) -> Boolean, vararg equippedRange: IntRange = arrayOf(-1..-1)) {
-    (0 until inventory.sizeInventory).forEach {
-        val slot = mc.player.inventoryContainer.getSlotFromInventory(inventory, it)!!
-        +ItemStackElement(slot, Vec2d.ZERO, equippedRange.any { r -> it in r }, filter)
+fun NeoCategoryButton.itemList(inventory: Container, filter: (iss: ItemStack) -> Boolean, vararg equippedRange: IntRange = arrayOf(-1..-1)) {
+    inventory.inventorySlots.forEach { slot ->
+        +ItemStackElement(slot, Vec2d.ZERO, equippedRange.any { r -> slot.slotNumber in r }, filter)
     }
     +object : NeoIconLabelElement(icon = IconCore.NONE, label = I18n.format("gui.empty")) {
         private var mark = false
@@ -152,7 +148,6 @@ class ItemStackElement(private val slot: Slot, pos: Vec2d, override var selected
     }
 
     private fun handleUse(){
-
     }
 
     fun swapItems(otherSlot: Int){
@@ -168,6 +163,7 @@ class ItemStackElement(private val slot: Slot, pos: Vec2d, override var selected
     }
 
     /**
+     * TODO Finish this
      * Compares two items together
      * Types:   0 - Armor
      *          1 - Weapons

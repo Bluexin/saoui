@@ -48,29 +48,29 @@ class NeoIngameMenu : NeoGui<Unit>(Vec2d.ZERO) {
             profile(mc.player)
             category(IconCore.EQUIPMENT, format("sao.element.equipment")) {
                 category(IconCore.ARMOR, format("sao.element.armor")) {
-                    itemList(mc.player.inventory, BaseFilters.EQUIPMENT, 36..39)
+                    itemList(mc.player.inventoryContainer, BaseFilters.EQUIPMENT, 36..39)
                 }
                 category(IconCore.EQUIPMENT, format("sao.element.weapons")) {
-                    itemList(mc.player.inventory, BaseFilters.WEAPONS, 0..8)
+                    itemList(mc.player.inventoryContainer, BaseFilters.WEAPONS, 0..8)
                 }
                 category(IconCore.EQUIPMENT, format("sao.element.tools")) {
-                    itemList(mc.player.inventory, BaseFilters.COMPATTOOLS, 0..8, 40..40)
+                    itemList(mc.player.inventoryContainer, BaseFilters.COMPATTOOLS, 0..8, 40..40)
                 }
                 category(IconCore.EQUIPMENT, format("sao.element.consumables")) {
-                    itemList(mc.player.inventory, BaseFilters.CONSUMABLES, 0..8)
+                    itemList(mc.player.inventoryContainer, BaseFilters.CONSUMABLES, 0..8)
                 }
                 category(IconCore.EQUIPMENT, format("sao.element.shields")) {
-                    itemList(mc.player.inventory, BaseFilters.SHIELDS, 40..40)
+                    itemList(mc.player.inventoryContainer, BaseFilters.SHIELDS, 40..40)
                 }
                 if (BaseFilters.baublesLoaded) {
                     category(IconCore.ACCESSORY, format("sao.element.accessories")) {
-                        itemList(BaseFilters.getBaubles(mc.player)!!, BaseFilters.ACCESSORY, 0..10000)
-                        itemList(mc.player.inventory, filter = BaseFilters.ACCESSORY)
+                        //itemList(BaseFilters.getBaubles(mc.player)!!, BaseFilters.ACCESSORY, 0..10000)
+                        itemList(mc.player.inventoryContainer, filter = BaseFilters.ACCESSORY)
                     }
                 }
             }
             category(IconCore.ITEMS, format("sao.element.items")) {
-                itemList(mc.player.inventory, BaseFilters.ITEMS, 0..8, 40..40)
+                itemList(mc.player.inventoryContainer, BaseFilters.ITEMS, 0..8, 40..40)
             }
             category(IconCore.SKILLS, format("sao.element.skills")) {
                 category(IconCore.SKILLS, "Test 1") {
