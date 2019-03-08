@@ -91,6 +91,7 @@ class ItemStackElement(private val slot: Slot, pos: Vec2d, override var selected
         val test = ItemStack(Blocks.COBBLESTONE)
         val test2 = ItemStack(Items.APPLE)
         val otherSlot = mc.player.inventoryContainer.inventorySlots
+                .asSequence()
                 .filter { slot -> slot.isItemValid(itemStack) && !slot.isItemValid(test) && !slot.isItemValid(test2) }
                 .toList()
         if (otherSlot.isNullOrEmpty() || otherSlot.size > 1){
