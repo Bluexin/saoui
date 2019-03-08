@@ -18,12 +18,10 @@
 package com.saomc.saoui.neo.screens
 
 import com.saomc.saoui.GLCore
-import com.saomc.saoui.SAOCore
 import com.saomc.saoui.api.elements.neo.NeoCategoryButton
 import com.saomc.saoui.api.elements.neo.NeoIconLabelElement
 import com.saomc.saoui.api.screens.IIcon
 import com.saomc.saoui.events.EventCore.mc
-import com.saomc.saoui.screens.inventory.BaseFilters
 import com.saomc.saoui.util.IconCore
 import com.teamwizardry.librarianlib.features.kotlin.get
 import com.teamwizardry.librarianlib.features.kotlin.isNotEmpty
@@ -33,7 +31,12 @@ import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.RenderHelper
 import net.minecraft.client.resources.I18n
 import net.minecraft.client.util.ITooltipFlag
-import net.minecraft.inventory.*
+import net.minecraft.init.Blocks
+import net.minecraft.init.Items
+import net.minecraft.inventory.ClickType
+import net.minecraft.inventory.Container
+import net.minecraft.inventory.IInventory
+import net.minecraft.inventory.Slot
 import net.minecraft.item.*
 import net.minecraft.util.ResourceLocation
 import net.minecraftforge.fml.common.registry.ForgeRegistries
@@ -85,54 +88,36 @@ class ItemStackElement(private val slot: Slot, pos: Vec2d, override var selected
     }
 
     private fun handleEquip(){
-        if (BaseFilters.EQUIPMENT(itemStack)){
-            val equipSlot = (itemStack.item as ItemArmor).getEquipmentSlot(itemStack)?: (itemStack.item as ItemArmor).equipmentSlot
-            val otherSlot =
-                    when (equipSlot){
-                        EntityEquipmentSlot.HEAD -> 5
-                        EntityEquipmentSlot.CHEST -> 6
-                        EntityEquipmentSlot.LEGS -> 7
-                        EntityEquipmentSlot.FEET -> 8
-                        //Sanity Check
-                        else -> checkArmorSlots()
-                    }
-            val other = mc.player.inventoryContainer.getSlot(otherSlot).stack
-            SAOCore.LOGGER.info("$slotID Item Slot -> $otherSlot Other Slot")
-            mc.player.inventoryContainer.inventorySlots.forEach {
-                if (it.hasStack)
-                    SAOCore.LOGGER.info("${it.slotNumber} - ${it.stack}")
-            }
-            if (other.isNotEmpty) {
-                val otherLabel = I18n.format("saoui.formatItem", other.getTooltip(mc.player, ITooltipFlag.TooltipFlags.NORMAL)[0])
-                (tlParent as NeoGui<*>).openGui(PopupYesNo("$otherLabel -> $label", compare(other, 0), "Are you sure you want to replace this?")) += {
-                    if (it == PopupYesNo.Result.YES) {
-                        swapItems(otherSlot)
-                    }
-                }
-            }
-            else
-                swapItems(otherSlot)
-        }
-        else if (BaseFilters.SHIELDS(itemStack)){
-            val other = mc.player.inventoryContainer.getSlot(45).stack
-            if (other.isNotEmpty) {
-                val otherLabel = I18n.format("saoui.formatItem", other.getTooltip(mc.player, ITooltipFlag.TooltipFlags.NORMAL)[0])
-                (tlParent as NeoGui<*>).openGui(PopupYesNo("$otherLabel -> $label", compare(other, 0), "Are you sure you want to replace this?")) += {
-                    if (it == PopupYesNo.Result.YES) {
-                        swapItems(45)
-                    }
-                }
-            }
-            else
-                swapItems(45)
-
-        }
-        else
+        val test = ItemStack(Blocks.COBBLESTONE)
+        val test2 = ItemStack(Items.APPLE)
+        val otherSlot = mc.player.inventoryContainer.inventorySlots
+                .filter { slot -> slot.isItemValid(itemStack) && !slot.isItemValid(test) && !slot.isItemValid(test2) }
+                .toList()
+        if (otherSlot.isNullOrEmpty() || otherSlot.size > 1){
             (tlParent as NeoGui<*>).openGui(PopupHotbarSelection(label, "Select a slot", "")) += {
                 if (it != PopupHotbarSelection.Result.CANCEL)
                     if (it.slot != slotID)
                         swapItems(it.slot)
             }
+        }
+        else
+            swapItems(otherSlot[0].slotNumber)
+        /*
+        else if (otherSlot.size == 1){ TODO Do this better, disabled until then
+            val other = otherSlot[0].stack
+            if (other.isNotEmpty) {
+                val otherLabel = I18n.format("saoui.formatItem", other.getTooltip(mc.player, ITooltipFlag.TooltipFlags.NORMAL)[0])
+                (tlParent as NeoGui<*>).openGui(PopupYesNo("$otherLabel -> $label", compare(other, 0), "Are you sure you want to replace this?")) += {
+                    if (it == PopupYesNo.Result.YES) {
+                        swapItems(otherSlot[0].slotNumber)
+                    }
+                }
+            }
+            else
+                swapItems(otherSlot[0].slotNumber)
+        }*/
+
+
     }
 
     private fun handleTrade(){
@@ -172,6 +157,7 @@ class ItemStackElement(private val slot: Slot, pos: Vec2d, override var selected
      *          4 - Misc
      */
     fun compare(other: ItemStack, type: Int): List<String>{
+
         val stringBuilder = mutableListOf<String>()
         when (type){
             0 -> {
