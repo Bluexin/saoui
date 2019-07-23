@@ -45,7 +45,7 @@ import javax.xml.bind.JAXBException
 object SAOCore {
     const val MODID = "saoui"
     const val NAME = "Sword Art Online UI"
-    const val VERSION = "2.0.0.13"
+    const val VERSION = "2.0.0.14"
     const val DEPS = "required-after:saomclib@[1.3.0,);after:mantle"
 
     // TODO: investigate toasts -> net.minecraft.client.gui.toasts
