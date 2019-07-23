@@ -20,6 +20,7 @@ package com.saomc.saoui.renders
 import com.saomc.saoui.GLCore
 import com.saomc.saoui.SAOCore
 import com.saomc.saoui.api.entity.rendering.RenderCapability
+import com.saomc.saoui.api.entity.rendering.getRenderData
 import com.saomc.saoui.config.OptionCore
 import com.saomc.saoui.effects.DeathParticles
 import com.saomc.saoui.resources.StringNames
@@ -53,7 +54,7 @@ object StaticRenderer { // TODO: add usage of scale, offset etc from capability
 
         if (living.deathTime == 1) living.deathTime++
 
-        if (!dead && !living.isInvisibleToPlayer(mc.player)) {
+        if (!dead && !living.isInvisibleToPlayer(mc.player) && living != mc.player) {
             if (OptionCore.COLOR_CURSOR.isEnabled && living.hasCapability(RenderCapability.RENDER_CAPABILITY, null))
                 doRenderColorCursor(renderManager, mc, living, x, y, z, 64)
 
@@ -90,7 +91,7 @@ object StaticRenderer { // TODO: add usage of scale, offset etc from capability
                 GLCore.tryBlendFuncSeparate(770, 771, 1, 0)
 
                 GLCore.glBindTexture(if (OptionCore.SAO_UI.isEnabled) StringNames.entities else StringNames.entitiesCustom)
-                GLCore.color(RenderCapability.get(entity).colorStateHandler.colorState.rgba)
+                GLCore.color(entity.getRenderData().getColorStateHandler().colorState.rgba)
                 GLCore.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX)
 
                 if (OptionCore.SPINNING_CRYSTALS.isEnabled) {

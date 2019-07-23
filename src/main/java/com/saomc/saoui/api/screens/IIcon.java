@@ -39,10 +39,12 @@ public interface IIcon {
      * @param x x-coordinate to start drawing from
      * @param y y-coordinate to start drawing from
      */
-    void glDraw(int x, int y);
+    default void glDraw(int x, int y) { this.glDraw(x, y, 0); }
 
-    default void glDraw(int x, int y, float z) {
-        this.glDraw(x, y);
+    void glDraw(int x, int y, float z);
+
+    default void glDraw(Vec2d pos, float z) {
+        glDraw(pos.getXi(), pos.getYi(), z);
     }
 
     default void glDrawUnsafe(int x, int y) {

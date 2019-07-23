@@ -36,6 +36,34 @@ guiConsumable=Consumables
 guiItems=Items
 gui.empty=empty
 
+# Item Description
+itemDesc.type=Type: %s
+itemDesc.tool=Tool
+itemDesc.sword=Sword
+itemDesc.hoe=Hoe
+itemDesc.tileEntity=Tile Entity
+itemDesc.block=Block
+itemDesc.food=Food
+itemDesc.armor=Armor
+itemDesc.potion=Potion
+itemDesc.material=Material
+itemDesc.toolClasses=Tool Classes: %s Lv%s
+itemDesc.toolClass=Tool Class: %s Lv %s
+itemDesc.toolClassSpace=               %s Lv%s
+itemDesc.enchantable=Enchantable: %s
+itemDesc.enchantability=Enchantability: %s
+itemDesc.repairable=Repairable: %s
+itemDesc.hardness=Hardness: %s
+itemDesc.solid=Solid: %s
+itemDesc.toolRequired.false=Tool Required: False
+itemDesc.toolRequired.true=Tool Required: True
+itemDesc.mostEffective=Most effective: %s
+itemDesc.none=None
+itemDesc.foodValue=Food Value: %s
+itemDesc.saturationValue=Saturation Value: %s
+itemDesc.slot=Slot: %s
+itemDesc.repairItem=Repair Item: %s
+itemDesc.toughness=Toughness: %s
 
 #Skills
 skillSprinting=Sprinting
@@ -119,7 +147,7 @@ optionTextShadow= Text Shadow
 
 # Display
 displayLvShort=LV %1$d
-displayLvLong=Level %1$d
+displayLvLong=Level
 displayXpShort=XP
 displayXpLong=Experience
 displayHpLong=Health

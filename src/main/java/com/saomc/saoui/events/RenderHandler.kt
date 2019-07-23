@@ -23,7 +23,6 @@ import com.saomc.saoui.neo.screens.DeathGui
 import com.saomc.saoui.neo.screens.NeoGui
 import com.saomc.saoui.neo.screens.NeoIngameMenu
 import com.saomc.saoui.renders.StaticRenderer
-import com.saomc.saoui.screens.ingame.IngameGUI
 import com.saomc.saoui.screens.menu.StartupGUI
 import net.minecraft.client.gui.GuiGameOver
 import net.minecraft.client.gui.GuiIngameMenu
@@ -44,11 +43,6 @@ internal object RenderHandler {
     private val deadHandlers = ArrayList<EntityLivingBase>()
     private var menuGUI = true
 
-    fun checkingameGUI() {
-        if (EventCore.mc.ingameGUI != null && EventCore.mc.ingameGUI !is IngameGUI)
-            EventCore.mc.ingameGUI = IngameGUI(EventCore.mc)
-    }
-
     fun deathHandlers() {
         deadHandlers.forEach { ent ->
             val deadStart = ent.deathTime == 1
@@ -60,7 +54,6 @@ internal object RenderHandler {
 
             if (deadExactly) {
                 StaticRenderer.doSpawnDeathParticles(EventCore.mc, ent)
-//                ent.setDead()
             }
         }
         deadHandlers.removeIf { ent -> ent.deathTime >= 18 }
@@ -90,14 +83,6 @@ internal object RenderHandler {
                 e.isCanceled = true
             }
         }
-    }
-
-    fun deathCheck() {
-        /*
-        if (EventCore.mc.currentScreen instanceof DeathScreen && EventCore.mc.player.getHealth() > 0.0F) {
-            EventCore.mc.currentScreen.onGuiClosed();
-            EventCore.mc.setIngameFocus();
-        }*/
     }
 
     fun renderPlayer(e: RenderPlayerEvent.Post) {

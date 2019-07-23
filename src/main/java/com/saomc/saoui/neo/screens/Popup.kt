@@ -28,10 +28,11 @@ import com.saomc.saoui.util.IconCore
 import com.teamwizardry.librarianlib.features.animator.Easing
 import com.teamwizardry.librarianlib.features.helpers.vec
 import com.teamwizardry.librarianlib.features.math.Vec2d
+import net.minecraft.client.Minecraft
 import net.minecraft.util.ResourceLocation
 import kotlin.math.max
 
-open class Popup<T : Any>(var title: String, var text: List<String>, private val buttons: Map<NeoIconElement, T>) : NeoGui<T>(Vec2d.ZERO) {
+open class Popup<T : Any>(var title: String, var text: List<String>, var footer: String, private val buttons: Map<NeoIconElement, T>) : NeoGui<T>(Vec2d.ZERO) {
 
     private val rl = ResourceLocation(SAOCore.MODID, "textures/menu/parts/alertbg.png")
     internal /*private*/ var expansion = 0f
@@ -52,17 +53,18 @@ open class Popup<T : Any>(var title: String, var text: List<String>, private val
         destination = pos
 
         val childrenXSeparator = w / buttons.size
-        val childrenXOffset = -childrenXSeparator / buttons.size - 9
+        val childrenXOffset = (-w / 2) + (childrenXSeparator / 2 - 9)
         val childrenYOffset = h * 0.1875 - 9 + h * 0.03125 * (text.size)
 
-        var i = 0
-        buttons.forEach { button, result ->
+        buttons.asSequence().forEachIndexed { index, entry ->
+            val button = entry.key
+            val result = entry.value
             button.onClick { _, _ ->
                 this@Popup.result = result
                 onGuiClosed()
                 true
             }
-            button.pos = vec(childrenXOffset + childrenXSeparator * i++, childrenYOffset)
+            button.pos = vec(childrenXOffset + childrenXSeparator * index, childrenYOffset)
             button.destination = button.pos
             +basicAnimation(button, "opacity") {
                 duration = animDuration
@@ -87,8 +89,8 @@ open class Popup<T : Any>(var title: String, var text: List<String>, private val
                 }
             }
             +button
-        }
 
+        }
         +basicAnimation(this, "expansion") {
             to = 1f
             duration = animDuration
@@ -141,6 +143,7 @@ open class Popup<T : Any>(var title: String, var text: List<String>, private val
         (0 until text.size).forEach {
             if (alpha > 0.56f) GLCore.glString(text[it], -GLCore.glStringWidth(text[it]) / 2, (-h / 2.0 + step1 + shadows + step3 / (text.size) * (it + 0.5)).toInt(), ColorUtil.DEFAULT_FONT_COLOR.multiplyAlpha((alpha - 0.5f) / 0.5f), centered = true)
         }
+        if (alpha > 0.03f) GLCore.glString(footer, -GLCore.glStringWidth(footer) / 2, (-h / 2.0 + step1 + shadows + step3 + (step5 / 2)).toInt(), ColorUtil.DEFAULT_BOX_FONT_COLOR.multiplyAlpha(alpha), centered = true)
 
         // Guides
         /*GLCore.glBindTexture(StringNames.gui)
@@ -187,7 +190,7 @@ open class Popup<T : Any>(var title: String, var text: List<String>, private val
     }
 }
 
-class PopupYesNo(title: String, text: List<String>) : Popup<PopupYesNo.Result>(title, text, mapOf(
+class PopupYesNo(title: String, text: List<String>, footer: String) : Popup<PopupYesNo.Result>(title, text, footer, mapOf(
         NeoIconElement(IconCore.CONFIRM)
                 .setBgColor(ColorIntent.NORMAL, ColorUtil.CONFIRM_COLOR)
                 .setBgColor(ColorIntent.HOVERED, ColorUtil.CONFIRM_COLOR_LIGHT)
@@ -202,7 +205,7 @@ class PopupYesNo(title: String, text: List<String>) : Popup<PopupYesNo.Result>(t
                 to Result.NO
 )) {
 
-    constructor(title: String, text: String) : this(title, listOf(text))
+    constructor(title: String, text: String, footer: String) : this(title, listOf(text), footer)
 
     init {
         result = Result.NO
@@ -211,5 +214,93 @@ class PopupYesNo(title: String, text: List<String>) : Popup<PopupYesNo.Result>(t
     enum class Result {
         YES,
         NO
+    }
+}
+
+class PopupItem(title: String, text: List<String>, footer: String) : Popup<PopupItem.Result>(title, text, footer, mapOf(
+        NeoIconElement(IconCore.EQUIPMENT)
+                .setBgColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
+                .setBgColor(ColorIntent.HOVERED, ColorUtil.HOVER_COLOR)
+                .setFontColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
+                .setFontColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
+                to Result.EQUIP,
+        NeoIconElement(IconCore.CRAFTING)
+                .setBgColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
+                .setBgColor(ColorIntent.HOVERED, ColorUtil.HOVER_COLOR)
+                .setFontColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
+                .setFontColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
+                to Result.USE,
+        NeoIconElement(IconCore.CANCEL)
+                .setBgColor(ColorIntent.NORMAL, ColorUtil.CANCEL_COLOR)
+                .setBgColor(ColorIntent.HOVERED, ColorUtil.CANCEL_COLOR_LIGHT)
+                .setFontColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
+                .setFontColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
+                to Result.DROP,
+        NeoIconElement(IconCore.PARTY)
+                .setBgColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
+                .setBgColor(ColorIntent.HOVERED, ColorUtil.HOVER_COLOR)
+                .setFontColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
+                .setFontColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
+                to Result.TRADE
+)) {
+
+    constructor(title: String, text: String, footer: String) : this(title, listOf(text), footer)
+
+    init {
+        result = Result.CANCEL
+    }
+
+    enum class Result {
+        EQUIP,
+        USE,
+        DROP,
+        TRADE,
+        CANCEL
+    }
+}
+
+/**
+ * This is used to select a slot on the hotbar
+ *
+ * TODO find better solution or allow user input
+ */
+class PopupHotbarSelection(title: String, text: List<String>, footer: String) : Popup<PopupHotbarSelection.Result>(title, text, footer, PopupHotbarSelection.getHotbarList()) {
+
+
+    constructor(title: String, text: String, footer: String) : this(title, listOf(text), footer)
+
+    init {
+        result = Result.CANCEL
+    }
+
+    enum class Result(val slot: Int) {
+        ONE(36),
+        TWO(37),
+        THREE(38),
+        FOUR(39),
+        FIVE(40),
+        SIX(41),
+        SEVEN(42),
+        EIGHT(43),
+        NEIN(44),
+        CANCEL(-1)
+    }
+
+    companion object {
+
+        fun getHotbarList():Map<NeoIconElement, PopupHotbarSelection.Result>{
+            val map = linkedMapOf<NeoIconElement, PopupHotbarSelection.Result>()
+            val inventory = Minecraft.getMinecraft().player.inventoryContainer
+            for (i in 36..44){
+                val stack = inventory.getSlot(i).stack
+                map.put(NeoIconElement(icon = ItemIcon{stack})
+                        .setBgColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
+                        .setBgColor(ColorIntent.HOVERED, ColorUtil.HOVER_COLOR)
+                        .setFontColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
+                        .setFontColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR),
+                        Result.values()[i - 36])
+            }
+            return map
+        }
     }
 }

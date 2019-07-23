@@ -51,8 +51,7 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
     private var offsetUsername: Int = 0
     private val debugOverlay: GuiOverlayDebugForge
 
-    @Deprecated("") // use getContext() instead of directly calling this
-    private var ctx: HudDrawContext? = null
+    private lateinit var context: HudDrawContext
 
     init {
         this.debugOverlay = GuiOverlayDebugForge(mc)
@@ -60,6 +59,9 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
 
     override fun renderGameOverlay(partialTicks: Float) {
         mc.profiler.startSection("setup")
+        if (!::context.isInitialized) {
+            this.context = HudDrawContext(mc.player, mc, mc.renderItem)
+        }
         val username = mc.player.displayNameString
         val maxNameWidth = fontRenderer.getStringWidth(username)
         val usernameBoxes = 1 + (maxNameWidth + 4) / 5
@@ -306,12 +308,6 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
     private fun post(type: ElementType) {
         MinecraftForge.EVENT_BUS.post(RenderGameOverlayEvent.Post(eventParent!!, type))
     }
-
-    private val context: HudDrawContext
-        get() {
-            if (ctx == null) this.ctx = HudDrawContext(mc.player, mc, itemRenderer)
-            return ctx!!
-        }
 
     private inner class GuiOverlayDebugForge constructor(mc: Minecraft) : GuiOverlayDebug(mc) {
 

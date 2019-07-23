@@ -20,6 +20,8 @@ package com.saomc.saoui.api.info;
 import com.saomc.saoui.api.events.EventInitStatsProvider;
 import net.minecraft.entity.player.EntityPlayer;
 
+import java.util.List;
+
 /**
  * Part of saoui
  * Used to retrieve information about a player.
@@ -58,5 +60,5 @@ public interface IPlayerStatsProvider {
      * @param player the player to get the info about
      * @return the stats of given player
      */
-    String getStatsString(EntityPlayer player);
+    List<String> getStatsString(EntityPlayer player);
 }

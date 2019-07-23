@@ -27,6 +27,7 @@ import com.teamwizardry.librarianlib.features.animator.Easing
 import com.teamwizardry.librarianlib.features.gui.component.supporting.delegate
 import com.teamwizardry.librarianlib.features.helpers.vec
 import com.teamwizardry.librarianlib.features.math.Vec2d
+import net.minecraft.entity.player.EntityPlayer
 import java.lang.ref.WeakReference
 import kotlin.math.max
 import kotlin.math.min
@@ -152,6 +153,13 @@ class NeoCategoryButton(private val delegate: NeoIconElement, parent: INeoParent
     @NeoGuiDsl
     fun category(icon: IIcon, label: String, body: (NeoCategoryButton.() -> Unit)? = null): NeoCategoryButton {
         val cat = NeoCategoryButton(NeoIconLabelElement(icon, label), this, body)
+        +cat
+        return cat
+    }
+
+    @NeoGuiDsl
+    fun profile(player: EntityPlayer, body: (NeoCategoryButton.() -> Unit)? = null): NeoCategoryButton{
+        val cat = NeoCategoryButton(NeoProfileElement(player), this, body)
         +cat
         return cat
     }

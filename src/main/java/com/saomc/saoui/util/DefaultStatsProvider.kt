@@ -27,7 +27,6 @@ import net.minecraft.entity.ai.attributes.AttributeModifier
 import net.minecraft.entity.passive.EntityHorse
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.inventory.EntityEquipmentSlot
-
 import java.text.DecimalFormat
 
 /**
@@ -41,8 +40,8 @@ class DefaultStatsProvider : IPlayerStatsProvider {
         return (attributeValue * 1000).toInt().toFloat() / 1000
     }
 
-    override fun getStatsString(player: EntityPlayer): String {
-        val builder = StringBuilder()
+    override fun getStatsString(player: EntityPlayer): List<String> {
+        val builder = mutableListOf<String>()
         val mount = player.ridingEntity as EntityLivingBase?
 
         if (player.isRiding && OptionCore.MOUNT_STAT_VIEW.isEnabled) {
@@ -60,14 +59,14 @@ class DefaultStatsProvider : IPlayerStatsProvider {
             health /= 10.0
             val healthFormated = df1.format(health)
 
-            builder.append(I18n.format("displayName")).append(": ").append(name).append('\n')
-            builder.append(I18n.format("displayHpLong")).append(": ").append(healthFormated).append("/").append(maxHealth).append('\n')
-            builder.append(I18n.format("displayResLong")).append(": ").append(resistance).append('\n')
-            builder.append(I18n.format("displaySpdLong")).append(": ").append(speedFormated).append('\n')
+            builder.add(I18n.format("displayName") + ": $name")
+            builder.add(I18n.format("displayHpLong") + ": $healthFormated/$maxHealth")
+            builder.add(I18n.format("displayResLong") + ": $resistance")
+            builder.add(I18n.format("displaySpdLong") + ": $speedFormated")
             if (mount is EntityHorse) {
                 jump = mount.horseJumpStrength
                 val jumpFormated = df3.format(jump)
-                builder.append(I18n.format("displayJmpLong")).append(": ").append(jumpFormated).append('\n')
+                builder.add(I18n.format("displayJmpLong") + ": $jumpFormated")
             }
         } else {
             val level = PlayerStats.instance().stats.getLevel(player)
@@ -100,15 +99,14 @@ class DefaultStatsProvider : IPlayerStatsProvider {
             val agility = attr(player.aiMoveSpeed.toDouble()) * 10
             val resistance = attr(player.totalArmorValue.toDouble())
 
-            builder.append(I18n.format("displayLvLong")).append(": ").append(level).append('\n')
-            builder.append(I18n.format("displayXpLong")).append(": ").append(experience).append("%\n")
-
-            builder.append(I18n.format("displayHpLong")).append(": ").append(health).append("/").append(maxHealth).append('\n')
-            builder.append(I18n.format("displayStrLong")).append(": ").append(strength).append('\n')
-            builder.append(I18n.format("displayDexLong")).append(": ").append(agility).append('\n')
-            builder.append(I18n.format("displayResLong")).append(": ").append(resistance).append("\n")
+            builder.add(I18n.format("displayLvLong") + ": $level")
+            builder.add(I18n.format("displayXpLong") + ": $experience")
+            builder.add(I18n.format("displayHpLong") + ": $health/$maxHealth")
+            builder.add(I18n.format("displayStrLong") + ": $strength")
+            builder.add(I18n.format("displayDexLong") + ": $agility")
+            builder.add(I18n.format("displayResLong") + ": $resistance")
         }
 
-        return builder.toString()
+        return builder
     }
 }

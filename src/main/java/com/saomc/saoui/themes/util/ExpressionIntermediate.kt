@@ -30,8 +30,8 @@ class ExpressionIntermediate {
     @XmlAttribute(name = "cache")
     val cacheType = CacheType.DEFAULT
 
-    @field:XmlValue
-    val expression = "" // Will get replaced by the loading
+    @get:XmlValue
+    var expression = "" // Will get replaced by the loading
         get() {
             var f = field
             if (LibHelper.obfuscated) f = f.replace("format(", "func_135052_a(")

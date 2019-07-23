@@ -62,9 +62,9 @@ enum class StatusEffects : IIcon {
     val resource by lazy { ResourceLocation(SAOCore.MODID, "textures/hud/status_icons/${name.toLowerCase()}.png") }
 
     @Suppress("unused")
-    override fun glDraw(x: Int, y: Int) {
+    override fun glDraw(x: Int, y: Int, z: Float) {
         GLCore.glBindTexture(resource)
-        GLCore.glTexturedRectV2(x.toDouble(), y.toDouble(), 0.0, 16.0, 16.0, srcWidth = 64.0, srcHeight = 64.0, textureW = 64, textureH = 64)
+        GLCore.glTexturedRectV2(x.toDouble(), y.toDouble(), z.toDouble(), 16.0, 16.0, srcWidth = 64.0, srcHeight = 64.0, textureW = 64, textureH = 64)
     }
 
     companion object {

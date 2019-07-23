@@ -23,19 +23,29 @@ import com.saomc.saoui.api.elements.neo.NeoIconLabelElement
 import com.saomc.saoui.api.screens.IIcon
 import com.saomc.saoui.events.EventCore.mc
 import com.saomc.saoui.util.IconCore
+import com.teamwizardry.librarianlib.features.kotlin.get
 import com.teamwizardry.librarianlib.features.kotlin.isNotEmpty
+import com.teamwizardry.librarianlib.features.kotlin.toolClasses
 import com.teamwizardry.librarianlib.features.math.Vec2d
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.RenderHelper
 import net.minecraft.client.resources.I18n
 import net.minecraft.client.util.ITooltipFlag
+import net.minecraft.init.Blocks
+import net.minecraft.init.Items
+import net.minecraft.inventory.ClickType
+import net.minecraft.inventory.Container
 import net.minecraft.inventory.IInventory
-import net.minecraft.item.ItemStack
+import net.minecraft.inventory.Slot
+import net.minecraft.item.*
+import net.minecraft.util.ResourceLocation
+import net.minecraftforge.fml.common.registry.ForgeRegistries
+
 
 @NeoGuiDsl
-fun NeoCategoryButton.itemList(inventory: IInventory, filter: (iss: ItemStack) -> Boolean, vararg equippedRange: IntRange = arrayOf(-1..-1)) {
-    (0 until inventory.sizeInventory).forEach {
-        +ItemStackElement(inventory, it, Vec2d.ZERO, equippedRange.any { r -> it in r }, filter)
+fun NeoCategoryButton.itemList(inventory: Container, filter: (iss: ItemStack) -> Boolean, vararg equippedRange: IntRange = arrayOf(-1..-1)) {
+    inventory.inventorySlots.forEach { slot ->
+        +ItemStackElement(slot, Vec2d.ZERO, equippedRange.any { r -> slot.slotNumber in r }, filter)
     }
     +object : NeoIconLabelElement(icon = IconCore.NONE, label = I18n.format("gui.empty")) {
         private var mark = false
@@ -55,54 +65,314 @@ fun NeoCategoryButton.itemList(inventory: IInventory, filter: (iss: ItemStack) -
     }
 }
 
-class ItemStackElement(private val inventoryIn: IInventory, private val slot: Int, pos: Vec2d, override var selected: Boolean, private val filter: (iss: ItemStack) -> Boolean) :
-        NeoIconLabelElement(icon = ItemIcon { inventoryIn.getStackInSlot(slot) }, pos = pos) {
+class ItemStackElement(private val slot: Slot, pos: Vec2d, override var selected: Boolean, private val filter: (iss: ItemStack) -> Boolean) :
+        NeoIconLabelElement(icon = ItemIcon { slot.stack }, pos = pos) {
 
     init {
         onClick { _, button ->
-            if (button == MouseButton.LEFT) (tlParent as? NeoGui<*>)?.openGui(PopupYesNo(label, itemStack.getTooltip(mc.player, if (mc.gameSettings.advancedItemTooltips) ITooltipFlag.TooltipFlags.ADVANCED else ITooltipFlag.TooltipFlags.NORMAL)))
+            if (button == MouseButton.LEFT)
+                if (tlParent is NeoGui<*>)
+                    (tlParent as NeoGui<*>).openGui(PopupItem(label, itemStack.itemDesc(), if (mc.gameSettings.advancedItemTooltips) ForgeRegistries.ITEMS.getKey(itemStack.item).toString() else "")) += {
+                        when (it){
+                            PopupItem.Result.EQUIP -> handleEquip()
+                            PopupItem.Result.TRADE -> handleTrade()
+                            PopupItem.Result.DROP -> handleDrop()
+                            PopupItem.Result.USE -> handleUse()
+                            else -> {}
+                        }
+                        selected = false
+                    }
             true
+        }
+        //itemStack.getTooltip(mc.player, if (mc.gameSettings.advancedItemTooltips) ITooltipFlag.TooltipFlags.ADVANCED else ITooltipFlag.TooltipFlags.NORMAL)
+    }
+
+    private fun handleEquip(){
+        val test = ItemStack(Blocks.COBBLESTONE)
+        val test2 = ItemStack(Items.APPLE)
+        val otherSlot = mc.player.inventoryContainer.inventorySlots
+                .asSequence()
+                .filter { slot -> slot.isItemValid(itemStack) && !slot.isItemValid(test) && !slot.isItemValid(test2) }
+                .toList()
+        if (otherSlot.isNullOrEmpty() || otherSlot.size > 1){
+            (tlParent as NeoGui<*>).openGui(PopupHotbarSelection(label, "Select a slot", "")) += {
+                if (it != PopupHotbarSelection.Result.CANCEL)
+                    if (it.slot != slotID)
+                        swapItems(it.slot)
+            }
+        }
+        else
+            swapItems(otherSlot[0].slotNumber)
+        /*
+        else if (otherSlot.size == 1){ TODO Do this better, disabled until then
+            val other = otherSlot[0].stack
+            if (other.isNotEmpty) {
+                val otherLabel = I18n.format("saoui.formatItem", other.getTooltip(mc.player, ITooltipFlag.TooltipFlags.NORMAL)[0])
+                (tlParent as NeoGui<*>).openGui(PopupYesNo("$otherLabel -> $label", compare(other, 0), "Are you sure you want to replace this?")) += {
+                    if (it == PopupYesNo.Result.YES) {
+                        swapItems(otherSlot[0].slotNumber)
+                    }
+                }
+            }
+            else
+                swapItems(otherSlot[0].slotNumber)
+        }*/
+
+
+    }
+
+    private fun handleTrade(){
+
+    }
+
+    private fun handleDrop(){
+        (tlParent as NeoGui<*>).openGui(PopupYesNo(label, "Are you sure you want to discard this item?", "")) += {
+            if (it == PopupYesNo.Result.YES) {
+                throwItem()
+            }
         }
     }
 
+    private fun handleUse(){
+    }
+
+    fun swapItems(otherSlot: Int){
+        if (mc.player.inventory.isItemValidForSlot(otherSlot, itemStack)) {
+            mc.playerController.windowClick(mc.player.inventoryContainer.windowId, otherSlot, 0, ClickType.PICKUP, mc.player)
+            mc.playerController.windowClick(mc.player.inventoryContainer.windowId, slotID, 0, ClickType.PICKUP, mc.player)
+            mc.playerController.windowClick(mc.player.inventoryContainer.windowId, otherSlot, 0, ClickType.PICKUP, mc.player)
+        }
+    }
+
+    fun throwItem(){
+        mc.playerController.windowClick(mc.player.inventoryContainer.windowId, slotID, 0, ClickType.THROW, mc.player)
+    }
+
+    /**
+     * TODO Finish this
+     * Compares two items together
+     * Types:   0 - Armor
+     *          1 - Weapons
+     *          2 - Tools
+     *          3 - Food
+     *          4 - Misc
+     */
+    fun compare(other: ItemStack, type: Int): List<String>{
+
+        val stringBuilder = mutableListOf<String>()
+        when (type){
+            0 -> {
+                val desc = itemStack.itemDesc()
+                other.itemDesc().forEachIndexed { index, s ->
+                    if (index <= 3)
+                        stringBuilder.add("$s -> ${desc[index]}")
+                }
+
+            }
+            else -> {
+
+            }
+        }
+        return stringBuilder
+    }
+
+    fun checkArmorSlots(): Int {
+        if (mc.player.inventory.isItemValidForSlot(37, itemStack)) {
+            return 37
+        }
+        else if (mc.player.inventory.isItemValidForSlot(38, itemStack)) {
+            return 38
+        }
+        else if (mc.player.inventory.isItemValidForSlot(39, itemStack)) {
+            return 39
+        }
+        else if (mc.player.inventory.isItemValidForSlot(40, itemStack)) {
+            return 40
+        }
+
+        else return findFreeHotbarSlot()
+    }
+
+    fun findFreeHotbarSlot(): Int {
+        for (i in 4..8){
+            if (mc.player.inventory.get(i).isEmpty)
+                return i
+        }
+        return 8
+    }
+
     private val itemStack
-        get() = with(inventoryIn.getStackInSlot(slot)) {
+        get() = with(slot.stack) {
             return@with if (filter(this)) this
             else ItemStack.EMPTY
         }
+
+    private val slotID
+        get() = slot.slotNumber
 
     override val valid: Boolean
         get() = itemStack.isNotEmpty
 
     override val label: String
         get() = if (itemStack.isNotEmpty) {
-            if (itemStack.count > 1) I18n.format("saoui.formatItems", itemStack.displayName, itemStack.count)
-            else I18n.format("saoui.formatItem", itemStack.displayName)
+            if (itemStack.count > 1) I18n.format("saoui.formatItems", itemStack.getTooltip(mc.player, ITooltipFlag.TooltipFlags.NORMAL)[0], itemStack.count)
+            else I18n.format("saoui.formatItem", itemStack.getTooltip(mc.player, ITooltipFlag.TooltipFlags.NORMAL)[0])
         } else I18n.format("gui.empty")
+
 }
 
 class ItemIcon(private val itemStack: () -> ItemStack) : IIcon {
     private val itemRenderer by lazy { Minecraft.getMinecraft().renderItem }
 
-    override fun glDraw(x: Int, y: Int) {
+    override fun glDraw(x: Int, y: Int, z: Float) {
         val f = itemStack().animationsToGo.toFloat()/* - partialTicks*/
+        RenderHelper.disableStandardItemLighting()
+        RenderHelper.enableGUIStandardItemLighting()
+
+        itemRenderer.zLevel += z
 
         if (f > 0.0f) {
             GLCore.pushMatrix()
             val f1 = 1.0f + f / 5.0f
-            GLCore.translate((x + 8).toFloat(), (y + 12).toFloat(), 0.0f)
-            GLCore.scale(1.0f / f1, (f1 + 1.0f) / 2.0f, 1.0f)
-            GLCore.translate((-(x + 8)).toFloat(), (-(y + 12)).toFloat(), 0.0f)
+            GLCore.translate((x + 8).toFloat(), (y + 12).toFloat(), z)
+            GLCore.scale(1.0f / f1, (f1 + 1.0f) / 2.0f, z.plus(1))
+            GLCore.translate((-(x + 8)).toFloat(), (-(y + 12)).toFloat(), z)
         }
 
         RenderHelper.enableGUIStandardItemLighting()
         itemRenderer.renderItemAndEffectIntoGUI(itemStack(), x, y)
         GLCore.depth(false)
 
+        itemRenderer.zLevel -= z
+
         if (f > 0.0f) GLCore.popMatrix()
 
 //        itemRenderer.renderItemOverlays(fontRenderer, itemStack, x, y)
     }
+}
+
+fun ItemStack.itemDesc(): List<String> {
+    val stringBuilder = mutableListOf<String>()
+    val desc = getTooltip(mc.player, ITooltipFlag.TooltipFlags.NORMAL)
+    desc.removeAt(0)
+    if (item is ItemTool){
+        if (toolClasses.isNotEmpty()) {
+            toolClasses.forEachIndexed { index, s ->
+                stringBuilder.add(I18n.format("itemDesc.type", I18n.format("itemDesc.tool")))
+                if (toolClasses.size > 1) {
+                    if (index == 0)
+                        stringBuilder.add(I18n.format("itemDesc.toolClasses", s.capitalize(), item.getHarvestLevel(this, s, mc.player, null)))
+                    else
+                        stringBuilder.add(I18n.format("itemDesc.toolClassSpace", s.capitalize(), item.getHarvestLevel(this, s, mc.player, null)))
+                } else
+                    stringBuilder.add(I18n.format("itemDesc.toolClass", s.capitalize(), item.getHarvestLevel(this, s, mc.player, null)))
+            }
+        }
+
+        if (isItemEnchantable)
+            stringBuilder.add(I18n.format("itemDesc.enchantability", (item as ItemTool).itemEnchantability))
+        else
+            stringBuilder.add(I18n.format("itemDesc.enchantable", isItemEnchantable.toString().capitalize()))
+        stringBuilder.add(I18n.format("itemDesc.repairable",  (item as ItemTool).isRepairable.toString().capitalize()))
+    }
+
+    else if (toolClasses.isNotEmpty()) {
+        toolClasses.forEachIndexed { index, s ->
+            stringBuilder.add(I18n.format("itemDesc.type", I18n.format("itemDesc.tool")))
+            if (toolClasses.size > 1) {
+                if (index == 0)
+                    stringBuilder.add(I18n.format("itemDesc.toolClasses", s.capitalize(), item.getHarvestLevel(this, s, mc.player, null)))
+                else
+                    stringBuilder.add(I18n.format("itemDesc.toolClassSpace", s.capitalize(), item.getHarvestLevel(this, s, mc.player, null)))
+            } else
+                stringBuilder.add(I18n.format("itemDesc.toolClass", s.capitalize(), item.getHarvestLevel(this, s, mc.player, null)))
+            stringBuilder.add(I18n.format("itemDesc.enchantable", isItemEnchantable.toString().capitalize()))
+        }
+
+        //TODO Item tool
+    }
+
+    else if (item is ItemHoe){
+        stringBuilder.add(I18n.format("itemDesc.type", I18n.format("itemDesc.tool")))
+        stringBuilder.add(I18n.format("itemDesc.toolClass", I18n.format("itemDesc.hoe"), 0))
+    }
+
+    else if (item is ItemSword) {
+        stringBuilder.add(I18n.format("itemDesc.type", I18n.format("itemDesc.sword")))
+        if (isItemEnchantable)
+            stringBuilder.add(I18n.format("itemDesc.enchantability", (item as ItemSword).itemEnchantability))
+        else
+            stringBuilder.add(I18n.format("itemDesc.enchantable", isItemEnchantable.toString().capitalize()))
+    }
+
+    else if (item is ItemBlock) {
+        val block = (item as ItemBlock).block
+        val state = block.getStateFromMeta(metadata)
+        if (block.hasTileEntity(state))
+            stringBuilder.add(I18n.format("itemDesc.type", I18n.format("itemDesc.tileEntity")))
+        else
+            stringBuilder.add(I18n.format("itemDesc.type", I18n.format("itemDesc.block")))
+        stringBuilder.add(I18n.format("itemDesc.hardness", block.getBlockHardness(state, mc.player.world, mc.player.position)))
+        stringBuilder.add(I18n.format("itemDesc.solid", state.material.isSolid.toString().capitalize()))
+        if (state.material.isToolNotRequired)
+            stringBuilder.add(I18n.format("itemDesc.toolRequired.false"))
+        else {
+            stringBuilder.add(I18n.format("itemDesc.toolRequired.true"))
+            stringBuilder.add(I18n.format("itemDesc.mostEffective",
+                    mc.player.inventory.asSequence().filter { it.canHarvestBlock(state) }.maxBy { it.getDestroySpeed(state) }?.displayName
+                    ?: I18n.format("itemDesc.none")))
+
+        }
+
+
+        //TODO Block Desc
+    }
+
+    else if (item is ItemFood){
+        stringBuilder.add(I18n.format("itemDesc.type", I18n.format("itemDesc.food")))
+        stringBuilder.add(I18n.format("itemDesc.foodValue", (item as ItemFood).getHealAmount(this)))
+        stringBuilder.add(I18n.format("itemDesc.saturationValue", (item as ItemFood).getSaturationModifier(this)))
+        //TODO Food Desc
+    }
+
+    else if (item is ItemEnchantedBook){
+
+        //TODO Enchant Desc
+    }
+
+    else if (item is ItemWrittenBook){
+
+        //TODO Book Desk
+
+    }
+    else if (item is ItemArmor){
+        stringBuilder.add(I18n.format("itemDesc.type", I18n.format("itemDesc.armor")))
+        val equipSlot = (item as ItemArmor).getEquipmentSlot(this)?: (item as ItemArmor).equipmentSlot
+        stringBuilder.add(I18n.format("itemDesc.slot", equipSlot.getName().capitalize()))
+        if (isItemEnchantable)
+            stringBuilder.add(I18n.format("itemDesc.enchantability", (item as ItemArmor).itemEnchantability))
+        else
+            stringBuilder.add(I18n.format("itemDesc.enchantable", isItemEnchantable.toString().capitalize()))
+        if ((item as ItemArmor).isRepairable)
+            stringBuilder.add(I18n.format("itemDesc.repairItem",  (item as ItemArmor).armorMaterial.repairItemStack.displayName))
+        else
+            stringBuilder.add(I18n.format("itemDesc.repairable",  (item as ItemArmor).isRepairable.toString().capitalize()))
+        stringBuilder.add(I18n.format("itemDesc.toughness",  (item as ItemArmor).armorMaterial.toughness))
+    }
+
+    else if (hasTagCompound()){
+        //TODO Potion Desc
+        tagCompound?.get("Potion")?.let {
+            val potion = ForgeRegistries.POTION_TYPES.getValue(ResourceLocation(it.toString()))
+        }
+    }
+    else{
+        stringBuilder.add(I18n.format("itemDesc.type", I18n.format("itemDesc.material")))
+    }
+
+    stringBuilder.addAll(desc)
+
+    return stringBuilder
 }
 
 fun IInventory.asSequence(): Sequence<ItemStack> {

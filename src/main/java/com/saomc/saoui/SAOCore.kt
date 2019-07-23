@@ -17,6 +17,8 @@
 
 package com.saomc.saoui
 
+import be.bluexin.saomclib.capabilities.CapabilitiesHandler
+import com.saomc.saoui.api.entity.rendering.RenderCapability
 import com.saomc.saoui.api.events.EventInitStatsProvider
 import com.saomc.saoui.config.ConfigHandler
 import com.saomc.saoui.events.EventCore
@@ -26,6 +28,7 @@ import com.saomc.saoui.util.DefaultStatsProvider
 import com.saomc.saoui.util.PlayerStats
 import net.minecraft.client.Minecraft
 import net.minecraft.client.resources.IReloadableResourceManager
+import net.minecraft.entity.EntityLivingBase
 import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.fml.common.Loader
 import net.minecraftforge.fml.common.Mod
@@ -42,7 +45,7 @@ import javax.xml.bind.JAXBException
 object SAOCore {
     const val MODID = "saoui"
     const val NAME = "Sword Art Online UI"
-    const val VERSION = "2.0.0.10"
+    const val VERSION = "2.0.0.13"
     const val DEPS = "required-after:saomclib@[1.3.0,);after:mantle"
 
     // TODO: investigate toasts -> net.minecraft.client.gui.toasts
@@ -59,6 +62,8 @@ object SAOCore {
     fun preInit(event: FMLPreInitializationEvent) {
         MinecraftForge.EVENT_BUS.register(EventCore)
         ConfigHandler.preInit(event)
+
+        CapabilitiesHandler.registerEntityCapability(RenderCapability::class.java, RenderCapability.Storage()) { `object`: Any -> `object` is EntityLivingBase }
 
         (Minecraft.getMinecraft().resourceManager as IReloadableResourceManager).registerReloadListener { resourceManager ->
             try {
