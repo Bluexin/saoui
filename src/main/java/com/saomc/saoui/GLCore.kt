@@ -139,10 +139,10 @@ object GLCore {
     fun glRect(x: Int, y: Int, width: Int, height: Int) {
         val tessellator = Tessellator.getInstance()
         tessellator.buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION)
-        tessellator.buffer.pos(x.toDouble(), (y + height).toDouble(), 0.0)
-        tessellator.buffer.pos((x + width).toDouble(), (y + height).toDouble(), 0.0)
-        tessellator.buffer.pos((x + width).toDouble(), y.toDouble(), 0.0)
-        tessellator.buffer.pos(x.toDouble(), y.toDouble(), 0.0)
+        tessellator.buffer.pos(x.toDouble(), (y + height).toDouble(), .0).endVertex()
+        tessellator.buffer.pos((x + width).toDouble(), (y + height).toDouble(), .0).endVertex()
+        tessellator.buffer.pos((x + width).toDouble(), y.toDouble(), .0).endVertex()
+        tessellator.buffer.pos(x.toDouble(), y.toDouble(), .0).endVertex()
         tessellator.draw()
     }
 

@@ -1,6 +1,7 @@
 package com.saomc.saoui.screens.ingame
 
 import be.bluexin.saomclib.capabilities.PartyCapability
+import be.bluexin.saomclib.party.PlayerInfo
 import be.bluexin.saomclib.profile
 import com.saomc.saoui.GLCore
 import com.saomc.saoui.config.ConfigHandler
@@ -161,11 +162,9 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
         GLCore.glAlphaTest(true)
         GLCore.glBlend(true)
 
-        var members: MutableList<EntityPlayer> = mutableListOf()
-        if (pt?.isParty == true)
-            members = pt.members.filter { it != mc.player }.toMutableList()
-        else
-            for (i in 1..ConfigHandler.debugFakePT) members.add(mc.player)
+        val ourPlayerInfo = PlayerInfo(mc.player)
+        val members = if (pt?.isParty == true) pt.membersInfo.filter { it != ourPlayerInfo }.toList()
+        else (1..ConfigHandler.debugFakePT).map { ourPlayerInfo }
 
         context.setPt(members)
         ThemeLoader.HUD.draw(HudPartType.PARTY, context)

@@ -40,6 +40,7 @@ class StaticCachedExpression<out T>(expression: CompiledExpressionWrapper<T>) : 
         override fun air() = 0
         override fun armor() = 1
         override fun ptHealthStep(index: Int) = HealthStep.CREATIVE
+        override fun ptPresent(index: Int) = true
         override fun ptName(index: Int) = ""
         override fun ptHp(index: Int) = 0f
         override fun ptMaxHp(index: Int) = 0f

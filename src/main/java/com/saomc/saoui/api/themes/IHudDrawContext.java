@@ -169,6 +169,12 @@ public interface IHudDrawContext {
     HealthStep ptHealthStep(int index);
 
     /**
+     * @param index the index of the party member to check
+     * @return whether we have data about the member (didn't get GC for example)
+     */
+    boolean ptPresent(int index);
+
+    /**
      * @return current party size
      */
     int ptSize();

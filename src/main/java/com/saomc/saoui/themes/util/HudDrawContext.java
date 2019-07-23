@@ -1,5 +1,6 @@
 package com.saomc.saoui.themes.util;
 
+import be.bluexin.saomclib.party.IPlayerInfo;
 import com.saomc.saoui.api.info.IPlayerStatsProvider;
 import com.saomc.saoui.api.themes.IHudDrawContext;
 import com.saomc.saoui.effects.StatusEffects;
@@ -45,7 +46,7 @@ public class HudDrawContext implements IHudDrawContext {
     private ScaledResolution scaledResolution;
     private float partialTicks;
     private int i;
-    private List<EntityPlayer> pt;
+    private List<IPlayerInfo> pt;
     private List<StatusEffects> effects;
 
     public HudDrawContext(EntityPlayer player, Minecraft mc, RenderItem itemRenderer) {
@@ -58,7 +59,7 @@ public class HudDrawContext implements IHudDrawContext {
         this.usernameWidth = (1 + (mc.fontRenderer.getStringWidth(username) + 4) / 5) * 5;
     }
 
-    public void setPt(List<EntityPlayer> pt) {
+    public void setPt(List<IPlayerInfo> pt) {
         this.pt = pt;
     }
 
@@ -204,17 +205,25 @@ public class HudDrawContext implements IHudDrawContext {
 
     @Override
     public String ptName(int index) {
-        return validatePtIndex(index) ? pt.get(index).getDisplayNameString() : "???";
+        return validatePtIndex(index) ? pt.get(index).getUsername() : "???";
     }
 
     @Override
     public float ptHp(int index) {
-        return validatePtIndex(index) ? StaticPlayerHelper.INSTANCE.getHealth(mc, pt.get(index), partialTicks) : 0f;
+        if (validatePtIndex(index)) {
+            EntityPlayer player = pt.get(index).getPlayer();
+            if (player == null) return 0f;
+            else return StaticPlayerHelper.INSTANCE.getHealth(mc, player, partialTicks);
+        } else return 0f;
     }
 
     @Override
     public float ptMaxHp(int index) {
-        return validatePtIndex(index) ? StaticPlayerHelper.INSTANCE.getMaxHealth(pt.get(index)) : 0f;
+        if (validatePtIndex(index)) {
+            EntityPlayer player = pt.get(index).getPlayer();
+            if (player == null) return 0f;
+            else return StaticPlayerHelper.INSTANCE.getMaxHealth(player);
+        } else return 0f;
     }
 
     @Override
@@ -230,6 +239,11 @@ public class HudDrawContext implements IHudDrawContext {
     @Override
     public HealthStep ptHealthStep(int index) {
         return HealthStep.Companion.getStep(ptHpPct(index));
+    }
+
+    @Override
+    public boolean ptPresent(int index) {
+        return validatePtIndex(index) && pt.get(index).getPresent();
     }
 
     @Override

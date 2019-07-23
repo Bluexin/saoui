@@ -26,7 +26,7 @@ object SAOCore {
     const val MODID = "saoui"
     const val NAME = "Sword Art Online UI"
     const val VERSION = "2.0.0.10"
-    const val DEPS = "required-before:" + MODID + "ntw;required-after:saomclib@[1.2.1,);after:mantle"
+    const val DEPS = "required-before:" + MODID + "ntw;required-after:saomclib@[1.3.0,);after:mantle"
 
     // TODO: investigate toasts -> net.minecraft.client.gui.toasts
 

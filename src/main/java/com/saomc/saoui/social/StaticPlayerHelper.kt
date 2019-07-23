@@ -1,13 +1,14 @@
 package com.saomc.saoui.social
 
-import be.bluexin.saomclib.capabilities.getPartyCapability
-import be.bluexin.saomclib.party.IParty
 import com.saomc.saoui.config.OptionCore
 import net.minecraft.client.Minecraft
 import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
 import java.util.*
+import kotlin.math.max
+import kotlin.math.roundToInt
+import kotlin.math.roundToLong
 
 /**
  * Part of SAOUI
@@ -16,7 +17,7 @@ import java.util.*
  */
 object StaticPlayerHelper {
     private const val HEALTH_ANIMATION_FACTOR = 0.075f
-    private val HEALTH_FRAME_FACTOR = HEALTH_ANIMATION_FACTOR * HEALTH_ANIMATION_FACTOR * 0x40f * 0x64f
+    private const val HEALTH_FRAME_FACTOR = HEALTH_ANIMATION_FACTOR * HEALTH_ANIMATION_FACTOR * 0x40f * 0x64f
     private val healthSmooth = HashMap<UUID, Float>()
     private val hungerSmooth = HashMap<UUID, Float>()
 
@@ -55,22 +56,6 @@ object StaticPlayerHelper {
         return getName(mc.player)
     }
 
-    fun unformatName(name: String): String {
-        var name = name
-        var index = name.indexOf("�")
-
-        while (index != -1) {
-            name = if (index + 1 < name.length)
-                name.replace(name.substring(index, index + 2), "")
-            else
-                name.replace("�", "")
-
-            index = name.indexOf("�")
-        }
-
-        return name
-    }
-
     fun getHealth(mc: Minecraft, entity: Entity, time: Float): Float { // FIXME: this seems to break if called many times in a single render frame
         if (OptionCore.SMOOTH_HEALTH.isEnabled) {
             val healthReal: Float = (entity as? EntityLivingBase)?.health ?: if (entity.isDead) 0f else 1f
@@ -88,24 +73,24 @@ object StaticPlayerHelper {
 
                     if (value <= 0) healthSmooth.remove(uuid)
 
-                    return Math.max(0.0f, healthValue * value)
-                } else if (Math.round(healthValue * 10) != Math.round(healthReal * 10))
+                    return max(0.0f, healthValue * value)
+                } else if ((healthValue * 10).roundToInt() != (healthReal * 10).roundToInt())
                     healthValue += (healthReal - healthValue) * (gameTimeDelay(mc, time) * HEALTH_ANIMATION_FACTOR)
                 else
                     healthValue = healthReal
 
                 healthSmooth[uuid] = healthValue
-                return Math.max(0.0f, healthValue)
+                return max(0.0f, healthValue)
             } else {
                 healthSmooth[uuid] = healthReal
-                return Math.max(0.0f, healthReal)
+                return max(0.0f, healthReal)
             }
         } else
-            return if (entity is EntityLivingBase) Math.max(0.0f, entity.health) else if (entity.isDead) 0f else 1f
+            return if (entity is EntityLivingBase) max(0.0f, entity.health) else if (entity.isDead) 0f else 1f
     }
 
     fun getMaxHealth(entity: Entity): Float {
-        return if (entity is EntityLivingBase) Math.max(0.0000001f, entity.maxHealth) else 1f
+        return if (entity is EntityLivingBase) max(0.0000001f, entity.maxHealth) else 1f
     }
 
     fun getHungerFract(mc: Minecraft, entity: Entity, time: Float) =
@@ -134,7 +119,7 @@ object StaticPlayerHelper {
 
                         return hungerValue * value
                     }
-                    Math.round(hungerValue * 10) != Math.round(hungerReal * 10) -> hungerValue += (hungerReal - hungerValue) * (gameTimeDelay(mc, time) * HEALTH_ANIMATION_FACTOR)
+                    (hungerValue * 10).roundToLong() != (hungerReal * 10).roundToLong() -> hungerValue += (hungerReal - hungerValue) * (gameTimeDelay(mc, time) * HEALTH_ANIMATION_FACTOR)
                     else -> hungerValue = hungerReal
                 }
 
@@ -161,13 +146,5 @@ object StaticPlayerHelper {
 
     fun thePlayer(): EntityPlayer {
         return Minecraft.getMinecraft().player
-    }
-
-    fun getIParty(): IParty {
-        return Minecraft.getMinecraft().player.getPartyCapability().getOrCreatePT()
-    }
-
-    fun getIParty(player: EntityPlayer): IParty {
-        return player.getPartyCapability().getOrCreatePT()
     }
 }
