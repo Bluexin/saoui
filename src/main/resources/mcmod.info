@@ -16,20 +16,5 @@
     "logoFile": "assets/saoui/textures/logo.png",
     "screenshots": [],
     "dependencies": ["saomclib"]
-  },
-   {
-     "modid": "saouintw",
-     "name": "SAOUI Networking",
-     "version": "${version}",
-     "mcversion": "${mcversion}",
-     "description": "Networking part of the SAOUI",
-     "credits": "",
-     "logoFile": "assets/saoui/textures/logo.png",
-     "url": "",
-     "updateUrl": "",
-     "authorList": [ "Bluexin" ],
-     "parent": "saoui",
-     "screenshots": [],
-     "dependencies": []
-   }
+  }
 ]

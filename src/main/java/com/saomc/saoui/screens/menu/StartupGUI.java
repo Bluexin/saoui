@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2016-2019 Arnaud 'Bluexin' Solé
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package com.saomc.saoui.screens.menu;
 
 import com.saomc.saoui.SAOCore;
@@ -84,12 +101,9 @@ public class StartupGUI extends GuiScreen {
     @Override
     protected void actionPerformed(GuiButton button) {
         if (isDev())
-            switch (button.id) {
-                case 0: {
-                    buttonList.forEach(b -> b.enabled = false);
-                    this.mc.displayGuiScreen(null);
-                    break;
-                }
+            if (button.id == 0) {
+                buttonList.forEach(b -> b.enabled = false);
+                this.mc.displayGuiScreen(null);
             }
         /*else if (UpdateChecker.hasUpdate())
             switch (button.id) {

@@ -1,12 +1,31 @@
+/*
+ * Copyright (C) 2016-2019 Arnaud 'Bluexin' Solé
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package com.saomc.saoui.events
 
 import com.saomc.saoui.SoundCore
 import com.saomc.saoui.config.OptionCore
+import com.saomc.saoui.neo.screens.DeathGui
 import com.saomc.saoui.neo.screens.NeoGui
 import com.saomc.saoui.neo.screens.NeoIngameMenu
 import com.saomc.saoui.renders.StaticRenderer
 import com.saomc.saoui.screens.ingame.IngameGUI
 import com.saomc.saoui.screens.menu.StartupGUI
+import net.minecraft.client.gui.GuiGameOver
 import net.minecraft.client.gui.GuiIngameMenu
 import net.minecraft.client.gui.GuiMainMenu
 import net.minecraft.client.gui.inventory.GuiContainerCreative
@@ -59,17 +78,18 @@ internal object RenderHandler {
                 if (EventCore.mc.currentScreen !is NeoGui<*>) e.gui = NeoIngameMenu()
             }
         }
-        if (e.gui is GuiInventory && !OptionCore.DEFAULT_INVENTORY.isEnabled) {
+        else if (e.gui is GuiInventory && !OptionCore.DEFAULT_INVENTORY.isEnabled) {
             when {
                 EventCore.mc.playerController.isInCreativeMode -> e.gui = GuiContainerCreative(EventCore.mc.player)
                 else -> e.isCanceled = true
             }
         }
-        /*if (e.getGui() instanceof GuiGameOver && (!OptionCore.DEFAULT_DEATH_SCREEN.isEnabled())) {
-            if (!(e.getGui() instanceof DeathScreen)) {
-                e.setGui(new DeathScreen());
+        else if (e.gui is GuiGameOver && (!OptionCore.DEFAULT_DEATH_SCREEN.isEnabled)) {
+            if (EventCore.mc.currentScreen !is DeathGui) e.gui = DeathGui()
+            else {
+                e.isCanceled = true
             }
-        }*/
+        }
     }
 
     fun deathCheck() {

@@ -1,3 +1,20 @@
+/*
+ * Copyright (C) 2016-2019 Arnaud 'Bluexin' Solé
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package com.saomc.saoui
 
 import com.saomc.saoui.api.events.EventInitStatsProvider
@@ -26,7 +43,7 @@ object SAOCore {
     const val MODID = "saoui"
     const val NAME = "Sword Art Online UI"
     const val VERSION = "2.0.0.10"
-    const val DEPS = "required-before:" + MODID + "ntw;required-after:saomclib@[1.3.0,);after:mantle"
+    const val DEPS = "required-after:saomclib@[1.3.0,);after:mantle"
 
     // TODO: investigate toasts -> net.minecraft.client.gui.toasts
 
@@ -62,15 +79,6 @@ object SAOCore {
 
     @Mod.EventHandler
     fun postInit(event: FMLPostInitializationEvent) {
-        // Attempt to fix 1st menu opening freeze, doesn't seem enough :<
-        /*GLCore.glBindTexture(StringNames.gui)
-        GLCore.glBindTexture(StringNames.slot)
-        GLCore.glBindTexture(StringNames.entities)
-        GLCore.glBindTexture(StringNames.entitiesCustom)
-        GLCore.glBindTexture(StringNames.particleLarge)
-        IconCore.values().forEach { if (it.rl != null) GLCore.glBindTexture(it.rl!!) }
-        NeoIngameMenu()//.initGui()*/
-
         if (Loader.isModLoaded("mantle")) {
             LOGGER.info("Unregistering Mantle health renderer.")
             val f = EventBus::class.java.getDeclaredField("listeners")
