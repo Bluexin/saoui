@@ -17,12 +17,11 @@
 
 package com.saomc.saoui.events
 
-import be.bluexin.saomclib.events.PartyEvent
-import be.bluexin.saomclib.packets.PTC2SPacket
-import be.bluexin.saomclib.packets.PacketPipeline
+import be.bluexin.saomclib.events.PartyEventV2
 import com.saomc.saoui.effects.RenderDispatcher
 import com.saomc.saoui.neo.screens.PopupYesNo
 import com.saomc.saoui.screens.ingame.IngameGUI
+import com.teamwizardry.librarianlib.features.kotlin.localize
 import net.minecraft.client.Minecraft
 import net.minecraft.client.settings.GameSettings
 import net.minecraftforge.client.event.GuiOpenEvent
@@ -83,13 +82,12 @@ object EventCore {
     }
 
     @SubscribeEvent
-    fun partyInvite(e: PartyEvent.Invited) {
-        PopupYesNo("Party Invite", "Would you like to join ${e.party!!.leader}'s party?", "") += {
-            if (it == PopupYesNo.Result.YES)
-                PacketPipeline.sendToServer(PTC2SPacket(PTC2SPacket.Type.JOIN, e.player))
-            else PacketPipeline.sendToServer(PTC2SPacket(PTC2SPacket.Type.CANCEL, e.player))
+    fun partyInvite(e: PartyEventV2.Invited) {
+        val p = e.party ?: return
+        PopupYesNo("guiPartyInviteTitle".localize(), "guiPartyInviteText".localize(p.leaderInfo?.username.toString()), "") += {
+            if (it == PopupYesNo.Result.YES) p.acceptInvite(e.player)
+            else p.cancel(e.player)
         }
-        //if (e.party?.leader != mc.player) mc.ingameGUI.setRecordPlayingMessage(I18n.format("saoui.invited", e.party?.leader?.displayNameString))
     }
 
     @SubscribeEvent

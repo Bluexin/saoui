@@ -4,8 +4,8 @@
 # Social
 guiFriendRequestTitle=Friend Request
 guiFriendRequestText=%s wants to add you as a friend.
-guiPartyInviteTitle=Invite
-guiPartyInviteText=%s invites you to join a party.
+guiPartyInviteTitle=Party Invite
+guiPartyInviteText=Would you like to join %s's party?
 guiPartyDissolvingTitle=Dissolve
 guiPartyDissolvingText=Do you want to disband your party?
 guiPartyLeaveTitle=Leave
