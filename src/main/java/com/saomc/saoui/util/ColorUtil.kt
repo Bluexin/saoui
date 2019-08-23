@@ -45,7 +45,7 @@ enum class ColorUtil constructor(var rgba: Int) {
     HARDCORE_DEAD_COLOR(0x990000FF.toInt());
 
     fun multiplyAlpha(alpha: Float): Int {
-        return ColorUtil.multiplyAlpha(this.rgba, alpha)
+        return multiplyAlpha(this.rgba, alpha)
     }
 
     fun mediumColor(color: ColorUtil): Int {
@@ -53,7 +53,7 @@ enum class ColorUtil constructor(var rgba: Int) {
     }
 
     fun mediumColor(rgba: Int): Int {
-        return ColorUtil.mediumColor(this.rgba, rgba)
+        return mediumColor(this.rgba, rgba)
     }
 
     companion object {

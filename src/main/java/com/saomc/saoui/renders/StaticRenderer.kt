@@ -37,6 +37,10 @@ import net.minecraftforge.fml.common.Loader
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
 import org.lwjgl.opengl.GL11
+import kotlin.math.cos
+import kotlin.math.max
+import kotlin.math.min
+import kotlin.math.sin
 
 @SideOnly(Side.CLIENT)
 object StaticRenderer { // TODO: add usage of scale, offset etc from capability
@@ -96,8 +100,8 @@ object StaticRenderer { // TODO: add usage of scale, offset etc from capability
 
                 if (OptionCore.SPINNING_CRYSTALS.isEnabled) {
                     val a = entity.world.totalWorldTime % 40 / 20.0 * Math.PI
-                    val cos = Math.cos(a)//Math.PI / 3 * 2);
-                    val sin = Math.sin(a)//Math.PI / 3 * 2);
+                    val cos = cos(a)//Math.PI / 3 * 2);
+                    val sin = sin(a)//Math.PI / 3 * 2);
 
                     if (a > Math.PI / 2 && a <= Math.PI * 3 / 2) {
                         GLCore.addVertex(9.0 * cos, -1.0, 9.0 * sin, 0.125, 0.25)
@@ -160,9 +164,9 @@ object StaticRenderer { // TODO: add usage of scale, offset etc from capability
             val value = (i + HEALTH_COUNT - hitPoints).toDouble() / HEALTH_COUNT
             val rad = Math.toRadians((renderManager.playerViewY - 135).toDouble()) + (value - 0.5) * Math.PI * HEALTH_ANGLE
 
-            val x0 = x + sizeMult.toDouble() * living.width.toDouble() * HEALTH_RANGE * Math.cos(rad)
+            val x0 = x + sizeMult.toDouble() * living.width.toDouble() * HEALTH_RANGE * cos(rad)
             val y0 = y + sizeMult * living.height * HEALTH_OFFSET
-            val z0 = z + sizeMult.toDouble() * living.width.toDouble() * HEALTH_RANGE * Math.sin(rad)
+            val z0 = z + sizeMult.toDouble() * living.width.toDouble() * HEALTH_RANGE * sin(rad)
 
             val uv = value - (HEALTH_COUNT - hitPoints).toDouble() / HEALTH_COUNT
 
@@ -179,9 +183,9 @@ object StaticRenderer { // TODO: add usage of scale, offset etc from capability
             val value = i.toDouble() / HEALTH_COUNT
             val rad = Math.toRadians((renderManager.playerViewY - 135).toDouble()) + (value - 0.5) * Math.PI * HEALTH_ANGLE
 
-            val x0 = x + sizeMult.toDouble() * living.width.toDouble() * HEALTH_RANGE * Math.cos(rad)
+            val x0 = x + sizeMult.toDouble() * living.width.toDouble() * HEALTH_RANGE * cos(rad)
             val y0 = y + sizeMult * living.height * HEALTH_OFFSET
-            val z0 = z + sizeMult.toDouble() * living.width.toDouble() * HEALTH_RANGE * Math.sin(rad)
+            val z0 = z + sizeMult.toDouble() * living.width.toDouble() * HEALTH_RANGE * sin(rad)
 
             GLCore.addVertex(x0, y0 + HEALTH_HEIGHT, z0, 1.0 - value, 0.125)
             GLCore.addVertex(x0, y0, z0, 1.0 - value, 0.25)
@@ -200,7 +204,7 @@ object StaticRenderer { // TODO: add usage of scale, offset etc from capability
             val colors = arrayOf(floatArrayOf(1f / 0xFF * 0x9A, 1f / 0xFF * 0xFE, 1f / 0xFF * 0x2E), floatArrayOf(1f / 0xFF * 0x01, 1f / 0xFF * 0xFF, 1f / 0xFF * 0xFF), floatArrayOf(1f / 0xFF * 0x08, 1f / 0xFF * 0x08, 1f / 0xFF * 0x8A))
 
             val size = living.width * living.height
-            val pieces = Math.max(Math.min(size * 64, 128f), 8f).toInt()
+            val pieces = max(min(size * 64, 128f), 8f).toInt()
 
             for (i in 0 until pieces) {
                 val color = colors[i % 3]

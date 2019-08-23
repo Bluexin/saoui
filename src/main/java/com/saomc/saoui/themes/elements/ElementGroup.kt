@@ -83,7 +83,7 @@ open class ElementGroup : Element(), ElementParent {
         if (this.texture != null) this.rl = ResourceLocation(this.texture)
         val res = super.setup(parent)
         var anonymous = 0
-        this.elements.forEach { if (it.name == Element.DEFAULT_NAME) ++anonymous; it.setup(this) }
+        this.elements.forEach { if (it.name == DEFAULT_NAME) ++anonymous; it.setup(this) }
         if (anonymous > 0) SAOCore.LOGGER.info("Set up $anonymous anonymous elements in $name.")
         return res
     }

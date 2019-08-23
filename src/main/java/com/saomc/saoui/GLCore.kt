@@ -34,6 +34,8 @@ import net.minecraft.util.math.Vec3d
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
 import org.lwjgl.opengl.GL11
+import kotlin.math.max
+import kotlin.math.min
 
 @SideOnly(Side.CLIENT)
 object GLCore {
@@ -261,12 +263,12 @@ object GLCore {
      * returns an AABB with corners x1, y1, z1 and x2, y2, z2
      */
     fun fromBounds(x1: Double, y1: Double, z1: Double, x2: Double, y2: Double, z2: Double): AxisAlignedBB {
-        val d0 = Math.min(x1, x2)
-        val d1 = Math.min(y1, y2)
-        val d2 = Math.min(z1, z2)
-        val d3 = Math.max(x1, x2)
-        val d4 = Math.max(y1, y2)
-        val d5 = Math.max(z1, z2)
+        val d0 = min(x1, x2)
+        val d1 = min(y1, y2)
+        val d2 = min(z1, z2)
+        val d3 = max(x1, x2)
+        val d4 = max(y1, y2)
+        val d5 = max(z1, z2)
         return AxisAlignedBB(d0, d1, d2, d3, d4, d5)
     }
 

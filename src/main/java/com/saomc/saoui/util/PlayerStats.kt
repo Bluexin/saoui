@@ -29,12 +29,12 @@ class PlayerStats private constructor(val stats: IPlayerStatsProvider) {
         private var instance: PlayerStats? = null
 
         fun init(provider: IPlayerStatsProvider) {
-            if (instance != null) throw IllegalStateException("PlayerStats already initialized!")
+            check(instance == null) { "PlayerStats already initialized!" }
             instance = PlayerStats(provider)
         }
 
         fun instance(): PlayerStats {
-            if (instance == null) throw IllegalStateException("PlayerStats not initialized!")
+            checkNotNull(instance) { "PlayerStats not initialized!" }
             return instance!!
         }
     }

@@ -15,6 +15,8 @@ import net.minecraft.client.gui.inventory.GuiInventory
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.util.ResourceLocation
+import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.roundToInt
 
 
@@ -85,7 +87,7 @@ open class NeoProfileElement(var player: EntityPlayer, override var pos: Vec2d =
         val top = pos.y + height / 2
         val size = 40
 
-        val shadowY = size / 2 + Math.max(Math.min((mouse.y - pos.y), 0.0), -size / 2 + 2.0)
+        val shadowY = size / 2 + max(min((mouse.y - pos.y), 0.0), -size / 2 + 2.0)
         GLCore.glTexturedRectV2(pos.x, pos.y, width = width.toDouble(), height = height.toDouble())
 
 
@@ -93,7 +95,7 @@ open class NeoProfileElement(var player: EntityPlayer, override var pos: Vec2d =
         GLCore.glTexturedRectV2( left - size / 2, top - shadowY / 2, width = size.toDouble(), height = shadowY, srcX = 200.0, srcY = 85.0, srcWidth = 56.0, srcHeight = 30.0)
         drawCharacter(left, top, size, mouse.x.roundToInt(), mouse.y.roundToInt())
 
-        GLCore.glString(player.displayNameString, pos.xi + 50 + (player.displayNameString.length / 2), pos.yi + 20, ColorUtil.DEFAULT_BOX_FONT_COLOR.rgba, false, true)
+        GLCore.glString(player.displayNameString, pos.xi + 50 + (player.displayNameString.length / 2), pos.yi + 20, ColorUtil.DEFAULT_BOX_FONT_COLOR.rgba, shadow = false, centered = true)
         val profile = PlayerStats.instance().stats.getStatsString(player)
         (0 until profile.size).forEach {
             GLCore.glString(profile[it], pos.xi + (width / 2) - 10 + (-GLCore.glStringWidth(profile[it]) / 2), (pos.y + 180 + (it * GLCore.glStringHeight())).toInt(), ColorUtil.DEFAULT_FONT_COLOR.rgba, centered = false)

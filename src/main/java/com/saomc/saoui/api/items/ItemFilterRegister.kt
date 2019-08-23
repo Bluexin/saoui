@@ -8,7 +8,7 @@ object ItemFilterRegister {
     private val defaultFilters: LinkedHashSet<IItemFilter> = getDefaults()
 
     val tlFilters
-        get() = ItemFilterRegister.filters().filter { it.category == null }
+        get() = filters().filter { it.category == null }
 
     private fun getDefaults(): LinkedHashSet<IItemFilter>{
         val set: LinkedHashSet<IItemFilter> = linkedSetOf()

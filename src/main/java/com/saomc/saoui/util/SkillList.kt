@@ -74,14 +74,14 @@ class SkillList private constructor(skills: List<ISkill>, val isRingShown: Boole
     }
 
     fun hitInSkillRing(index: Int, mc: Minecraft, parent: GuiInventory, action: Actions) {
-        SkillList.instance()!!.stream().filter{ it.shouldShowInRing() }.skip(index.toLong()).findFirst().ifPresent { s -> s.activate(mc, parent, action) }
+        instance()!!.stream().filter{ it.shouldShowInRing() }.skip(index.toLong()).findFirst().ifPresent { s -> s.activate(mc, parent, action) }
     }
 
     companion object {
         private var instance: SkillList? = null
 
         fun init(skills: List<ISkill>, showRing: Boolean) {
-            if (instance != null) throw IllegalStateException("SkillList already got initialized!")
+            check(instance == null) { "SkillList already got initialized!" }
             instance = SkillList(skills, showRing)
         }
 

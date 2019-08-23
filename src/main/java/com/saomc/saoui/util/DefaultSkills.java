@@ -27,6 +27,7 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.BiConsumer;
 import java.util.function.BooleanSupplier;
@@ -63,7 +64,7 @@ public enum DefaultSkills implements ISkill {
     public final String toString() {
         final String name = name();
 
-        return I18n.format("skill" + name.charAt(0) + name.substring(1, name.length()).toLowerCase());
+        return I18n.format("skill" + name.charAt(0) + name.substring(1).toLowerCase());
     }
 
     @Override
@@ -77,10 +78,11 @@ public enum DefaultSkills implements ISkill {
     }
 
     @Override
-    public void activate(Minecraft mc, GuiInventory parent, Actions action) {
+    public void activate(@NotNull Minecraft mc, @NotNull GuiInventory parent, @NotNull Actions action) {
         this.action.accept(mc, parent);
     }
 
+    @NotNull
     @Override
     public IIcon getIcon() {
         return icon;

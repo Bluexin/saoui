@@ -22,6 +22,9 @@ import com.saomc.saoui.api.elements.neo.NeoCategoryButton
 import com.saomc.saoui.api.elements.neo.NeoIconLabelElement
 import com.saomc.saoui.api.screens.IIcon
 import com.saomc.saoui.events.EventCore.mc
+import com.saomc.saoui.neo.screens.util.PopupHotbarSelection
+import com.saomc.saoui.neo.screens.util.PopupItem
+import com.saomc.saoui.neo.screens.util.PopupYesNo
 import com.saomc.saoui.util.IconCore
 import com.teamwizardry.librarianlib.features.kotlin.get
 import com.teamwizardry.librarianlib.features.kotlin.isNotEmpty
@@ -177,25 +180,18 @@ class ItemStackElement(private val slot: Slot, pos: Vec2d, override var selected
     }
 
     fun checkArmorSlots(): Int {
-        if (mc.player.inventory.isItemValidForSlot(37, itemStack)) {
-            return 37
+        return when {
+            mc.player.inventory.isItemValidForSlot(37, itemStack) -> 37
+            mc.player.inventory.isItemValidForSlot(38, itemStack) -> 38
+            mc.player.inventory.isItemValidForSlot(39, itemStack) -> 39
+            mc.player.inventory.isItemValidForSlot(40, itemStack) -> 40
+            else -> findFreeHotbarSlot()
         }
-        else if (mc.player.inventory.isItemValidForSlot(38, itemStack)) {
-            return 38
-        }
-        else if (mc.player.inventory.isItemValidForSlot(39, itemStack)) {
-            return 39
-        }
-        else if (mc.player.inventory.isItemValidForSlot(40, itemStack)) {
-            return 40
-        }
-
-        else return findFreeHotbarSlot()
     }
 
     fun findFreeHotbarSlot(): Int {
         for (i in 4..8){
-            if (mc.player.inventory.get(i).isEmpty)
+            if (mc.player.inventory[i].isEmpty)
                 return i
         }
         return 8

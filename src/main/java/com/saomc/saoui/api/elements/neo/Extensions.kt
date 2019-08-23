@@ -134,7 +134,7 @@ class NeoCategoryButton(private val delegate: NeoIconElement, parent: INeoParent
         return if ((mouseButton == MouseButton.SCROLL_DOWN || mouseButton == MouseButton.SCROLL_UP) && openAnim?.get()?.finished == false) true else delegate.mouseClicked(pos, mouseButton)
     }
 
-    protected fun childrenOrderedForAppearing(): Sequence<NeoElement> {
+    private fun childrenOrderedForAppearing(): Sequence<NeoElement> {
         val count = validElementsSequence.count()
         return if (count == 0) emptySequence()
         else {

@@ -84,13 +84,13 @@ class DefaultStatsProvider : IPlayerStatsProvider {
             if (player.heldItemMainhand.isNotEmpty) {
                 val itemAttackMain = player.heldItemMainhand.getAttributeModifiers(EntityEquipmentSlot.MAINHAND).get(SharedMonsterAttributes.ATTACK_DAMAGE.name)
 
-                itemDamage += itemAttackMain.filter { value -> value is AttributeModifier }.map { value -> value }
+                itemDamage += itemAttackMain.filterIsInstance<AttributeModifier>().map { value -> value }
                         .filter { mod -> mod.name == "Weapon modifier" }.sumByDouble { it.amount }.toFloat()
             }
             if (player.heldItemOffhand.isNotEmpty) {
                 val itemAttackOff = player.heldItemOffhand.getAttributeModifiers(EntityEquipmentSlot.OFFHAND).get(SharedMonsterAttributes.ATTACK_DAMAGE.name)
 
-                itemDamage += itemAttackOff.filter { value -> value is AttributeModifier }.map { value -> value }
+                itemDamage += itemAttackOff.filterIsInstance<AttributeModifier>().map { value -> value }
                         .filter { mod -> mod.name == "Weapon modifier" }.sumByDouble { it.amount }.toFloat()
             }
 

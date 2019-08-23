@@ -19,10 +19,10 @@ package com.saomc.saoui.config
 
 import com.saomc.saoui.GLCore
 import com.saomc.saoui.api.info.IOption
-import net.minecraftforge.fml.relauncher.Side
-import net.minecraftforge.fml.relauncher.SideOnly
 import net.minecraft.client.Minecraft
 import net.minecraft.client.resources.I18n
+import net.minecraftforge.fml.relauncher.Side
+import net.minecraftforge.fml.relauncher.SideOnly
 
 @SideOnly(Side.CLIENT)
 enum class OptionCore(
@@ -106,7 +106,7 @@ enum class OptionCore(
      */
     fun flip(): Boolean {
         if (this.isRestricted) {
-            OptionCore.values().filter { it.category == this.category }.forEach {
+            values().filter { it.category == this.category }.forEach {
                 it.value = false
                 ConfigHandler.setOption(it) // TODO: transaction
             }
@@ -166,7 +166,7 @@ enum class OptionCore(
     }
 
     val subOptions
-        get() = OptionCore.values().filter { it.category == this }
+        get() = values().filter { it.category == this }
 
     operator fun invoke() = isEnabled
 
@@ -200,6 +200,6 @@ enum class OptionCore(
         }
 
         val tlOptions
-            get() = OptionCore.values().filter { it.category == null }
+            get() = values().filter { it.category == null }
     }
 }

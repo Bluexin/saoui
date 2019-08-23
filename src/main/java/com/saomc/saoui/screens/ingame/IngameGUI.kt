@@ -18,6 +18,7 @@
 package com.saomc.saoui.screens.ingame
 
 import be.bluexin.saomclib.capabilities.PartyCapability
+import be.bluexin.saomclib.party.IPlayerInfo
 import be.bluexin.saomclib.profile
 import com.saomc.saoui.GLCore
 import com.saomc.saoui.config.ConfigHandler
@@ -79,11 +80,11 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
         super.renderGameOverlay(partialTicks)
 
         if (OptionCore.FORCE_HUD.isEnabled && !this.mc.playerController.shouldDrawHUD() && this.mc.renderViewEntity is EntityPlayer) {
-            if (GuiIngameForge.renderHealth) renderHealth(width, height)
-            if (GuiIngameForge.renderArmor) renderArmor(width, height)
-            if (GuiIngameForge.renderFood) renderFood(width, height)
-            if (GuiIngameForge.renderHealthMount) renderHealthMount(width, height)
-            if (GuiIngameForge.renderAir) renderAir(width, height)
+            if (renderHealth) renderHealth(width, height)
+            if (renderArmor) renderArmor(width, height)
+            if (renderFood) renderFood(width, height)
+            if (renderHealthMount) renderHealthMount(width, height)
+            if (renderAir) renderAir(width, height)
             mc.entityRenderer.setupOverlayRendering()
         } // Basically adding what super doesn't render by default
 
@@ -182,7 +183,7 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
 
         var members: MutableList<EntityPlayer> = mutableListOf()
         if (pt?.isParty == true)
-            members = pt.members.filter { it != mc.player }.toMutableList()
+            members = pt.membersInfo.mapNotNull(IPlayerInfo::player).filter { it != mc.player }.toMutableList()
         else
             for (i in 1..ConfigHandler.debugFakePT) members.add(mc.player)
 

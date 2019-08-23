@@ -29,6 +29,8 @@ import net.minecraft.world.World
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
 import java.util.*
+import kotlin.math.cos
+import kotlin.math.sin
 
 
 @SideOnly(Side.CLIENT)
@@ -78,9 +80,9 @@ class DeathParticles private constructor(world: World, xCoord: Double, yCoord: D
         if (particle > 1.0f) particle = 1.0f
 
         val scale = 0.1f * this.particleScale * particle
-        val xPos = (this.prevPosX + (this.posX - this.prevPosX) * time.toDouble() - Particle.interpPosX).toFloat()
-        val yPos = (this.prevPosY + (this.posY - this.prevPosY) * time.toDouble() - Particle.interpPosY).toFloat()
-        val zPos = (this.prevPosZ + (this.posZ - this.prevPosZ) * time.toDouble() - Particle.interpPosZ).toFloat()
+        val xPos = (this.prevPosX + (this.posX - this.prevPosX) * time.toDouble() - interpPosX).toFloat()
+        val yPos = (this.prevPosY + (this.posY - this.prevPosY) * time.toDouble() - interpPosY).toFloat()
+        val zPos = (this.prevPosZ + (this.posZ - this.prevPosZ) * time.toDouble() - interpPosZ).toFloat()
         val colorIntensity = 1.0f
 
         val x1: Double
@@ -111,8 +113,8 @@ class DeathParticles private constructor(world: World, xCoord: Double, yCoord: D
         val e = Minecraft.getMinecraft().player.horizontalFacing
         val q = e == EnumFacing.NORTH || e == EnumFacing.SOUTH
         val a = (if (q) if (rotationY < 1.5f && rotationY > 0.5f) rotationY - 1.0f else rotationY + 1.0f else rotationY) * Math.PI
-        val cos = Math.cos(a)
-        val sin = Math.sin(a)
+        val cos = cos(a)
+        val sin = sin(a)
 
         if (a < Math.PI) {
             GLCore.addVertex(xPos + x1 * cos, yPos + y1, zPos + z1 * sin, 0.0, 1.0, this.particleRed * colorIntensity, this.particleGreen * colorIntensity, this.particleBlue * colorIntensity, 1f)

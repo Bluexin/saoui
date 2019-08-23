@@ -95,7 +95,7 @@ abstract class NeoGui<T : Any>(override var pos: Vec2d, override var destination
     }
 
     fun <R : Any> openGui(gui: NeoGui<R>): NeoGui<R> {
-        if (subGui != null) throw IllegalStateException("Already opened a sub gui of type ${subGui!!::class.qualifiedName}")
+        check(subGui == null) { "Already opened a sub gui of type ${subGui!!::class.qualifiedName}" }
         subGui = gui
         gui.parent = this
         KeyBinding.unPressAllKeys()

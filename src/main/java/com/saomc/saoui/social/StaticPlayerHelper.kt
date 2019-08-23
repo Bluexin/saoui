@@ -25,6 +25,8 @@ import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
 import java.util.*
+import kotlin.math.max
+import kotlin.math.roundToLong
 
 /**
  * Part of SAOUI
@@ -105,24 +107,24 @@ object StaticPlayerHelper {
 
                     if (value <= 0) healthSmooth.remove(uuid)
 
-                    return Math.max(0.0f, healthValue * value)
-                } else if (Math.round(healthValue * 10) != Math.round(healthReal * 10))
+                    return max(0.0f, healthValue * value)
+                } else if ((healthValue * 10).roundToLong() != (healthReal * 10).roundToLong())
                     healthValue += (healthReal - healthValue) * (gameTimeDelay(mc, time) * HEALTH_ANIMATION_FACTOR)
                 else
                     healthValue = healthReal
 
                 healthSmooth[uuid] = healthValue
-                return Math.max(0.0f, healthValue)
+                return max(0.0f, healthValue)
             } else {
                 healthSmooth[uuid] = healthReal
-                return Math.max(0.0f, healthReal)
+                return max(0.0f, healthReal)
             }
         } else
-            return if (entity is EntityLivingBase) Math.max(0.0f, entity.health) else if (entity.isDead) 0f else 1f
+            return if (entity is EntityLivingBase) max(0.0f, entity.health) else if (entity.isDead) 0f else 1f
     }
 
     fun getMaxHealth(entity: Entity): Float {
-        return if (entity is EntityLivingBase) Math.max(0.0000001f, entity.maxHealth) else 1f
+        return if (entity is EntityLivingBase) max(0.0000001f, entity.maxHealth) else 1f
     }
 
     fun getHungerFract(mc: Minecraft, entity: Entity, time: Float) =
@@ -151,7 +153,7 @@ object StaticPlayerHelper {
 
                         return hungerValue * value
                     }
-                    Math.round(hungerValue * 10) != Math.round(hungerReal * 10) -> hungerValue += (hungerReal - hungerValue) * (gameTimeDelay(mc, time) * HEALTH_ANIMATION_FACTOR)
+                    (hungerValue * 10).roundToLong() != (hungerReal * 10).roundToLong() -> hungerValue += (hungerReal - hungerValue) * (gameTimeDelay(mc, time) * HEALTH_ANIMATION_FACTOR)
                     else -> hungerValue = hungerReal
                 }
 

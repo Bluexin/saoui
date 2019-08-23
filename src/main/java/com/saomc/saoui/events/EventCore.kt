@@ -17,9 +17,9 @@
 
 package com.saomc.saoui.events
 
-import be.bluexin.saomclib.events.PartyEvent
+import be.bluexin.saomclib.events.PartyEventV2
 import com.saomc.saoui.effects.RenderDispatcher
-import com.saomc.saoui.neo.screens.PopupYesNo
+import com.saomc.saoui.neo.screens.util.PopupYesNo
 import com.saomc.saoui.screens.ingame.IngameGUI
 import com.teamwizardry.librarianlib.features.kotlin.localize
 import net.minecraft.client.Minecraft
@@ -32,6 +32,7 @@ import net.minecraftforge.event.entity.living.LivingDeathEvent
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import net.minecraftforge.fml.common.gameevent.TickEvent
 import net.minecraftforge.fml.common.network.FMLNetworkEvent
+import kotlin.math.pow
 
 /**
  * This is the core for all event handlers, listening to events then passing on to the other events that need it.
@@ -66,7 +67,7 @@ object EventCore {
 
     @SubscribeEvent
     fun renderEntityListener(e: RenderLivingEvent.Pre<*>) {
-        if (e.entity.getDistanceSq(mc.player) > Math.pow((mc.gameSettings.getOptionFloatValue(GameSettings.Options.RENDER_DISTANCE) * 16).toDouble(), 2.0))
+        if (e.entity.getDistanceSq(mc.player) > (mc.gameSettings.getOptionFloatValue(GameSettings.Options.RENDER_DISTANCE) * 16).toDouble().pow(2.0))
             e.isCanceled = true
     }
 
@@ -82,7 +83,7 @@ object EventCore {
     }
 
     @SubscribeEvent
-    fun partyInvite(e: PartyEvent.Invited) {
+    fun partyInvite(e: PartyEventV2.Invited) {
         val p = e.party ?: return
         PopupYesNo("guiPartyInviteTitle".localize(), "guiPartyInviteText".localize(p.leaderInfo?.username.toString()), "") += {
             if (it == PopupYesNo.Result.YES) p.acceptInvite(e.player)

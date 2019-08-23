@@ -18,8 +18,9 @@
 package com.saomc.saoui.neo.screens.util
 
 import be.bluexin.saomclib.capabilities.getPartyCapability
-import be.bluexin.saomclib.events.PartyEvent
+import be.bluexin.saomclib.events.PartyEventV2
 import be.bluexin.saomclib.party.IParty
+import be.bluexin.saomclib.party.IPlayerInfo
 import com.saomc.saoui.api.elements.neo.NeoCategoryButton
 import com.saomc.saoui.api.elements.neo.NeoIconLabelElement
 import com.saomc.saoui.neo.screens.NeoGuiDsl
@@ -44,18 +45,18 @@ fun NeoCategoryButton.partyList(player: EntityPlayer) {
     val partyCapability = player.getPartyCapability()
     val party = partyCapability.getOrCreatePT()
 
-    party.members.filter { it != player }.forEach {
+    party.membersInfo.mapNotNull(IPlayerInfo::player).filter { it != player }.forEach {
         +partyMemberButton(party, it, player)
     }
 
-    party.invited.forEach {
+    party.invitedInfo.mapNotNull { it.key.player }.forEach {
         +partyMemberButton(party, it, player, true)
     }
 
     val ref = WeakReference(this)
     MinecraftForge.EVENT_BUS.register(object {
         @SubscribeEvent
-        fun onPartyEvent(event: PartyEvent) {
+        fun onPartyEvent(event: PartyEventV2) {
             MinecraftForge.EVENT_BUS.unregister(this)
             ref.get()?.performLater {
                 ref.get()?.reInit()
@@ -82,7 +83,7 @@ fun NeoCategoryButton.partyExtras(player: EntityPlayer) {
         party.removeMember(player)
     }
     if (partyCapability.invitedTo != null) {
-        category(IconCore.PARTY, format("sao.party.invited", partyCapability.invitedTo?.leader?.displayNameString)) {
+        category(IconCore.PARTY, format("sao.party.invited", partyCapability.invitedTo?.let { it.leaderInfo?.player }?.displayNameString)) {
             +NeoIconLabelElement(IconCore.CONFIRM, format("sao.misc.accept")).onClick { _, _ ->
                 partyCapability.invitedTo?.acceptInvite(player)
                 true
@@ -99,7 +100,7 @@ fun NeoCategoryButton.partyExtras(player: EntityPlayer) {
 fun NeoCategoryButton.partyMemberButton(party: IParty, player: EntityPlayer, ourPlayer: EntityPlayer, invited: Boolean = false): NeoCategoryButton =
         NeoCategoryButton(NeoIconLabelElement(IconCore.FRIEND, if (invited) format("sao.party.player_invited", player.displayNameString) else player.displayNameString), this) {
             +NeoIconLabelElement(IconCore.HELP, format("sao.element.inspect"))
-            if (party.leader == ourPlayer) {
+            if (party.leaderInfo?.player == ourPlayer) {
                 +NeoIconLabelElement(IconCore.CANCEL, format("sao.party.${if (invited) "cancel" else "kick"}")).onClick { _, _ ->
                     if (invited) party.cancel(player)
                     else party.removeMember(player)

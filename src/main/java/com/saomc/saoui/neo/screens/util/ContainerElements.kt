@@ -23,7 +23,9 @@ import com.saomc.saoui.api.elements.neo.NeoIconLabelElement
 import com.saomc.saoui.api.items.IItemFilter
 import com.saomc.saoui.api.screens.IIcon
 import com.saomc.saoui.events.EventCore.mc
-import com.saomc.saoui.neo.screens.*
+import com.saomc.saoui.neo.screens.MouseButton
+import com.saomc.saoui.neo.screens.NeoGui
+import com.saomc.saoui.neo.screens.NeoGuiDsl
 import com.saomc.saoui.util.IconCore
 import com.teamwizardry.librarianlib.features.kotlin.get
 import com.teamwizardry.librarianlib.features.kotlin.isNotEmpty
@@ -42,6 +44,11 @@ import net.minecraft.inventory.Slot
 import net.minecraft.item.*
 import net.minecraft.util.ResourceLocation
 import net.minecraftforge.fml.common.registry.ForgeRegistries
+import kotlin.sequences.Sequence
+import kotlin.sequences.any
+import kotlin.sequences.filter
+import kotlin.sequences.maxBy
+import kotlin.sequences.toList
 
 
 @NeoGuiDsl

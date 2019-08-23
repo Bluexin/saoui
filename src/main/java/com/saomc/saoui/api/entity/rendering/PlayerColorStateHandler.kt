@@ -31,13 +31,9 @@ import java.lang.ref.WeakReference
  */
 class PlayerColorStateHandler(thePlayer: EntityPlayer) : IColorStateHandler {
 
-    private val thePlayer: WeakReference<EntityPlayer>
+    private val thePlayer: WeakReference<EntityPlayer> = WeakReference(thePlayer)
     private var ticksForRedemption: Long = 0
     private var currentState = INNOCENT
-
-    init {
-        this.thePlayer = WeakReference(thePlayer)
-    }
 
     /**
      * @return the color state the entity should be showing.
@@ -117,7 +113,7 @@ class PlayerColorStateHandler(thePlayer: EntityPlayer) : IColorStateHandler {
     override fun load(tag: NBTTagCompound) {
         val atag = tag.getCompoundTag(KEY)
         this.ticksForRedemption = atag.getLong("ticksForRedemption")
-        this.currentState = ColorState.values()[atag.getInteger("state")]
+        this.currentState = values()[atag.getInteger("state")]
     }
 
     companion object {
@@ -140,6 +136,6 @@ class PlayerColorStateHandler(thePlayer: EntityPlayer) : IColorStateHandler {
          * player A (killer) hits player B (innocent)
          * player A's status doesn't change
          */
-        private val TICKS_PER_STATE: Long = 12000
+        private const val TICKS_PER_STATE: Long = 12000
     }
 }

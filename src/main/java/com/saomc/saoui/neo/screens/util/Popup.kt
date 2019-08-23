@@ -15,13 +15,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.saomc.saoui.neo.screens
+package com.saomc.saoui.neo.screens.util
 
 import com.saomc.saoui.GLCore
 import com.saomc.saoui.GLCore.glTexturedRectV2
 import com.saomc.saoui.SAOCore
 import com.saomc.saoui.api.elements.neo.NeoIconElement
 import com.saomc.saoui.api.elements.neo.basicAnimation
+import com.saomc.saoui.neo.screens.ItemIcon
+import com.saomc.saoui.neo.screens.NeoGui
+import com.saomc.saoui.neo.screens.unaryPlus
 import com.saomc.saoui.util.ColorIntent
 import com.saomc.saoui.util.ColorUtil
 import com.saomc.saoui.util.IconCore
@@ -81,7 +84,7 @@ open class Popup<T : Any>(var title: String, var text: List<String>, var footer:
                 from = Vec2d.ZERO
                 easing = object : Easing() {
                     override fun invoke(progress: Float): Float {
-                        val t = Easing.easeInQuint(progress)
+                        val t = easeInQuint(progress)
                         return if (t < 0.2f) t * 4 + 0.2f
                         else 1f
                     }
@@ -140,7 +143,7 @@ open class Popup<T : Any>(var title: String, var text: List<String>, var footer:
         glTexturedRectV2(-w / 2.0, -h / 2.0 + step1 + shadows + step3 + shadows, width = w, height = step5, srcX = 0.0, srcY = 160.0, srcWidth = 256.0, srcHeight = 96.0) // Button bar
 
         if (alpha > 0.03f) GLCore.glString(title, -GLCore.glStringWidth(title) / 2, (-h / 2.0 + step1 / 2).toInt(), ColorUtil.DEFAULT_BOX_FONT_COLOR.multiplyAlpha(alpha), centered = true)
-        (0 until text.size).forEach {
+        (text.indices).forEach {
             if (alpha > 0.56f) GLCore.glString(text[it], -GLCore.glStringWidth(text[it]) / 2, (-h / 2.0 + step1 + shadows + step3 / (text.size) * (it + 0.5)).toInt(), ColorUtil.DEFAULT_FONT_COLOR.multiplyAlpha((alpha - 0.5f) / 0.5f), centered = true)
         }
         if (alpha > 0.03f) GLCore.glString(footer, -GLCore.glStringWidth(footer) / 2, (-h / 2.0 + step1 + shadows + step3 + (step5 / 2)).toInt(), ColorUtil.DEFAULT_BOX_FONT_COLOR.multiplyAlpha(alpha), centered = true)
@@ -264,7 +267,7 @@ class PopupItem(title: String, text: List<String>, footer: String) : Popup<Popup
  *
  * TODO find better solution or allow user input
  */
-class PopupHotbarSelection(title: String, text: List<String>, footer: String) : Popup<PopupHotbarSelection.Result>(title, text, footer, PopupHotbarSelection.getHotbarList()) {
+class PopupHotbarSelection(title: String, text: List<String>, footer: String) : Popup<PopupHotbarSelection.Result>(title, text, footer, getHotbarList()) {
 
 
     constructor(title: String, text: String, footer: String) : this(title, listOf(text), footer)
@@ -288,17 +291,16 @@ class PopupHotbarSelection(title: String, text: List<String>, footer: String) : 
 
     companion object {
 
-        fun getHotbarList():Map<NeoIconElement, PopupHotbarSelection.Result>{
-            val map = linkedMapOf<NeoIconElement, PopupHotbarSelection.Result>()
+        fun getHotbarList():Map<NeoIconElement, Result>{
+            val map = linkedMapOf<NeoIconElement, Result>()
             val inventory = Minecraft.getMinecraft().player.inventoryContainer
             for (i in 36..44){
                 val stack = inventory.getSlot(i).stack
-                map.put(NeoIconElement(icon = ItemIcon{stack})
+                map[NeoIconElement(icon = ItemIcon { stack })
                         .setBgColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
                         .setBgColor(ColorIntent.HOVERED, ColorUtil.HOVER_COLOR)
                         .setFontColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
-                        .setFontColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR),
-                        Result.values()[i - 36])
+                        .setFontColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)] = Result.values()[i - 36]
             }
             return map
         }
