@@ -15,13 +15,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.saomc.saoui.neo.screens
+package com.saomc.saoui.neo.screens.util
 
 import be.bluexin.saomclib.capabilities.getPartyCapability
 import be.bluexin.saomclib.events.PartyEvent
 import be.bluexin.saomclib.party.IParty
 import com.saomc.saoui.api.elements.neo.NeoCategoryButton
 import com.saomc.saoui.api.elements.neo.NeoIconLabelElement
+import com.saomc.saoui.neo.screens.NeoGuiDsl
 import com.saomc.saoui.util.IconCore
 import net.minecraft.client.resources.I18n.format
 import net.minecraft.entity.player.EntityPlayer

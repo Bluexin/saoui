@@ -64,7 +64,7 @@ interface ISkill {
      *
      * @return whether this skill should be listed on the "Skills" ring
      */
-    open fun shouldShowInRing(): Boolean {
+    fun shouldShowInRing(): Boolean {
         return true
     }
 

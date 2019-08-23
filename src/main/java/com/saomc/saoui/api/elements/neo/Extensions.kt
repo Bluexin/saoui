@@ -17,15 +17,18 @@
 
 package com.saomc.saoui.api.elements.neo
 
+import com.saomc.saoui.api.items.IItemFilter
 import com.saomc.saoui.api.screens.IIcon
 import com.saomc.saoui.config.OptionCore
 import com.saomc.saoui.neo.screens.MouseButton
 import com.saomc.saoui.neo.screens.NeoGuiDsl
 import com.saomc.saoui.neo.screens.unaryPlus
+import com.saomc.saoui.neo.screens.util.itemList
 import com.saomc.saoui.util.IconCore
 import com.teamwizardry.librarianlib.features.animator.Easing
 import com.teamwizardry.librarianlib.features.gui.component.supporting.delegate
 import com.teamwizardry.librarianlib.features.helpers.vec
+import com.teamwizardry.librarianlib.features.kotlin.Minecraft
 import com.teamwizardry.librarianlib.features.math.Vec2d
 import net.minecraft.entity.player.EntityPlayer
 import java.lang.ref.WeakReference
@@ -192,11 +195,23 @@ fun INeoParent.optionButton(option: OptionCore): NeoIconLabelElement {
     return but
 }
 
+
 fun INeoParent.optionCategory(option: OptionCore): NeoCategoryButton {
     val cat = NeoCategoryButton(NeoIconLabelElement(IconCore.OPTION, option.displayName))
     option.subOptions.forEach {
         cat += if (it.isCategory) optionCategory(it)
         else optionButton(it)
+    }
+    cat.parent = this
+    return cat
+}
+
+fun INeoParent.itemCategory(filter: IItemFilter): NeoCategoryButton {
+    val cat = NeoCategoryButton(NeoIconLabelElement(filter.icon, filter.displayName))
+    if (filter.subFilters.isEmpty())
+        cat.itemList(Minecraft().player.inventoryContainer, filter)
+    else filter.subFilters.forEach {
+        cat += itemCategory(it)
     }
     cat.parent = this
     return cat
