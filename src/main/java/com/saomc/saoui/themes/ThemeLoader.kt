@@ -25,8 +25,11 @@ import com.helger.css.decl.visit.DefaultCSSVisitor
 import com.helger.css.reader.CSSReader
 import com.saomc.saoui.SAOCore
 import com.saomc.saoui.api.entity.rendering.ColorState
+import com.saomc.saoui.api.themes.HudContextExtension
 import com.saomc.saoui.screens.ingame.HealthStep
 import com.saomc.saoui.themes.elements.Hud
+import com.saomc.saoui.themes.elements.ModCompatibilityElement
+import com.saomc.saoui.themes.elements.ModCompatibilityLoader
 import com.saomc.saoui.util.ColorUtil
 import net.minecraft.client.Minecraft
 import net.minecraft.util.ResourceLocation
@@ -47,6 +50,21 @@ object ThemeLoader {
     // TODO: loading reporter (amount of issues, details, missing keys, ..?)
 
     lateinit var HUD: Hud
+    val extensions: MutableMap<Pair<String, String>, HudContextExtension> = mutableMapOf()
+
+    operator fun plusAssign(extension: HudContextExtension) {
+        this[extension.key, extension.version] = extension
+    }
+
+    operator fun set(key: String, version: String, extension: HudContextExtension) {
+        val fullKey = key to version
+        if (fullKey in this.extensions) SAOCore.LOGGER.warn("Replacing extension for `$fullKey` from ${this.extensions[fullKey]!!.javaClass} to ${extension.javaClass}")
+        this.extensions[fullKey] = extension
+    }
+
+    operator fun get(key: String, version: String) = extensions[key to version]
+
+    operator fun contains(kv: Pair<String, String>) = kv in extensions
 
     @Throws(JAXBException::class)
     fun load() {
@@ -67,6 +85,18 @@ object ThemeLoader {
         HUD.setup()
 
         SAOCore.LOGGER.info("Loaded theme and set it up in " + (System.currentTimeMillis() - start) + "ms.")
+    }
+
+    fun loadExtension(loader: ModCompatibilityLoader) : ModCompatibilityElement {
+        val context = JAXBContext.newInstance(ModCompatibilityElement::class.java)
+        val um = context.createUnmarshaller()
+
+        return Minecraft.getMinecraft().resourceManager.getResource(ResourceLocation(loader.loadFrom)).inputStream.use {
+            val e = um.unmarshal(it) as ModCompatibilityElement
+            e.key = loader.key
+            e.version = loader.version
+            e
+        }
     }
 
     fun loadCss() {

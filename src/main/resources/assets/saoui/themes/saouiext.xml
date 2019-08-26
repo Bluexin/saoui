@@ -1,0 +1,9 @@
+<bl:elementGroup xmlns:bl="http://www.bluexin.be/com/saomc/saoui/hud-schema" name="saouiext v0.1">
+<children>
+    <glString name="someValue string">
+        <x cache="STATIC">5</x>
+        <y cache="STATIC">8</y>
+        <text>"someValue: " + ext.someValue</text>
+    </glString>
+</children>
+</bl:elementGroup>

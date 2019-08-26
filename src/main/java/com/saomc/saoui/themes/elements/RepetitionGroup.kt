@@ -31,11 +31,10 @@ open class RepetitionGroup : ElementGroup() {
     protected var amount: CInt? = null
 
     override fun draw(ctx: IHudDrawContext) {
-        if (enabled?.invoke(ctx) == true) return
+        if (!isEnabled(ctx)) return
 
-        val m = amount?.invoke(ctx) ?: 0
-        for (i in 0 until m) {
-            ctx.setI(i)
+        repeat(amount?.invoke(ctx) ?: 0) {
+            ctx.setI(it)
             super.draw(ctx)
         }
     }

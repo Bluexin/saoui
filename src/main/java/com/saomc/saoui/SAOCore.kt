@@ -20,6 +20,7 @@ package com.saomc.saoui
 import be.bluexin.saomclib.capabilities.CapabilitiesHandler
 import com.saomc.saoui.api.entity.rendering.RenderCapability
 import com.saomc.saoui.api.events.EventInitStatsProvider
+import com.saomc.saoui.api.themes.HudContextExtension
 import com.saomc.saoui.config.ConfigHandler
 import com.saomc.saoui.events.EventCore
 import com.saomc.saoui.neo.screens.NeoGui
@@ -71,6 +72,13 @@ object SAOCore {
             } catch (e: JAXBException) {
                 e.printStackTrace()
             }
+        }
+
+        ThemeLoader += object : HudContextExtension {
+            override val key = "saouiext"
+            override val version = "0.1"
+
+            fun someValue() = 12
         }
     }
 

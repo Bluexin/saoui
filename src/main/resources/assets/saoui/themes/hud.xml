@@ -265,6 +265,7 @@
                             </glRectangle>
                         </children>
                     </elementGroup>
+                    <modCompatibilityElement key="saouiext" version="0.1" loadFrom="saoui:themes/saouiext.xml"/>
                 </children>
             </value>
         </entry>

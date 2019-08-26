@@ -65,6 +65,7 @@
     <xs:element name="glHotbarItem" substitutionGroup="element" type="GLHotbarItem"/>
     <xs:element name="elementGroup" substitutionGroup="element" type="ElementGroup"/>
     <xs:element name="repetitionGroup" substitutionGroup="element" type="RepetitionGroup"/>
+    <xs:element name="modCompatibilityElement" substitutionGroup="element" type="ModCompatibilityElement"/>
     <xs:element name="rawElement" substitutionGroup="element" type="RawElement"/>
 
     <xs:complexType name="Element" abstract="true">
@@ -352,6 +353,17 @@
                 </xs:all>
             </xs:extension>
         </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="ModCompatibilityElement">
+        <xs:annotation>
+            <xs:documentation>
+                WIP
+            </xs:documentation>
+        </xs:annotation>
+        <xs:attribute name="key" type="xs:string"/>
+        <xs:attribute name="version" type="xs:string"/>
+        <xs:attribute name="loadFrom" type="xs:string"/>
     </xs:complexType>
 
     <xs:complexType name="RawElement">

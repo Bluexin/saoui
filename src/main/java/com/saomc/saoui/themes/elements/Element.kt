@@ -94,5 +94,7 @@ abstract class Element {
         } else true
     }
 
+    open fun isEnabled(ctx: IHudDrawContext) = enabled?.invoke(ctx) != false
+
     override fun toString() = "$name ($javaClass)"
 }

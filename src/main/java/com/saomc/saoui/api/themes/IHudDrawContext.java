@@ -23,6 +23,8 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.entity.player.EntityPlayer;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 
 /**
@@ -243,7 +245,7 @@ public interface IHudDrawContext {
      * @param i index to check
      * @return status effect at given index
      */
-    default StatusEffects statusEffect(int i) {
+    default StatusEffects statusEffect(final int i) {
         return statusEffects().get(i);
     }
 
@@ -297,4 +299,33 @@ public interface IHudDrawContext {
      * @return armor value
      */
     int armor();
+
+    /**
+     * @return current active mod extension, if any
+     */
+    @Nullable HudContextExtension ext();
+
+    /**
+     * @param key of the mod extension to look for
+     * @param version version of the extension
+     * @return mod extension, if any
+     */
+    @Nullable HudContextExtension ext(@Nonnull final String key, @Nonnull final String version);
+
+    /**
+     * Set the current active mod extension by key
+     *
+     * @param key mod extension to set by key
+     * @param version version of the extension
+     * @return previously set active extension, if any
+     */
+    @Nullable HudContextExtension setExt(@Nullable final String key, @Nonnull final String version);
+
+    /**
+     * Set the current active mod extension
+     *
+     * @param ext mod extension to set
+     * @return previously set active extension, if any
+     */
+    @Nullable HudContextExtension setExt(@Nullable final HudContextExtension ext);
 }

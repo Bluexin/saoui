@@ -55,11 +55,6 @@ enum class HudPartType {
     JUMP_BAR,
 
     /**
-     * Key for the HudPart rendering the am2 bars (not in use!).
-     */
-    AM2BARS,
-
-    /**
      * Key for the HudPart rendering the party.
      */
     PARTY,

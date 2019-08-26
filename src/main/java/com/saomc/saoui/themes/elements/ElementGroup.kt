@@ -29,12 +29,12 @@ import javax.xml.bind.annotation.*
  * @author Bluexin
  */
 @XmlRootElement
-@XmlSeeAlso(RepetitionGroup::class)
+@XmlSeeAlso(RepetitionGroup::class, ModCompatibilityElement::class)
 open class ElementGroup : Element(), ElementParent {
 
     @XmlElementWrapper(name = "children")
     @XmlElementRef(type = Element::class)
-    protected lateinit var elements: List<Element>
+    protected lateinit var elements: List<Element?>
     protected var rl: ResourceLocation? = null
     private val texture: String? = null
 
@@ -46,6 +46,9 @@ open class ElementGroup : Element(), ElementParent {
     protected var cachedZ = 0.0
     @XmlTransient
     protected var latestTicks = -1.0F
+
+    @delegate:XmlTransient
+    val elementsSequence by lazy { elements.asSequence().filterNotNull() }
 
     /**
      * Returns true if the element should update it's position. Can be extremely useful in huge groups
@@ -73,17 +76,17 @@ open class ElementGroup : Element(), ElementParent {
         GLCore.glBlend(true)
         GLCore.color(1f, 1f, 1f, 1f)
 
-        if (enabled?.invoke(ctx) == false) return
+        if (!isEnabled(ctx)) return
         if (this.rl != null) GLCore.glBindTexture(this.rl!!)
 
-        this.elements.forEach { it.draw(ctx) }
+        this.elementsSequence.forEach { it.draw(ctx) }
     }
 
     override fun setup(parent: ElementParent): Boolean {
         if (this.texture != null) this.rl = ResourceLocation(this.texture)
         val res = super.setup(parent)
         var anonymous = 0
-        this.elements.forEach { if (it.name == Element.DEFAULT_NAME) ++anonymous; it.setup(this) }
+        this.elementsSequence.forEach { if (it.name == Element.DEFAULT_NAME) ++anonymous; it.setup(this) }
         if (anonymous > 0) SAOCore.LOGGER.info("Set up $anonymous anonymous elements in $name.")
         return res
     }

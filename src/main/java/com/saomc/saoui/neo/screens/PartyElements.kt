@@ -18,7 +18,7 @@
 package com.saomc.saoui.neo.screens
 
 import be.bluexin.saomclib.capabilities.getPartyCapability
-import be.bluexin.saomclib.events.PartyEvent
+import be.bluexin.saomclib.events.PartyEventV2
 import be.bluexin.saomclib.party.IParty
 import com.saomc.saoui.api.elements.neo.NeoCategoryButton
 import com.saomc.saoui.api.elements.neo.NeoIconLabelElement
@@ -54,7 +54,7 @@ fun NeoCategoryButton.partyList(player: EntityPlayer) {
     val ref = WeakReference(this)
     MinecraftForge.EVENT_BUS.register(object {
         @SubscribeEvent
-        fun onPartyEvent(event: PartyEvent) {
+        fun onPartyEvent(event: PartyEventV2) {
             MinecraftForge.EVENT_BUS.unregister(this)
             ref.get()?.performLater {
                 ref.get()?.reInit()

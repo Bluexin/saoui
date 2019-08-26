@@ -19,10 +19,12 @@ package com.saomc.saoui.themes.util;
 
 import be.bluexin.saomclib.party.IPlayerInfo;
 import com.saomc.saoui.api.info.IPlayerStatsProvider;
+import com.saomc.saoui.api.themes.HudContextExtension;
 import com.saomc.saoui.api.themes.IHudDrawContext;
 import com.saomc.saoui.effects.StatusEffects;
 import com.saomc.saoui.screens.ingame.HealthStep;
 import com.saomc.saoui.social.StaticPlayerHelper;
+import com.saomc.saoui.themes.ThemeLoader;
 import com.saomc.saoui.util.PlayerStats;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
@@ -36,7 +38,10 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 
 /**
@@ -65,6 +70,7 @@ public class HudDrawContext implements IHudDrawContext {
     private int i;
     private List<IPlayerInfo> pt;
     private List<StatusEffects> effects;
+    private @Nullable HudContextExtension activeExtension;
 
     public HudDrawContext(EntityPlayer player, Minecraft mc, RenderItem itemRenderer) {
         this.username = player.getDisplayNameString();
@@ -316,5 +322,45 @@ public class HudDrawContext implements IHudDrawContext {
 
     private boolean validatePtIndex(int index) {
         return index >= 0 && index < ptSize();
+    }
+
+    @Nullable
+    @Override
+    public HudContextExtension ext() {
+        return activeExtension;
+    }
+
+    @Nullable
+    @Override
+    public HudContextExtension ext(@NotNull final String key, @Nonnull final String version) {
+        return ThemeLoader.INSTANCE.get(key, version);
+    }
+
+    @Nullable
+    @Override
+    public HudContextExtension setExt(@Nullable final String key, @Nonnull final String version) {
+        final HudContextExtension old = this.activeExtension;
+        if (key == null) {
+            this.activeExtension = null;
+            return old;
+        }
+        final HudContextExtension _new = ThemeLoader.INSTANCE.get(key, version);
+        if (_new != null) {
+            this.activeExtension = _new;
+        }
+        return old;
+    }
+
+    @Nullable
+    @Override
+    public HudContextExtension setExt(@Nullable final HudContextExtension ext) {
+        final HudContextExtension old = this.activeExtension;
+        if (ext == null) {
+            this.activeExtension = null;
+            return old;
+        } else {
+            this.activeExtension = ext;
+            return old;
+        }
     }
 }
