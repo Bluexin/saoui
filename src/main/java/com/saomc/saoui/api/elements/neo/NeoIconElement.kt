@@ -103,16 +103,22 @@ open class NeoIconElement(val icon: IIcon, override var pos: Vec2d = Vec2d.ZERO,
     }
 
     protected open fun drawChildren(mouse: Vec2d, partialTicks: Float) {
-        val c = validElementsSequence.take(7).count()
-        val centering = ((c + c % 2 - 2) * childrenYSeparator) / 2.0
-        GLCore.translate(pos.x + childrenXOffset, pos.y + childrenYOffset - centering, 0.0)
-        var nmouse = mouse - pos - vec(childrenXOffset, childrenYOffset - centering)
-        childrenOrderedForRendering().forEachIndexed { i, it ->
-            if (c == 7 && (i == 0 || i == 6)) it.opacity /= 2
-            it.draw(nmouse, partialTicks)
-            GLCore.translate(childrenXSeparator.toDouble(), childrenYSeparator.toDouble(), 0.0)
-            nmouse -= vec(childrenXSeparator, childrenYSeparator)
-            if (c == 7 && (i == 0 || i == 6)) it.opacity *= 2
+        if (visibleElementsSequence.count() > 0) {
+            val c = validElementsSequence.take(7).count()
+            val centering = ((c + c % 2 - 2) * childrenYSeparator) / 2.0
+            GLCore.translate(pos.x + childrenXOffset, pos.y + childrenYOffset - centering, 0.0)
+            var nmouse = mouse - pos - vec(childrenXOffset, childrenYOffset - centering)
+            childrenOrderedForRendering().forEachIndexed { i, it ->
+                if (c == 7 && (i == 0 || i == 6)) it.opacity /= 2
+                it.draw(nmouse, partialTicks)
+                GLCore.translate(childrenXSeparator.toDouble(), childrenYSeparator.toDouble(), 0.0)
+                nmouse -= vec(childrenXSeparator, childrenYSeparator)
+                if (c == 7 && (i == 0 || i == 6)) it.opacity *= 2
+            }
+            nmouse = mouse - pos - vec(childrenXOffset, childrenYOffset - centering)
+            otherElementsSequence.forEach {
+                it.draw(nmouse, partialTicks)
+            }
         }
     }
 
@@ -150,7 +156,7 @@ open class NeoIconElement(val icon: IIcon, override var pos: Vec2d = Vec2d.ZERO,
         return if (mouseButton == MouseButton.LEFT && pos in this) onClickBody(pos, mouseButton)
         else {
             val children = childrenOrderedForRendering() // childrenOrderedForAppearing
-            val c = validElementsSequence.take(7).count()
+            val c = validElementsSequence .take(7).count()
 //            val c = children.count()
             var npos = pos - this.pos - vec(childrenXOffset, childrenYOffset - (c + c % 2 - 2) * childrenYSeparator / 2.0)
             var ok = false

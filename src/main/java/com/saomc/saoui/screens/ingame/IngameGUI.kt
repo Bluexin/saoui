@@ -185,7 +185,7 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
         if (pt?.isParty == true)
             members = pt.membersInfo.mapNotNull(IPlayerInfo::player).filter { it != mc.player }.toMutableList()
         else
-            for (i in 1..ConfigHandler.debugFakePT) members.add(mc.player)
+            for (i in 0 until ConfigHandler.debugFakePT) members.add(mc.player)
 
         context.setPt(members)
         ThemeLoader.HUD.draw(HudPartType.PARTY, context)

@@ -19,10 +19,10 @@ package com.saomc.saoui.events
 
 import com.saomc.saoui.SoundCore
 import com.saomc.saoui.config.OptionCore
-import com.saomc.saoui.neo.screens.DeathGui
 import com.saomc.saoui.neo.screens.NeoGui
 import com.saomc.saoui.neo.screens.NeoIngameMenu
 import com.saomc.saoui.renders.StaticRenderer
+import com.saomc.saoui.screens.DeathGui
 import com.saomc.saoui.screens.menu.StartupGUI
 import net.minecraft.client.gui.GuiGameOver
 import net.minecraft.client.gui.GuiIngameMenu

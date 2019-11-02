@@ -78,10 +78,12 @@ open class NeoIconLabelElement(icon: IIcon, open val label: String = "", var wid
         set(value) {
             if (value && !super.visible) {
                 opacity = 0f
-                +basicAnimation(this, "opacity") {
-                    from = 0f
-                    to = 1f
-                    duration = 4f
+                if (listed) {
+                    +basicAnimation(this, "opacity") {
+                        from = 0f
+                        to = 1f
+                        duration = 4f
+                    }
                 }
             }
             super.visible = value

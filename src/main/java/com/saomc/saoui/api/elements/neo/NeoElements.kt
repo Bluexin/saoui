@@ -75,6 +75,9 @@ interface NeoElement : INeoParent {
 
     operator fun contains(pos: Vec2d) = pos in boundingBox
 
+    val listed
+        get() = true
+
     val visible
         get() = true
 
@@ -111,7 +114,9 @@ abstract class NeoParent : NeoElement {
 
     open val elements = mutableListOf<NeoElement>()
 
-    open val elementsSequence by lazy { elements.asSequence() }
+    open val elementsSequence by lazy { elements.asSequence().filter(NeoElement::listed) }
+
+    open val otherElementsSequence by lazy { elements.asSequence().filter { !it.listed }  }
 
     open val validElementsSequence by lazy { elementsSequence.filter(NeoElement::valid) }
 
@@ -141,6 +146,7 @@ abstract class NeoParent : NeoElement {
             }
         } else element.idealBoundingBox = element.idealBoundingBox
         elements += element
+
         element.parent = this
     }
 

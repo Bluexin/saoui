@@ -3,12 +3,11 @@ package com.saomc.saoui.api.elements.neo
 import com.saomc.saoui.GLCore
 import com.saomc.saoui.SAOCore
 import com.saomc.saoui.config.OptionCore
+import com.saomc.saoui.neo.screens.NeoGui
 import com.saomc.saoui.resources.StringNames
 import com.saomc.saoui.util.ColorUtil
 import com.saomc.saoui.util.IconCore
 import com.saomc.saoui.util.PlayerStats
-import com.teamwizardry.librarianlib.features.helpers.vec
-import com.teamwizardry.librarianlib.features.kotlin.plus
 import com.teamwizardry.librarianlib.features.math.BoundingBox2D
 import com.teamwizardry.librarianlib.features.math.Vec2d
 import net.minecraft.client.gui.inventory.GuiInventory
@@ -20,16 +19,26 @@ import kotlin.math.min
 import kotlin.math.roundToInt
 
 
-open class NeoProfileElement(var player: EntityPlayer, override var pos: Vec2d = vec(-189, -74), override var destination: Vec2d = pos) : NeoIconElement(IconCore.PROFILE) {
+open class NeoProfileElement(var player: EntityPlayer, override var parent: INeoParent?) : NeoIconElement(IconCore.PROFILE) {
+
+    override val listed: Boolean
+        get() = false
 
     val width = 170
     val height = 240
 
+    override var pos: Vec2d= Vec2d(-width - 20.0, -(height / 2.0) - 13)
+
+    override var destination: Vec2d = Vec2d(-width - 20.0, -(height / 2.0) - 13)
+
     override val boundingBox: BoundingBox2D
         get() = BoundingBox2D(pos , pos)
 
-    val actualBoundingBox: BoundingBox2D
-        get() = BoundingBox2D(pos , pos + vec(width, height))
+    override val childrenYOffset: Int
+        get() = 0
+    override val childrenYSeparator: Int
+        get() = 0
+
 
     private val rl = ResourceLocation(SAOCore.MODID, "textures/menu/parts/profilebg.png")
 
@@ -104,6 +113,10 @@ open class NeoProfileElement(var player: EntityPlayer, override var pos: Vec2d =
         GLCore.popMatrix()
 
 
+    }
+
+    override fun move(delta: Vec2d) {
+        NeoGui.animator.removeAnimationsFor(this)
     }
 
 }

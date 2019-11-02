@@ -47,7 +47,6 @@ class NeoIngameMenu : NeoGui<Unit>(Vec2d.ZERO) {
         elements.clear()
 
         tlCategory(IconCore.PROFILE) {
-            profile(mc.player)
             category(IconCore.EQUIPMENT, format("sao.element.equipment")) {
                 category(IconCore.ARMOR, format("sao.element.armor")) {
                     itemList(mc.player.inventoryContainer, BaseFilters.EQUIPMENT, 36..39)
@@ -108,6 +107,7 @@ class NeoIngameMenu : NeoGui<Unit>(Vec2d.ZERO) {
                     }
                 }
             }
+            profile(mc.player)
         }
         tlCategory(IconCore.SOCIAL) {
             category(IconCore.GUILD, format("sao.element.guild"))

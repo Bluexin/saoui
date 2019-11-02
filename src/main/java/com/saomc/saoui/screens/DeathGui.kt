@@ -1,4 +1,4 @@
-package com.saomc.saoui.neo.screens
+package com.saomc.saoui.screens
 
 import com.saomc.saoui.GLCore
 import com.saomc.saoui.SAOCore
@@ -46,9 +46,10 @@ class DeathGui : GuiScreen() {
             mc.loadWorld(null)
             mc.displayGuiScreen(GuiMainMenu())
         } else {
+            mc.player.preparePlayerToSpawn()
             mc.player.respawnPlayer()
             // ****** Prevents GUI attempting to open Death Screen twice ******
-            mc.player.setPlayerSPHealth(mc.player.maxHealth)
+            //mc.player.setPlayerSPHealth(mc.player.maxHealth)
             mc.displayGuiScreen(null)
         }
     }

@@ -51,6 +51,7 @@ class NeoCategoryButton(private val delegate: NeoIconElement, parent: INeoParent
     override val childrenYOffset by delegate::childrenYOffset.delegate
     override val childrenXSeparator by delegate::childrenXSeparator.delegate
     override val childrenYSeparator by delegate::childrenYSeparator.delegate
+    override val listed by delegate::listed.delegate
     override var visible by delegate::visible.delegate
     override var selected by delegate::selected.delegate
     override var disabled by delegate::disabled.delegate
@@ -162,7 +163,7 @@ class NeoCategoryButton(private val delegate: NeoIconElement, parent: INeoParent
 
     @NeoGuiDsl
     fun profile(player: EntityPlayer, body: (NeoCategoryButton.() -> Unit)? = null): NeoCategoryButton{
-        val cat = NeoCategoryButton(NeoProfileElement(player), this, body)
+        val cat = NeoCategoryButton(NeoProfileElement(player, this), this, body)
         +cat
         return cat
     }
