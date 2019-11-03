@@ -12,7 +12,7 @@ cache:
     - .gradle
     - gradle
 jdk:
-  - oraclejdk8
+  - openjdk8
 after_success:
   - if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then ./gradlew publish; fi
   - wget https://raw.githubusercontent.com/DiscordHooks/travis-ci-discord-webhook/master/send.sh
