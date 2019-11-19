@@ -17,8 +17,8 @@
 
 package com.saomc.saoui.screens.ingame
 
-import be.bluexin.saomclib.capabilities.PartyCapability
-import be.bluexin.saomclib.party.IPlayerInfo
+import be.bluexin.saomclib.capabilities.getPartyCapability
+import be.bluexin.saomclib.party.PlayerInfo
 import be.bluexin.saomclib.profile
 import com.saomc.saoui.GLCore
 import com.saomc.saoui.config.ConfigHandler
@@ -30,6 +30,7 @@ import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.Gui
 import net.minecraft.client.gui.GuiOverlayDebug
 import net.minecraft.client.gui.ScaledResolution
+import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.renderer.OpenGlHelper
 import net.minecraft.client.resources.I18n
 import net.minecraft.entity.player.EntityPlayer
@@ -173,23 +174,25 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
     }
 
     private fun renderParty() {
-        val pt = mc.player.getCapability(PartyCapability.CAP_INSTANCE, null)!!.party
+        val pt = mc.player.getPartyCapability().partyData
         if ((pt == null || !pt.isParty) && ConfigHandler.debugFakePT == 0) return
 
         mc.profiler.startSection("party")
 
+        GlStateManager.disableLighting()
         GLCore.glAlphaTest(true)
         GLCore.glBlend(true)
 
-        var members: MutableList<EntityPlayer> = mutableListOf()
+        var members: MutableList<PlayerInfo> = mutableListOf()
         if (pt?.isParty == true)
-            members = pt.membersInfo.mapNotNull(IPlayerInfo::player).filter { it != mc.player }.toMutableList()
+            members = pt.membersInfo.filter { !it.equals(mc.player) }.toMutableList()
         else
-            for (i in 0 until ConfigHandler.debugFakePT) members.add(mc.player)
+            for (i in 0 until ConfigHandler.debugFakePT) members.add(PlayerInfo(mc.player))
 
         context.setPt(members)
         ThemeLoader.HUD.draw(HudPartType.PARTY, context)
 
+        GlStateManager.disableLighting()
         mc.profiler.endSection()
     }
 

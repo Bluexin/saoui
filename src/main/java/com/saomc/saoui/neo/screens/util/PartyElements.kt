@@ -18,9 +18,12 @@
 package com.saomc.saoui.neo.screens.util
 
 import be.bluexin.saomclib.capabilities.getPartyCapability
-import be.bluexin.saomclib.events.PartyEventV2
-import be.bluexin.saomclib.party.IParty
-import be.bluexin.saomclib.party.IPlayerInfo
+import be.bluexin.saomclib.events.PartyEvent3
+import be.bluexin.saomclib.packets.party.PartyType
+import be.bluexin.saomclib.packets.party.Type
+import be.bluexin.saomclib.packets.party.updateServer
+import be.bluexin.saomclib.party.IPartyData
+import be.bluexin.saomclib.party.PlayerInfo
 import com.saomc.saoui.api.elements.neo.NeoCategoryButton
 import com.saomc.saoui.api.elements.neo.NeoIconLabelElement
 import com.saomc.saoui.neo.screens.NeoGuiDsl
@@ -43,20 +46,22 @@ fun NeoCategoryButton.partyMenu(player: EntityPlayer) {
 @NeoGuiDsl
 fun NeoCategoryButton.partyList(player: EntityPlayer) {
     val partyCapability = player.getPartyCapability()
-    val party = partyCapability.getOrCreatePT()
+    val party = partyCapability.partyData
 
-    party.membersInfo.mapNotNull(IPlayerInfo::player).filter { it != player }.forEach {
-        +partyMemberButton(party, it, player)
-    }
+    if (party != null) {
+        party.membersInfo.mapNotNull(PlayerInfo::player).filter { it != player }.forEach {
+            +partyMemberButton(party, it, player)
+        }
 
-    party.invitedInfo.mapNotNull { it.key.player }.forEach {
-        +partyMemberButton(party, it, player, true)
+        party.invitedInfo.mapNotNull { it.key.player }.forEach {
+            +partyMemberButton(party, it, player, true)
+        }
     }
 
     val ref = WeakReference(this)
     MinecraftForge.EVENT_BUS.register(object {
         @SubscribeEvent
-        fun onPartyEvent(event: PartyEventV2) {
+        fun onPartyEvent(event: PartyEvent3) {
             MinecraftForge.EVENT_BUS.unregister(this)
             ref.get()?.performLater {
                 ref.get()?.reInit()
@@ -68,28 +73,31 @@ fun NeoCategoryButton.partyList(player: EntityPlayer) {
 @NeoGuiDsl
 fun NeoCategoryButton.partyExtras(player: EntityPlayer) {
     val partyCapability = player.getPartyCapability()
-    val party = partyCapability.getOrCreatePT()
+    val party = partyCapability.partyData
 
-    if (party.isLeader(player)) category(IconCore.PARTY, format("sao.party.invite")) {
+    if ((party != null && party.isLeader(player)) || party == null) category(IconCore.PARTY, format("sao.party.invite")) {
         @Suppress("UNCHECKED_CAST")
-        (player.world.playerEntities as List<EntityPlayer>).asSequence().filter { it != player && it !is FakePlayer && !party.isMember(it) }.forEach { player ->
+        (player.world.playerEntities as List<EntityPlayer>).asSequence().filter { it != player && it !is FakePlayer && party?.isMember(it) != true }.forEach { player ->
             +NeoIconLabelElement(IconCore.INVITE, player.displayNameString).onClick { _, _ ->
-                party.invite(player)
+                Type.INVITE.updateServer(player, PartyType.MAIN)
                 true
             }
         }
     }
-    if (party.isParty) +NeoIconLabelElement(IconCore.CANCEL, format("sao.party.leave")).onClick { _, _ ->
-        party.removeMember(player)
+    if (party != null && party.isParty) +NeoIconLabelElement(IconCore.CANCEL, format("sao.party.leave")).onClick { _, _ ->
+        Type.LEAVE.updateServer(player, PartyType.MAIN)
+        true
     }
-    if (partyCapability.invitedTo != null) {
-        category(IconCore.PARTY, format("sao.party.invited", partyCapability.invitedTo?.let { it.leaderInfo?.player }?.displayNameString)) {
+
+    val invitedTo = partyCapability.inviteData
+    if (invitedTo != null) {
+        category(IconCore.PARTY, format("sao.party.invited", invitedTo.leaderInfo.username)) {
             +NeoIconLabelElement(IconCore.CONFIRM, format("sao.misc.accept")).onClick { _, _ ->
-                partyCapability.invitedTo?.acceptInvite(player)
+                Type.ACCEPTINVITE.updateServer(player, PartyType.INVITE)
                 true
             }
             +NeoIconLabelElement(IconCore.CANCEL, format("sao.misc.decline")).onClick { _, _ ->
-                partyCapability.invitedTo?.cancel(player)
+                Type.CANCELINVITE.updateServer(player, PartyType.INVITE)
                 true
             }
         }
@@ -97,13 +105,19 @@ fun NeoCategoryButton.partyExtras(player: EntityPlayer) {
 }
 
 @NeoGuiDsl
-fun NeoCategoryButton.partyMemberButton(party: IParty, player: EntityPlayer, ourPlayer: EntityPlayer, invited: Boolean = false): NeoCategoryButton =
+fun NeoCategoryButton.partyMemberButton(party: IPartyData, player: EntityPlayer, ourPlayer: EntityPlayer, invited: Boolean = false): NeoCategoryButton =
         NeoCategoryButton(NeoIconLabelElement(IconCore.FRIEND, if (invited) format("sao.party.player_invited", player.displayNameString) else player.displayNameString), this) {
             +NeoIconLabelElement(IconCore.HELP, format("sao.element.inspect"))
-            if (party.leaderInfo?.player == ourPlayer) {
+            if (party.leaderInfo.equals(ourPlayer)) {
                 +NeoIconLabelElement(IconCore.CANCEL, format("sao.party.${if (invited) "cancel" else "kick"}")).onClick { _, _ ->
-                    if (invited) party.cancel(player)
-                    else party.removeMember(player)
+                    if (invited) {
+                        Type.CANCELINVITE.updateServer(player, PartyType.MAIN)
+                        true
+                    }
+                    else {
+                        Type.KICK.updateServer(player, PartyType.MAIN)
+                        true
+                    }
                 }
             }
         }

@@ -17,8 +17,6 @@
 
 package com.saomc.saoui.social
 
-import be.bluexin.saomclib.capabilities.getPartyCapability
-import be.bluexin.saomclib.party.IParty
 import com.saomc.saoui.config.OptionCore
 import net.minecraft.client.Minecraft
 import net.minecraft.entity.Entity
@@ -90,40 +88,44 @@ object StaticPlayerHelper {
         return name
     }
 
-    fun getHealth(mc: Minecraft, entity: Entity, time: Float): Float { // FIXME: this seems to break if called many times in a single render frame
+    fun getHealth(mc: Minecraft, entity: Entity?, time: Float): Float { // FIXME: this seems to break if called many times in a single render frame
         if (OptionCore.SMOOTH_HEALTH.isEnabled) {
-            val healthReal: Float = (entity as? EntityLivingBase)?.health ?: if (entity.isDead) 0f else 1f
-            val uuid = entity.uniqueID
+            val healthReal: Float = if (entity is EntityLivingBase)
+                entity.health
+                else 0f
+            val uuid = entity?.uniqueID
 
-            if (healthSmooth.containsKey(uuid)) {
-                var healthValue: Float = healthSmooth[uuid]!!
-                if (healthValue > healthReal) {
-                    healthValue = healthReal
+            if (uuid != null) {
+                if (healthSmooth.containsKey(uuid)) {
+                    var healthValue: Float = healthSmooth[uuid]!!
+                    if (healthValue > healthReal) {
+                        healthValue = healthReal
+                        healthSmooth[uuid] = healthReal
+                    }
+
+                    if (healthReal <= 0 && entity is EntityLivingBase) {
+                        val value = (18 - entity.deathTime).toFloat() / 18
+
+                        if (value <= 0) healthSmooth.remove(uuid)
+
+                        return max(0.0f, healthValue * value)
+                    } else if ((healthValue * 10).roundToLong() != (healthReal * 10).roundToLong())
+                        healthValue += (healthReal - healthValue) * (gameTimeDelay(mc, time) * HEALTH_ANIMATION_FACTOR)
+                    else
+                        healthValue = healthReal
+
+                    healthSmooth[uuid] = healthValue
+                    return max(0.0f, healthValue)
+                } else {
                     healthSmooth[uuid] = healthReal
+                    return max(0.0f, healthReal)
                 }
-
-                if (healthReal <= 0 && entity is EntityLivingBase) {
-                    val value = (18 - entity.deathTime).toFloat() / 18
-
-                    if (value <= 0) healthSmooth.remove(uuid)
-
-                    return max(0.0f, healthValue * value)
-                } else if ((healthValue * 10).roundToLong() != (healthReal * 10).roundToLong())
-                    healthValue += (healthReal - healthValue) * (gameTimeDelay(mc, time) * HEALTH_ANIMATION_FACTOR)
-                else
-                    healthValue = healthReal
-
-                healthSmooth[uuid] = healthValue
-                return max(0.0f, healthValue)
-            } else {
-                healthSmooth[uuid] = healthReal
-                return max(0.0f, healthReal)
-            }
+            } else return healthReal
         } else
-            return if (entity is EntityLivingBase) max(0.0f, entity.health) else if (entity.isDead) 0f else 1f
+            return if (entity is EntityLivingBase) max(0.0f, entity.health) else 0f
     }
 
-    fun getMaxHealth(entity: Entity): Float {
+    fun getMaxHealth(entity: Entity?): Float {
         return if (entity is EntityLivingBase) max(0.0000001f, entity.maxHealth) else 1f
     }
 
@@ -180,13 +182,5 @@ object StaticPlayerHelper {
 
     fun thePlayer(): EntityPlayer {
         return Minecraft.getMinecraft().player
-    }
-
-    fun getIParty(): IParty {
-        return Minecraft.getMinecraft().player.getPartyCapability().getOrCreatePT()
-    }
-
-    fun getIParty(player: EntityPlayer): IParty {
-        return player.getPartyCapability().getOrCreatePT()
     }
 }

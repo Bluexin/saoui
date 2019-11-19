@@ -17,6 +17,7 @@
 
 package com.saomc.saoui.themes.util;
 
+import be.bluexin.saomclib.party.PlayerInfo;
 import com.saomc.saoui.api.info.IPlayerStatsProvider;
 import com.saomc.saoui.api.themes.IHudDrawContext;
 import com.saomc.saoui.effects.StatusEffects;
@@ -62,7 +63,7 @@ public class HudDrawContext implements IHudDrawContext {
     private ScaledResolution scaledResolution;
     private float partialTicks;
     private int i;
-    private List<EntityPlayer> pt;
+    private List<PlayerInfo> pt;
     private List<StatusEffects> effects;
 
     public HudDrawContext(EntityPlayer player, Minecraft mc, RenderItem itemRenderer) {
@@ -75,7 +76,7 @@ public class HudDrawContext implements IHudDrawContext {
         this.usernameWidth = (1 + (mc.fontRenderer.getStringWidth(username) + 4) / 5.0) * 5;
     }
 
-    public void setPt(List<EntityPlayer> pt) {
+    public void setPt(List<PlayerInfo> pt) {
         this.pt = pt;
     }
 
@@ -221,17 +222,17 @@ public class HudDrawContext implements IHudDrawContext {
 
     @Override
     public String ptName(int index) {
-        return validatePtIndex(index) ? pt.get(index).getDisplayNameString() : "???";
+        return validatePtIndex(index) ? pt.get(index).getUsername() : "???";
     }
 
     @Override
     public float ptHp(int index) {
-        return validatePtIndex(index) ? StaticPlayerHelper.INSTANCE.getHealth(mc, pt.get(index), partialTicks) : 0f;
+        return validatePtIndex(index) ? StaticPlayerHelper.INSTANCE.getHealth(mc, pt.get(index).getPlayer(), partialTicks) : 0f;
     }
 
     @Override
     public float ptMaxHp(int index) {
-        return validatePtIndex(index) ? StaticPlayerHelper.INSTANCE.getMaxHealth(pt.get(index)) : 0f;
+        return validatePtIndex(index) ? StaticPlayerHelper.INSTANCE.getMaxHealth(pt.get(index).getPlayer()) : 0f;
     }
 
     @Override

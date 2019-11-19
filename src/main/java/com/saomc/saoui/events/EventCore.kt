@@ -17,10 +17,14 @@
 
 package com.saomc.saoui.events
 
-import be.bluexin.saomclib.events.PartyEventV2
+import be.bluexin.saomclib.events.PartyEvent3
+import be.bluexin.saomclib.packets.party.PartyType
+import be.bluexin.saomclib.packets.party.Type
+import be.bluexin.saomclib.packets.party.updateServer
 import com.saomc.saoui.effects.RenderDispatcher
 import com.saomc.saoui.neo.screens.util.PopupYesNo
 import com.saomc.saoui.screens.ingame.IngameGUI
+import com.teamwizardry.librarianlib.features.kotlin.Minecraft
 import com.teamwizardry.librarianlib.features.kotlin.localize
 import net.minecraft.client.Minecraft
 import net.minecraft.client.settings.GameSettings
@@ -83,11 +87,13 @@ object EventCore {
     }
 
     @SubscribeEvent
-    fun partyInvite(e: PartyEventV2.Invited) {
-        val p = e.party ?: return
-        PopupYesNo("guiPartyInviteTitle".localize(), "guiPartyInviteText".localize(p.leaderInfo?.username.toString()), "") += {
-            if (it == PopupYesNo.Result.YES) p.acceptInvite(e.player)
-            else p.cancel(e.player)
+    fun partyInvite(e: PartyEvent3.Invited) {
+        val p = e.partyData
+        if (e.player.equals(Minecraft().player)) {
+            PopupYesNo("guiPartyInviteTitle".localize(), "guiPartyInviteText".localize(p.leaderInfo.username), "") += {
+                if (it == PopupYesNo.Result.YES) Type.ACCEPTINVITE.updateServer(Minecraft().player, PartyType.INVITE)
+                else Type.CANCELINVITE.updateServer(Minecraft().player, PartyType.INVITE)
+            }
         }
     }
 
