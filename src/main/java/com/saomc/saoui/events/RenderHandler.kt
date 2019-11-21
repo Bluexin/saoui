@@ -67,9 +67,7 @@ internal object RenderHandler {
         if (!OptionCore.BUGGY_MENU.isEnabled) return
 
         if (e.gui is GuiIngameMenu) {
-            if (OptionCore.NEO_MENU.isEnabled) {
                 if (EventCore.mc.currentScreen !is NeoGui<*>) e.gui = NeoIngameMenu()
-            }
         }
         else if (e.gui is GuiInventory && !OptionCore.DEFAULT_INVENTORY.isEnabled) {
             when {

@@ -91,8 +91,7 @@ enum class OptionCore(
     //Debug
     DISABLE_TICKS(I18n.format("optionDisableTicks"), false, false, MISC, false),
     BUGGY_MENU(I18n.format("optionEnableMenus"), true, false, MISC, false),
-    NOTICE(I18n.format("optionNotice"), true, false, MISC, false),
-    NEO_MENU(I18n.format("optionNeoMenu"), true, false, MISC, false);
+    NOTICE(I18n.format("optionNotice"), true, false, MISC, false);
 
     // TODO: make a way for themes to register custom options?
 

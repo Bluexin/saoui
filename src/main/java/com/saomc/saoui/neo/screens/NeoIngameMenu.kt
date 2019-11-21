@@ -49,7 +49,7 @@ class NeoIngameMenu : NeoGui<Unit>(Vec2d.ZERO) {
         tlCategory(IconCore.PROFILE) {
             category(IconCore.EQUIPMENT, format("sao.element.equipment")) {
                 category(IconCore.ARMOR, format("sao.element.armor")) {
-                    itemList(mc.player.inventoryContainer, BaseFilters.EQUIPMENT, 36..39)
+                    itemList(mc.player.inventoryContainer, BaseFilters.ARMOR, 36..39)
                 }
                 category(IconCore.EQUIPMENT, format("sao.element.weapons")) {
                     itemList(mc.player.inventoryContainer, BaseFilters.WEAPONS, 0..8)

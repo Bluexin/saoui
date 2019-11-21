@@ -36,6 +36,7 @@ import net.minecraftforge.fml.common.Loader
  */
 enum class BaseFilters(val filter: (ItemStack, Boolean) -> Boolean) : IItemFilter { // Todo: support for TConstruct
 
+
     EQUIPMENT({ _, _ -> false }) {
         override val icon: IIcon
             get() = IconCore.EQUIPMENT
@@ -45,7 +46,7 @@ enum class BaseFilters(val filter: (ItemStack, Boolean) -> Boolean) : IItemFilte
             get() = true
     },
 
-    ARMOR({ _, _ -> false }) {
+    ARMOR({  _, _ -> false }) {
         override val icon: IIcon
             get() = IconCore.ARMOR
         override val category: IItemFilter
