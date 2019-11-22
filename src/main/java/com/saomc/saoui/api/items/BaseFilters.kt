@@ -22,6 +22,7 @@ import baubles.api.IBauble
 import com.saomc.saoui.api.screens.IIcon
 import com.saomc.saoui.util.IconCore
 import com.teamwizardry.librarianlib.features.kotlin.Minecraft
+import com.teamwizardry.librarianlib.features.kotlin.toolClasses
 import net.minecraft.block.BlockPumpkin
 import net.minecraft.client.resources.I18n
 import net.minecraft.entity.player.EntityPlayer
@@ -35,7 +36,6 @@ import net.minecraftforge.fml.common.Loader
  * TODO: use [ItemTool.getToolClasses] for moar modded compat
  */
 enum class BaseFilters(val filter: (ItemStack, Boolean) -> Boolean) : IItemFilter { // Todo: support for TConstruct
-
 
     EQUIPMENT({ _, _ -> false }) {
         override val icon: IIcon
@@ -173,7 +173,7 @@ enum class BaseFilters(val filter: (ItemStack, Boolean) -> Boolean) : IItemFilte
             get() = true
     },
 
-    SWORDS({ stack, _ -> stack.item is ItemSword}) {
+    SWORDS({ stack, _ -> stack.item is ItemSword || stack.toolClasses.contains("sword")}) {
         override val icon: IIcon
             get() = IconCore.EQUIPMENT
 
@@ -184,7 +184,7 @@ enum class BaseFilters(val filter: (ItemStack, Boolean) -> Boolean) : IItemFilte
             get() = WEAPONS
     },
 
-    BOWS({ stack, _ -> stack.item is ItemBow || stack.item.getItemUseAction(stack) == EnumAction.BOW}) {
+    BOWS({ stack, _ -> stack.item is ItemBow || stack.item.getItemUseAction(stack) == EnumAction.BOW || stack.toolClasses.contains("bow")}) {
         override val icon: IIcon
             get() = IconCore.EQUIPMENT
 
@@ -209,7 +209,7 @@ enum class BaseFilters(val filter: (ItemStack, Boolean) -> Boolean) : IItemFilte
             get() = true
     },
 
-    PICKAXES({ stack, _ -> stack.item is ItemPickaxe}) {
+    PICKAXES({ stack, _ -> stack.item is ItemPickaxe || stack.toolClasses.contains("pickaxe")}) {
         override val icon: IIcon
             get() = IconCore.EQUIPMENT
 
@@ -220,7 +220,7 @@ enum class BaseFilters(val filter: (ItemStack, Boolean) -> Boolean) : IItemFilte
             get() = TOOLS
     },
 
-    AXES({ stack, _ -> stack.item is ItemAxe}) {
+    AXES({ stack, _ -> stack.item is ItemAxe || stack.toolClasses.contains("axe")}) {
         override val icon: IIcon
             get() = IconCore.EQUIPMENT
 
@@ -244,7 +244,8 @@ enum class BaseFilters(val filter: (ItemStack, Boolean) -> Boolean) : IItemFilte
 
     COMPATTOOLS({ stack, _ ->
         val item = stack.item
-        item is ItemTool || item is ItemHoe || item is ItemShears
+        values().filter { it.category == TOOLS && it != COMPATTOOLS }.none { it.invoke(stack) } &&
+                (item is ItemTool || item is ItemHoe || item is ItemShears)
     }) {
         override val icon: IIcon
             get() = IconCore.EQUIPMENT
@@ -272,7 +273,7 @@ enum class BaseFilters(val filter: (ItemStack, Boolean) -> Boolean) : IItemFilte
         override val displayName: String
             get() = I18n.format("sao.element.items")
         override val isCategory: Boolean
-            get() = false
+            get() = true
     },
 
     CONSUMABLES({ stack, _ ->

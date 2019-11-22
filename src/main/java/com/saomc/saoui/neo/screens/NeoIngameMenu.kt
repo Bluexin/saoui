@@ -18,8 +18,10 @@
 package com.saomc.saoui.neo.screens
 
 import be.bluexin.saomclib.message
+import com.saomc.saoui.api.elements.neo.NeoCategoryButton
 import com.saomc.saoui.api.elements.neo.optionCategory
-import com.saomc.saoui.api.items.BaseFilters
+import com.saomc.saoui.api.items.IItemFilter
+import com.saomc.saoui.api.items.ItemFilterRegister
 import com.saomc.saoui.config.OptionCore
 import com.saomc.saoui.events.EventCore
 import com.saomc.saoui.neo.screens.util.PopupYesNo
@@ -47,6 +49,10 @@ class NeoIngameMenu : NeoGui<Unit>(Vec2d.ZERO) {
         elements.clear()
 
         tlCategory(IconCore.PROFILE) {
+            ItemFilterRegister.tlFilters.forEach {baseFilter ->
+                addItemCategories(this, baseFilter)
+            }
+            /*
             category(IconCore.EQUIPMENT, format("sao.element.equipment")) {
                 category(IconCore.ARMOR, format("sao.element.armor")) {
                     itemList(mc.player.inventoryContainer, BaseFilters.ARMOR, 36..39)
@@ -65,14 +71,13 @@ class NeoIngameMenu : NeoGui<Unit>(Vec2d.ZERO) {
                 }
                 if (BaseFilters.baublesLoaded) {
                     category(IconCore.ACCESSORY, format("sao.element.accessories")) {
-                        //itemList(BaseFilters.getBaubles(mc.player)!!, BaseFilters.ACCESSORY, 0..10000)
-                        itemList(mc.player.inventoryContainer, filter = BaseFilters.ACCESSORY)
+                        itemList(mc.player.inventoryContainer, BaseFilters.ACCESSORY)
                     }
                 }
             }
             category(IconCore.ITEMS, format("sao.element.items")) {
                 itemList(mc.player.inventoryContainer, BaseFilters.ITEMS, 0..8, 40..40)
-            }
+            }*/
             category(IconCore.SKILLS, format("sao.element.skills")) {
                 category(IconCore.SKILLS, "Test 1") {
                     category(IconCore.SKILLS, "1.1") {
@@ -149,5 +154,15 @@ class NeoIngameMenu : NeoGui<Unit>(Vec2d.ZERO) {
 
         pos = vec(width / 2.0 - 10, (height - elements.size * 20) / 2.0)
         destination = pos
+    }
+
+    fun addItemCategories(button: NeoCategoryButton, filter: IItemFilter){
+        button.category(filter.icon, filter.displayName) {
+            if (filter.isCategory) {
+                if (filter.subFilters.isNotEmpty())
+                    filter.subFilters.forEach { subfilter -> addItemCategories(this, subfilter) }
+            }
+            else itemList(mc.player.inventoryContainer, filter)
+        }
     }
 }
