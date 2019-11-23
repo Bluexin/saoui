@@ -15,6 +15,9 @@
     "credits": "TheJackiMonster for the original mod.",
     "logoFile": "assets/saoui/textures/logo.png",
     "screenshots": [],
-    "dependencies": ["saomclib"]
+    "dependencies": [
+      "saomclib",
+      "librarianlib"
+    ]
   }
 ]
