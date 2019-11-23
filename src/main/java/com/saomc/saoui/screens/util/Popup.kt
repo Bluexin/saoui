@@ -15,16 +15,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.saomc.saoui.neo.screens.util
+package com.saomc.saoui.screens.util
 
 import com.saomc.saoui.GLCore
 import com.saomc.saoui.GLCore.glTexturedRectV2
 import com.saomc.saoui.SAOCore
 import com.saomc.saoui.api.elements.neo.NeoIconElement
 import com.saomc.saoui.api.elements.neo.basicAnimation
-import com.saomc.saoui.neo.screens.ItemIcon
-import com.saomc.saoui.neo.screens.NeoGui
-import com.saomc.saoui.neo.screens.unaryPlus
+import com.saomc.saoui.screens.CoreGUI
+import com.saomc.saoui.screens.ItemIcon
+import com.saomc.saoui.screens.unaryPlus
 import com.saomc.saoui.util.ColorIntent
 import com.saomc.saoui.util.ColorUtil
 import com.saomc.saoui.util.IconCore
@@ -35,7 +35,7 @@ import net.minecraft.client.Minecraft
 import net.minecraft.util.ResourceLocation
 import kotlin.math.max
 
-open class Popup<T : Any>(var title: String, var text: List<String>, var footer: String, private val buttons: Map<NeoIconElement, T>) : NeoGui<T>(Vec2d.ZERO) {
+open class Popup<T : Any>(var title: String, var text: List<String>, var footer: String, private val buttons: Map<NeoIconElement, T>) : CoreGUI<T>(Vec2d.ZERO) {
 
     private val rl = ResourceLocation(SAOCore.MODID, "textures/menu/parts/alertbg.png")
     internal /*private*/ var expansion = 0f

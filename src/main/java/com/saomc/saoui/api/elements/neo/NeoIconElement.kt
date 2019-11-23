@@ -19,9 +19,9 @@ package com.saomc.saoui.api.elements.neo
 
 import com.saomc.saoui.GLCore
 import com.saomc.saoui.api.screens.IIcon
-import com.saomc.saoui.neo.screens.ItemIcon
-import com.saomc.saoui.neo.screens.MouseButton
 import com.saomc.saoui.resources.StringNames
+import com.saomc.saoui.screens.ItemIcon
+import com.saomc.saoui.screens.MouseButton
 import com.saomc.saoui.util.ColorIntent
 import com.saomc.saoui.util.ColorUtil
 import com.teamwizardry.librarianlib.features.helpers.vec

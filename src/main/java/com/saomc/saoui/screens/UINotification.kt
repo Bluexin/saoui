@@ -1,4 +1,4 @@
-package com.saomc.saoui.neo.screens
+package com.saomc.saoui.screens
 
 import com.saomc.saoui.api.elements.neo.NeoIconElement
 

@@ -17,9 +17,9 @@
 
 package com.saomc.saoui.api.elements.neo
 
-import com.saomc.saoui.neo.screens.MouseButton
-import com.saomc.saoui.neo.screens.NeoGui
-import com.saomc.saoui.neo.screens.unaryPlus
+import com.saomc.saoui.screens.CoreGUI
+import com.saomc.saoui.screens.MouseButton
+import com.saomc.saoui.screens.unaryPlus
 import com.teamwizardry.librarianlib.features.animator.Easing
 import com.teamwizardry.librarianlib.features.helpers.vec
 import com.teamwizardry.librarianlib.features.kotlin.plus
@@ -41,7 +41,7 @@ interface INeoParent {
         get() = parent?.tlParent ?: this
 
     fun move(delta: Vec2d) {
-        NeoGui.animator.removeAnimationsFor(this)
+        CoreGUI.animator.removeAnimationsFor(this)
         destination += delta
         +basicAnimation(this, "pos") {
             to = destination

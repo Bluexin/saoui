@@ -22,8 +22,8 @@ import be.bluexin.saomclib.packets.party.PartyType
 import be.bluexin.saomclib.packets.party.Type
 import be.bluexin.saomclib.packets.party.updateServer
 import com.saomc.saoui.effects.RenderDispatcher
-import com.saomc.saoui.neo.screens.util.PopupYesNo
 import com.saomc.saoui.screens.ingame.IngameGUI
+import com.saomc.saoui.screens.util.PopupYesNo
 import com.teamwizardry.librarianlib.features.kotlin.Minecraft
 import com.teamwizardry.librarianlib.features.kotlin.localize
 import net.minecraft.client.Minecraft

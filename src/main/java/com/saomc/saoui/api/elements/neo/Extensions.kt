@@ -20,10 +20,10 @@ package com.saomc.saoui.api.elements.neo
 import com.saomc.saoui.api.items.IItemFilter
 import com.saomc.saoui.api.screens.IIcon
 import com.saomc.saoui.config.OptionCore
-import com.saomc.saoui.neo.screens.MouseButton
-import com.saomc.saoui.neo.screens.NeoGuiDsl
-import com.saomc.saoui.neo.screens.unaryPlus
-import com.saomc.saoui.neo.screens.util.itemList
+import com.saomc.saoui.screens.CoreGUIDsl
+import com.saomc.saoui.screens.MouseButton
+import com.saomc.saoui.screens.unaryPlus
+import com.saomc.saoui.screens.util.itemList
 import com.saomc.saoui.util.IconCore
 import com.teamwizardry.librarianlib.features.animator.Easing
 import com.teamwizardry.librarianlib.features.gui.component.supporting.delegate
@@ -154,14 +154,14 @@ class NeoCategoryButton(private val delegate: NeoIconElement, parent: INeoParent
         }
     }
 
-    @NeoGuiDsl
+    @CoreGUIDsl
     fun category(icon: IIcon, label: String, body: (NeoCategoryButton.() -> Unit)? = null): NeoCategoryButton {
         val cat = NeoCategoryButton(NeoIconLabelElement(icon, label), this, body)
         +cat
         return cat
     }
 
-    @NeoGuiDsl
+    @CoreGUIDsl
     fun profile(player: EntityPlayer, body: (NeoCategoryButton.() -> Unit)? = null): NeoCategoryButton{
         val cat = NeoCategoryButton(NeoProfileElement(player, this), this, body)
         +cat

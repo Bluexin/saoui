@@ -3,8 +3,8 @@ package com.saomc.saoui.api.elements.neo
 import com.saomc.saoui.GLCore
 import com.saomc.saoui.SAOCore
 import com.saomc.saoui.config.OptionCore
-import com.saomc.saoui.neo.screens.NeoGui
 import com.saomc.saoui.resources.StringNames
+import com.saomc.saoui.screens.CoreGUI
 import com.saomc.saoui.util.ColorUtil
 import com.saomc.saoui.util.IconCore
 import com.saomc.saoui.util.PlayerStats
@@ -116,7 +116,7 @@ open class NeoProfileElement(var player: EntityPlayer, override var parent: INeo
     }
 
     override fun move(delta: Vec2d) {
-        NeoGui.animator.removeAnimationsFor(this)
+        CoreGUI.animator.removeAnimationsFor(this)
     }
 
 }

@@ -15,16 +15,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.saomc.saoui.neo.screens
+package com.saomc.saoui.screens.util
 
 import com.saomc.saoui.GLCore
 import com.saomc.saoui.api.elements.neo.NeoCategoryButton
 import com.saomc.saoui.api.elements.neo.NeoIconLabelElement
+import com.saomc.saoui.api.items.IItemFilter
 import com.saomc.saoui.api.screens.IIcon
 import com.saomc.saoui.events.EventCore.mc
-import com.saomc.saoui.neo.screens.util.PopupHotbarSelection
-import com.saomc.saoui.neo.screens.util.PopupItem
-import com.saomc.saoui.neo.screens.util.PopupYesNo
+import com.saomc.saoui.screens.CoreGUI
+import com.saomc.saoui.screens.CoreGUIDsl
+import com.saomc.saoui.screens.MouseButton
 import com.saomc.saoui.util.IconCore
 import com.teamwizardry.librarianlib.features.kotlin.get
 import com.teamwizardry.librarianlib.features.kotlin.isNotEmpty
@@ -45,10 +46,10 @@ import net.minecraft.util.ResourceLocation
 import net.minecraftforge.fml.common.registry.ForgeRegistries
 
 
-@NeoGuiDsl
-fun NeoCategoryButton.itemList(inventory: Container, filter: (iss: ItemStack) -> Boolean, vararg equippedRange: IntRange = arrayOf(-1..-1)) {
+@CoreGUIDsl
+fun NeoCategoryButton.itemList(inventory: Container, filter: IItemFilter) {
     inventory.inventorySlots.forEach { slot ->
-        +ItemStackElement(slot, Vec2d.ZERO, equippedRange.any { r -> slot.slotNumber in r }, filter)
+        +ItemStackElement(slot, Vec2d.ZERO, filter.getValidSlots().contains(slot), filter)
     }
     +object : NeoIconLabelElement(icon = IconCore.NONE, label = I18n.format("gui.empty")) {
         private var mark = false
@@ -74,8 +75,8 @@ class ItemStackElement(private val slot: Slot, pos: Vec2d, override var selected
     init {
         onClick { _, button ->
             if (button == MouseButton.LEFT)
-                if (tlParent is NeoGui<*>)
-                    (tlParent as NeoGui<*>).openGui(PopupItem(label, itemStack.itemDesc(), if (mc.gameSettings.advancedItemTooltips) ForgeRegistries.ITEMS.getKey(itemStack.item).toString() else "")) += {
+                if (tlParent is CoreGUI<*>)
+                    (tlParent as CoreGUI<*>).openGui(PopupItem(label, itemStack.itemDesc(), if (mc.gameSettings.advancedItemTooltips) ForgeRegistries.ITEMS.getKey(itemStack.item).toString() else "")) += {
                         when (it){
                             PopupItem.Result.EQUIP -> handleEquip()
                             PopupItem.Result.TRADE -> handleTrade()
@@ -98,7 +99,7 @@ class ItemStackElement(private val slot: Slot, pos: Vec2d, override var selected
                 .filter { slot -> slot.isItemValid(itemStack) && !slot.isItemValid(test) && !slot.isItemValid(test2) }
                 .toList()
         if (otherSlot.isNullOrEmpty() || otherSlot.size > 1){
-            (tlParent as NeoGui<*>).openGui(PopupHotbarSelection(label, "Select a slot", "")) += {
+            (tlParent as CoreGUI<*>).openGui(PopupHotbarSelection(label, "Select a slot", "")) += {
                 if (it != PopupHotbarSelection.Result.CANCEL)
                     if (it.slot != slotID)
                         swapItems(it.slot)
@@ -111,7 +112,7 @@ class ItemStackElement(private val slot: Slot, pos: Vec2d, override var selected
             val other = otherSlot[0].stack
             if (other.isNotEmpty) {
                 val otherLabel = I18n.format("saoui.formatItem", other.getTooltip(mc.player, ITooltipFlag.TooltipFlags.NORMAL)[0])
-                (tlParent as NeoGui<*>).openGui(PopupYesNo("$otherLabel -> $label", compare(other, 0), "Are you sure you want to replace this?")) += {
+                (tlParent as CoreGUI<*>).openGui(PopupYesNo("$otherLabel -> $label", compare(other, 0), "Are you sure you want to replace this?")) += {
                     if (it == PopupYesNo.Result.YES) {
                         swapItems(otherSlot[0].slotNumber)
                     }
@@ -129,7 +130,7 @@ class ItemStackElement(private val slot: Slot, pos: Vec2d, override var selected
     }
 
     private fun handleDrop(){
-        (tlParent as NeoGui<*>).openGui(PopupYesNo(label, "Are you sure you want to discard this item?", "")) += {
+        (tlParent as CoreGUI<*>).openGui(PopupYesNo(label, "Are you sure you want to discard this item?", "")) += {
             if (it == PopupYesNo.Result.YES) {
                 throwItem()
             }
@@ -179,24 +180,6 @@ class ItemStackElement(private val slot: Slot, pos: Vec2d, override var selected
         return stringBuilder
     }
 
-    fun checkArmorSlots(): Int {
-        return when {
-            mc.player.inventory.isItemValidForSlot(37, itemStack) -> 37
-            mc.player.inventory.isItemValidForSlot(38, itemStack) -> 38
-            mc.player.inventory.isItemValidForSlot(39, itemStack) -> 39
-            mc.player.inventory.isItemValidForSlot(40, itemStack) -> 40
-            else -> findFreeHotbarSlot()
-        }
-    }
-
-    fun findFreeHotbarSlot(): Int {
-        for (i in 4..8){
-            if (mc.player.inventory[i].isEmpty)
-                return i
-        }
-        return 8
-    }
-
     private val itemStack
         get() = with(slot.stack) {
             return@with if (filter(this)) this
@@ -214,6 +197,7 @@ class ItemStackElement(private val slot: Slot, pos: Vec2d, override var selected
             if (itemStack.count > 1) I18n.format("saoui.formatItems", itemStack.getTooltip(mc.player, ITooltipFlag.TooltipFlags.NORMAL)[0], itemStack.count)
             else I18n.format("saoui.formatItem", itemStack.getTooltip(mc.player, ITooltipFlag.TooltipFlags.NORMAL)[0])
         } else I18n.format("gui.empty")
+
 
 }
 

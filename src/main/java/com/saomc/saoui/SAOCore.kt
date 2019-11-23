@@ -22,7 +22,7 @@ import com.saomc.saoui.api.entity.rendering.RenderCapability
 import com.saomc.saoui.api.events.EventInitStatsProvider
 import com.saomc.saoui.config.ConfigHandler
 import com.saomc.saoui.events.EventCore
-import com.saomc.saoui.neo.screens.NeoGui
+import com.saomc.saoui.screens.CoreGUI
 import com.saomc.saoui.themes.ThemeLoader
 import com.saomc.saoui.util.DefaultStatsProvider
 import com.saomc.saoui.util.PlayerStats
@@ -45,7 +45,7 @@ import javax.xml.bind.JAXBException
 object SAOCore {
     const val MODID = "saoui"
     const val NAME = "Sword Art Online UI"
-    const val VERSION = "2.0.3"
+    const val VERSION = "2.0.4"
     const val DEPS = "required-after:saomclib@[1.2.1,);after:mantle"
 
     // TODO: investigate toasts -> net.minecraft.client.gui.toasts
@@ -79,7 +79,7 @@ object SAOCore {
         val s = EventInitStatsProvider(DefaultStatsProvider())
         MinecraftForge.EVENT_BUS.post(s)
         PlayerStats.init(s.implementation)
-        NeoGui.animator // Let's force things to init early
+        CoreGUI.animator // Let's force things to init early
     }
 
     @Mod.EventHandler

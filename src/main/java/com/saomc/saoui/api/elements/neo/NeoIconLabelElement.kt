@@ -19,8 +19,8 @@ package com.saomc.saoui.api.elements.neo
 
 import com.saomc.saoui.GLCore
 import com.saomc.saoui.api.screens.IIcon
-import com.saomc.saoui.neo.screens.unaryPlus
 import com.saomc.saoui.resources.StringNames
+import com.saomc.saoui.screens.unaryPlus
 import com.saomc.saoui.util.ColorUtil
 import com.teamwizardry.librarianlib.features.helpers.vec
 import com.teamwizardry.librarianlib.features.kotlin.plus

@@ -15,7 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.saomc.saoui.neo.screens
+package com.saomc.saoui.screens.menus
 
 import be.bluexin.saomclib.message
 import com.saomc.saoui.api.elements.neo.NeoCategoryButton
@@ -24,13 +24,15 @@ import com.saomc.saoui.api.items.IItemFilter
 import com.saomc.saoui.api.items.ItemFilterRegister
 import com.saomc.saoui.config.OptionCore
 import com.saomc.saoui.events.EventCore
-import com.saomc.saoui.neo.screens.util.PopupYesNo
-import com.saomc.saoui.neo.screens.util.partyMenu
+import com.saomc.saoui.screens.CoreGUI
+import com.saomc.saoui.screens.itemList
+import com.saomc.saoui.screens.util.PopupYesNo
+import com.saomc.saoui.screens.util.partyMenu
 import com.saomc.saoui.util.IconCore
+import com.saomc.saoui.util.UIUtil
 import com.teamwizardry.librarianlib.features.helpers.vec
 import com.teamwizardry.librarianlib.features.math.Vec2d
 import net.minecraft.client.gui.GuiIngameMenu
-import net.minecraft.client.gui.GuiMainMenu
 import net.minecraft.client.gui.GuiOptions
 import net.minecraft.client.resources.I18n.format
 
@@ -39,7 +41,7 @@ import net.minecraft.client.resources.I18n.format
  *
  * @author Bluexin
  */
-class NeoIngameMenu : NeoGui<Unit>(Vec2d.ZERO) {
+class IngameMenu : CoreGUI<Unit>(Vec2d.ZERO) {
 
     override var result: Unit
         get() = Unit
@@ -125,7 +127,7 @@ class NeoIngameMenu : NeoGui<Unit>(Vec2d.ZERO) {
             category(IconCore.OPTION, format("sao.element.options")) {
                 category(IconCore.OPTION, format("guiOptions")) {
                     onClick { _, _ ->
-                        mc.displayGuiScreen(GuiOptions(this@NeoIngameMenu, EventCore.mc.gameSettings))
+                        mc.displayGuiScreen(GuiOptions(this@IngameMenu, EventCore.mc.gameSettings))
                         true
                     }
                 }
@@ -142,10 +144,7 @@ class NeoIngameMenu : NeoGui<Unit>(Vec2d.ZERO) {
             category(IconCore.LOGOUT, if (OptionCore.LOGOUT()) format("sao.element.logout") else "") {
                 onClick { _, _ ->
                     if (OptionCore.LOGOUT()) {
-                        EventCore.mc.currentScreen!!.onGuiClosed()
-                        EventCore.mc.world.sendQuittingDisconnectingPacket()
-                        EventCore.mc.loadWorld(null)
-                        EventCore.mc.displayGuiScreen(GuiMainMenu())
+                        UIUtil.closeGame()
                         true
                     } else false
                 }

@@ -15,7 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.saomc.saoui.neo.screens
+package com.saomc.saoui.screens
 
 import com.saomc.saoui.GLCore
 import com.saomc.saoui.api.elements.neo.*
@@ -39,10 +39,10 @@ import org.lwjgl.input.Mouse
  *
  * @author Bluexin
  */
-abstract class NeoGui<T : Any>(override var pos: Vec2d, override var destination: Vec2d = pos) : GuiScreen(), INeoParent {
+abstract class CoreGUI<T : Any>(override var pos: Vec2d, override var destination: Vec2d = pos) : GuiScreen(), INeoParent {
     protected val elements = mutableListOf<NeoElement>()
 
-    protected var subGui: NeoGui<*>? = null
+    protected var subGui: CoreGUI<*>? = null
 
     override var parent: INeoParent? = null
 
@@ -85,16 +85,16 @@ abstract class NeoGui<T : Any>(override var pos: Vec2d, override var destination
 
     override fun doesGuiPauseGame() = OptionCore.GUI_PAUSE.isEnabled
 
-    @NeoGuiDsl
+    @CoreGUIDsl
     fun tlCategory(icon: IIcon, body: (NeoCategoryButton.() -> Unit)? = null) {
         this.elements += NeoCategoryButton(NeoIconElement(icon, vec(0, 25 * elements.size)), this, body)
     }
 
     operator fun NeoElement.unaryPlus() {
-        this@NeoGui.elements += this
+        this@CoreGUI.elements += this
     }
 
-    fun <R : Any> openGui(gui: NeoGui<R>): NeoGui<R> {
+    fun <R : Any> openGui(gui: CoreGUI<R>): CoreGUI<R> {
         check(subGui == null) { "Already opened a sub gui of type ${subGui!!::class.qualifiedName}" }
         subGui = gui
         gui.parent = this
@@ -167,8 +167,8 @@ enum class MouseButton {
 }
 
 operator fun Animation<*>.unaryPlus() {
-    NeoGui.animator += this
+    CoreGUI.animator += this
 }
 
 @DslMarker
-annotation class NeoGuiDsl
+annotation class CoreGUIDsl

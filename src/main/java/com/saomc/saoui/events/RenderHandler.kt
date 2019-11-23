@@ -19,11 +19,10 @@ package com.saomc.saoui.events
 
 import com.saomc.saoui.SoundCore
 import com.saomc.saoui.config.OptionCore
-import com.saomc.saoui.neo.screens.NeoGui
-import com.saomc.saoui.neo.screens.NeoIngameMenu
 import com.saomc.saoui.renders.StaticRenderer
+import com.saomc.saoui.screens.CoreGUI
 import com.saomc.saoui.screens.DeathGui
-import com.saomc.saoui.screens.menu.StartupGUI
+import com.saomc.saoui.screens.menus.IngameMenu
 import net.minecraft.client.gui.GuiGameOver
 import net.minecraft.client.gui.GuiIngameMenu
 import net.minecraft.client.gui.GuiMainMenu
@@ -67,7 +66,7 @@ internal object RenderHandler {
         if (!OptionCore.BUGGY_MENU.isEnabled) return
 
         if (e.gui is GuiIngameMenu) {
-                if (EventCore.mc.currentScreen !is NeoGui<*>) e.gui = NeoIngameMenu()
+                if (EventCore.mc.currentScreen !is CoreGUI<*>) e.gui = IngameMenu()
         }
         else if (e.gui is GuiInventory && !OptionCore.DEFAULT_INVENTORY.isEnabled) {
             when {
@@ -101,11 +100,8 @@ internal object RenderHandler {
 
     fun mainMenuGUI(e: GuiOpenEvent) {
         if (menuGUI)
-            if (e.gui is GuiMainMenu)
-                if (StartupGUI.shouldShow()) {
-                    e.gui = StartupGUI()
-                    menuGUI = false
-                } //else e.setGui(new MainMenuGUI());
+            if (e.gui is GuiMainMenu) {}
+            //e.setGui(new MainMenuGUI());
     }
 
 }

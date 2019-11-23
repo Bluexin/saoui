@@ -15,7 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.saomc.saoui.neo.screens.util
+package com.saomc.saoui.screens.util
 
 import be.bluexin.saomclib.capabilities.getPartyCapability
 import be.bluexin.saomclib.events.PartyEvent3
@@ -26,7 +26,7 @@ import be.bluexin.saomclib.party.IPartyData
 import be.bluexin.saomclib.party.PlayerInfo
 import com.saomc.saoui.api.elements.neo.NeoCategoryButton
 import com.saomc.saoui.api.elements.neo.NeoIconLabelElement
-import com.saomc.saoui.neo.screens.NeoGuiDsl
+import com.saomc.saoui.screens.CoreGUIDsl
 import com.saomc.saoui.util.IconCore
 import net.minecraft.client.resources.I18n.format
 import net.minecraft.entity.player.EntityPlayer
@@ -35,7 +35,7 @@ import net.minecraftforge.common.util.FakePlayer
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import java.lang.ref.WeakReference
 
-@NeoGuiDsl
+@CoreGUIDsl
 fun NeoCategoryButton.partyMenu(player: EntityPlayer) {
     category(IconCore.PARTY, format("sao.element.party")) {
         partyList(player)
@@ -43,7 +43,7 @@ fun NeoCategoryButton.partyMenu(player: EntityPlayer) {
     }
 }
 
-@NeoGuiDsl
+@CoreGUIDsl
 fun NeoCategoryButton.partyList(player: EntityPlayer) {
     val partyCapability = player.getPartyCapability()
     val party = partyCapability.partyData
@@ -70,7 +70,7 @@ fun NeoCategoryButton.partyList(player: EntityPlayer) {
     })
 }
 
-@NeoGuiDsl
+@CoreGUIDsl
 fun NeoCategoryButton.partyExtras(player: EntityPlayer) {
     val partyCapability = player.getPartyCapability()
     val party = partyCapability.partyData
@@ -104,7 +104,7 @@ fun NeoCategoryButton.partyExtras(player: EntityPlayer) {
     }
 }
 
-@NeoGuiDsl
+@CoreGUIDsl
 fun NeoCategoryButton.partyMemberButton(party: IPartyData, player: EntityPlayer, ourPlayer: EntityPlayer, invited: Boolean = false): NeoCategoryButton =
         NeoCategoryButton(NeoIconLabelElement(IconCore.FRIEND, if (invited) format("sao.party.player_invited", player.displayNameString) else player.displayNameString), this) {
             +NeoIconLabelElement(IconCore.HELP, format("sao.element.inspect"))

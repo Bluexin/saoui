@@ -3,7 +3,7 @@ package com.saomc.saoui.screens
 import com.saomc.saoui.GLCore
 import com.saomc.saoui.SAOCore
 import com.saomc.saoui.util.ColorUtil
-import net.minecraft.client.gui.GuiMainMenu
+import com.saomc.saoui.util.UIUtil
 import net.minecraft.client.gui.GuiScreen
 import net.minecraft.client.gui.ScaledResolution
 import net.minecraft.util.ResourceLocation
@@ -42,9 +42,7 @@ class DeathGui : GuiScreen() {
 
     fun confirmedClick(){
         if (mc.world.worldInfo.isHardcoreModeEnabled){
-            mc.world.sendQuittingDisconnectingPacket()
-            mc.loadWorld(null)
-            mc.displayGuiScreen(GuiMainMenu())
+            UIUtil.closeGame()
         } else {
             mc.player.preparePlayerToSpawn()
             mc.player.respawnPlayer()
