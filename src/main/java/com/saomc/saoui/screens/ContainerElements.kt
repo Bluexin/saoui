@@ -46,9 +46,9 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries
 
 
 @CoreGUIDsl
-fun NeoCategoryButton.itemList(inventory: Container, filter: (iss: ItemStack) -> Boolean, vararg equippedRange: IntRange = arrayOf(-1..-1)) {
+fun NeoCategoryButton.itemList(inventory: Container, filter: (iss: ItemStack) -> Boolean, equippedRange: Set<Slot>) {
     inventory.inventorySlots.forEach { slot ->
-        +ItemStackElement(slot, Vec2d.ZERO, equippedRange.any { r -> slot.slotNumber in r }, filter)
+        +ItemStackElement(slot, Vec2d.ZERO, equippedRange.any { r -> slot.slotNumber == r.slotIndex }, filter)
     }
     +object : NeoIconLabelElement(icon = IconCore.NONE, label = I18n.format("gui.empty")) {
         private var mark = false
@@ -105,7 +105,7 @@ class ItemStackElement(private val slot: Slot, pos: Vec2d, override var selected
             }
         }
         else
-            swapItems(otherSlot[0].slotNumber)
+            swapItems(otherSlot.first().slotNumber)
         /*
         else if (otherSlot.size == 1){ TODO Do this better, disabled until then
             val other = otherSlot[0].stack

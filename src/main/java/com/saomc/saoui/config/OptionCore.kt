@@ -64,11 +64,18 @@ enum class OptionCore(
     SAO_UI(I18n.format("optionSAOUI"), true, false, THEME, true),
     // Health Options
     SMOOTH_HEALTH(I18n.format("optionSmoothHealth"), true, false, HEALTH_OPTIONS, false),
-    HEALTH_BARS(I18n.format("optionHealthBars"), true, false, HEALTH_OPTIONS, false),
+    HEALTH_BARS(I18n.format("optionHealthBars"), false, true, HEALTH_OPTIONS, false),
     REMOVE_HPXP(I18n.format("optionLightHud"), false, false, HEALTH_OPTIONS, false),
-    //DEFAULT_HEALTH(I18n.format("optionDefaultHealth"), false, false, HEALTH_OPTIONS, false),
     ALT_ABSORB_POS(I18n.format("optionAltAbsorbPos"), false, false, HEALTH_OPTIONS, false),
-    MOB_HEALTH(I18n.format("optionMobHealth"), true, false, HEALTH_OPTIONS, false),
+    // Health Bars
+    INNOCENT_HEALTH(I18n.format("optionInnocentHealthBars"), true, false, HEALTH_BARS, false),
+    VIOLENT_HEALTH(I18n.format("optionViolentHealthBars"), true, false, HEALTH_BARS, false),
+    KILLER_HEALTH(I18n.format("optionKillerHealthBars"), true, false, HEALTH_BARS, false),
+    BOSS_HEALTH(I18n.format("optionBossHealthBars"), true, false, HEALTH_BARS, false),
+    CREATIVE_HEALTH(I18n.format("optionCreativeHealthBars"), true, false, HEALTH_BARS, false),
+    OP_HEALTH(I18n.format("optionOPHealthBars"), true, false, HEALTH_BARS, false),
+    INVALID_HEALTH(I18n.format("optionInvalidHealthBars"), true, false, HEALTH_BARS, false),
+    DEV_HEALTH(I18n.format("optionDevHealthBars"), true, false, HEALTH_BARS, false),
     //Hotbar
     DEFAULT_HOTBAR(I18n.format("optionDefaultHotbar"), false, false, HOTBAR_OPTIONS, true),
     HOR_HOTBAR(I18n.format("optionHorHotbar"), false, false, HOTBAR_OPTIONS, true),

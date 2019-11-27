@@ -19,6 +19,7 @@ package com.saomc.saoui.events
 
 import com.saomc.saoui.SoundCore
 import com.saomc.saoui.events.EventCore.mc
+import com.saomc.saoui.play
 import net.minecraft.client.multiplayer.GuiConnecting
 import net.minecraft.client.settings.KeyBinding
 import net.minecraftforge.client.event.ClientChatReceivedEvent
@@ -33,7 +34,7 @@ object EventHandler {
 
     internal fun nameNotification(e: ClientChatReceivedEvent) {
         if (mc.currentScreen !is GuiConnecting && e.message.unformattedText.contains(mc.player.displayNameString))
-            SoundCore.play(mc, SoundCore.MESSAGE)
+            SoundCore.MESSAGE.play()
     }
 
     internal fun abilityCheck() {

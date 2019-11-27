@@ -23,10 +23,8 @@ import com.saomc.saoui.api.screens.IIcon
 import com.saomc.saoui.util.IconCore
 import com.teamwizardry.librarianlib.features.kotlin.Minecraft
 import com.teamwizardry.librarianlib.features.kotlin.toolClasses
-import net.minecraft.block.BlockPumpkin
 import net.minecraft.client.resources.I18n
 import net.minecraft.entity.player.EntityPlayer
-import net.minecraft.inventory.EntityEquipmentSlot
 import net.minecraft.inventory.IInventory
 import net.minecraft.inventory.Slot
 import net.minecraft.item.*
@@ -58,12 +56,7 @@ enum class BaseFilters(val filter: (ItemStack, Boolean) -> Boolean) : IItemFilte
     },
 
     HELMET({ stack, _ ->
-        val item = stack.item
-        if (item is ItemArmor) {
-            val equipSlot = item.getEquipmentSlot(stack) ?: item.armorType
-            equipSlot == EntityEquipmentSlot.HEAD
-        }
-        else item is ItemBlock && item.block is BlockPumpkin
+        mc.player.inventoryContainer.inventorySlots.first { it.slotIndex == 39 }.isItemValid(stack)
     }) {
         override val icon: IIcon
             get() = IconCore.ARMOR
@@ -75,17 +68,12 @@ enum class BaseFilters(val filter: (ItemStack, Boolean) -> Boolean) : IItemFilte
             get() = ARMOR
 
         override fun getValidSlots(): Set<Slot> {
-            return IItemFilter.getPlayerSlots(Minecraft().player.inventory, 35)
+            return IItemFilter.getPlayerSlots(mc.player.inventory, 39)
         }
     },
 
     CHESTPLATES({ stack, _ ->
-        val item = stack.item
-        if (item is ItemArmor) {
-            val equipSlot = item.getEquipmentSlot(stack) ?: item.armorType
-            equipSlot == EntityEquipmentSlot.CHEST
-        }
-        else item is ItemBlock && item.block is BlockPumpkin
+        mc.player.inventoryContainer.inventorySlots.first { it.slotIndex == 38 }.isItemValid(stack)
     }) {
         override val icon: IIcon
             get() = IconCore.ARMOR
@@ -97,17 +85,12 @@ enum class BaseFilters(val filter: (ItemStack, Boolean) -> Boolean) : IItemFilte
             get() = ARMOR
 
         override fun getValidSlots(): Set<Slot> {
-            return IItemFilter.getPlayerSlots(Minecraft().player.inventory, 36)
+            return IItemFilter.getPlayerSlots(mc.player.inventory, 38)
         }
     },
 
     LEGGINS({ stack, _ ->
-        val item = stack.item
-        if (item is ItemArmor) {
-            val equipSlot = item.getEquipmentSlot(stack) ?: item.armorType
-            equipSlot == EntityEquipmentSlot.LEGS
-        }
-        else item is ItemBlock && item.block is BlockPumpkin
+        mc.player.inventoryContainer.inventorySlots.first { it.slotIndex == 37 }.isItemValid(stack)
     }) {
         override val icon: IIcon
             get() = IconCore.ARMOR
@@ -124,12 +107,7 @@ enum class BaseFilters(val filter: (ItemStack, Boolean) -> Boolean) : IItemFilte
     },
 
     BOOTS({ stack, _ ->
-        val item = stack.item
-        if (item is ItemArmor) {
-            val equipSlot = item.getEquipmentSlot(stack) ?: item.armorType
-            equipSlot == EntityEquipmentSlot.FEET
-        }
-        else item is ItemBlock && item.block is BlockPumpkin
+        mc.player.inventoryContainer.inventorySlots.first { it.slotIndex == 36 }.isItemValid(stack)
     }) {
         override val icon: IIcon
             get() = IconCore.ARMOR
@@ -141,7 +119,7 @@ enum class BaseFilters(val filter: (ItemStack, Boolean) -> Boolean) : IItemFilte
             get() = ARMOR
 
         override fun getValidSlots(): Set<Slot> {
-            return IItemFilter.getPlayerSlots(Minecraft().player.inventory, 38)
+            return IItemFilter.getPlayerSlots(mc.player.inventory, 36)
         }
     },
 
@@ -308,6 +286,8 @@ enum class BaseFilters(val filter: (ItemStack, Boolean) -> Boolean) : IItemFilte
     override fun invoke(stack: ItemStack, equipped: Boolean) = filter(stack, equipped)
 
     companion object {
+        val mc = Minecraft()
+
         val baublesLoaded by lazy { Loader.isModLoaded("baubles") }
 
         fun getBaubles(player: EntityPlayer): IInventory? {

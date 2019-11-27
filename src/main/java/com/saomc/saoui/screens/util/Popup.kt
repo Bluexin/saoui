@@ -20,8 +20,10 @@ package com.saomc.saoui.screens.util
 import com.saomc.saoui.GLCore
 import com.saomc.saoui.GLCore.glTexturedRectV2
 import com.saomc.saoui.SAOCore
+import com.saomc.saoui.SoundCore
 import com.saomc.saoui.api.elements.neo.NeoIconElement
 import com.saomc.saoui.api.elements.neo.basicAnimation
+import com.saomc.saoui.play
 import com.saomc.saoui.screens.CoreGUI
 import com.saomc.saoui.screens.ItemIcon
 import com.saomc.saoui.screens.unaryPlus
@@ -104,6 +106,7 @@ open class Popup<T : Any>(var title: String, var text: List<String>, var footer:
             duration = animDuration
             easing = Easing.easeInQuint
         }
+        SoundCore.MESSAGE.play()
     }
 
     override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
@@ -190,6 +193,8 @@ open class Popup<T : Any>(var title: String, var text: List<String>, var footer:
                 easing = Easing.linear
             }
         }
+
+        SoundCore.DIALOG_CLOSE.play()
     }
 }
 

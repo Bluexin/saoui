@@ -17,6 +17,10 @@
 
 package com.saomc.saoui.api.entity.rendering
 
+import com.saomc.saoui.SAOCore
+import net.minecraft.nbt.NBTBase
+import net.minecraft.nbt.NBTTagCompound
+
 /**
  * Part of saoui
  *
@@ -73,5 +77,15 @@ enum class ColorState(var rgba: Int) {
      * Purple.
      * Used for devs of the SAOUI by default.
      */
-    GAMEMASTER(0x79139EFF);
+    DEV(0x79139EFF);
+
+    fun nbt(): NBTBase{
+        val nbt = NBTTagCompound()
+        nbt.setString(STATE_TAG, name)
+        return nbt
+    }
+
+    companion object {
+        const val STATE_TAG = "${SAOCore.MODID}_state"
+    }
 }

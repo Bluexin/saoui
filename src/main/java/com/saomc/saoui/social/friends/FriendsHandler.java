@@ -28,6 +28,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -105,7 +106,7 @@ public class FriendsHandler {
     }
 
     public boolean isFriend(String name) {
-        return Stream.of(listFriends()).anyMatch(friend -> friend.equals(name));
+        return Arrays.asList(listFriends()).contains(name);
     }
 
     public boolean isFriend(EntityPlayer player) {

@@ -174,7 +174,7 @@ object ThemeLoader {
                                 if (bg != null) ColorState.INVALID.rgba = bg
                             }
                             ".cursor .gamemaster" -> {
-                                if (bg != null) ColorState.GAMEMASTER.rgba = bg
+                                if (bg != null) ColorState.DEV.rgba = bg
                             }
                         }
                     }

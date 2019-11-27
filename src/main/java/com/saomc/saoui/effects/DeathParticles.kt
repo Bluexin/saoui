@@ -22,7 +22,6 @@ import com.saomc.saoui.resources.StringNames
 import net.minecraft.client.Minecraft
 import net.minecraft.client.particle.Particle
 import net.minecraft.client.renderer.BufferBuilder
-import net.minecraft.client.renderer.Tessellator
 import net.minecraft.entity.Entity
 import net.minecraft.util.EnumFacing
 import net.minecraft.world.World
@@ -72,7 +71,7 @@ class DeathParticles private constructor(world: World, xCoord: Double, yCoord: D
         queuedRenders.add(this)
     }
 
-    private fun renderQueued(tessellator: Tessellator) {
+    private fun renderQueued() {
         var particle = (this.particleAge.toFloat() + time) / this.particleMaxAge.toFloat() * 32.0f
 
         if (particle < 0.0f) particle = 0.0f
@@ -115,6 +114,8 @@ class DeathParticles private constructor(world: World, xCoord: Double, yCoord: D
         val a = (if (q) if (rotationY < 1.5f && rotationY > 0.5f) rotationY - 1.0f else rotationY + 1.0f else rotationY) * Math.PI
         val cos = cos(a)
         val sin = sin(a)
+
+
 
         if (a < Math.PI) {
             GLCore.addVertex(xPos + x1 * cos, yPos + y1, zPos + z1 * sin, 0.0, 1.0, this.particleRed * colorIntensity, this.particleGreen * colorIntensity, this.particleBlue * colorIntensity, 1f)
@@ -159,7 +160,7 @@ class DeathParticles private constructor(world: World, xCoord: Double, yCoord: D
 
         var queuedRenders: Queue<DeathParticles> = ArrayDeque()
 
-        internal fun dispatchQueuedRenders(tessellator: Tessellator) {
+        internal fun dispatchQueuedRenders() {
             RenderDispatcher.particleFxCount = 0
 
             Minecraft.getMinecraft().renderEngine.bindTexture(StringNames.particleLarge)
@@ -167,7 +168,7 @@ class DeathParticles private constructor(world: World, xCoord: Double, yCoord: D
             GLCore.glAlphaTest(true)
             GLCore.glBlend(true)
             GLCore.begin()
-            queuedRenders.forEach { p -> p.renderQueued(tessellator) }
+            queuedRenders.forEach { p -> p.renderQueued() }
             GLCore.draw()
             GLCore.glBlend(false)
 

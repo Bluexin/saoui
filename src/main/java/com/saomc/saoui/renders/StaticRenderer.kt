@@ -19,6 +19,7 @@ package com.saomc.saoui.renders
 
 import com.saomc.saoui.GLCore
 import com.saomc.saoui.SAOCore
+import com.saomc.saoui.api.entity.rendering.ColorState
 import com.saomc.saoui.api.entity.rendering.RenderCapability
 import com.saomc.saoui.api.entity.rendering.getRenderData
 import com.saomc.saoui.config.OptionCore
@@ -62,8 +63,20 @@ object StaticRenderer { // TODO: add usage of scale, offset etc from capability
             if (OptionCore.COLOR_CURSOR.isEnabled && living.hasCapability(RenderCapability.RENDER_CAPABILITY, null))
                 doRenderColorCursor(renderManager, mc, living, x, y, z, 64)
 
-            if (OptionCore.HEALTH_BARS.isEnabled && living != mc.player && living.hasCapability(RenderCapability.RENDER_CAPABILITY, null))
-                doRenderHealthBar(renderManager, mc, living, x, y, z)
+            if (living != mc.player && living.hasCapability(RenderCapability.RENDER_CAPABILITY, null)) {
+                if (Loader.isModLoaded("neat")) return
+                val state = living.getRenderData().getColorStateHandler().colorState?: return
+                when (state){
+                    ColorState.INNOCENT -> if (OptionCore.INNOCENT_HEALTH.isEnabled) doRenderHealthBar(renderManager, mc, living, x, y, z)
+                    ColorState.VIOLENT -> if (OptionCore.VIOLENT_HEALTH.isEnabled) doRenderHealthBar(renderManager, mc, living, x, y, z)
+                    ColorState.KILLER -> if (OptionCore.KILLER_HEALTH.isEnabled) doRenderHealthBar(renderManager, mc, living, x, y, z)
+                    ColorState.BOSS -> if (OptionCore.BOSS_HEALTH.isEnabled) doRenderHealthBar(renderManager, mc, living, x, y, z)
+                    ColorState.CREATIVE -> if (OptionCore.CREATIVE_HEALTH.isEnabled) doRenderHealthBar(renderManager, mc, living, x, y, z)
+                    ColorState.OP -> if (OptionCore.OP_HEALTH.isEnabled) doRenderHealthBar(renderManager, mc, living, x, y, z)
+                    ColorState.INVALID -> if (OptionCore.INVALID_HEALTH.isEnabled) doRenderHealthBar(renderManager, mc, living, x, y, z)
+                    ColorState.DEV -> if (OptionCore.DEV_HEALTH.isEnabled) doRenderHealthBar(renderManager, mc, living, x, y, z)
+                }
+            }
         }
     }
 
@@ -144,7 +157,6 @@ object StaticRenderer { // TODO: add usage of scale, offset etc from capability
         if (living.ridingEntity != null && living.ridingEntity === mc.player) return
         if (OptionCore.LESS_VISUALS.isEnabled && !(living is IMob || StaticPlayerHelper.getHealth(mc, living, SAOCore.UNKNOWN_TIME_DELAY) != StaticPlayerHelper.getMaxHealth(living)))
             return
-        if (!OptionCore.MOB_HEALTH.isEnabled || Loader.isModLoaded("neat")) return
 
         GLCore.glBindTexture(if (OptionCore.SAO_UI.isEnabled) StringNames.entities else StringNames.entitiesCustom)
         GLCore.pushMatrix()

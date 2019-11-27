@@ -1,46 +1,46 @@
 {
-  "sao.confirm": {
-    "category": "master",
+  "confirm": {
+    "category": "player",
     "sounds": [
       {
         "name": "saoui:confirm"
       }
     ]
   },
-  "sao.dialog.close": {
-    "category": "master",
+  "dialog_close": {
+    "category": "player",
     "sounds": [
       {
         "name": "saoui:dialog_close"
       }
     ]
   },
-  "sao.menu.popup": {
-    "category": "master",
+  "menu_popup": {
+    "category": "player",
     "sounds": [
       {
         "name": "saoui:menu_popup"
       }
     ]
   },
-  "sao.message": {
-    "category": "master",
+  "message": {
+    "category": "player",
     "sounds": [
       {
         "name": "saoui:message"
       }
     ]
   },
-  "sao.orb.dropdown": {
-    "category": "master",
+  "orb_dropdown": {
+    "category": "player",
     "sounds": [
       {
         "name": "saoui:orb_dropdown"
       }
     ]
   },
-  "sao.particles.death": {
-    "category": "master",
+  "particles_death": {
+    "category": "ambient",
     "sounds": [
       {
         "name": "saoui:particles_death"

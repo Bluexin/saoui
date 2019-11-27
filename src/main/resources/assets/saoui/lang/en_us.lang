@@ -120,7 +120,17 @@ optionSmoothHealth=Smooth Health
 optionHealthBars=Health Bars
 optionLightHud=Lighter HUD
 optionAltAbsorbPos=Alt Absorb Value Pos
-optionMobHealth=Mob Health Bars
+
+# Options - Health - Mob Health
+optionInnocentHealthBars= Innocent Health Bars
+optionViolentHealthBars= Violent Health Bars
+optionKillerHealthBars= Killer Health Bars
+optionBossHealthBars= Boss Health Bars
+optionCreativeHealthBars= Creative Health Bars
+optionOPHealthBars= OP Health Bars
+optionInvalidHealthBars= Invalid Health Bars
+optionDevHealthBars= Dev Health Bars
+
 
 # Options - Hotbar
 optionDefaultHotbar=Default Hotbar

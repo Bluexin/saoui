@@ -48,8 +48,6 @@ object SAOCore {
     const val VERSION = "2.0.5"
     const val DEPS = "required-after:saomclib@[1.4.1,);after:mantle;after:librarianlib@[4.19.2,)"
 
-    // TODO: investigate toasts -> net.minecraft.client.gui.toasts
-
     @JvmStatic
     @Mod.InstanceFactory
     fun shenanigan() = this
@@ -61,6 +59,7 @@ object SAOCore {
     @Throws(Exception::class)
     fun preInit(event: FMLPreInitializationEvent) {
         MinecraftForge.EVENT_BUS.register(EventCore)
+        MinecraftForge.EVENT_BUS.register(SoundCore)
         ConfigHandler.preInit(event)
 
         CapabilitiesHandler.registerEntityCapability(RenderCapability::class.java, RenderCapability.Storage()) { `object`: Any -> `object` is EntityLivingBase }

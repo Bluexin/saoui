@@ -17,9 +17,11 @@
 
 package com.saomc.saoui.api.elements.neo
 
+import com.saomc.saoui.SoundCore
 import com.saomc.saoui.api.items.IItemFilter
 import com.saomc.saoui.api.screens.IIcon
 import com.saomc.saoui.config.OptionCore
+import com.saomc.saoui.play
 import com.saomc.saoui.screens.CoreGUIDsl
 import com.saomc.saoui.screens.MouseButton
 import com.saomc.saoui.screens.unaryPlus
@@ -73,8 +75,14 @@ class NeoCategoryButton(private val delegate: NeoIconElement, parent: INeoParent
         delegate.parent = this
 
         delegate.onClick { _, _ ->
-            if (elements.isNotEmpty() && !selected) open()
-            else if (selected) close()
+            if (elements.isNotEmpty() && !selected) {
+                open()
+                SoundCore.MENU_POPUP.play()
+            }
+            else if (selected) {
+                close()
+                SoundCore.DIALOG_CLOSE.play()
+            }
 
             true
         }

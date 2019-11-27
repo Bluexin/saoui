@@ -19,6 +19,7 @@ package com.saomc.saoui.events
 
 import com.saomc.saoui.SoundCore
 import com.saomc.saoui.config.OptionCore
+import com.saomc.saoui.playAtEntity
 import com.saomc.saoui.renders.StaticRenderer
 import com.saomc.saoui.screens.CoreGUI
 import com.saomc.saoui.screens.DeathGui
@@ -48,7 +49,7 @@ internal object RenderHandler {
             val deadExactly = ent.deathTime >= 18
             if (deadStart) {
                 ent.deathTime++
-                SoundCore.playAtEntity(ent, SoundCore.PARTICLES_DEATH)
+                SoundCore.PARTICLES_DEATH.playAtEntity(ent)
             }
 
             if (deadExactly) {

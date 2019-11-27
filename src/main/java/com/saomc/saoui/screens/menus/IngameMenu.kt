@@ -18,12 +18,14 @@
 package com.saomc.saoui.screens.menus
 
 import be.bluexin.saomclib.message
+import com.saomc.saoui.SoundCore
 import com.saomc.saoui.api.elements.neo.NeoCategoryButton
 import com.saomc.saoui.api.elements.neo.optionCategory
 import com.saomc.saoui.api.items.IItemFilter
 import com.saomc.saoui.api.items.ItemFilterRegister
 import com.saomc.saoui.config.OptionCore
 import com.saomc.saoui.events.EventCore
+import com.saomc.saoui.play
 import com.saomc.saoui.screens.CoreGUI
 import com.saomc.saoui.screens.itemList
 import com.saomc.saoui.screens.util.PopupYesNo
@@ -54,32 +56,6 @@ class IngameMenu : CoreGUI<Unit>(Vec2d.ZERO) {
             ItemFilterRegister.tlFilters.forEach {baseFilter ->
                 addItemCategories(this, baseFilter)
             }
-            /*
-            category(IconCore.EQUIPMENT, format("sao.element.equipment")) {
-                category(IconCore.ARMOR, format("sao.element.armor")) {
-                    itemList(mc.player.inventoryContainer, BaseFilters.ARMOR, 36..39)
-                }
-                category(IconCore.EQUIPMENT, format("sao.element.weapons")) {
-                    itemList(mc.player.inventoryContainer, BaseFilters.WEAPONS, 0..8)
-                }
-                category(IconCore.EQUIPMENT, format("sao.element.tools")) {
-                    itemList(mc.player.inventoryContainer, BaseFilters.COMPATTOOLS, 0..8, 40..40)
-                }
-                category(IconCore.EQUIPMENT, format("sao.element.consumables")) {
-                    itemList(mc.player.inventoryContainer, BaseFilters.CONSUMABLES, 0..8)
-                }
-                category(IconCore.EQUIPMENT, format("sao.element.shields")) {
-                    itemList(mc.player.inventoryContainer, BaseFilters.SHIELDS, 40..40)
-                }
-                if (BaseFilters.baublesLoaded) {
-                    category(IconCore.ACCESSORY, format("sao.element.accessories")) {
-                        itemList(mc.player.inventoryContainer, BaseFilters.ACCESSORY)
-                    }
-                }
-            }
-            category(IconCore.ITEMS, format("sao.element.items")) {
-                itemList(mc.player.inventoryContainer, BaseFilters.ITEMS, 0..8, 40..40)
-            }*/
             category(IconCore.SKILLS, format("sao.element.skills")) {
                 category(IconCore.SKILLS, "Test 1") {
                     category(IconCore.SKILLS, "1.1") {
@@ -153,6 +129,7 @@ class IngameMenu : CoreGUI<Unit>(Vec2d.ZERO) {
 
         pos = vec(width / 2.0 - 10, (height - elements.size * 20) / 2.0)
         destination = pos
+        SoundCore.ORB_DROPDOWN.play()
     }
 
     fun addItemCategories(button: NeoCategoryButton, filter: IItemFilter){
@@ -161,7 +138,7 @@ class IngameMenu : CoreGUI<Unit>(Vec2d.ZERO) {
                 if (filter.subFilters.isNotEmpty())
                     filter.subFilters.forEach { subfilter -> addItemCategories(this, subfilter) }
             }
-            else itemList(mc.player.inventoryContainer, filter)
+            else itemList(mc.player.inventoryContainer, filter, filter.getValidSlots())
         }
     }
 }
