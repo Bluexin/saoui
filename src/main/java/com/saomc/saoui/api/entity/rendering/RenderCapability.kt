@@ -21,6 +21,7 @@ import be.bluexin.saomclib.capabilities.AbstractCapability
 import be.bluexin.saomclib.capabilities.AbstractEntityCapability
 import be.bluexin.saomclib.capabilities.Key
 import com.saomc.saoui.SAOCore
+import com.teamwizardry.librarianlib.features.kotlin.Minecraft
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.nbt.NBTBase
@@ -29,6 +30,8 @@ import net.minecraft.util.EnumFacing
 import net.minecraft.util.ResourceLocation
 import net.minecraftforge.common.capabilities.Capability
 import net.minecraftforge.common.capabilities.CapabilityInject
+import kotlin.math.max
+import kotlin.math.roundToLong
 
 /**
  * Part of saoui
@@ -53,6 +56,33 @@ class RenderCapability : AbstractEntityCapability() {
      * Where this capability is getting it's Color State data from.
      */
     private lateinit var colorStateHandler: IColorStateHandler
+
+    var healthSmooth: Float = 0f
+
+    fun update(partialTicks: Float){
+        updateHealthSmooth(partialTicks)
+    }
+
+    fun updateHealthSmooth(partialTicks: Float){
+        if (theEnt.health == theEnt.maxHealth)
+            healthSmooth = theEnt.maxHealth
+        else if (theEnt.health <= 0){
+            val value = (18 - theEnt.deathTime).toFloat() / 18
+            healthSmooth =  max(0.0f, theEnt.health * value)
+        }else if ((healthSmooth * 10).roundToLong() != (theEnt.health * 10).roundToLong())
+            healthSmooth += (theEnt.health - healthSmooth) * (gameTimeDelay(partialTicks) * HEALTH_ANIMATION_FACTOR)
+        else
+            healthSmooth = theEnt.health
+        healthSmooth = max(0.0f, healthSmooth)
+    }
+
+    private fun gameTimeDelay(time: Float): Float {
+        return if (time >= 0f) time else HEALTH_FRAME_FACTOR / gameFPS()
+    }
+
+    private fun gameFPS(): Int {
+        return Minecraft().limitFramerate
+    }
 
     /**
      * The entity this capability refers to.
@@ -125,6 +155,9 @@ class RenderCapability : AbstractEntityCapability() {
         fun syncClient(player: EntityPlayer) {// TODO: implement
             //        PacketPipeline.sendTo(new SyncExtStats(player), (EntityPlayerMP) player);
         }
+
+        private const val HEALTH_ANIMATION_FACTOR = 0.075f
+        private const val HEALTH_FRAME_FACTOR = HEALTH_ANIMATION_FACTOR * HEALTH_ANIMATION_FACTOR * 0x40f * 0x64f
     }
 }
 
@@ -134,4 +167,4 @@ class RenderCapability : AbstractEntityCapability() {
  * @param ent the entity to get the capability for
  * @return the capability
  */
-fun EntityLivingBase.getRenderData() = this.getCapability(RenderCapability.RENDER_CAPABILITY, null)!!
+fun EntityLivingBase.getRenderData() = this.getCapability(RenderCapability.RENDER_CAPABILITY, null)

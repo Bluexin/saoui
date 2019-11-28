@@ -21,6 +21,7 @@ import be.bluexin.saomclib.events.PartyEvent3
 import be.bluexin.saomclib.packets.party.PartyType
 import be.bluexin.saomclib.packets.party.Type
 import be.bluexin.saomclib.packets.party.updateServer
+import com.saomc.saoui.api.entity.rendering.getRenderData
 import com.saomc.saoui.effects.RenderDispatcher
 import com.saomc.saoui.screens.ingame.IngameGUI
 import com.saomc.saoui.screens.util.PopupYesNo
@@ -51,6 +52,7 @@ object EventCore {
     @SubscribeEvent
     fun renderTickListener(e: TickEvent.RenderTickEvent) {
         RenderHandler.deathHandlers()
+        Minecraft().player?.getRenderData()?.update(e.renderTickTime)
     }
 
     @SubscribeEvent
@@ -61,7 +63,7 @@ object EventCore {
 
     @SubscribeEvent
     fun renderPlayerListener(e: RenderPlayerEvent.Post) {
-        RenderHandler.renderPlayer(e)
+        //RenderHandler.renderPlayer(e)
     }
 
     @SubscribeEvent

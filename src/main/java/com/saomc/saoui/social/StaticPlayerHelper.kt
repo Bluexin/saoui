@@ -34,7 +34,7 @@ import kotlin.math.roundToLong
 object StaticPlayerHelper {
     private const val HEALTH_ANIMATION_FACTOR = 0.075f
     private const val HEALTH_FRAME_FACTOR = HEALTH_ANIMATION_FACTOR * HEALTH_ANIMATION_FACTOR * 0x40f * 0x64f
-    private val healthSmooth = HashMap<UUID, Float>()
+    //private val healthSmooth = HashMap<UUID, Float>()
     private val hungerSmooth = HashMap<UUID, Float>()
 
     fun listOnlinePlayers(mc: Minecraft, range: Double): List<EntityPlayer> {
@@ -88,6 +88,7 @@ object StaticPlayerHelper {
         return name
     }
 
+    /*
     fun getHealth(mc: Minecraft, entity: Entity?, time: Float): Float { // FIXME: this seems to break if called many times in a single render frame
         if (OptionCore.SMOOTH_HEALTH.isEnabled) {
             val healthReal: Float = if (entity is EntityLivingBase)
@@ -123,7 +124,7 @@ object StaticPlayerHelper {
             } else return healthReal
         } else
             return if (entity is EntityLivingBase) max(0.0f, entity.health) else 0f
-    }
+    }*/
 
     fun getMaxHealth(entity: Entity?): Float {
         return if (entity is EntityLivingBase) max(0.0000001f, entity.maxHealth) else 1f

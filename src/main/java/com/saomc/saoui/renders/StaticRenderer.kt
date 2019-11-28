@@ -18,9 +18,7 @@
 package com.saomc.saoui.renders
 
 import com.saomc.saoui.GLCore
-import com.saomc.saoui.SAOCore
 import com.saomc.saoui.api.entity.rendering.ColorState
-import com.saomc.saoui.api.entity.rendering.RenderCapability
 import com.saomc.saoui.api.entity.rendering.getRenderData
 import com.saomc.saoui.config.OptionCore
 import com.saomc.saoui.effects.DeathParticles
@@ -33,7 +31,6 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats
 import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.monster.EntityMob
-import net.minecraft.entity.monster.IMob
 import net.minecraftforge.fml.common.Loader
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
@@ -55,35 +52,37 @@ object StaticRenderer { // TODO: add usage of scale, offset etc from capability
     fun render(renderManager: RenderManager, living: EntityLivingBase, x: Double, y: Double, z: Double) {
         val mc = Minecraft.getMinecraft()
 
-        val dead = StaticPlayerHelper.getHealth(mc, living, SAOCore.UNKNOWN_TIME_DELAY) <= 0
+        val dead = living.getRenderData()?.healthSmooth?: living.health <= 0
 
         if (living.deathTime == 1) living.deathTime++
 
         if (!dead && !living.isInvisibleToPlayer(mc.player) && living != mc.player) {
-            if (OptionCore.COLOR_CURSOR.isEnabled && living.hasCapability(RenderCapability.RENDER_CAPABILITY, null))
-                doRenderColorCursor(renderManager, mc, living, x, y, z, 64)
-
-            if (living != mc.player && living.hasCapability(RenderCapability.RENDER_CAPABILITY, null)) {
-                if (Loader.isModLoaded("neat")) return
-                val state = living.getRenderData().getColorStateHandler().colorState?: return
+            living.getRenderData()?.let {renderCap ->
+                val state = renderCap.getColorStateHandler().colorState?: return
                 when (state){
-                    ColorState.INNOCENT -> if (OptionCore.INNOCENT_HEALTH.isEnabled) doRenderHealthBar(renderManager, mc, living, x, y, z)
-                    ColorState.VIOLENT -> if (OptionCore.VIOLENT_HEALTH.isEnabled) doRenderHealthBar(renderManager, mc, living, x, y, z)
-                    ColorState.KILLER -> if (OptionCore.KILLER_HEALTH.isEnabled) doRenderHealthBar(renderManager, mc, living, x, y, z)
-                    ColorState.BOSS -> if (OptionCore.BOSS_HEALTH.isEnabled) doRenderHealthBar(renderManager, mc, living, x, y, z)
-                    ColorState.CREATIVE -> if (OptionCore.CREATIVE_HEALTH.isEnabled) doRenderHealthBar(renderManager, mc, living, x, y, z)
-                    ColorState.OP -> if (OptionCore.OP_HEALTH.isEnabled) doRenderHealthBar(renderManager, mc, living, x, y, z)
-                    ColorState.INVALID -> if (OptionCore.INVALID_HEALTH.isEnabled) doRenderHealthBar(renderManager, mc, living, x, y, z)
-                    ColorState.DEV -> if (OptionCore.DEV_HEALTH.isEnabled) doRenderHealthBar(renderManager, mc, living, x, y, z)
+                    ColorState.VIOLENT -> {
+                        if (OptionCore.VIOLENT_HEALTH.isEnabled) doRenderHealthBar(renderManager, mc, living, x, y, z)
+                        if (OptionCore.VIOLENT_CRYSTAL.isEnabled) doRenderColorCursor(renderManager, living, x, y, z, 64, state)
+                    }
+                    ColorState.KILLER -> {
+                        if (OptionCore.KILLER_HEALTH.isEnabled) doRenderHealthBar(renderManager, mc, living, x, y, z)
+                        if (OptionCore.VIOLENT_CRYSTAL.isEnabled) doRenderColorCursor(renderManager, living, x, y, z, 64, state)
+                    }
+                    ColorState.BOSS -> {
+                        if (OptionCore.BOSS_HEALTH.isEnabled) doRenderHealthBar(renderManager, mc, living, x, y, z)
+                        if (OptionCore.VIOLENT_CRYSTAL.isEnabled) doRenderColorCursor(renderManager, living, x, y, z, 64, state)
+                    }
+                    else -> {
+                        if (OptionCore.INNOCENT_HEALTH.isEnabled) doRenderHealthBar(renderManager, mc, living, x, y, z)
+                        if (OptionCore.INNOCENT_CRYSTAL.isEnabled) doRenderColorCursor(renderManager, living, x, y, z, 64, state)
+                    }
                 }
             }
         }
     }
 
-    private fun doRenderColorCursor(renderManager: RenderManager, mc: Minecraft, entity: EntityLivingBase, x: Double, y: Double, z: Double, distance: Int) {
+    private fun doRenderColorCursor(renderManager: RenderManager, entity: EntityLivingBase, x: Double, y: Double, z: Double, distance: Int, color: ColorState) {
         if (entity.ridingEntity != null) return
-        if (OptionCore.LESS_VISUALS.isEnabled && !(entity is IMob || StaticPlayerHelper.getHealth(mc, entity, SAOCore.UNKNOWN_TIME_DELAY) != StaticPlayerHelper.getMaxHealth(entity)))
-            return
 
         if (entity.world.isRemote) {
             val d3 = entity.getDistanceSq(renderManager.renderViewEntity)
@@ -108,7 +107,7 @@ object StaticRenderer { // TODO: add usage of scale, offset etc from capability
                 GLCore.tryBlendFuncSeparate(770, 771, 1, 0)
 
                 GLCore.glBindTexture(if (OptionCore.SAO_UI.isEnabled) StringNames.entities else StringNames.entitiesCustom)
-                GLCore.color(entity.getRenderData().getColorStateHandler().colorState.rgba)
+                GLCore.color(color.rgba)
                 GLCore.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX)
 
                 if (OptionCore.SPINNING_CRYSTALS.isEnabled) {
@@ -155,8 +154,8 @@ object StaticRenderer { // TODO: add usage of scale, offset etc from capability
 
     private fun doRenderHealthBar(renderManager: RenderManager, mc: Minecraft, living: EntityLivingBase, x: Double, y: Double, z: Double) {
         if (living.ridingEntity != null && living.ridingEntity === mc.player) return
-        if (OptionCore.LESS_VISUALS.isEnabled && !(living is IMob || StaticPlayerHelper.getHealth(mc, living, SAOCore.UNKNOWN_TIME_DELAY) != StaticPlayerHelper.getMaxHealth(living)))
-            return
+        if (living.health > living.maxHealth) return
+        if (Loader.isModLoaded("neat")) return
 
         GLCore.glBindTexture(if (OptionCore.SAO_UI.isEnabled) StringNames.entities else StringNames.entitiesCustom)
         GLCore.pushMatrix()
@@ -166,8 +165,8 @@ object StaticRenderer { // TODO: add usage of scale, offset etc from capability
 
         GLCore.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA)
 
-        val hitPoints = (getHealthFactor(mc, living, SAOCore.UNKNOWN_TIME_DELAY) * HEALTH_COUNT).toInt()
-        useColor(mc, living, SAOCore.UNKNOWN_TIME_DELAY)
+        val hitPoints = (getHealthFactor(living) * HEALTH_COUNT).toInt()
+        useColor(living)
 
         val sizeMult = if (living.isChild && living is EntityMob) 0.5f else 1.0f
 
@@ -234,16 +233,16 @@ object StaticRenderer { // TODO: add usage of scale, offset etc from capability
         }
     }
 
-    private fun useColor(mc: Minecraft, living: Entity, time: Float) {
+    private fun useColor(living: Entity) {
         if (living is EntityLivingBase) {
-            HealthStep.getStep(mc, living, time).glColor()
+            HealthStep.getStep(living).glColor()
         } else {
             HealthStep.GOOD.glColor()
         }
     }
 
-    private fun getHealthFactor(mc: Minecraft, living: Entity, time: Float): Float {
-        val normalFactor = StaticPlayerHelper.getHealth(mc, living, time) / StaticPlayerHelper.getMaxHealth(living)
+    private fun getHealthFactor(living: EntityLivingBase): Float {
+        val normalFactor = (living.getRenderData()?.healthSmooth?: living.health) / StaticPlayerHelper.getMaxHealth(living)
         val delta = 1.0f - normalFactor
 
         return normalFactor + delta * delta / 2 * normalFactor

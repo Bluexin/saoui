@@ -18,6 +18,7 @@
 package com.saomc.saoui.events
 
 import com.saomc.saoui.SoundCore
+import com.saomc.saoui.api.entity.rendering.getRenderData
 import com.saomc.saoui.config.OptionCore
 import com.saomc.saoui.playAtEntity
 import com.saomc.saoui.renders.StaticRenderer
@@ -64,7 +65,6 @@ internal object RenderHandler {
     }
 
     fun guiInstance(e: GuiOpenEvent) {
-        if (!OptionCore.BUGGY_MENU.isEnabled) return
 
         if (e.gui is GuiIngameMenu) {
                 if (EventCore.mc.currentScreen !is CoreGUI<*>) e.gui = IngameMenu()
@@ -75,7 +75,7 @@ internal object RenderHandler {
                 else -> e.isCanceled = true
             }
         }
-        else if (e.gui is GuiGameOver && (!OptionCore.DEFAULT_DEATH_SCREEN.isEnabled)) {
+        else if (e.gui is GuiGameOver && !OptionCore.DEFAULT_DEATH_SCREEN.isEnabled) {
             if (EventCore.mc.currentScreen !is DeathGui) e.gui = DeathGui()
             else {
                 e.isCanceled = true
@@ -85,6 +85,7 @@ internal object RenderHandler {
 
     fun renderPlayer(e: RenderPlayerEvent.Post) {
         if (!OptionCore.UI_ONLY.isEnabled) {
+            e.entityPlayer.getRenderData()?.update(e.partialRenderTick)
             if (e.entityPlayer != null) {
                 StaticRenderer.render(e.renderer.renderManager, e.entityPlayer, e.x, e.y, e.z)
             }
@@ -93,7 +94,8 @@ internal object RenderHandler {
 
     fun renderEntity(e: RenderLivingEvent.Post<*>) {
         if (!OptionCore.UI_ONLY.isEnabled) {
-            if (e.entity !== EventCore.mc.player) {
+            e.entity.getRenderData()?.update(e.partialRenderTick)
+            if (e.entity != EventCore.mc.player) {
                 StaticRenderer.render(e.renderer.renderManager, e.entity, e.x, e.y, e.z)
             }
         }

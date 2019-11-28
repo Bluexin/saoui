@@ -65,7 +65,7 @@ class PlayerColorStateHandler(thePlayer: EntityPlayer) : IColorStateHandler {
      * @param target the player hit
      */
     fun hit(target: EntityPlayer) {
-        val targetState = target.getRenderData().getColorStateHandler().colorState
+        val targetState = target.getRenderData()?.getColorStateHandler()?.colorState
         if (targetState !== KILLER && targetState !== VIOLENT && this.currentState !== KILLER) {
             this.currentState = VIOLENT
             this.ticksForRedemption = TICKS_PER_STATE
@@ -78,7 +78,7 @@ class PlayerColorStateHandler(thePlayer: EntityPlayer) : IColorStateHandler {
      * @param target the player killed
      */
     fun kill(target: EntityPlayer) {
-        val targetState =target.getRenderData().getColorStateHandler().colorState
+        val targetState =target.getRenderData()?.getColorStateHandler()?.colorState
         if (targetState !== KILLER && targetState !== VIOLENT) {
             if (this.currentState === KILLER)
                 this.ticksForRedemption += TICKS_PER_STATE

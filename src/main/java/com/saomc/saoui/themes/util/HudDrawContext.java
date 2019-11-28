@@ -18,6 +18,7 @@
 package com.saomc.saoui.themes.util;
 
 import be.bluexin.saomclib.party.PlayerInfo;
+import com.saomc.saoui.api.entity.rendering.RenderCapability;
 import com.saomc.saoui.api.info.IPlayerStatsProvider;
 import com.saomc.saoui.api.themes.IHudDrawContext;
 import com.saomc.saoui.effects.StatusEffects;
@@ -127,7 +128,13 @@ public class HudDrawContext implements IHudDrawContext {
      * Aka partialTicks
      */
     public void setTime(float time) {
-        this.hp = StaticPlayerHelper.INSTANCE.getHealth(mc, player, time);
+        RenderCapability cap = player.getCapability(RenderCapability.RENDER_CAPABILITY, null);
+        if (cap != null){
+            this.hp = cap.getHealthSmooth();
+        }
+        else{
+            this.hp = player.getHealth();
+        }
         this.maxHp = StaticPlayerHelper.INSTANCE.getMaxHealth(player);
         healthStep = HealthStep.Companion.getStep(player, hpPct());
         partialTicks = time;
@@ -227,7 +234,7 @@ public class HudDrawContext implements IHudDrawContext {
 
     @Override
     public float ptHp(int index) {
-        return validatePtIndex(index) ? StaticPlayerHelper.INSTANCE.getHealth(mc, pt.get(index).getPlayer(), partialTicks) : 0f;
+        return validatePtIndex(index) ? pt.get(index).getPlayer().getCapability(RenderCapability.RENDER_CAPABILITY, null).getHealthSmooth() : 0f;
     }
 
     @Override

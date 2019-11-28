@@ -65,41 +65,44 @@ enum class OptionCore(
     // Health Options
     SMOOTH_HEALTH(I18n.format("optionSmoothHealth"), true, false, HEALTH_OPTIONS, false),
     HEALTH_BARS(I18n.format("optionHealthBars"), false, true, HEALTH_OPTIONS, false),
-    REMOVE_HPXP(I18n.format("optionLightHud"), false, false, HEALTH_OPTIONS, false),
+    //REMOVE_HPXP(I18n.format("optionLightHud"), false, false, HEALTH_OPTIONS, false),
     ALT_ABSORB_POS(I18n.format("optionAltAbsorbPos"), false, false, HEALTH_OPTIONS, false),
     // Health Bars
     INNOCENT_HEALTH(I18n.format("optionInnocentHealthBars"), true, false, HEALTH_BARS, false),
     VIOLENT_HEALTH(I18n.format("optionViolentHealthBars"), true, false, HEALTH_BARS, false),
     KILLER_HEALTH(I18n.format("optionKillerHealthBars"), true, false, HEALTH_BARS, false),
     BOSS_HEALTH(I18n.format("optionBossHealthBars"), true, false, HEALTH_BARS, false),
+    /*
     CREATIVE_HEALTH(I18n.format("optionCreativeHealthBars"), true, false, HEALTH_BARS, false),
     OP_HEALTH(I18n.format("optionOPHealthBars"), true, false, HEALTH_BARS, false),
     INVALID_HEALTH(I18n.format("optionInvalidHealthBars"), true, false, HEALTH_BARS, false),
-    DEV_HEALTH(I18n.format("optionDevHealthBars"), true, false, HEALTH_BARS, false),
+    DEV_HEALTH(I18n.format("optionDevHealthBars"), true, false, HEALTH_BARS, false),*/
     //Hotbar
     DEFAULT_HOTBAR(I18n.format("optionDefaultHotbar"), false, false, HOTBAR_OPTIONS, true),
     HOR_HOTBAR(I18n.format("optionHorHotbar"), false, false, HOTBAR_OPTIONS, true),
     VER_HOTBAR(I18n.format("optionVerHotbar"), true, false, HOTBAR_OPTIONS, true),
     //Effects
-    CURSOR_TOGGLE(I18n.format("optionCursorToggle"), true, false, EFFECTS, false),
-    COLOR_CURSOR(I18n.format("optionColorCursor"), true, false, EFFECTS, false),
     SPINNING_CRYSTALS(I18n.format("optionSpinning"), true, false, EFFECTS, false),
     PARTICLES(I18n.format("optionParticles"), true, false, EFFECTS, false),
-    LESS_VISUALS(I18n.format("optionLessVis"), false, false, EFFECTS, false),
     SOUND_EFFECTS(I18n.format("optionSounds"), true, false, EFFECTS, false),
+    CRYSTALS(I18n.format("optionCursor"), false, true, EFFECTS, false),
+    //CRYSTALS
+    INNOCENT_CRYSTAL(I18n.format("optionInnocentCrystal"), true, false, CRYSTALS, false),
+    VIOLENT_CRYSTAL(I18n.format("optionViolentCrystal"), true, false, CRYSTALS, false),
+    KILLER_CRYSTAL(I18n.format("optionKillerCrystal"), true, false, CRYSTALS, false),
+    BOSS_CRYSTAL(I18n.format("optionBossCrystal"), true, false, CRYSTALS, false),
+    /*
+    CREATIVE_CRYSTAL(I18n.format("optionCreativeCrystal"), true, false, CRYSTALS, false),
+    OP_CRYSTAL(I18n.format("optionOPCrystal"), true, false, CRYSTALS, false),
+    INVALID_CRYSTAL(I18n.format("optionInvalidCrystal"), true, false, CRYSTALS, false),
+    DEV_CRYSTAL(I18n.format("optionDevCrystal"), true, false, CRYSTALS, false),*/
+
     //Misc
     AGGRO_SYSTEM(I18n.format("optionAggro"), true, false, MISC, false),
-    CLIENT_CHAT_PACKETS(I18n.format("optionCliChatPacks"), true, false, MISC, false),
     MOUNT_STAT_VIEW(I18n.format("optionMountStatView"), true, false, MISC, false),
     CUSTOM_FONT(I18n.format("optionCustomFont"), false, false, MISC, false),
-    DEBUG_MODE(I18n.format("optionDebugMode"), false, false, MISC, false),
     COMPACT_INVENTORY(I18n.format("optionCompatInv"), false, false, MISC, false),
-    TEXT_SHADOW(I18n.format("optionTextShadow"), true, false, MISC, false),
-    //Debug
-    DISABLE_TICKS(I18n.format("optionDisableTicks"), false, false, MISC, false),
-    BUGGY_MENU(I18n.format("optionEnableMenus"), true, false, MISC, false),
-    NOTICE(I18n.format("optionNotice"), true, false, MISC, false);
-
+    TEXT_SHADOW(I18n.format("optionTextShadow"), true, false, MISC, false);
     // TODO: make a way for themes to register custom options?
 
     override fun toString() = name

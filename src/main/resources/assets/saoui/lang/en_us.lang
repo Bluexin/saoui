@@ -105,7 +105,7 @@ optCatMisc=Misc
 optionUIOnly=UI Only
 optionDefaultInv=Default Inventory
 optionDefaultDeath=Default Death
-optionDefaultDebuge=Default Debug
+optionDefaultDebug=Default Debug
 optionForceHud=Force HUD (gm 1)
 optionLogout=Enable Logout
 optionGuiPause=GUIs pause the game
@@ -117,7 +117,7 @@ optionSAOUI=SAO UI
 
 # Options - Health
 optionSmoothHealth=Smooth Health
-optionHealthBars=Health Bars
+optionHealthBars=Health Bar Options
 optionLightHud=Lighter HUD
 optionAltAbsorbPos=Alt Absorb Value Pos
 
@@ -131,19 +131,28 @@ optionOPHealthBars= OP Health Bars
 optionInvalidHealthBars= Invalid Health Bars
 optionDevHealthBars= Dev Health Bars
 
-
 # Options - Hotbar
 optionDefaultHotbar=Default Hotbar
 optionHorHotbar=Horizontal Hotbar
 optionVerHotbar=Vertical Hotbar
 
 # Options - Effects
-optionColorCursor=Color Cursor
+optionCursor=Crystal Options
 optionCursorToggle=Toggle Cursor Movement
 optionSpinning=Spinning Crystals
 optionParticles=Particles
 optionLessVis=Less Visual Noise
 optionSounds=Sound Effects
+
+# Options - Effects - Crystals
+optionInnocentCrystal= Innocent Crystal
+optionViolentCrystal= Violent Crystal
+optionKillerCrystal= Killer Crystal
+optionBossCrystal= Boss Crystal
+optionCreativeCrystal= Creative Crystal
+optionOPCrystal= OP Crystal
+optionInvalidCrystal= Invalid Crystal
+optionDevCrystal= Dev Crystal
 
 # Options - Misc
 optionCrossHair=Cross Hair

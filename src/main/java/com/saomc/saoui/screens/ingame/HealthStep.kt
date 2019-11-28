@@ -18,8 +18,8 @@
 package com.saomc.saoui.screens.ingame
 
 import com.saomc.saoui.GLCore
+import com.saomc.saoui.api.entity.rendering.getRenderData
 import com.saomc.saoui.social.StaticPlayerHelper
-import net.minecraft.client.Minecraft
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraftforge.fml.relauncher.Side
@@ -48,8 +48,8 @@ enum class HealthStep constructor(private val limit: Float, var rgba: Int) {
 
     companion object {
 
-        fun getStep(mc: Minecraft, entity: EntityLivingBase, time: Float): HealthStep {
-            return getStep(entity, (StaticPlayerHelper.getHealth(mc, entity, time) / StaticPlayerHelper.getMaxHealth(entity)).toDouble())
+        fun getStep(entity: EntityLivingBase): HealthStep {
+            return getStep(entity, (entity.getRenderData()?.healthSmooth?: entity.health) / StaticPlayerHelper.getMaxHealth(entity).toDouble())
         }
 
         fun getStep(entity: EntityLivingBase, health: Double): HealthStep {
