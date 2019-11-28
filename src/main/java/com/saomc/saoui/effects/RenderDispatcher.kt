@@ -41,7 +41,6 @@ object RenderDispatcher {
         profiler.startSection("death particle")
         DeathParticles.dispatchQueuedRenders()
         profiler.endSection()
-        GLCore.lighting(true)
         GLCore.blendFunc(GL11.GL_ONE, GL11.GL_ZERO)
         GLCore.glBlend(false)
     }

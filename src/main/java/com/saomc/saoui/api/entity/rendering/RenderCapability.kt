@@ -31,7 +31,7 @@ import net.minecraft.util.ResourceLocation
 import net.minecraftforge.common.capabilities.Capability
 import net.minecraftforge.common.capabilities.CapabilityInject
 import kotlin.math.max
-import kotlin.math.roundToLong
+import kotlin.math.roundToInt
 
 /**
  * Part of saoui
@@ -64,15 +64,15 @@ class RenderCapability : AbstractEntityCapability() {
     }
 
     fun updateHealthSmooth(partialTicks: Float){
-        if (theEnt.health == theEnt.maxHealth)
-            healthSmooth = theEnt.maxHealth
-        else if (theEnt.health <= 0){
-            val value = (18 - theEnt.deathTime).toFloat() / 18
-            healthSmooth =  max(0.0f, theEnt.health * value)
-        }else if ((healthSmooth * 10).roundToLong() != (theEnt.health * 10).roundToLong())
-            healthSmooth += (theEnt.health - healthSmooth) * (gameTimeDelay(partialTicks) * HEALTH_ANIMATION_FACTOR)
-        else
-            healthSmooth = theEnt.health
+        when {
+            theEnt.health == theEnt.maxHealth -> healthSmooth = theEnt.maxHealth
+            theEnt.health <= 0 -> {
+                val value = (18 - theEnt.deathTime).toFloat() / 18
+                healthSmooth =  max(0.0f, theEnt.health * value)
+            }
+            (healthSmooth * 10).roundToInt() != (theEnt.health * 10).roundToInt() -> healthSmooth += (theEnt.health - healthSmooth) * (gameTimeDelay(partialTicks) * HEALTH_ANIMATION_FACTOR)
+            else -> healthSmooth = theEnt.health
+        }
         healthSmooth = max(0.0f, healthSmooth)
     }
 
