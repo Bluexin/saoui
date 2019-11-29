@@ -85,6 +85,7 @@ enum class OptionCore(
     SPINNING_CRYSTALS(I18n.format("optionSpinning"), true, false, EFFECTS, false),
     PARTICLES(I18n.format("optionParticles"), true, false, EFFECTS, false),
     SOUND_EFFECTS(I18n.format("optionSounds"), true, false, EFFECTS, false),
+    MOUSE_OVER_EFFECT(I18n.format("optionMouseOver"), true, false, EFFECTS, false),
     CRYSTALS(I18n.format("optionCursor"), false, true, EFFECTS, false),
     //CRYSTALS
     INNOCENT_CRYSTAL(I18n.format("optionInnocentCrystal"), true, false, CRYSTALS, false),

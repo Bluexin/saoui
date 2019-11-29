@@ -19,13 +19,10 @@ import kotlin.math.min
 import kotlin.math.roundToInt
 
 
-open class NeoProfileElement(var player: EntityPlayer, override var parent: INeoParent?) : NeoIconElement(IconCore.PROFILE) {
+open class NeoProfileElement(var player: EntityPlayer, override var parent: INeoParent?) : NeoIconElement(IconCore.PROFILE, width = 170, height = 240) {
 
     override val listed: Boolean
         get() = false
-
-    val width = 170
-    val height = 240
 
     override var pos: Vec2d= Vec2d(-width - 20.0, -(height / 2.0) - 13)
 

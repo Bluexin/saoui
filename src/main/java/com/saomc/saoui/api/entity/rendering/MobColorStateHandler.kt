@@ -61,7 +61,7 @@ class MobColorStateHandler internal constructor(entity: EntityLivingBase) : ICol
                 entity is EntityPigZombie && entity.isAngry -> ColorState.KILLER
                 entity is IEntityOwnable && entity.owner != null -> if (entity.owner == mc.player) ColorState.INNOCENT else ColorState.VIOLENT
                 entity is IMob -> if (entity.canEntityBeSeen(mc.player)) ColorState.KILLER else ColorState.VIOLENT
-                entity is IAnimals -> if (entity.combatTracker.combatEntries.any { it.damageSrc.trueSource == mc.player }) ColorState.VIOLENT else ColorState.INNOCENT
+                entity is IAnimals -> ColorState.INNOCENT.also { cached = it }
                 else -> ColorState.INVALID
             }
         }

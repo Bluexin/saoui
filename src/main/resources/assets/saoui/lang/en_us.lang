@@ -142,6 +142,7 @@ optionCursorToggle=Toggle Cursor Movement
 optionSpinning=Spinning Crystals
 optionParticles=Particles
 optionLessVis=Less Visual Noise
+optionMouseOver=Mouse over effects
 optionSounds=Sound Effects
 
 # Options - Effects - Crystals

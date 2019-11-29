@@ -19,6 +19,7 @@ package com.saomc.saoui.api.elements.neo
 
 import com.saomc.saoui.GLCore
 import com.saomc.saoui.api.screens.IIcon
+import com.saomc.saoui.config.OptionCore
 import com.saomc.saoui.resources.StringNames
 import com.saomc.saoui.screens.ItemIcon
 import com.saomc.saoui.screens.MouseButton
@@ -30,6 +31,9 @@ import com.teamwizardry.librarianlib.features.kotlin.minus
 import com.teamwizardry.librarianlib.features.kotlin.plus
 import com.teamwizardry.librarianlib.features.math.BoundingBox2D
 import com.teamwizardry.librarianlib.features.math.Vec2d
+import net.minecraft.client.Minecraft
+import net.minecraft.client.renderer.GlStateManager
+import net.minecraft.util.ResourceLocation
 import kotlin.math.max
 import kotlin.math.min
 
@@ -38,8 +42,10 @@ import kotlin.math.min
  *
  * @author Bluexin
  */
-open class NeoIconElement(val icon: IIcon, override var pos: Vec2d = Vec2d.ZERO, override var destination: Vec2d = pos) : NeoParent() {
+open class NeoIconElement(val icon: IIcon, override var pos: Vec2d = Vec2d.ZERO, override var destination: Vec2d = pos, var width: Int = 19, var height: Int = 19) : NeoParent() {
 
+
+    val RES_ITEM_GLINT = ResourceLocation("textures/misc/enchanted_item_glint.png")
     private var onClickBody: (Vec2d, MouseButton) -> Boolean = { _, _ -> true }
     private var onClickOutBody: (Vec2d, MouseButton) -> Unit = { _, _ -> Unit }
 
@@ -82,7 +88,8 @@ open class NeoIconElement(val icon: IIcon, override var pos: Vec2d = Vec2d.ZERO,
         if (scale != Vec2d.ONE) GLCore.glScalef(scale.xf, scale.yf, 1f)
         GLCore.color(ColorUtil.multiplyAlpha(getColor(mouse), opacity))
         GLCore.glBindTexture(StringNames.gui)
-        GLCore.glTexturedRectV2(pos.x, pos.y, width = 19.0, height = 19.0, srcX = 1.0, srcY = 26.0)
+        GLCore.glTexturedRectV2(pos.x, pos.y, width = width.toDouble(), height = height.toDouble(), srcX = 1.0, srcY = 26.0)
+        if (OptionCore.MOUSE_OVER_EFFECT.isEnabled && mouse in this) mouseOverEffect()
         GLCore.color(ColorUtil.multiplyAlpha(getTextColor(mouse), opacity))
         if (icon.rl != null) {
             GLCore.glBindTexture(icon.rl!!)
@@ -100,6 +107,33 @@ open class NeoIconElement(val icon: IIcon, override var pos: Vec2d = Vec2d.ZERO,
 
         drawChildren(mouse, partialTicks)
         GLCore.popMatrix()
+    }
+
+    fun mouseOverEffect(){
+        GLCore.glBindTexture(RES_ITEM_GLINT)
+        GlStateManager.depthMask(false)
+        GlStateManager.depthFunc(514)
+        GLCore.glBlend(true)
+        GLCore.blendFunc(GlStateManager.SourceFactor.SRC_COLOR.factor, GlStateManager.DestFactor.ONE.factor)
+        GlStateManager.matrixMode(5890)
+        GLCore.pushMatrix()
+        GLCore.scale(8.0f, 8.0f, 8.0f)
+        val f = (Minecraft.getSystemTime() % 3000L).toFloat() / 3000.0f / 8.0f
+        GLCore.translate(f, 0.0f, 0.0f)
+        GLCore.glRotatef(-50.0f, 0.0f, 0.0f, 1.0f)
+        GLCore.glTexturedRectV2(pos.x, pos.y, width = width.toDouble(), height = height.toDouble())
+        GLCore.popMatrix()
+        GLCore.pushMatrix()
+        GLCore.scale(8.0f, 8.0f, 8.0f)
+        val f1 = (Minecraft.getSystemTime() % 4873L).toFloat() / 4873.0f / 8.0f
+        GLCore.translate(-f1, 0.0f, 0.0f)
+        GLCore.glRotatef(10.0f, 0.0f, 0.0f, 1.0f)
+        GLCore.glTexturedRectV2(pos.x, pos.y, width = width.toDouble(), height = height.toDouble())
+        GLCore.popMatrix()
+        GlStateManager.matrixMode(5888)
+        GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA)
+        GlStateManager.depthFunc(515)
+        GlStateManager.depthMask(true)
     }
 
     protected open fun drawChildren(mouse: Vec2d, partialTicks: Float) {

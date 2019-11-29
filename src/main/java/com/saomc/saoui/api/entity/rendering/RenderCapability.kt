@@ -20,6 +20,7 @@ package com.saomc.saoui.api.entity.rendering
 import be.bluexin.saomclib.capabilities.AbstractCapability
 import be.bluexin.saomclib.capabilities.AbstractEntityCapability
 import be.bluexin.saomclib.capabilities.Key
+import be.bluexin.saomclib.capabilities.getPartyCapability
 import com.saomc.saoui.SAOCore
 import com.teamwizardry.librarianlib.features.kotlin.Minecraft
 import net.minecraft.entity.EntityLivingBase
@@ -57,23 +58,32 @@ class RenderCapability : AbstractEntityCapability() {
      */
     private lateinit var colorStateHandler: IColorStateHandler
 
-    var healthSmooth: Float = 0f
+    var healthSmooth: Float = -1f
+    get() {
+        return if (field == -1f)
+            theEnt.health
+        else field
+    }
 
     fun update(partialTicks: Float){
         updateHealthSmooth(partialTicks)
     }
 
     fun updateHealthSmooth(partialTicks: Float){
-        when {
-            theEnt.health == theEnt.maxHealth -> healthSmooth = theEnt.maxHealth
-            theEnt.health <= 0 -> {
-                val value = (18 - theEnt.deathTime).toFloat() / 18
-                healthSmooth =  max(0.0f, theEnt.health * value)
+        Minecraft().profiler.startSection("updateHealthSmooth")
+        if (Minecraft().player.getPartyCapability().partyData?.isMember(theEnt as EntityPlayer) == true) {
+            when {
+                theEnt.health == theEnt.maxHealth -> healthSmooth = theEnt.maxHealth
+                theEnt.health <= 0 -> {
+                    val value = (18 - theEnt.deathTime).toFloat() / 18
+                    healthSmooth = max(0.0f, theEnt.health * value)
+                }
+                (healthSmooth * 10).roundToInt() != (theEnt.health * 10).roundToInt() -> healthSmooth += (theEnt.health - healthSmooth) * (gameTimeDelay(partialTicks) * HEALTH_ANIMATION_FACTOR)
+                else -> healthSmooth = theEnt.health
             }
-            (healthSmooth * 10).roundToInt() != (theEnt.health * 10).roundToInt() -> healthSmooth += (theEnt.health - healthSmooth) * (gameTimeDelay(partialTicks) * HEALTH_ANIMATION_FACTOR)
-            else -> healthSmooth = theEnt.health
-        }
-        healthSmooth = max(0.0f, healthSmooth)
+            healthSmooth = max(0.0f, healthSmooth)
+        } else healthSmooth = -1f
+        Minecraft().profiler.endSection()
     }
 
     private fun gameTimeDelay(time: Float): Float {

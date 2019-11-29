@@ -23,7 +23,7 @@ import net.minecraftforge.fml.relauncher.SideOnly
 @SideOnly(Side.CLIENT)
 enum class ColorUtil constructor(var rgba: Int) {
     DEFAULT_COLOR(0xFFFFFFFF.toInt()),
-    DEFAULT_FONT_COLOR(0x888888FF.toInt()),
+    DEFAULT_FONT_COLOR(0x1B1B1BFF),
     DEFAULT_BOX_COLOR(0xBBBBBBFF.toInt()),
     DEFAULT_BOX_FONT_COLOR(0x555555FF),
 

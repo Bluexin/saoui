@@ -25,6 +25,7 @@ import com.saomc.saoui.effects.DeathParticles
 import com.saomc.saoui.resources.StringNames
 import com.saomc.saoui.screens.ingame.HealthStep
 import com.saomc.saoui.social.StaticPlayerHelper
+import com.teamwizardry.librarianlib.features.kotlin.Minecraft
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.entity.RenderManager
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats
@@ -51,6 +52,7 @@ object StaticRenderer { // TODO: add usage of scale, offset etc from capability
 
     fun render(renderManager: RenderManager, living: EntityLivingBase, x: Double, y: Double, z: Double) {
         val mc = Minecraft.getMinecraft()
+        mc.profiler.startSection("setupStaticRender")
 
         val dead = living.getRenderData()?.healthSmooth?: living.health <= 0
 
@@ -62,26 +64,28 @@ object StaticRenderer { // TODO: add usage of scale, offset etc from capability
                 when (state){
                     ColorState.VIOLENT -> {
                         if (OptionCore.VIOLENT_HEALTH.isEnabled) doRenderHealthBar(renderManager, mc, living, x, y, z)
-                        if (OptionCore.VIOLENT_CRYSTAL.isEnabled) doRenderColorCursor(renderManager, living, x, y, z, 64, state)
+                        if (OptionCore.VIOLENT_CRYSTAL.isEnabled) doRenderColorCursor(renderManager, mc, living, x, y, z, 64, state)
                     }
                     ColorState.KILLER -> {
                         if (OptionCore.KILLER_HEALTH.isEnabled) doRenderHealthBar(renderManager, mc, living, x, y, z)
-                        if (OptionCore.VIOLENT_CRYSTAL.isEnabled) doRenderColorCursor(renderManager, living, x, y, z, 64, state)
+                        if (OptionCore.VIOLENT_CRYSTAL.isEnabled) doRenderColorCursor(renderManager, mc, living, x, y, z, 64, state)
                     }
                     ColorState.BOSS -> {
                         if (OptionCore.BOSS_HEALTH.isEnabled) doRenderHealthBar(renderManager, mc, living, x, y, z)
-                        if (OptionCore.VIOLENT_CRYSTAL.isEnabled) doRenderColorCursor(renderManager, living, x, y, z, 64, state)
+                        if (OptionCore.VIOLENT_CRYSTAL.isEnabled) doRenderColorCursor(renderManager, mc, living, x, y, z, 64, state)
                     }
                     else -> {
                         if (OptionCore.INNOCENT_HEALTH.isEnabled) doRenderHealthBar(renderManager, mc, living, x, y, z)
-                        if (OptionCore.INNOCENT_CRYSTAL.isEnabled) doRenderColorCursor(renderManager, living, x, y, z, 64, state)
+                        if (OptionCore.INNOCENT_CRYSTAL.isEnabled) doRenderColorCursor(renderManager, mc, living, x, y, z, 64, state)
                     }
                 }
             }
         }
+        mc.profiler.endSection()
     }
 
-    private fun doRenderColorCursor(renderManager: RenderManager, entity: EntityLivingBase, x: Double, y: Double, z: Double, distance: Int, color: ColorState) {
+    private fun doRenderColorCursor(renderManager: RenderManager, mc: Minecraft, entity: EntityLivingBase, x: Double, y: Double, z: Double, distance: Int, color: ColorState) {
+        mc.profiler.startSection("renderColorCursor")
         if (entity.ridingEntity != null) return
 
         if (entity.world.isRemote) {
@@ -150,9 +154,11 @@ object StaticRenderer { // TODO: add usage of scale, offset etc from capability
                 GLCore.popMatrix()
             }
         }
+        mc.profiler.endSection()
     }
 
     private fun doRenderHealthBar(renderManager: RenderManager, mc: Minecraft, living: EntityLivingBase, x: Double, y: Double, z: Double) {
+        mc.profiler.startSection("renderHealthBars")
         if (living.ridingEntity != null && living.ridingEntity === mc.player) return
         if (living.health > living.maxHealth) return
         if (Loader.isModLoaded("neat")) return
@@ -206,9 +212,11 @@ object StaticRenderer { // TODO: add usage of scale, offset etc from capability
 
         GLCore.glCullFace(true)
         GLCore.popMatrix()
+        mc.profiler.endSection()
     }
 
     fun doSpawnDeathParticles(mc: Minecraft, living: Entity) {
+        mc.profiler.startSection("spawnDeathParticles")
         val world = living.world
 
         if (living.world.isRemote) {
@@ -231,6 +239,7 @@ object StaticRenderer { // TODO: add usage of scale, offset etc from capability
                 ))
             }
         }
+        mc.profiler.endSection()
     }
 
     private fun useColor(living: Entity) {
@@ -242,10 +251,11 @@ object StaticRenderer { // TODO: add usage of scale, offset etc from capability
     }
 
     private fun getHealthFactor(living: EntityLivingBase): Float {
+        Minecraft().profiler.startSection("getHealthFactor")
         val normalFactor = (living.getRenderData()?.healthSmooth?: living.health) / StaticPlayerHelper.getMaxHealth(living)
         val delta = 1.0f - normalFactor
 
-        return normalFactor + delta * delta / 2 * normalFactor
+        return (normalFactor + delta * delta / 2 * normalFactor).also { Minecraft().profiler.endSection() }
     }
 
 }

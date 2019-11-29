@@ -25,12 +25,14 @@ import com.saomc.saoui.renders.StaticRenderer
 import com.saomc.saoui.screens.CoreGUI
 import com.saomc.saoui.screens.DeathGui
 import com.saomc.saoui.screens.menus.IngameMenu
+import com.teamwizardry.librarianlib.features.kotlin.Minecraft
 import net.minecraft.client.gui.GuiGameOver
 import net.minecraft.client.gui.GuiIngameMenu
 import net.minecraft.client.gui.GuiMainMenu
 import net.minecraft.client.gui.inventory.GuiContainerCreative
 import net.minecraft.client.gui.inventory.GuiInventory
 import net.minecraft.entity.EntityLivingBase
+import net.minecraft.entity.player.EntityPlayer
 import net.minecraftforge.client.event.GuiOpenEvent
 import net.minecraftforge.client.event.RenderLivingEvent
 import net.minecraftforge.client.event.RenderPlayerEvent
@@ -93,12 +95,15 @@ internal object RenderHandler {
     }
 
     fun renderEntity(e: RenderLivingEvent.Post<*>) {
+        Minecraft().profiler.startSection("setupRenderEntity")
         if (!OptionCore.UI_ONLY.isEnabled) {
-            e.entity.getRenderData()?.update(e.partialRenderTick)
-            if (e.entity != EventCore.mc.player) {
+            if (e.entity is EntityPlayer && e.entity != Minecraft().player)
+                e.entity.getRenderData()?.update(e.partialRenderTick)
+            if (e.entity.uniqueID != EventCore.mc.player.uniqueID) {
                 StaticRenderer.render(e.renderer.renderManager, e.entity, e.x, e.y, e.z)
             }
         }
+        Minecraft().profiler.endSection()
     }
 
     fun mainMenuGUI(e: GuiOpenEvent) {
