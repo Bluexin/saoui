@@ -71,7 +71,7 @@ class RenderCapability : AbstractEntityCapability() {
 
     fun updateHealthSmooth(partialTicks: Float){
         Minecraft().profiler.startSection("updateHealthSmooth")
-        if (Minecraft().player.getPartyCapability().partyData?.isMember(theEnt as EntityPlayer) == true) {
+        if (Minecraft().player.getPartyCapability().partyData?.isMember(theEnt.uniqueID) == true) {
             when {
                 theEnt.health == theEnt.maxHealth -> healthSmooth = theEnt.maxHealth
                 theEnt.health <= 0 -> {

@@ -18,7 +18,7 @@
 package com.saomc.saoui.effects
 
 import com.saomc.saoui.GLCore
-import net.minecraft.client.Minecraft
+import com.teamwizardry.librarianlib.features.kotlin.Minecraft
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
 import org.lwjgl.opengl.GL11
@@ -33,14 +33,13 @@ object RenderDispatcher {
     var particleFxCount = 0
 
     fun dispatch() {
-        val profiler = Minecraft.getMinecraft().profiler
 
         GLCore.glBlend(true)
         GLCore.blendFunc(GL11.GL_ONE, GL11.GL_ONE)
         GLCore.lighting(false)
-        profiler.startSection("death particle")
+        Minecraft().profiler.startSection("death particle")
         DeathParticles.dispatchQueuedRenders()
-        profiler.endSection()
+        Minecraft().profiler.endSection()
         GLCore.blendFunc(GL11.GL_ONE, GL11.GL_ZERO)
         GLCore.glBlend(false)
     }
