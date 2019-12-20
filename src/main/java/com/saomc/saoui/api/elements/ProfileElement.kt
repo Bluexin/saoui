@@ -1,4 +1,4 @@
-package com.saomc.saoui.api.elements.neo
+package com.saomc.saoui.api.elements
 
 import com.saomc.saoui.GLCore
 import com.saomc.saoui.SAOCore
@@ -19,7 +19,7 @@ import kotlin.math.min
 import kotlin.math.roundToInt
 
 
-open class NeoProfileElement(var player: EntityPlayer, override var parent: INeoParent?) : NeoIconElement(IconCore.PROFILE, width = 170, height = 240) {
+class ProfileElement(var player: EntityPlayer, override var parent: INeoParent?) : IconElement(IconCore.PROFILE, width = 170, height = 240) {
 
     override val listed: Boolean
         get() = false
@@ -67,15 +67,13 @@ open class NeoProfileElement(var player: EntityPlayer, override var parent: INeo
         }*/
     }
 
-    private fun drawCharacter(x: Double, y: Double, size: Int, cursorX: Int, cursorY: Int) {
-        val mouseX = x.toFloat() - cursorX
-        val mouseY = y.toFloat() - size * 1.67f - cursorY.toFloat()
+    private fun drawCharacter(x: Double, y: Double) {
         val tmp = player.ridingEntity as EntityLivingBase?
 
         if (player.isRiding && OptionCore.MOUNT_STAT_VIEW.isEnabled)
-            GuiInventory.drawEntityOnScreen(x.roundToInt(), y.roundToInt(), size, mouseX, mouseY, tmp!!)
+            GuiInventory.drawEntityOnScreen(x.roundToInt(), y.roundToInt(), 40, SAOCore.mc.currentScreen!!.width / 3.5f, 20f, tmp!!)
         else
-            GuiInventory.drawEntityOnScreen(x.roundToInt(), y.roundToInt(), size, mouseX, mouseY, player)
+            GuiInventory.drawEntityOnScreen(x.roundToInt(), y.roundToInt(), 40, SAOCore.mc.currentScreen!!.width / 3.5f, 20f, player)
 
         GLCore.glRescaleNormal(true)
         GLCore.glTexture2D(true)
@@ -99,7 +97,7 @@ open class NeoProfileElement(var player: EntityPlayer, override var parent: INeo
 
         GLCore.glBindTexture(StringNames.gui)
         GLCore.glTexturedRectV2( left - size / 2, top - shadowY / 2, width = size.toDouble(), height = shadowY, srcX = 200.0, srcY = 85.0, srcWidth = 56.0, srcHeight = 30.0)
-        drawCharacter(left, top, size, mouse.x.roundToInt(), mouse.y.roundToInt())
+        drawCharacter(left, top)
 
         GLCore.glString(player.displayNameString, pos.xi + 50 + (player.displayNameString.length / 2), pos.yi + 20, ColorUtil.DEFAULT_BOX_FONT_COLOR.rgba, shadow = false, centered = true)
         val profile = PlayerStats.instance().stats.getStatsString(player)

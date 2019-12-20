@@ -18,14 +18,16 @@
 package com.saomc.saoui
 
 import be.bluexin.saomclib.capabilities.CapabilitiesHandler
-import com.saomc.saoui.api.entity.rendering.RenderCapability
 import com.saomc.saoui.api.events.EventInitStatsProvider
+import com.saomc.saoui.capabilities.RenderCapability
 import com.saomc.saoui.config.ConfigHandler
+import com.saomc.saoui.config.OptionCore
 import com.saomc.saoui.events.EventCore
 import com.saomc.saoui.screens.CoreGUI
 import com.saomc.saoui.themes.ThemeLoader
 import com.saomc.saoui.util.DefaultStatsProvider
 import com.saomc.saoui.util.PlayerStats
+import com.teamwizardry.librarianlib.features.kotlin.Minecraft
 import net.minecraft.client.Minecraft
 import net.minecraft.client.resources.IReloadableResourceManager
 import net.minecraft.entity.EntityLivingBase
@@ -46,7 +48,9 @@ object SAOCore {
     const val MODID = "saoui"
     const val NAME = "Sword Art Online UI"
     const val VERSION = "2.0.8"
-    const val DEPS = "required-after:saomclib@[1.4.1,);after:mantle;after:librarianlib@[4.19.2,)"
+    const val DEPS = "required-after:saomclib@[1.4.5,);after:mantle;required-after:librarianlib@[4.19.2,)"
+
+    val mc = Minecraft()
 
     @JvmStatic
     @Mod.InstanceFactory
@@ -76,6 +80,7 @@ object SAOCore {
     @Mod.EventHandler
     fun init(event: FMLInitializationEvent) {
         val s = EventInitStatsProvider(DefaultStatsProvider())
+        if (OptionCore.CUSTOM_FONT.isEnabled) GLCore.setFont(Minecraft.getMinecraft(), OptionCore.CUSTOM_FONT.isEnabled)
         MinecraftForge.EVENT_BUS.post(s)
         PlayerStats.init(s.implementation)
         CoreGUI.animator // Let's force things to init early

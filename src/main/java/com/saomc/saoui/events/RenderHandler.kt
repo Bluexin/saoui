@@ -18,7 +18,7 @@
 package com.saomc.saoui.events
 
 import com.saomc.saoui.SoundCore
-import com.saomc.saoui.api.entity.rendering.getRenderData
+import com.saomc.saoui.capabilities.getRenderData
 import com.saomc.saoui.config.OptionCore
 import com.saomc.saoui.playAtEntity
 import com.saomc.saoui.renders.StaticRenderer

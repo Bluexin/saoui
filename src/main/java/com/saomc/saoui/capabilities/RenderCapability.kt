@@ -15,13 +15,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.saomc.saoui.api.entity.rendering
+package com.saomc.saoui.capabilities
 
 import be.bluexin.saomclib.capabilities.AbstractCapability
 import be.bluexin.saomclib.capabilities.AbstractEntityCapability
 import be.bluexin.saomclib.capabilities.Key
 import be.bluexin.saomclib.capabilities.getPartyCapability
 import com.saomc.saoui.SAOCore
+import com.saomc.saoui.api.entity.rendering.*
 import com.teamwizardry.librarianlib.features.kotlin.Minecraft
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
@@ -50,7 +51,7 @@ class RenderCapability : AbstractEntityCapability() {
     /**
      * Where this capability is getting it's customization settings from.
      */
-     private lateinit var customizationProvider: ICustomizationProvider
+    private lateinit var customizationProvider: ICustomizationProvider
 
 
     /**
@@ -59,11 +60,11 @@ class RenderCapability : AbstractEntityCapability() {
     private lateinit var colorStateHandler: IColorStateHandler
 
     var healthSmooth: Float = -1f
-    get() {
-        return if (field == -1f)
-            theEnt.health
-        else field
-    }
+        get() {
+            return if (field == -1f)
+                theEnt.health
+            else field
+        }
 
     fun update(partialTicks: Float){
         updateHealthSmooth(partialTicks)
@@ -116,9 +117,9 @@ class RenderCapability : AbstractEntityCapability() {
                 ?: MobColorStateHandler(ent) // TODO: implement with event or something
     }
 
-    fun getCustomizationProvider():ICustomizationProvider { return customizationProvider}
+    fun getCustomizationProvider(): ICustomizationProvider { return customizationProvider}
 
-    fun getColorStateHandler():IColorStateHandler { return colorStateHandler}
+    fun getColorStateHandler(): IColorStateHandler { return colorStateHandler}
 
     class Storage : Capability.IStorage<RenderCapability> {
 

@@ -86,6 +86,7 @@ object GLCore {
     }
 
     fun setFont(mc: Minecraft, custom: Boolean) {
+        if (mc.textureManager == null) return
         val fontLocation = if (custom) ResourceLocation(SAOCore.MODID, "textures/ascii.png") else ResourceLocation("textures/font/ascii.png")
         mc.fontRenderer = FontRenderer(mc.gameSettings, fontLocation, mc.textureManager, false)
         if (mc.gameSettings.language != null) {

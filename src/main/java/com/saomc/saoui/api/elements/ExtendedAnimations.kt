@@ -15,7 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.saomc.saoui.api.elements.neo
+package com.saomc.saoui.api.elements
 
 import com.teamwizardry.librarianlib.features.animator.*
 import com.teamwizardry.librarianlib.features.animator.animations.BasicAnimation

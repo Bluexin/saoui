@@ -21,8 +21,8 @@ import com.saomc.saoui.GLCore
 import com.saomc.saoui.GLCore.glTexturedRectV2
 import com.saomc.saoui.SAOCore
 import com.saomc.saoui.SoundCore
-import com.saomc.saoui.api.elements.neo.NeoIconElement
-import com.saomc.saoui.api.elements.neo.basicAnimation
+import com.saomc.saoui.api.elements.IconElement
+import com.saomc.saoui.api.elements.basicAnimation
 import com.saomc.saoui.play
 import com.saomc.saoui.screens.CoreGUI
 import com.saomc.saoui.screens.ItemIcon
@@ -37,7 +37,7 @@ import net.minecraft.client.Minecraft
 import net.minecraft.util.ResourceLocation
 import kotlin.math.max
 
-open class Popup<T : Any>(var title: String, var text: List<String>, var footer: String, private val buttons: Map<NeoIconElement, T>) : CoreGUI<T>(Vec2d.ZERO) {
+open class Popup<T : Any>(var title: String, var text: List<String>, var footer: String, private val buttons: Map<IconElement, T>) : CoreGUI<T>(Vec2d.ZERO) {
 
     private val rl = ResourceLocation(SAOCore.MODID, "textures/menu/parts/alertbg.png")
     internal /*private*/ var expansion = 0f
@@ -199,13 +199,13 @@ open class Popup<T : Any>(var title: String, var text: List<String>, var footer:
 }
 
 class PopupYesNo(title: String, text: List<String>, footer: String) : Popup<PopupYesNo.Result>(title, text, footer, mapOf(
-        NeoIconElement(IconCore.CONFIRM)
+        IconElement(IconCore.CONFIRM)
                 .setBgColor(ColorIntent.NORMAL, ColorUtil.CONFIRM_COLOR)
                 .setBgColor(ColorIntent.HOVERED, ColorUtil.CONFIRM_COLOR_LIGHT)
                 .setFontColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
                 .setFontColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
                 to Result.YES,
-        NeoIconElement(IconCore.CANCEL)
+        IconElement(IconCore.CANCEL)
                 .setBgColor(ColorIntent.NORMAL, ColorUtil.CANCEL_COLOR)
                 .setBgColor(ColorIntent.HOVERED, ColorUtil.CANCEL_COLOR_LIGHT)
                 .setFontColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
@@ -226,25 +226,25 @@ class PopupYesNo(title: String, text: List<String>, footer: String) : Popup<Popu
 }
 
 class PopupItem(title: String, text: List<String>, footer: String) : Popup<PopupItem.Result>(title, text, footer, mapOf(
-        NeoIconElement(IconCore.EQUIPMENT)
+        IconElement(IconCore.EQUIPMENT)
                 .setBgColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
                 .setBgColor(ColorIntent.HOVERED, ColorUtil.HOVER_COLOR)
                 .setFontColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
                 .setFontColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
                 to Result.EQUIP,
-        NeoIconElement(IconCore.CRAFTING)
+        IconElement(IconCore.CRAFTING)
                 .setBgColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
                 .setBgColor(ColorIntent.HOVERED, ColorUtil.HOVER_COLOR)
                 .setFontColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
                 .setFontColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
                 to Result.USE,
-        NeoIconElement(IconCore.CANCEL)
+        IconElement(IconCore.CANCEL)
                 .setBgColor(ColorIntent.NORMAL, ColorUtil.CANCEL_COLOR)
                 .setBgColor(ColorIntent.HOVERED, ColorUtil.CANCEL_COLOR_LIGHT)
                 .setFontColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
                 .setFontColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
                 to Result.DROP,
-        NeoIconElement(IconCore.PARTY)
+        IconElement(IconCore.PARTY)
                 .setBgColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
                 .setBgColor(ColorIntent.HOVERED, ColorUtil.HOVER_COLOR)
                 .setFontColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
@@ -296,12 +296,12 @@ class PopupHotbarSelection(title: String, text: List<String>, footer: String) : 
 
     companion object {
 
-        fun getHotbarList():Map<NeoIconElement, Result>{
-            val map = linkedMapOf<NeoIconElement, Result>()
+        fun getHotbarList():Map<IconElement, Result>{
+            val map = linkedMapOf<IconElement, Result>()
             val inventory = Minecraft.getMinecraft().player.inventoryContainer
             for (i in 36..44){
                 val stack = inventory.getSlot(i).stack
-                map[NeoIconElement(icon = ItemIcon { stack })
+                map[IconElement(icon = ItemIcon { stack })
                         .setBgColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
                         .setBgColor(ColorIntent.HOVERED, ColorUtil.HOVER_COLOR)
                         .setFontColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)

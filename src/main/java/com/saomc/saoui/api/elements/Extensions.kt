@@ -15,24 +15,27 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.saomc.saoui.api.elements.neo
+package com.saomc.saoui.api.elements
 
+import be.bluexin.saomclib.capabilities.getPartyCapability
+import be.bluexin.saomclib.packets.party.PartyType
+import be.bluexin.saomclib.packets.party.Type
+import be.bluexin.saomclib.packets.party.updateServer
 import com.saomc.saoui.SoundCore
-import com.saomc.saoui.api.items.IItemFilter
 import com.saomc.saoui.api.screens.IIcon
 import com.saomc.saoui.config.OptionCore
 import com.saomc.saoui.play
 import com.saomc.saoui.screens.CoreGUIDsl
 import com.saomc.saoui.screens.MouseButton
 import com.saomc.saoui.screens.unaryPlus
-import com.saomc.saoui.screens.util.itemList
 import com.saomc.saoui.util.IconCore
 import com.teamwizardry.librarianlib.features.animator.Easing
 import com.teamwizardry.librarianlib.features.gui.component.supporting.delegate
 import com.teamwizardry.librarianlib.features.helpers.vec
-import com.teamwizardry.librarianlib.features.kotlin.Minecraft
 import com.teamwizardry.librarianlib.features.math.Vec2d
+import net.minecraft.client.resources.I18n
 import net.minecraft.entity.player.EntityPlayer
+import net.minecraftforge.common.util.FakePlayer
 import java.lang.ref.WeakReference
 import kotlin.math.max
 import kotlin.math.min
@@ -42,7 +45,7 @@ import kotlin.math.min
  *
  * @author Bluexin
  */
-class NeoCategoryButton(private val delegate: NeoIconElement, parent: INeoParent? = null, private val init: (NeoCategoryButton.() -> Unit)? = null) : NeoIconElement(delegate.icon, delegate.pos) {
+class CategoryButton(private val delegate: IconElement, parent: INeoParent? = null, private val init: (CategoryButton.() -> Unit)? = null) : IconElement(delegate.icon, delegate.pos) {
 
     override var pos by delegate::pos.delegate
     override var destination by delegate::destination.delegate
@@ -91,7 +94,7 @@ class NeoCategoryButton(private val delegate: NeoIconElement, parent: INeoParent
             if (selected) close()
         }
 
-        if (delegate !is NeoIconLabelElement) { // TL Category TODO: move to their actual creation
+        if (delegate !is IconLabelElement) { // TL Category TODO: move to their actual creation
             +basicAnimation(this, "pos") {
                 duration = 10f
                 from = Vec2d.ZERO
@@ -122,7 +125,7 @@ class NeoCategoryButton(private val delegate: NeoIconElement, parent: INeoParent
         delegate.scroll = -3
         elements.forEach {
             it.hide()
-            if (it is NeoCategoryButton && it.selected) {
+            if (it is CategoryButton && it.selected) {
                 it.close()
             }
         }
@@ -147,7 +150,7 @@ class NeoCategoryButton(private val delegate: NeoIconElement, parent: INeoParent
         val count = validElementsSequence.count()
         return if (count == 0) emptySequence()
         else {
-            val selectedIdx = if (validElementsSequence.any { it is NeoCategoryButton }) validElementsSequence.indexOfFirst { it.selected } else -1
+            val selectedIdx = if (validElementsSequence.any { it is CategoryButton }) validElementsSequence.indexOfFirst { it.selected } else -1
             when {
                 selectedIdx >= 0 -> {
                     val skipFront = (selectedIdx - (count / 2 - (count + 1) % 2) + count) % count
@@ -163,17 +166,61 @@ class NeoCategoryButton(private val delegate: NeoIconElement, parent: INeoParent
     }
 
     @CoreGUIDsl
-    fun category(icon: IIcon, label: String, body: (NeoCategoryButton.() -> Unit)? = null): NeoCategoryButton {
-        val cat = NeoCategoryButton(NeoIconLabelElement(icon, label), this, body)
+    fun category(icon: IIcon, label: String, body: (CategoryButton.() -> Unit)? = null): CategoryButton {
+        val cat = CategoryButton(IconLabelElement(icon, label), this, body)
         +cat
         return cat
     }
 
     @CoreGUIDsl
-    fun profile(player: EntityPlayer, body: (NeoCategoryButton.() -> Unit)? = null): NeoCategoryButton{
-        val cat = NeoCategoryButton(NeoProfileElement(player, this), this, body)
+    fun partyMenu(player: EntityPlayer): CategoryButton {
+        val partyElement = PartyElement(player)
+        val cat = CategoryButton(partyElement, this) {
+            partyExtras(player)
+        }
         +cat
         return cat
+    }
+
+    @CoreGUIDsl
+    fun profile(player: EntityPlayer, body: (CategoryButton.() -> Unit)? = null): CategoryButton {
+        val cat = CategoryButton(ProfileElement(player, this), this, body)
+        +cat
+        return cat
+    }
+
+    @CoreGUIDsl
+    fun partyExtras(player: EntityPlayer) {
+        val partyCapability = player.getPartyCapability()
+        val party = partyCapability.partyData
+
+        if ((party != null && party.isLeader(player)) || party == null) category(IconCore.PARTY, I18n.format("sao.party.invite")) {
+            @Suppress("UNCHECKED_CAST")
+            (player.world.playerEntities as List<EntityPlayer>).asSequence().filter { it != player && it !is FakePlayer && party?.isMember(it) != true }.forEach { player ->
+                +IconLabelElement(IconCore.INVITE, player.displayNameString).onClick { _, _ ->
+                    Type.INVITE.updateServer(player, PartyType.MAIN)
+                    true
+                }
+            }
+        }
+        if (party != null && party.isParty) +IconLabelElement(IconCore.CANCEL, I18n.format("sao.party.leave")).onClick { _, _ ->
+            Type.LEAVE.updateServer(player, PartyType.MAIN)
+            true
+        }
+
+        val invitedTo = partyCapability.inviteData
+        if (invitedTo != null) {
+            category(IconCore.PARTY, I18n.format("sao.party.invited", invitedTo.leaderInfo.username)) {
+                +IconLabelElement(IconCore.CONFIRM, I18n.format("sao.misc.accept")).onClick { _, _ ->
+                    Type.ACCEPTINVITE.updateServer(player, PartyType.INVITE)
+                    true
+                }
+                +IconLabelElement(IconCore.CANCEL, I18n.format("sao.misc.decline")).onClick { _, _ ->
+                    Type.CANCELINVITE.updateServer(player, PartyType.INVITE)
+                    true
+                }
+            }
+        }
     }
 
     fun reInit() {
@@ -190,8 +237,8 @@ class NeoCategoryButton(private val delegate: NeoIconElement, parent: INeoParent
     }
 }
 
-fun INeoParent.optionButton(option: OptionCore): NeoIconLabelElement {
-    val but = object : NeoIconLabelElement(IconCore.OPTION, option.displayName) {
+fun INeoParent.optionButton(option: OptionCore): IconLabelElement {
+    val but = object : IconLabelElement(IconCore.OPTION, option.displayName) {
         override var selected: Boolean
             get() = option.isEnabled
             set(value) = if (value) option.enable() else option.disable()
@@ -205,8 +252,8 @@ fun INeoParent.optionButton(option: OptionCore): NeoIconLabelElement {
 }
 
 
-fun INeoParent.optionCategory(option: OptionCore): NeoCategoryButton {
-    val cat = NeoCategoryButton(NeoIconLabelElement(IconCore.OPTION, option.displayName))
+fun INeoParent.optionCategory(option: OptionCore): CategoryButton {
+    val cat = CategoryButton(IconLabelElement(IconCore.OPTION, option.displayName))
     option.subOptions.forEach {
         cat += if (it.isCategory) optionCategory(it)
         else optionButton(it)
@@ -215,13 +262,3 @@ fun INeoParent.optionCategory(option: OptionCore): NeoCategoryButton {
     return cat
 }
 
-fun INeoParent.itemCategory(filter: IItemFilter): NeoCategoryButton {
-    val cat = NeoCategoryButton(NeoIconLabelElement(filter.icon, filter.displayName))
-    if (filter.subFilters.isEmpty())
-        cat.itemList(Minecraft().player.inventoryContainer, filter)
-    else filter.subFilters.forEach {
-        cat += itemCategory(it)
-    }
-    cat.parent = this
-    return cat
-}

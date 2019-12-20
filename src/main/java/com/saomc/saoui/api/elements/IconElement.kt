@@ -15,7 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.saomc.saoui.api.elements.neo
+package com.saomc.saoui.api.elements
 
 import com.saomc.saoui.GLCore
 import com.saomc.saoui.api.screens.IIcon
@@ -42,7 +42,7 @@ import kotlin.math.min
  *
  * @author Bluexin
  */
-open class NeoIconElement(val icon: IIcon, override var pos: Vec2d = Vec2d.ZERO, override var destination: Vec2d = pos, var width: Int = 19, var height: Int = 19) : NeoParent() {
+open class IconElement(val icon: IIcon, override var pos: Vec2d = Vec2d.ZERO, override var destination: Vec2d = pos, var width: Int = 19, var height: Int = 19) : NeoParent() {
 
 
     val RES_ITEM_GLINT = ResourceLocation("textures/misc/enchanted_item_glint.png")
@@ -67,7 +67,7 @@ open class NeoIconElement(val icon: IIcon, override var pos: Vec2d = Vec2d.ZERO,
         val count = visibleElementsSequence.count()
         return if (count == 0) emptySequence()
         else {
-            val selectedIdx = if (visibleElementsSequence.any { it is NeoCategoryButton }) visibleElementsSequence.indexOfFirst { it.selected } else -1
+            val selectedIdx = if (visibleElementsSequence.any { it is CategoryButton }) visibleElementsSequence.indexOfFirst { it.selected } else -1
             when {
                 selectedIdx >= 0 -> {
                     val skipFront = (selectedIdx - (count / 2 - (count + 1) % 2) + count) % count
@@ -172,7 +172,7 @@ open class NeoIconElement(val icon: IIcon, override var pos: Vec2d = Vec2d.ZERO,
 
     override fun mouseClicked(pos: Vec2d, mouseButton: MouseButton): Boolean {
 //        SAOCore.LOGGER.info("$pos $mouseButton Checking $this")
-        if (this.parent is NeoCategoryButton && this.selected && this.elementsSequence.none { it is NeoCategoryButton && it.selected }) {
+        if (this.parent is CategoryButton && this.selected && this.elementsSequence.none { it is CategoryButton && it.selected }) {
             @Suppress("NON_EXHAUSTIVE_WHEN")
             when (mouseButton) {
                 MouseButton.SCROLL_UP -> {
@@ -206,19 +206,19 @@ open class NeoIconElement(val icon: IIcon, override var pos: Vec2d = Vec2d.ZERO,
         }
     }
 
-    fun setBgColor(intent: ColorIntent, rgba: Int): NeoIconElement {
+    fun setBgColor(intent: ColorIntent, rgba: Int): IconElement {
         bgColorScheme[intent] = rgba
         return this
     }
 
-    fun setBgColor(intent: ColorIntent, color: ColorUtil): NeoIconElement = setBgColor(intent, color.rgba)
+    fun setBgColor(intent: ColorIntent, color: ColorUtil): IconElement = setBgColor(intent, color.rgba)
 
-    fun setFontColor(intent: ColorIntent, rgba: Int): NeoIconElement {
+    fun setFontColor(intent: ColorIntent, rgba: Int): IconElement {
         fontColorScheme[intent] = rgba
         return this
     }
 
-    fun setFontColor(intent: ColorIntent, color: ColorUtil): NeoIconElement = setFontColor(intent, color.rgba)
+    fun setFontColor(intent: ColorIntent, color: ColorUtil): IconElement = setFontColor(intent, color.rgba)
 
     override val childrenXOffset = 25
     override val childrenYSeparator = 20

@@ -19,7 +19,7 @@ package com.saomc.saoui.renders
 
 import com.saomc.saoui.GLCore
 import com.saomc.saoui.api.entity.rendering.ColorState
-import com.saomc.saoui.api.entity.rendering.getRenderData
+import com.saomc.saoui.capabilities.getRenderData
 import com.saomc.saoui.config.OptionCore
 import com.saomc.saoui.effects.DeathParticles
 import com.saomc.saoui.resources.StringNames
@@ -50,20 +50,17 @@ object StaticRenderer { // TODO: add usage of scale, offset etc from capability
     private const val HEALTH_OFFSET = 0.75f
     private const val HEALTH_HEIGHT = 0.21
 
-    val renderCache: HashSet<RenderMobCache> = hashSetOf()
-
     fun render(renderManager: RenderManager, living: EntityLivingBase, x: Double, y: Double, z: Double) {
         val mc = Minecraft.getMinecraft()
         mc.profiler.startSection("setupStaticRender")
 
-        val dead = living.getRenderData()?.healthSmooth?: living.health <= 0
+        val dead = living.health <= 0
 
         if (living.deathTime == 1) living.deathTime++
 
         if (!dead && !living.isInvisibleToPlayer(mc.player) && living != mc.player) {
             living.getRenderData()?.let {renderCap ->
-                val state = renderCap.getColorStateHandler().colorState?: return
-                when (state){
+                when (val state = renderCap.getColorStateHandler().colorState){
                     ColorState.VIOLENT -> {
                         if (OptionCore.VIOLENT_HEALTH.isEnabled) doRenderHealthBar(renderManager, mc, living, x, y, z, sqrt(64))
                         if (OptionCore.VIOLENT_CRYSTAL.isEnabled) doRenderColorCursor(renderManager, mc, living, x, y, z, sqrt(64), state)
@@ -171,7 +168,6 @@ object StaticRenderer { // TODO: add usage of scale, offset etc from capability
         val d3 = living.getDistanceSq(renderManager.renderViewEntity)
 
         if (d3 <= distance) {
-            mc.profiler.startSection("initSetup")
             GLCore.glBindTexture(if (OptionCore.SAO_UI.isEnabled) StringNames.entities else StringNames.entitiesCustom)
             GLCore.pushMatrix()
             GLCore.depth(true)
@@ -180,33 +176,27 @@ object StaticRenderer { // TODO: add usage of scale, offset etc from capability
 
             GLCore.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA)
 
-            val cache = getCache(living)
-
             val hitPoints = (getHealthFactor(living) * HEALTH_COUNT).toInt()
             useColor(living)
 
-            mc.profiler.endSection()
+            val sizeMult = if (living.isChild && living is EntityMob) 0.5f else 1.0f
 
-            mc.profiler.startSection("draw_1")
             GLCore.begin(GL11.GL_TRIANGLE_STRIP, DefaultVertexFormats.POSITION_TEX)
             for (i in 0..hitPoints) {
                 val value = (i + HEALTH_COUNT - hitPoints).toDouble() / HEALTH_COUNT
                 val rad = Math.toRadians((renderManager.playerViewY - 135).toDouble()) + (value - 0.5) * Math.PI * HEALTH_ANGLE
 
-                val x0 = x + cache.xPos * cos(rad)
-                val y0 = y + cache.yPos
-                val z0 = z + cache.zPos * sin(rad)
+                val x0 = x + sizeMult.toDouble() * living.width.toDouble() * HEALTH_RANGE * Math.cos(rad)
+                val y0 = y + sizeMult * living.height * HEALTH_OFFSET
+                val z0 = z + sizeMult.toDouble() * living.width.toDouble() * HEALTH_RANGE * Math.sin(rad)
 
                 val uv = value - (HEALTH_COUNT - hitPoints).toDouble() / HEALTH_COUNT
 
                 GLCore.addVertex(x0, y0 + HEALTH_HEIGHT, z0, 1.0 - uv, 0.0)
                 GLCore.addVertex(x0, y0, z0, 1.0 - uv, 0.125)
-
             }
 
             GLCore.draw()
-            mc.profiler.endSection()
-            mc.profiler.startSection("draw_2")
 
             GLCore.color(1f, 1f, 1f, 1f)
             GLCore.begin(GL11.GL_TRIANGLE_STRIP, DefaultVertexFormats.POSITION_TEX)
@@ -215,21 +205,18 @@ object StaticRenderer { // TODO: add usage of scale, offset etc from capability
                 val value = i.toDouble() / HEALTH_COUNT
                 val rad = Math.toRadians((renderManager.playerViewY - 135).toDouble()) + (value - 0.5) * Math.PI * HEALTH_ANGLE
 
-                val x0 = x + cache.xPos * cos(rad)
-                val y0 = y + cache.yPos
-                val z0 = z + cache.zPos * sin(rad)
+                val x0 = x + sizeMult.toDouble() * living.width.toDouble() * HEALTH_RANGE * Math.cos(rad)
+                val y0 = y + sizeMult * living.height * HEALTH_OFFSET
+                val z0 = z + sizeMult.toDouble() * living.width.toDouble() * HEALTH_RANGE * Math.sin(rad)
 
                 GLCore.addVertex(x0, y0 + HEALTH_HEIGHT, z0, 1.0 - value, 0.125)
                 GLCore.addVertex(x0, y0, z0, 1.0 - value, 0.25)
             }
 
             GLCore.draw()
-            mc.profiler.endSection()
 
-            mc.profiler.startSection("end")
             GLCore.glCullFace(true)
             GLCore.popMatrix()
-            mc.profiler.endSection()
         }
         mc.profiler.endSection()
     }
@@ -279,12 +266,7 @@ object StaticRenderer { // TODO: add usage of scale, offset etc from capability
         return health
     }
 
-    fun getCache(entity: EntityLivingBase): RenderMobCache{
-        return renderCache.firstOrNull { it.test(entity) }?: let {
-            val cache = RenderMobCache(entity)
-            renderCache.add(cache)
-            cache
-        }
-    }
+
+
     fun sqrt(int: Int) = int * int
 }

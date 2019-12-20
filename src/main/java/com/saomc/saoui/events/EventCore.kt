@@ -17,13 +17,14 @@
 
 package com.saomc.saoui.events
 
-import be.bluexin.saomclib.events.PartyEvent3
+import be.bluexin.saomclib.events.PartyEvent
 import be.bluexin.saomclib.packets.party.PartyType
 import be.bluexin.saomclib.packets.party.Type
 import be.bluexin.saomclib.packets.party.updateServer
-import com.saomc.saoui.api.entity.rendering.getRenderData
+import com.saomc.saoui.capabilities.getRenderData
 import com.saomc.saoui.effects.RenderDispatcher
 import com.saomc.saoui.screens.ingame.IngameGUI
+import com.saomc.saoui.screens.menus.IngameMenu
 import com.saomc.saoui.screens.util.PopupYesNo
 import com.teamwizardry.librarianlib.features.kotlin.Minecraft
 import com.teamwizardry.librarianlib.features.kotlin.localize
@@ -35,6 +36,7 @@ import net.minecraftforge.client.event.RenderPlayerEvent
 import net.minecraftforge.client.event.RenderWorldLastEvent
 import net.minecraftforge.event.entity.living.LivingDeathEvent
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
+import net.minecraftforge.fml.common.gameevent.PlayerEvent
 import net.minecraftforge.fml.common.gameevent.TickEvent
 import net.minecraftforge.fml.common.network.FMLNetworkEvent
 import kotlin.math.pow
@@ -89,7 +91,7 @@ object EventCore {
     }
 
     @SubscribeEvent
-    fun partyInvite(e: PartyEvent3.Invited) {
+    fun partyInvite(e: PartyEvent.Invited) {
         val p = e.partyData
         if (e.player.equals(Minecraft().player)) {
             PopupYesNo("guiPartyInviteTitle".localize(), "guiPartyInviteText".localize(p.leaderInfo.username), "") += {
@@ -100,8 +102,32 @@ object EventCore {
     }
 
     @SubscribeEvent
+    fun partyRefresh(e: PartyEvent.Refresh){
+        (mc.currentScreen as? IngameMenu)?.updateParty()
+    }
+
+    @SubscribeEvent
     fun onWorldLoad(e: FMLNetworkEvent.ClientConnectedToServerEvent){
         mc.ingameGUI = IngameGUI(mc)
+    }
+
+    @SubscribeEvent
+    fun itemPickupEvent(e: PlayerEvent.ItemPickupEvent){
+        inventoryUpdate()
+    }
+
+    @SubscribeEvent
+    fun itemCraftedEvent(e: PlayerEvent.ItemCraftedEvent){
+        inventoryUpdate()
+    }
+
+    @SubscribeEvent
+    fun itemSmeltedEvent(e: PlayerEvent.ItemSmeltedEvent){
+        inventoryUpdate()
+    }
+
+    fun inventoryUpdate(){
+        (mc.currentScreen as? IngameMenu)?.updateInventory()
     }
 
     internal val mc = Minecraft.getMinecraft()

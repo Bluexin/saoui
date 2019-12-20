@@ -18,9 +18,11 @@
 package com.saomc.saoui.config
 
 import com.saomc.saoui.GLCore
+import com.saomc.saoui.api.events.OptionTriggerEvent
 import com.saomc.saoui.api.info.IOption
 import net.minecraft.client.Minecraft
 import net.minecraft.client.resources.I18n
+import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
 
@@ -65,7 +67,7 @@ enum class OptionCore(
     // Health Options
     SMOOTH_HEALTH(I18n.format("optionSmoothHealth"), true, false, HEALTH_OPTIONS, false),
     HEALTH_BARS(I18n.format("optionHealthBars"), false, true, HEALTH_OPTIONS, false),
-    //REMOVE_HPXP(I18n.format("optionLightHud"), false, false, HEALTH_OPTIONS, false),
+    REMOVE_HPXP(I18n.format("optionLightHud"), false, false, HEALTH_OPTIONS, false),
     ALT_ABSORB_POS(I18n.format("optionAltAbsorbPos"), false, false, HEALTH_OPTIONS, false),
     // Health Bars
     INNOCENT_HEALTH(I18n.format("optionInnocentHealthBars"), true, false, HEALTH_BARS, false),
@@ -126,6 +128,7 @@ enum class OptionCore(
             if (this == CUSTOM_FONT) GLCore.setFont(Minecraft.getMinecraft(), this.value)
         }
         ConfigHandler.setOption(this)
+        MinecraftForge.EVENT_BUS.post(OptionTriggerEvent(this))
         return this.value
     }
 

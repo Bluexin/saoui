@@ -18,8 +18,8 @@
 package com.saomc.saoui.screens
 
 import com.saomc.saoui.GLCore
-import com.saomc.saoui.api.elements.neo.NeoCategoryButton
-import com.saomc.saoui.api.elements.neo.NeoIconLabelElement
+import com.saomc.saoui.api.elements.CategoryButton
+import com.saomc.saoui.api.elements.IconLabelElement
 import com.saomc.saoui.api.screens.IIcon
 import com.saomc.saoui.events.EventCore.mc
 import com.saomc.saoui.screens.util.PopupHotbarSelection
@@ -46,14 +46,14 @@ import net.minecraftforge.fml.common.registry.ForgeRegistries
 
 
 @CoreGUIDsl
-fun NeoCategoryButton.itemList(inventory: Container, filter: (iss: ItemStack) -> Boolean, equippedRange: Set<Slot>) {
+fun CategoryButton.itemList(inventory: Container, filter: (iss: ItemStack) -> Boolean, equippedRange: Set<Slot>) {
     inventory.inventorySlots.forEach { slot ->
         +ItemStackElement(slot, Vec2d.ZERO, equippedRange.any { r -> slot.slotNumber == r.slotIndex }, filter)
     }
-    +object : NeoIconLabelElement(icon = IconCore.NONE, label = I18n.format("gui.empty")) {
+    +object : IconLabelElement(icon = IconCore.NONE, label = I18n.format("gui.empty")) {
         private var mark = false
 
-        override val valid: Boolean
+        override var valid: Boolean = true
             get() {
                 if (mark) return false
                 mark = true
@@ -69,7 +69,7 @@ fun NeoCategoryButton.itemList(inventory: Container, filter: (iss: ItemStack) ->
 }
 
 class ItemStackElement(private val slot: Slot, pos: Vec2d, override var selected: Boolean, private val filter: (iss: ItemStack) -> Boolean) :
-        NeoIconLabelElement(icon = ItemIcon { slot.stack }, pos = pos) {
+        IconLabelElement(icon = ItemIcon { slot.stack }, pos = pos) {
 
     init {
         onClick { _, button ->
@@ -206,7 +206,7 @@ class ItemStackElement(private val slot: Slot, pos: Vec2d, override var selected
     private val slotID
         get() = slot.slotNumber
 
-    override val valid: Boolean
+    override var valid: Boolean = true
         get() = itemStack.isNotEmpty
 
     override val label: String

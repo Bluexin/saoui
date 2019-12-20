@@ -18,7 +18,7 @@
 package com.saomc.saoui.screens
 
 import com.saomc.saoui.GLCore
-import com.saomc.saoui.api.elements.neo.*
+import com.saomc.saoui.api.elements.*
 import com.saomc.saoui.api.screens.IIcon
 import com.saomc.saoui.config.OptionCore
 import com.teamwizardry.librarianlib.features.animator.Animation
@@ -86,8 +86,13 @@ abstract class CoreGUI<T : Any>(override var pos: Vec2d, override var destinatio
     override fun doesGuiPauseGame() = OptionCore.GUI_PAUSE.isEnabled
 
     @CoreGUIDsl
-    fun tlCategory(icon: IIcon, body: (NeoCategoryButton.() -> Unit)? = null) {
-        this.elements += NeoCategoryButton(NeoIconElement(icon, vec(0, 25 * elements.size)), this, body)
+    fun tlCategory(icon: IIcon, body: (CategoryButton.() -> Unit)? = null) {
+        this.elements += CategoryButton(IconElement(icon, vec(0, 25 * elements.size)), this, body)
+    }
+
+    @CoreGUIDsl
+    fun tlCategory(icon: IIcon, index: Int, body: (CategoryButton.() -> Unit)? = null): CategoryButton {
+        return CategoryButton(IconElement(icon, vec(0, 25 * index)), this, body)
     }
 
     operator fun NeoElement.unaryPlus() {
@@ -132,7 +137,7 @@ abstract class CoreGUI<T : Any>(override var pos: Vec2d, override var destinatio
         super.onGuiClosed()
 
         this.elements.forEach {
-            (it as? NeoCategoryButton)?.close()
+            (it as? CategoryButton)?.close()
         }
 
         this.callbacks.forEach { it(result) }

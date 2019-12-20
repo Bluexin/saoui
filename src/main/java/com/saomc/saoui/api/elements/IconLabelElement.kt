@@ -15,7 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.saomc.saoui.api.elements.neo
+package com.saomc.saoui.api.elements
 
 import com.saomc.saoui.GLCore
 import com.saomc.saoui.api.screens.IIcon
@@ -34,7 +34,7 @@ import kotlin.math.max
  *
  * @author Bluexin
  */
-open class NeoIconLabelElement(icon: IIcon, open val label: String = "", pos: Vec2d = Vec2d.ZERO) : NeoIconElement(icon, pos, width = 84, height = 18) {
+open class IconLabelElement(icon: IIcon, open val label: String = "", pos: Vec2d = Vec2d.ZERO) : IconElement(icon, pos, width = 84, height = 18) {
 
     override val boundingBox get() = BoundingBox2D(pos, pos + vec(width, height))
 

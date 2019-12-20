@@ -15,7 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.saomc.saoui.api.elements.neo
+package com.saomc.saoui.api.elements
 
 import com.saomc.saoui.screens.CoreGUI
 import com.saomc.saoui.screens.MouseButton
@@ -81,8 +81,9 @@ interface NeoElement : INeoParent {
     val visible
         get() = true
 
-    val valid
+    var valid
         get() = true
+        set(_) = Unit
 
     val selected
         get() = false

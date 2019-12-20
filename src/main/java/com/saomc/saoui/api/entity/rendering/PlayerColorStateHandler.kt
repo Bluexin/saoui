@@ -19,6 +19,7 @@ package com.saomc.saoui.api.entity.rendering
 
 import com.saomc.saoui.SAOCore
 import com.saomc.saoui.api.entity.rendering.ColorState.*
+import com.saomc.saoui.capabilities.getRenderData
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.util.ResourceLocation
@@ -65,6 +66,7 @@ class PlayerColorStateHandler(thePlayer: EntityPlayer) : IColorStateHandler {
      * @param target the player hit
      */
     fun hit(target: EntityPlayer) {
+        //TODO Fix Me
         val targetState = target.getRenderData()?.getColorStateHandler()?.colorState
         if (targetState !== KILLER && targetState !== VIOLENT && this.currentState !== KILLER) {
             this.currentState = VIOLENT
@@ -78,6 +80,7 @@ class PlayerColorStateHandler(thePlayer: EntityPlayer) : IColorStateHandler {
      * @param target the player killed
      */
     fun kill(target: EntityPlayer) {
+        //TODO Fix Me
         val targetState =target.getRenderData()?.getColorStateHandler()?.colorState
         if (targetState !== KILLER && targetState !== VIOLENT) {
             if (this.currentState === KILLER)

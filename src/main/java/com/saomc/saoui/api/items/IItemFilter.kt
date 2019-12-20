@@ -36,7 +36,8 @@ interface IItemFilter : (ItemStack, Boolean) -> Boolean, (ItemStack) -> Boolean 
      * Categories do not have filters
      */
     val isCategory: Boolean
-        get() = false
+        get() = subFilters.isNotEmpty()
+
     val category: IItemFilter?
         get() = null
 
