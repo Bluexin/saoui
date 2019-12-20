@@ -155,5 +155,4 @@ class IngameMenu : CoreGUI<Unit>(Vec2d.ZERO) {
         ((elements[1] as IconElement).elements.firstOrNull { it is PartyElement } as? PartyElement)?.invalidate()
     }
 
-
 }
