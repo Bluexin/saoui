@@ -102,11 +102,6 @@ object EventCore {
     }
 
     @SubscribeEvent
-    fun partyRefresh(e: PartyEvent.Refresh){
-        (mc.currentScreen as? IngameMenu)?.updateParty()
-    }
-
-    @SubscribeEvent
     fun onWorldLoad(e: FMLNetworkEvent.ClientConnectedToServerEvent){
         mc.ingameGUI = IngameGUI(mc)
     }

@@ -186,9 +186,9 @@ object StaticRenderer { // TODO: add usage of scale, offset etc from capability
                 val value = (i + HEALTH_COUNT - hitPoints).toDouble() / HEALTH_COUNT
                 val rad = Math.toRadians((renderManager.playerViewY - 135).toDouble()) + (value - 0.5) * Math.PI * HEALTH_ANGLE
 
-                val x0 = x + sizeMult.toDouble() * living.width.toDouble() * HEALTH_RANGE * Math.cos(rad)
+                val x0 = x + sizeMult.toDouble() * living.width.toDouble() * HEALTH_RANGE * cos(rad)
                 val y0 = y + sizeMult * living.height * HEALTH_OFFSET
-                val z0 = z + sizeMult.toDouble() * living.width.toDouble() * HEALTH_RANGE * Math.sin(rad)
+                val z0 = z + sizeMult.toDouble() * living.width.toDouble() * HEALTH_RANGE * sin(rad)
 
                 val uv = value - (HEALTH_COUNT - hitPoints).toDouble() / HEALTH_COUNT
 
@@ -205,9 +205,9 @@ object StaticRenderer { // TODO: add usage of scale, offset etc from capability
                 val value = i.toDouble() / HEALTH_COUNT
                 val rad = Math.toRadians((renderManager.playerViewY - 135).toDouble()) + (value - 0.5) * Math.PI * HEALTH_ANGLE
 
-                val x0 = x + sizeMult.toDouble() * living.width.toDouble() * HEALTH_RANGE * Math.cos(rad)
+                val x0 = x + sizeMult.toDouble() * living.width.toDouble() * HEALTH_RANGE * cos(rad)
                 val y0 = y + sizeMult * living.height * HEALTH_OFFSET
-                val z0 = z + sizeMult.toDouble() * living.width.toDouble() * HEALTH_RANGE * Math.sin(rad)
+                val z0 = z + sizeMult.toDouble() * living.width.toDouble() * HEALTH_RANGE * sin(rad)
 
                 GLCore.addVertex(x0, y0 + HEALTH_HEIGHT, z0, 1.0 - value, 0.125)
                 GLCore.addVertex(x0, y0, z0, 1.0 - value, 0.25)

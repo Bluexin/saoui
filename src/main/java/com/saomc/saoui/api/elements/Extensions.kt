@@ -17,10 +17,6 @@
 
 package com.saomc.saoui.api.elements
 
-import be.bluexin.saomclib.capabilities.getPartyCapability
-import be.bluexin.saomclib.packets.party.PartyType
-import be.bluexin.saomclib.packets.party.Type
-import be.bluexin.saomclib.packets.party.updateServer
 import com.saomc.saoui.SoundCore
 import com.saomc.saoui.api.screens.IIcon
 import com.saomc.saoui.config.OptionCore
@@ -33,9 +29,7 @@ import com.teamwizardry.librarianlib.features.animator.Easing
 import com.teamwizardry.librarianlib.features.gui.component.supporting.delegate
 import com.teamwizardry.librarianlib.features.helpers.vec
 import com.teamwizardry.librarianlib.features.math.Vec2d
-import net.minecraft.client.resources.I18n
 import net.minecraft.entity.player.EntityPlayer
-import net.minecraftforge.common.util.FakePlayer
 import java.lang.ref.WeakReference
 import kotlin.math.max
 import kotlin.math.min
@@ -174,10 +168,8 @@ class CategoryButton(private val delegate: IconElement, parent: INeoParent? = nu
 
     @CoreGUIDsl
     fun partyMenu(player: EntityPlayer): CategoryButton {
-        val partyElement = PartyElement(player)
-        val cat = CategoryButton(partyElement, this) {
-            partyExtras(player)
-        }
+        val partyElement = PartyElement(player, this)
+        val cat = CategoryButton(partyElement, this)
         +cat
         return cat
     }
@@ -187,40 +179,6 @@ class CategoryButton(private val delegate: IconElement, parent: INeoParent? = nu
         val cat = CategoryButton(ProfileElement(player, this), this, body)
         +cat
         return cat
-    }
-
-    @CoreGUIDsl
-    fun partyExtras(player: EntityPlayer) {
-        val partyCapability = player.getPartyCapability()
-        val party = partyCapability.partyData
-
-        if ((party != null && party.isLeader(player)) || party == null) category(IconCore.PARTY, I18n.format("sao.party.invite")) {
-            @Suppress("UNCHECKED_CAST")
-            (player.world.playerEntities as List<EntityPlayer>).asSequence().filter { it != player && it !is FakePlayer && party?.isMember(it) != true }.forEach { player ->
-                +IconLabelElement(IconCore.INVITE, player.displayNameString).onClick { _, _ ->
-                    Type.INVITE.updateServer(player, PartyType.MAIN)
-                    true
-                }
-            }
-        }
-        if (party != null && party.isParty) +IconLabelElement(IconCore.CANCEL, I18n.format("sao.party.leave")).onClick { _, _ ->
-            Type.LEAVE.updateServer(player, PartyType.MAIN)
-            true
-        }
-
-        val invitedTo = partyCapability.inviteData
-        if (invitedTo != null) {
-            category(IconCore.PARTY, I18n.format("sao.party.invited", invitedTo.leaderInfo.username)) {
-                +IconLabelElement(IconCore.CONFIRM, I18n.format("sao.misc.accept")).onClick { _, _ ->
-                    Type.ACCEPTINVITE.updateServer(player, PartyType.INVITE)
-                    true
-                }
-                +IconLabelElement(IconCore.CANCEL, I18n.format("sao.misc.decline")).onClick { _, _ ->
-                    Type.CANCELINVITE.updateServer(player, PartyType.INVITE)
-                    true
-                }
-            }
-        }
     }
 
     fun reInit() {

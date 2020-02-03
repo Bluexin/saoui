@@ -19,7 +19,9 @@ package com.saomc.saoui.screens.menus
 
 import be.bluexin.saomclib.message
 import com.saomc.saoui.SoundCore
-import com.saomc.saoui.api.elements.*
+import com.saomc.saoui.api.elements.CategoryButton
+import com.saomc.saoui.api.elements.ItemFilterElement
+import com.saomc.saoui.api.elements.optionCategory
 import com.saomc.saoui.api.items.IItemFilter
 import com.saomc.saoui.api.items.ItemFilterRegister
 import com.saomc.saoui.config.OptionCore
@@ -42,6 +44,8 @@ import net.minecraft.client.resources.I18n.format
  * @author Bluexin
  */
 class IngameMenu : CoreGUI<Unit>(Vec2d.ZERO) {
+
+    private var loggingOut = false
 
     override var result: Unit
         get() = Unit
@@ -118,7 +122,7 @@ class IngameMenu : CoreGUI<Unit>(Vec2d.ZERO) {
                     category(IconCore.LOGOUT, if (OptionCore.LOGOUT()) format("sao.element.logout") else "") {
                         onClick { _, _ ->
                             if (OptionCore.LOGOUT()) {
-                                UIUtil.closeGame()
+                                loggingOut = true
                                 true
                             } else false
                         }
@@ -137,11 +141,17 @@ class IngameMenu : CoreGUI<Unit>(Vec2d.ZERO) {
         SoundCore.ORB_DROPDOWN.play()
     }
 
+    override fun updateScreen() {
+        if (loggingOut)
+            UIUtil.closeGame()
+        else super.updateScreen()
+    }
+
     fun addItemCategories(button: CategoryButton, filter: IItemFilter){
         button.category(filter.icon, filter.displayName) {
             if (filter.isCategory) {
                 if (filter.subFilters.isNotEmpty())
-                    filter.subFilters.forEach { subfilter -> addItemCategories(this, subfilter) }
+                    filter.subFilters.forEach { subFilter -> addItemCategories(this, subFilter) }
             }
             else itemList(mc.player.inventoryContainer, filter, filter.getValidSlots())
         }
@@ -151,8 +161,8 @@ class IngameMenu : CoreGUI<Unit>(Vec2d.ZERO) {
         elements.asSequence().filter { it is ItemFilterElement }.forEach { (it as ItemFilterElement).updateInventory() }
     }
 
-    fun updateParty(){
-        ((elements[1] as IconElement).elements.firstOrNull { it is PartyElement } as? PartyElement)?.invalidate()
+    override fun doesGuiPauseGame(): Boolean {
+        return loggingOut || super.doesGuiPauseGame()
     }
 
 }
