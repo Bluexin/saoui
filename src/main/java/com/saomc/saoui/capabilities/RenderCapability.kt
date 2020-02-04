@@ -68,6 +68,7 @@ class RenderCapability : AbstractEntityCapability() {
 
     fun update(partialTicks: Float){
         updateHealthSmooth(partialTicks)
+        colorStateHandler.tick()
     }
 
     fun updateHealthSmooth(partialTicks: Float){

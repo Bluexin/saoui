@@ -20,6 +20,7 @@ package com.saomc.saoui.api.entity.rendering
 import com.saomc.saoui.SAOCore
 import com.saomc.saoui.api.entity.rendering.ColorState.*
 import com.saomc.saoui.capabilities.getRenderData
+import com.teamwizardry.librarianlib.features.kotlin.Minecraft
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.util.ResourceLocation
@@ -34,6 +35,7 @@ class PlayerColorStateHandler(thePlayer: EntityPlayer) : IColorStateHandler {
 
     private val thePlayer: WeakReference<EntityPlayer> = WeakReference(thePlayer)
     private var ticksForRedemption: Long = 0
+    private var tickForGamePlayCheck: Int = 0
     private var currentState = INNOCENT
 
     /**
@@ -48,6 +50,21 @@ class PlayerColorStateHandler(thePlayer: EntityPlayer) : IColorStateHandler {
      * Use this to handle anything special.
      */
     override fun tick() {
+        if (--tickForGamePlayCheck <= 0 && Minecraft().connection != null) {
+            val gamemode = Minecraft().connection!!.playerInfoMap.firstOrNull { it.gameProfile.id == thePlayer.get()?.uniqueID }?.gameType
+            if (gamemode != null) {
+                if (gamemode.isCreative){
+                    currentState = CREATIVE
+                }
+                else if (gamemode.isSurvivalOrAdventure){
+                        currentState = INNOCENT
+                    }
+                else {
+                        currentState = INVALID
+                    }
+            }
+            tickForGamePlayCheck = 20
+        }
         if (ticksForRedemption > 0) {
             if (--ticksForRedemption == 0L) {
                 if (currentState === VIOLENT)
