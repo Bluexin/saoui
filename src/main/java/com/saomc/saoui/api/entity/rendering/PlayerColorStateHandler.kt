@@ -25,6 +25,7 @@ import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.util.ResourceLocation
 import java.lang.ref.WeakReference
+import java.util.*
 
 /**
  * Part of saoui
@@ -34,9 +35,9 @@ import java.lang.ref.WeakReference
 class PlayerColorStateHandler(thePlayer: EntityPlayer) : IColorStateHandler {
 
     private val thePlayer: WeakReference<EntityPlayer> = WeakReference(thePlayer)
-    private var ticksForRedemption: Long = 0
+    private var ticksForRedemption: Int = 0
     private var tickForGamePlayCheck: Int = 0
-    private var currentState = INNOCENT
+    private var currentState = getInnocent()
 
     /**
      * @return the color state the entity should be showing.
@@ -53,28 +54,34 @@ class PlayerColorStateHandler(thePlayer: EntityPlayer) : IColorStateHandler {
         if (--tickForGamePlayCheck <= 0 && Minecraft().connection != null) {
             val gamemode = Minecraft().connection!!.playerInfoMap.firstOrNull { it.gameProfile.id == thePlayer.get()?.uniqueID }?.gameType
             if (gamemode != null) {
-                if (gamemode.isCreative){
-                    currentState = CREATIVE
+                currentState = when {
+                    gamemode.isCreative -> {
+                        CREATIVE
+                    }
+                    gamemode.isSurvivalOrAdventure -> {
+                        getInnocent()
+                    }
+                    else -> {
+                        INVALID
+                    }
                 }
-                else if (gamemode.isSurvivalOrAdventure){
-                        currentState = INNOCENT
-                    }
-                else {
-                        currentState = INVALID
-                    }
             }
             tickForGamePlayCheck = 20
         }
         if (ticksForRedemption > 0) {
-            if (--ticksForRedemption == 0L) {
+            if (--ticksForRedemption == 0) {
                 if (currentState === VIOLENT)
-                    currentState = INNOCENT
+                    currentState = getInnocent()
                 else {
                     currentState = VIOLENT
                     ticksForRedemption = TICKS_PER_STATE
                 }
             }
         }
+    }
+
+    private fun getInnocent(): ColorState{
+        return if (thePlayer.get() != null && devs.contains(thePlayer.get()!!.uniqueID)) DEV else INNOCENT
     }
 
     /**
@@ -118,7 +125,7 @@ class PlayerColorStateHandler(thePlayer: EntityPlayer) : IColorStateHandler {
      */
     override fun save(tag: NBTTagCompound) {
         val atag = NBTTagCompound()
-        atag.setLong("ticksForRedemption", this.ticksForRedemption)
+        atag.setInteger("ticksForRedemption", this.ticksForRedemption)
         atag.setInteger("state", this.currentState.ordinal)
         tag.setTag(KEY, atag)
     }
@@ -132,7 +139,7 @@ class PlayerColorStateHandler(thePlayer: EntityPlayer) : IColorStateHandler {
      */
     override fun load(tag: NBTTagCompound) {
         val atag = tag.getCompoundTag(KEY)
-        this.ticksForRedemption = atag.getLong("ticksForRedemption")
+        this.ticksForRedemption = atag.getInteger("ticksForRedemption")
         this.currentState = values()[atag.getInteger("state")]
     }
 
@@ -156,6 +163,8 @@ class PlayerColorStateHandler(thePlayer: EntityPlayer) : IColorStateHandler {
          * player A (killer) hits player B (innocent)
          * player A's status doesn't change
          */
-        private const val TICKS_PER_STATE: Long = 12000
+        private const val TICKS_PER_STATE: Int = 12000
+
+        private val devs = arrayOf(UUID.fromString("08197bad-1da1-48fd-82f1-9b388c49b6c9"), UUID.fromString("dc1bced1-26df-4c18-8eca-37484229ded1"))
     }
 }

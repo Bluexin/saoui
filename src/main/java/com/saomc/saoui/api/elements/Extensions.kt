@@ -175,6 +175,14 @@ class CategoryButton(private val delegate: IconElement, parent: INeoParent? = nu
     }
 
     @CoreGUIDsl
+    fun friendMenu(): CategoryButton {
+        val friendElement = FriendElement(this)
+        val cat = CategoryButton(friendElement, this)
+        +cat
+        return cat
+    }
+
+    @CoreGUIDsl
     fun profile(player: EntityPlayer, body: (CategoryButton.() -> Unit)? = null): CategoryButton {
         val cat = CategoryButton(ProfileElement(player, this), this, body)
         +cat

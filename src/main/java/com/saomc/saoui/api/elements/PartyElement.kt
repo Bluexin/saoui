@@ -32,10 +32,6 @@ class PartyElement(val player: EntityPlayer, override var parent: INeoParent?): 
         resetPartyData()
     }
 
-    override fun update() {
-        super.update()
-    }
-
     @SubscribeEvent
     fun partyRefresh(e: PartyEvent.Refresh){
         resetPartyData()

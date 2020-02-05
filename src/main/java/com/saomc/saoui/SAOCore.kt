@@ -21,6 +21,7 @@ import be.bluexin.saomclib.capabilities.CapabilitiesHandler
 import com.saomc.saoui.api.events.EventInitStatsProvider
 import com.saomc.saoui.capabilities.RenderCapability
 import com.saomc.saoui.config.ConfigHandler
+import com.saomc.saoui.config.FriendData
 import com.saomc.saoui.config.OptionCore
 import com.saomc.saoui.events.EventCore
 import com.saomc.saoui.screens.CoreGUI
@@ -40,6 +41,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent
 import net.minecraftforge.fml.common.eventhandler.EventBus
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import java.io.File
 import java.util.concurrent.ConcurrentHashMap
 import javax.xml.bind.JAXBException
 
@@ -51,6 +53,8 @@ object SAOCore {
     const val DEPS = "required-after:saomclib@[1.4.5,);after:mantle;required-after:librarianlib@[4.19.2,)"
 
     val mc = Minecraft()
+
+    val saoConfDir: File = confDir(File(Minecraft().gameDir, "config"))
 
     @JvmStatic
     @Mod.InstanceFactory
@@ -64,7 +68,8 @@ object SAOCore {
     fun preInit(event: FMLPreInitializationEvent) {
         MinecraftForge.EVENT_BUS.register(EventCore)
         MinecraftForge.EVENT_BUS.register(SoundCore)
-        ConfigHandler.preInit(event)
+        ConfigHandler.preInit()
+        FriendData.preInit()
 
         CapabilitiesHandler.registerEntityCapability(RenderCapability::class.java, RenderCapability.Storage()) { `object`: Any -> `object` is EntityLivingBase }
 
@@ -99,4 +104,7 @@ object SAOCore {
         }
     }
 
+    private fun confDir(genDir: File): File {
+        return File(genDir, MODID)
+    }
 }

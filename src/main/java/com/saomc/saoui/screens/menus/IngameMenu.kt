@@ -97,7 +97,7 @@ class IngameMenu : CoreGUI<Unit>(Vec2d.ZERO) {
                 tlCategory(IconCore.SOCIAL, index++) {
                     category(IconCore.GUILD, format("sao.element.guild"))
                     partyMenu(mc.player)
-                    category(IconCore.FRIEND, format("sao.element.friends"))
+                    friendMenu()
                 },
                 tlCategory(IconCore.MESSAGE, index++),
                 tlCategory(IconCore.NAVIGATION, index++),
@@ -130,6 +130,7 @@ class IngameMenu : CoreGUI<Unit>(Vec2d.ZERO) {
                 }
         )
     }
+
 
     override fun initGui() {
         elements.clear()

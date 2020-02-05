@@ -17,11 +17,8 @@
 
 package com.saomc.saoui.config
 
-import com.saomc.saoui.SAOCore
-import com.teamwizardry.librarianlib.features.kotlin.Minecraft
+import com.saomc.saoui.SAOCore.saoConfDir
 import net.minecraftforge.common.config.Configuration
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent
-
 import java.io.File
 import java.util.stream.Stream
 
@@ -35,11 +32,10 @@ object ConfigHandler {
     var IGNORE_UPDATE: Boolean = false
     var DEBUG = false
     var debugFakePT: Int = 0
-    val saoConfDir: File = confDir(File(Minecraft().gameDir, "config"))
     var config: Configuration = Configuration(File(saoConfDir, "main.cfg"))
         private set
 
-    fun preInit(event: FMLPreInitializationEvent) {
+    fun preInit() {
         //saoConfDir = confDir(event.modConfigurationDirectory)
         //config = Configuration(File(saoConfDir, "main.cfg"))
         config.load()
@@ -94,9 +90,5 @@ object ConfigHandler {
 
     fun ignoreVersion(): Boolean {
         return IGNORE_UPDATE
-    }
-
-    private fun confDir(genDir: File): File {
-        return File(genDir, SAOCore.MODID)
     }
 }
