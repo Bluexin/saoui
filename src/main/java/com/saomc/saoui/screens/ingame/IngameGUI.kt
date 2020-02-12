@@ -184,9 +184,10 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
         GLCore.glBlend(true)
 
         var members: MutableList<PlayerInfo> = mutableListOf()
-        if (pt?.isParty == true)
+        if (pt?.isParty == true) {
             members = pt.membersInfo.filter { !it.equals(mc.player) }.toMutableList()
-        else
+            if (OptionCore.HIDE_OFFLINE_PARTY.isEnabled) members.removeIf { it.player == null }
+        } else
             for (i in 0 until ConfigHandler.debugFakePT) members.add(PlayerInfo(mc.player))
 
         context.setPt(members)

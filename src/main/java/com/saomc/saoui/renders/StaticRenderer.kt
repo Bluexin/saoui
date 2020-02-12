@@ -60,27 +60,38 @@ object StaticRenderer { // TODO: add usage of scale, offset etc from capability
 
         if (!dead && !living.isInvisibleToPlayer(mc.player) && living != mc.player) {
             living.getRenderData()?.let {renderCap ->
-                when (val state = renderCap.getColorStateHandler().colorState){
-                    ColorState.VIOLENT -> {
-                        if (OptionCore.VIOLENT_HEALTH.isEnabled) doRenderHealthBar(renderManager, mc, living, x, y, z, sqrt(64))
-                        if (OptionCore.VIOLENT_CRYSTAL.isEnabled) doRenderColorCursor(renderManager, mc, living, x, y, z, sqrt(64), state)
-                    }
-                    ColorState.KILLER -> {
-                        if (OptionCore.KILLER_HEALTH.isEnabled) doRenderHealthBar(renderManager, mc, living, x, y, z, sqrt(64))
-                        if (OptionCore.VIOLENT_CRYSTAL.isEnabled) doRenderColorCursor(renderManager, mc, living, x, y, z, sqrt(64), state)
-                    }
-                    ColorState.BOSS -> {
-                        if (OptionCore.BOSS_HEALTH.isEnabled) doRenderHealthBar(renderManager, mc, living, x, y, z, sqrt(64))
-                        if (OptionCore.VIOLENT_CRYSTAL.isEnabled) doRenderColorCursor(renderManager, mc, living, x, y, z, sqrt(64), state)
-                    }
-                    else -> {
-                        if (OptionCore.INNOCENT_HEALTH.isEnabled) doRenderHealthBar(renderManager, mc, living, x, y, z, sqrt(64))
-                        if (OptionCore.INNOCENT_CRYSTAL.isEnabled) doRenderColorCursor(renderManager, mc, living, x, y, z, sqrt(64), state)
-                    }
-                }
+                val state = renderCap.getColorStateHandler().colorState
+                if (checkHealth(state)) doRenderHealthBar(renderManager, mc, living, x, y, z, sqrt(64))
+                if (checkCrystal(state)) doRenderColorCursor(renderManager, mc, living, x, y, z, sqrt(64), state)
             }
         }
         mc.profiler.endSection()
+    }
+
+    fun checkHealth(color: ColorState): Boolean{
+        return when (color){
+            ColorState.INNOCENT -> OptionCore.INNOCENT_HEALTH.isEnabled
+            ColorState.VIOLENT -> OptionCore.VIOLENT_HEALTH.isEnabled
+            ColorState.KILLER -> OptionCore.KILLER_HEALTH.isEnabled
+            ColorState.BOSS -> OptionCore.BOSS_HEALTH.isEnabled
+            ColorState.CREATIVE -> OptionCore.CREATIVE_HEALTH.isEnabled
+            ColorState.OP -> OptionCore.OP_HEALTH.isEnabled
+            ColorState.INVALID -> OptionCore.INVALID_HEALTH.isEnabled
+            ColorState.DEV -> OptionCore.DEV_HEALTH.isEnabled
+        }
+    }
+
+    fun checkCrystal(color: ColorState): Boolean{
+        return when (color){
+            ColorState.INNOCENT -> OptionCore.INNOCENT_CRYSTAL.isEnabled
+            ColorState.VIOLENT -> OptionCore.VIOLENT_CRYSTAL.isEnabled
+            ColorState.KILLER -> OptionCore.KILLER_CRYSTAL.isEnabled
+            ColorState.BOSS -> OptionCore.BOSS_CRYSTAL.isEnabled
+            ColorState.CREATIVE -> OptionCore.CREATIVE_CRYSTAL.isEnabled
+            ColorState.OP -> OptionCore.OP_CRYSTAL.isEnabled
+            ColorState.INVALID -> OptionCore.INVALID_CRYSTAL.isEnabled
+            ColorState.DEV -> OptionCore.DEV_CRYSTAL.isEnabled
+        }
     }
 
     private fun doRenderColorCursor(renderManager: RenderManager, mc: Minecraft, entity: EntityLivingBase, x: Double, y: Double, z: Double, distance: Int, color: ColorState) {

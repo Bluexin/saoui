@@ -26,6 +26,7 @@ import com.saomc.saoui.screens.util.PopupHotbarSelection
 import com.saomc.saoui.screens.util.PopupItem
 import com.saomc.saoui.screens.util.PopupYesNo
 import com.saomc.saoui.util.IconCore
+import com.teamwizardry.librarianlib.features.kotlin.Minecraft
 import com.teamwizardry.librarianlib.features.kotlin.get
 import com.teamwizardry.librarianlib.features.kotlin.isNotEmpty
 import com.teamwizardry.librarianlib.features.kotlin.toolClasses
@@ -42,6 +43,7 @@ import net.minecraft.inventory.IInventory
 import net.minecraft.inventory.Slot
 import net.minecraft.item.*
 import net.minecraft.util.ResourceLocation
+import net.minecraftforge.fml.client.config.GuiUtils
 import net.minecraftforge.fml.common.registry.ForgeRegistries
 
 
@@ -197,6 +199,10 @@ class ItemStackElement(private val slot: Slot, pos: Vec2d, override var selected
         return 8
     }
 
+    override fun drawHoveringText(mouse: Vec2d) {
+        GuiUtils.drawHoveringText(itemStack, description, mouse.xi, mouse.yi, Minecraft().displayWidth, Minecraft().displayHeight, -1, GLCore.glFont)
+    }
+
     private val itemStack
         get() = with(slot.stack) {
             return@with if (filter(this)) this
@@ -215,6 +221,8 @@ class ItemStackElement(private val slot: Slot, pos: Vec2d, override var selected
             else I18n.format("saoui.formatItem", itemStack.getTooltip(mc.player, ITooltipFlag.TooltipFlags.NORMAL)[0])
         } else I18n.format("gui.empty")
 
+    override val description: MutableList<String>
+        get() = itemStack.getTooltip(Minecraft().player) { Minecraft().gameSettings.advancedItemTooltips }
 }
 
 class ItemIcon(private val itemStack: () -> ItemStack) : IIcon {

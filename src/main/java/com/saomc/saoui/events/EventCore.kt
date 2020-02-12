@@ -21,19 +21,21 @@ import be.bluexin.saomclib.events.PartyEvent
 import be.bluexin.saomclib.packets.party.PartyType
 import be.bluexin.saomclib.packets.party.Type
 import be.bluexin.saomclib.packets.party.updateServer
+import be.bluexin.saomclib.party.playerInfo
 import com.saomc.saoui.capabilities.getRenderData
 import com.saomc.saoui.effects.RenderDispatcher
+import com.saomc.saoui.screens.CoreGUI
 import com.saomc.saoui.screens.ingame.IngameGUI
 import com.saomc.saoui.screens.menus.IngameMenu
+import com.saomc.saoui.screens.util.NotificationAlert
+import com.saomc.saoui.screens.util.Popup
 import com.saomc.saoui.screens.util.PopupYesNo
+import com.saomc.saoui.util.IconCore
 import com.teamwizardry.librarianlib.features.kotlin.Minecraft
 import com.teamwizardry.librarianlib.features.kotlin.localize
 import net.minecraft.client.Minecraft
 import net.minecraft.client.settings.GameSettings
-import net.minecraftforge.client.event.GuiOpenEvent
-import net.minecraftforge.client.event.RenderLivingEvent
-import net.minecraftforge.client.event.RenderPlayerEvent
-import net.minecraftforge.client.event.RenderWorldLastEvent
+import net.minecraftforge.client.event.*
 import net.minecraftforge.event.entity.living.LivingDeathEvent
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import net.minecraftforge.fml.common.gameevent.PlayerEvent
@@ -45,6 +47,8 @@ import kotlin.math.pow
  * This is the core for all event handlers, listening to events then passing on to the other events that need it.
  */
 object EventCore {
+
+    val notifications: MutableList<Popup<*>> = mutableListOf()
 
     @SubscribeEvent
     fun clientTickListener(e: TickEvent.ClientTickEvent) {
@@ -91,14 +95,91 @@ object EventCore {
     }
 
     @SubscribeEvent
+    fun partyDisband(e: PartyEvent.Disbanded){
+        NotificationAlert.new(IconCore.PARTY, "notificationPartyDisbandTitle".localize(), "")
+    }
+
+    @SubscribeEvent
+    fun partyInviteCancelled(e: PartyEvent.InviteCanceled){
+        val notification = notifications.firstOrNull { notification ->
+            notification.text.any { line ->
+                line.contains(e.partyData.leaderInfo.username, true)
+            }
+        }
+        if (notification != null) {
+            notifications.remove(notification)
+            NotificationAlert.new(IconCore.PARTY, "notificationPartyInviteTimeoutTitle".localize(), "")
+        }
+    }
+
+    @SubscribeEvent
+    fun partyJoin(e: PartyEvent.Join){
+        if (e.player == Minecraft().player.playerInfo()){
+            NotificationAlert.new(IconCore.PARTY, "notificationPartyJoinedTitle".localize(), "notificationPartyJoinedShortText".localize(e.partyData.leaderInfo.username))
+        }
+        else NotificationAlert.new(IconCore.PARTY, "notificationPartyAddedTitle".localize(), "notificationPartyAddedShortText".localize(e.player.username))
+    }
+
+    @SubscribeEvent
+    fun partyLeft(e: PartyEvent.Leave){
+        if (e.player == Minecraft().player.playerInfo()){
+            NotificationAlert.new(IconCore.PARTY, "notificationPartyLeftTitle".localize(), "notificationPartyLeftShortText".localize(e.partyData.leaderInfo.username))
+        }
+        else NotificationAlert.new(IconCore.PARTY, "notificationPartyLeaveTitle".localize(), "notificationPartyLeaveShortText".localize(e.player.username))
+    }
+
+    @SubscribeEvent
+    fun partyLeaderChange(e: PartyEvent.LeaderChanged){
+        if (e.newLeader == Minecraft().player.playerInfo()){
+            NotificationAlert.new(IconCore.PARTY, "notificationPartyLeaderTitle".localize(), "notificationPartyLeaderShortText".localize())
+        }
+        else NotificationAlert.new(IconCore.PARTY, "notificationPartyNewLeaderTitle".localize(), "notificationPartyNewLeaderShortText".localize(e.newLeader.username))
+    }
+
+    @SubscribeEvent
     fun partyInvite(e: PartyEvent.Invited) {
         val p = e.partyData
         if (e.player.equals(Minecraft().player)) {
-            PopupYesNo("guiPartyInviteTitle".localize(), "guiPartyInviteText".localize(p.leaderInfo.username), "") += {
-                if (it == PopupYesNo.Result.YES) Type.ACCEPTINVITE.updateServer(Minecraft().player, PartyType.INVITE)
-                else Type.CANCELINVITE.updateServer(Minecraft().player, PartyType.INVITE)
+            val builder = StringBuilder()
+            builder.append("${"guiPartyInviteText".localize(p.leaderInfo.username)}\n\n")
+            builder.append("Members: ${p.membersInfo.first().username}\n")
+            p.membersInfo.filter { it != p.membersInfo.first() }.forEach { builder.append("            ${it.username}") }
+            val partyNotification = PopupYesNo("guiPartyInviteTitle".localize(), builder.lines(), "")
+            partyNotification.plusAssign {
+                when (it) {
+                    PopupYesNo.Result.YES -> {
+                        Type.ACCEPTINVITE.updateServer(Minecraft().player.playerInfo(), PartyType.INVITE)
+                    }
+                    PopupYesNo.Result.NO -> {
+                        Type.CANCELINVITE.updateServer(Minecraft().player.playerInfo(), PartyType.INVITE)
+                    }
+                }
+            }
+            if (mc.currentScreen is CoreGUI<*>)
+                (mc.currentScreen as CoreGUI<*>).openGui(
+                        partyNotification
+                )
+            else {
+                notifications.add(partyNotification)
+                NotificationAlert.new(IconCore.PARTY, "notificationPartyInviteTitle".localize(), "notificationPartyInviteShortText".localize(p.leaderInfo.username))
             }
         }
+    }
+
+    @SubscribeEvent
+    fun clientRenderEvent(e: GuiScreenEvent.DrawScreenEvent){
+        if (e.gui is CoreGUI<*>)
+            if (notifications.isNotEmpty()){
+                if ((e.gui as CoreGUI<*>).subGui == null){
+                    (e.gui as CoreGUI<*>).openGui(notifications.first())
+                    notifications.removeAt(0)
+                }
+            }
+    }
+
+    @SubscribeEvent
+    fun chatEvent(e: ClientChatReceivedEvent){
+        //TODO chat system
     }
 
     @SubscribeEvent

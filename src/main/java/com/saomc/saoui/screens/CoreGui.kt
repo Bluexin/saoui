@@ -24,6 +24,7 @@ import com.saomc.saoui.config.OptionCore
 import com.teamwizardry.librarianlib.features.animator.Animation
 import com.teamwizardry.librarianlib.features.animator.Animator
 import com.teamwizardry.librarianlib.features.helpers.vec
+import com.teamwizardry.librarianlib.features.kotlin.Minecraft
 import com.teamwizardry.librarianlib.features.kotlin.clamp
 import com.teamwizardry.librarianlib.features.kotlin.minus
 import com.teamwizardry.librarianlib.features.math.Vec2d
@@ -31,6 +32,7 @@ import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiScreen
 import net.minecraft.client.gui.ScaledResolution
 import net.minecraft.client.settings.KeyBinding
+import net.minecraft.util.math.Vec2f
 import org.lwjgl.input.Keyboard
 import org.lwjgl.input.Mouse
 
@@ -42,17 +44,44 @@ import org.lwjgl.input.Mouse
 abstract class CoreGUI<T : Any>(override var pos: Vec2d, override var destination: Vec2d = pos) : GuiScreen(), INeoParent {
     protected val elements = mutableListOf<NeoElement>()
 
-    protected var subGui: CoreGUI<*>? = null
+    var viewSet: Boolean = false
+    var playerView: Vec2f = Vec2f.ZERO
+    open var previousMouse: Vec2d = Vec2d(0.0, 0.0)
+    open var originPos = pos
+
+    var subGui: CoreGUI<*>? = null
+        private set
 
     override var parent: INeoParent? = null
 
     override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
         GLCore.glBlend(true)
         GLCore.pushMatrix()
+
+        if (OptionCore.UI_MOVEMENT.isEnabled) {
+            if (!viewSet){
+                playerView = Vec2f(Minecraft().player.rotationYaw, Minecraft().player.rotationPitch)
+                previousMouse = Vec2d(mouseX.toDouble(), mouseY.toDouble())
+                viewSet = true
+            }
+            else {
+                Minecraft().player.rotationYaw = playerView.x - ((width / 2 - mouseX) / 2) * 0.25F
+                Minecraft().player.rotationPitch = playerView.y - ((height / 2 - mouseY) / 2) * 0.25F
+                pos = pos.add((mouseX - previousMouse.x) * 0.25, (mouseY - previousMouse.y) * 0.25)
+                previousMouse = Vec2d(mouseX.toDouble(), mouseY.toDouble())
+            }
+        }
+        else if (viewSet){
+            Minecraft().player.rotationYaw = playerView.x
+            Minecraft().player.rotationPitch = playerView.y
+            pos = originPos
+        }
         GLCore.translate(pos.x, pos.y, 0.0)
 
         val mousePos = if (subGui == null) vec(mouseX, mouseY) - pos else Vec2d.NEG_INFINITY
         elements.forEach { it.draw(mousePos, partialTicks) }
+
+        //GLCore.lighting(false)
 
         GLCore.popMatrix()
 
@@ -81,6 +110,14 @@ abstract class CoreGUI<T : Any>(override var pos: Vec2d, override var destinatio
 
     override fun mouseClicked(pos: Vec2d, mouseButton: MouseButton): Boolean {
         return subGui?.mouseClicked(pos, mouseButton) ?: elements.filter { it.mouseClicked(pos - this.pos, mouseButton) }.any()
+    }
+
+    override fun mouseClickMove(mouseX: Int, mouseY: Int, clickedMouseButton: Int, timeSinceLastClick: Long) {
+        subGui?.mouseClickMove(mouseX, mouseY, clickedMouseButton, timeSinceLastClick)
+    }
+
+    override fun mouseReleased(mouseX: Int, mouseY: Int, state: Int) {
+        subGui?.mouseReleased(mouseX, mouseY, state)
     }
 
     override fun doesGuiPauseGame() = OptionCore.GUI_PAUSE.isEnabled

@@ -34,7 +34,7 @@ import kotlin.math.max
  *
  * @author Bluexin
  */
-open class IconLabelElement(icon: IIcon, open val label: String = "", pos: Vec2d = Vec2d.ZERO) : IconElement(icon, pos, width = 84, height = 18) {
+open class IconLabelElement(icon: IIcon, open val label: String = "", pos: Vec2d = Vec2d.ZERO, override val description: MutableList<String> = mutableListOf()) : IconElement(icon, pos, width = 84, height = 18) {
 
     override val boundingBox get() = BoundingBox2D(pos, pos + vec(width, height))
 
@@ -48,10 +48,14 @@ open class IconLabelElement(icon: IIcon, open val label: String = "", pos: Vec2d
         if (opacity < 0.03 || scale == Vec2d.ZERO) return
         GLCore.pushMatrix()
         if (scale != Vec2d.ONE) GLCore.glScalef(scale.xf, scale.yf, 1f)
+        val mouseCheck = mouse in this
+        GLCore.glBlend(true)
+        GLCore.depth(true)
         GLCore.color(ColorUtil.multiplyAlpha(getColor(mouse), opacity))
         GLCore.glBindTexture(StringNames.slot)
         GLCore.glTexturedRectV2(pos.x, pos.y, width = width.toDouble(), height = height.toDouble(), srcX = 0.0, srcY = 40.0, srcWidth = 84.0, srcHeight = 18.0)
-        if (OptionCore.MOUSE_OVER_EFFECT.isEnabled && mouse in this) mouseOverEffect()
+        if (mouseCheck && OptionCore.MOUSE_OVER_EFFECT.isEnabled)
+            mouseOverEffect()
         val color = ColorUtil.multiplyAlpha(getTextColor(mouse), opacity)
         GLCore.color(color)
         if (icon.rl != null) GLCore.glBindTexture(icon.rl!!)
@@ -70,6 +74,11 @@ open class IconLabelElement(icon: IIcon, open val label: String = "", pos: Vec2d
 
         drawChildren(mouse, partialTicks)
         GLCore.popMatrix()
+        if (mouseCheck) {
+            drawHoveringText(mouse)
+            GLCore.lighting(false)
+            GLCore.depth(false)
+        }
     }
 
     override fun toString(): String {

@@ -1,12 +1,8 @@
 package com.saomc.saoui.util
 
-import com.teamwizardry.librarianlib.features.helpers.setNBTTag
 import com.teamwizardry.librarianlib.features.kotlin.Minecraft
 import net.minecraft.client.gui.GuiMainMenu
 import net.minecraft.client.gui.GuiMultiplayer
-import net.minecraft.init.Items
-import net.minecraft.item.ItemStack
-import net.minecraft.nbt.NBTTagString
 import net.minecraft.realms.RealmsBridge
 
 
@@ -33,11 +29,5 @@ object UIUtil {
                 this.mc.displayGuiScreen(GuiMultiplayer(GuiMainMenu()))
             }
         }
-    }
-
-    fun getCustomHead(playerName: String): ItemStack {
-        val customHead = ItemStack(Items.SKULL, 1, 3)
-        customHead.setNBTTag("SkullOwner", NBTTagString(playerName))
-        return customHead
     }
 }

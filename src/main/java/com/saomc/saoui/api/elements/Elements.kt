@@ -59,6 +59,7 @@ interface INeoParent {
         set(_) = Unit
 
     fun mouseClicked(pos: Vec2d, mouseButton: MouseButton) = false
+
 }
 
 interface NeoElement : INeoParent {

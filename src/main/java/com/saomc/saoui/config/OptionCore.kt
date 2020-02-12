@@ -34,7 +34,9 @@ enum class OptionCore(
          * Deprecated:
          * @see OptionCore.toString
          */
-        val displayName: String,
+        val unformattedName: String,
+        val displayName: String = I18n.format(unformattedName),
+        val description: List<String> = listOf( I18n.format("$unformattedName.desc")),
         private var value: Boolean,
         /**
          * @return Returns true if this is a Category or not
@@ -45,67 +47,67 @@ enum class OptionCore(
 ) : IOption {
 
     //Main Categories
-    UI(I18n.format("optCatUI"), false, true, null, false),
-    THEME(I18n.format("optTheme"), false, true, null, false),
-    HEALTH_OPTIONS(I18n.format("optCatHealth"), false, true, null, false),
-    HOTBAR_OPTIONS(I18n.format("optCatHotBar"), false, true, null, false),
-    EFFECTS(I18n.format("optCatEffects"), false, true, null, false),
-    MISC(I18n.format("optCatMisc"), false, true, null, false),
+    UI("optCatUI", value = false, isCategory = true, category = null, restricted = false),
+    THEME("optTheme", value = false, isCategory = true, category = null, restricted = false),
+    ENTITIES("optTheme", value = false, isCategory = true, category = null, restricted = false),
+    HEALTH_OPTIONS("optCatHealth", value = false, isCategory = true, category = null, restricted = false),
+    HOTBAR_OPTIONS("optCatHotBar", value = false, isCategory = true, category = null, restricted = false),
+    EFFECTS("optCatEffects", value = false, isCategory = true, category = null, restricted = false),
+    MISC("optCatMisc", value = false, isCategory = true, category = null, restricted = false),
     //General UI Settings
-    UI_ONLY(I18n.format("optionUIOnly"), false, false, UI, false),
-    DEFAULT_INVENTORY(I18n.format("optionDefaultInv"), true, false, UI, false),
-    DEFAULT_DEATH_SCREEN(I18n.format("optionDefaultDeath"), false, false, UI, false),
-    DEFAULT_DEBUG(I18n.format("optionDefaultDebug"), false, false, UI, false),
-    FORCE_HUD(I18n.format("optionForceHud"), true, false, UI, false),
-    LOGOUT(I18n.format("optionLogout"), false, false, UI, false),
-    GUI_PAUSE(I18n.format("optionGuiPause"), false, false, UI, false),
+    UI_ONLY("optionUIOnly", value = false, isCategory = false, category = UI, restricted = false),
+    DEFAULT_INVENTORY("optionDefaultInv", value = true, isCategory = false, category = UI, restricted = false),
+    DEFAULT_DEATH_SCREEN("optionDefaultDeath", value = false, isCategory = false, category = UI, restricted = false),
+    DEFAULT_DEBUG("optionDefaultDebug", value = false, isCategory = false, category = UI, restricted = false),
+    FORCE_HUD("optionForceHud", value = true, isCategory = false, category = UI, restricted = false),
+    LOGOUT("optionLogout", value = false, isCategory = false, category = UI, restricted = false),
+    GUI_PAUSE("optionGuiPause", value = false, isCategory = false, category = UI, restricted = false),
+    UI_MOVEMENT("optionUIMovement", value = true, isCategory = false, category = UI, restricted = false),
     // Themes
     @Deprecated("Themes are a thing now")
-    VANILLA_UI(I18n.format("optionDefaultUI"), false, false, THEME, true),
+    VANILLA_UI("optionDefaultUI", value = false, isCategory = false, category = THEME, restricted = true),
     @Deprecated("Themes are a thing now")
-    SAO_UI(I18n.format("optionSAOUI"), true, false, THEME, true),
+    SAO_UI("optionSAOUI", value = true, isCategory = false, category = THEME, restricted = true),
+    // Entity Options
+    ENTITY_HEALTH_BARS("optionEntityHealthBars", value = false, isCategory = true, category = ENTITIES, restricted = false),
+    ENTITY_CRYSTALS("optionEntityCrystals", value = false, isCategory = true, category = ENTITIES, restricted = false),
     // Health Options
-    SMOOTH_HEALTH(I18n.format("optionSmoothHealth"), true, false, HEALTH_OPTIONS, false),
-    HEALTH_BARS(I18n.format("optionHealthBars"), false, true, HEALTH_OPTIONS, false),
-    REMOVE_HPXP(I18n.format("optionLightHud"), false, false, HEALTH_OPTIONS, false),
-    ALT_ABSORB_POS(I18n.format("optionAltAbsorbPos"), false, false, HEALTH_OPTIONS, false),
+    SMOOTH_HEALTH("optionSmoothHealth", value = true, isCategory = false, category = HEALTH_OPTIONS, restricted = false),
+    REMOVE_HPXP("optionLightHud", value = false, isCategory = false, category = HEALTH_OPTIONS, restricted = false),
+    ALT_ABSORB_POS("optionAltAbsorbPos", value = false, isCategory = false, category = HEALTH_OPTIONS, restricted = false),
+    HIDE_OFFLINE_PARTY("optionHideOfflineParty", value = false, isCategory = false, category = HEALTH_OPTIONS, restricted = false),
     // Health Bars
-    INNOCENT_HEALTH(I18n.format("optionInnocentHealthBars"), true, false, HEALTH_BARS, false),
-    VIOLENT_HEALTH(I18n.format("optionViolentHealthBars"), true, false, HEALTH_BARS, false),
-    KILLER_HEALTH(I18n.format("optionKillerHealthBars"), true, false, HEALTH_BARS, false),
-    BOSS_HEALTH(I18n.format("optionBossHealthBars"), true, false, HEALTH_BARS, false),
-    /*
-    CREATIVE_HEALTH(I18n.format("optionCreativeHealthBars"), true, false, HEALTH_BARS, false),
-    OP_HEALTH(I18n.format("optionOPHealthBars"), true, false, HEALTH_BARS, false),
-    INVALID_HEALTH(I18n.format("optionInvalidHealthBars"), true, false, HEALTH_BARS, false),
-    DEV_HEALTH(I18n.format("optionDevHealthBars"), true, false, HEALTH_BARS, false),*/
-    //Hotbar
-    DEFAULT_HOTBAR(I18n.format("optionDefaultHotbar"), false, false, HOTBAR_OPTIONS, true),
-    HOR_HOTBAR(I18n.format("optionHorHotbar"), false, false, HOTBAR_OPTIONS, true),
-    VER_HOTBAR(I18n.format("optionVerHotbar"), true, false, HOTBAR_OPTIONS, true),
-    //Effects
-    SPINNING_CRYSTALS(I18n.format("optionSpinning"), true, false, EFFECTS, false),
-    PARTICLES(I18n.format("optionParticles"), true, false, EFFECTS, false),
-    SOUND_EFFECTS(I18n.format("optionSounds"), true, false, EFFECTS, false),
-    MOUSE_OVER_EFFECT(I18n.format("optionMouseOver"), true, false, EFFECTS, false),
-    CRYSTALS(I18n.format("optionCursor"), false, true, EFFECTS, false),
+    INNOCENT_HEALTH("optionInnocentHealthBars", value = true, isCategory = false, category = ENTITY_HEALTH_BARS, restricted = false),
+    VIOLENT_HEALTH("optionViolentHealthBars", value = true, isCategory = false, category = ENTITY_HEALTH_BARS, restricted = false),
+    KILLER_HEALTH("optionKillerHealthBars", value = true, isCategory = false, category = ENTITY_HEALTH_BARS, restricted = false),
+    BOSS_HEALTH("optionBossHealthBars", value = true, isCategory = false, category = ENTITY_HEALTH_BARS, restricted = false),
+    CREATIVE_HEALTH("optionCreativeHealthBars", value = true, isCategory = false, category = ENTITY_HEALTH_BARS, restricted = false),
+    OP_HEALTH("optionOPHealthBars", value = true, isCategory = false, category = ENTITY_HEALTH_BARS, restricted = false),
+    INVALID_HEALTH("optionInvalidHealthBars", value = true, isCategory = false, category = ENTITY_HEALTH_BARS, restricted = false),
+    DEV_HEALTH("optionDevHealthBars", value = true, isCategory = false, category = ENTITY_HEALTH_BARS, restricted = false),
     //CRYSTALS
-    INNOCENT_CRYSTAL(I18n.format("optionInnocentCrystal"), true, false, CRYSTALS, false),
-    VIOLENT_CRYSTAL(I18n.format("optionViolentCrystal"), true, false, CRYSTALS, false),
-    KILLER_CRYSTAL(I18n.format("optionKillerCrystal"), true, false, CRYSTALS, false),
-    BOSS_CRYSTAL(I18n.format("optionBossCrystal"), true, false, CRYSTALS, false),
-    /*
-    CREATIVE_CRYSTAL(I18n.format("optionCreativeCrystal"), true, false, CRYSTALS, false),
-    OP_CRYSTAL(I18n.format("optionOPCrystal"), true, false, CRYSTALS, false),
-    INVALID_CRYSTAL(I18n.format("optionInvalidCrystal"), true, false, CRYSTALS, false),
-    DEV_CRYSTAL(I18n.format("optionDevCrystal"), true, false, CRYSTALS, false),*/
-
+    INNOCENT_CRYSTAL("optionInnocentCrystal", value = true, isCategory = false, category = ENTITY_CRYSTALS, restricted = false),
+    VIOLENT_CRYSTAL("optionViolentCrystal", value = true, isCategory = false, category = ENTITY_CRYSTALS, restricted = false),
+    KILLER_CRYSTAL("optionKillerCrystal", value = true, isCategory = false, category = ENTITY_CRYSTALS, restricted = false),
+    BOSS_CRYSTAL("optionBossCrystal", value = true, isCategory = false, category = ENTITY_CRYSTALS, restricted = false),
+    CREATIVE_CRYSTAL("optionCreativeCrystal", value = true, isCategory = false, category = ENTITY_CRYSTALS, restricted = false),
+    OP_CRYSTAL("optionOPCrystal", value = true, isCategory = false, category = ENTITY_CRYSTALS, restricted = false),
+    INVALID_CRYSTAL("optionInvalidCrystal", value = true, isCategory = false, category = ENTITY_CRYSTALS, restricted = false),
+    DEV_CRYSTAL("optionDevCrystal", value = true, isCategory = false, category = ENTITY_CRYSTALS, restricted = false),
+    //Hotbar
+    DEFAULT_HOTBAR("optionDefaultHotbar", value = false, isCategory = false, category = HOTBAR_OPTIONS, restricted = true),
+    HOR_HOTBAR("optionHorHotbar", value = false, isCategory = false, category = HOTBAR_OPTIONS, restricted = true),
+    VER_HOTBAR("optionVerHotbar", value = true, isCategory = false, category = HOTBAR_OPTIONS, restricted = true),
+    //Effects
+    SPINNING_CRYSTALS("optionSpinning", value = true, isCategory = false, category = EFFECTS, restricted = false),
+    PARTICLES("optionParticles", value = true, isCategory = false, category = EFFECTS, restricted = false),
+    SOUND_EFFECTS("optionSounds", value = true, isCategory = false, category = EFFECTS, restricted = false),
+    MOUSE_OVER_EFFECT("optionMouseOver", value = true, isCategory = false, category = EFFECTS, restricted = false),
     //Misc
-    AGGRO_SYSTEM(I18n.format("optionAggro"), true, false, MISC, false),
-    MOUNT_STAT_VIEW(I18n.format("optionMountStatView"), true, false, MISC, false),
-    CUSTOM_FONT(I18n.format("optionCustomFont"), false, false, MISC, false),
-    COMPACT_INVENTORY(I18n.format("optionCompatInv"), false, false, MISC, false),
-    TEXT_SHADOW(I18n.format("optionTextShadow"), true, false, MISC, false);
+    AGGRO_SYSTEM("optionAggro", value = true, isCategory = false, category = MISC, restricted = false),
+    MOUNT_STAT_VIEW("optionMountStatView", value = true, isCategory = false, category = MISC, restricted = false),
+    CUSTOM_FONT("optionCustomFont", value = false, isCategory = false, category = MISC, restricted = false),
+    TEXT_SHADOW("optionTextShadow", value = true, isCategory = false, category = MISC, restricted = false);
     // TODO: make a way for themes to register custom options?
 
     override fun toString() = name

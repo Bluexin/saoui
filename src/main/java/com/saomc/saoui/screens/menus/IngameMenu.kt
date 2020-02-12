@@ -96,7 +96,7 @@ class IngameMenu : CoreGUI<Unit>(Vec2d.ZERO) {
                 },
                 tlCategory(IconCore.SOCIAL, index++) {
                     category(IconCore.GUILD, format("sao.element.guild"))
-                    partyMenu(mc.player)
+                    partyMenu()
                     friendMenu()
                 },
                 tlCategory(IconCore.MESSAGE, index++),

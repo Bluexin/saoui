@@ -41,7 +41,7 @@ import kotlin.math.min
 object GLCore {
 
     private val mc = Minecraft.getMinecraft()
-    private val glFont get() = mc.fontRenderer
+    val glFont: FontRenderer get() = mc.fontRenderer
     private val glTextureManager get() = mc.textureManager
 
     fun color(red: Float, green: Float, blue: Float, alpha: Float = 1f) {
@@ -164,6 +164,38 @@ object GLCore {
         tessellator.buffer.pos((x + width).toDouble(), y.toDouble(), 0.0)
         tessellator.buffer.pos(x.toDouble(), y.toDouble(), 0.0)
         tessellator.draw()
+    }
+
+    /**
+     * Draws a rectangle with a vertical gradient between the specified colors (ARGB format). Args : x1, y1, x2, y2,
+     * topColor, bottomColor
+     */
+    fun drawGradientRect(left: Double, top: Double, right: Double, bottom: Double, zLevel: Double, startColor: Int, endColor: Int) {
+        val f = (startColor shr 24 and 255).toFloat() / 255.0f
+        val f1 = (startColor shr 16 and 255).toFloat() / 255.0f
+        val f2 = (startColor shr 8 and 255).toFloat() / 255.0f
+        val f3 = (startColor and 255).toFloat() / 255.0f
+        val f4 = (endColor shr 24 and 255).toFloat() / 255.0f
+        val f5 = (endColor shr 16 and 255).toFloat() / 255.0f
+        val f6 = (endColor shr 8 and 255).toFloat() / 255.0f
+        val f7 = (endColor and 255).toFloat() / 255.0f
+        GlStateManager.disableTexture2D()
+        GlStateManager.enableBlend()
+        GlStateManager.disableAlpha()
+        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO)
+        GlStateManager.shadeModel(7425)
+        val tessellator = Tessellator.getInstance()
+        val bufferBuilder = tessellator.buffer
+        bufferBuilder.begin(7, DefaultVertexFormats.POSITION_COLOR)
+        bufferBuilder.pos(right, top, zLevel).color(f1, f2, f3, f).endVertex()
+        bufferBuilder.pos(left, top, zLevel).color(f1, f2, f3, f).endVertex()
+        bufferBuilder.pos(left, bottom, zLevel).color(f5, f6, f7, f4).endVertex()
+        bufferBuilder.pos(right, bottom, zLevel).color(f5, f6, f7, f4).endVertex()
+        tessellator.draw()
+        GlStateManager.shadeModel(7424)
+        GlStateManager.disableBlend()
+        GlStateManager.enableAlpha()
+        GlStateManager.enableTexture2D()
     }
 
     fun glAlphaTest(flag: Boolean) {

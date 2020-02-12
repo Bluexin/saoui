@@ -17,9 +17,11 @@
 
 package com.saomc.saoui.screens.ingame
 
+import be.bluexin.saomclib.party.PlayerInfo
 import com.saomc.saoui.GLCore
 import com.saomc.saoui.capabilities.getRenderData
 import com.saomc.saoui.social.StaticPlayerHelper
+import com.teamwizardry.librarianlib.features.kotlin.Minecraft
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraftforge.fml.relauncher.Side
@@ -34,7 +36,9 @@ enum class HealthStep constructor(private val limit: Float, var rgba: Int) {
     DAMAGED(0.4f, 0xF4BD00FF.toInt()),
     OKAY(0.5f, 0xEDEB38FF.toInt()),
     GOOD(1.0f, 0x93F43EFF.toInt()),
-    CREATIVE(-1.0f, 0xB32DE3FF.toInt());
+    CREATIVE(-1.0f, 0xBBF6F3FF.toInt()),
+    DEV(-1.0f, 0xB32DE3FF.toInt()),
+    INVALID(-1.0f, 0x8B8B8BFF.toInt());
 
     fun rgba() = rgba
 
@@ -52,8 +56,33 @@ enum class HealthStep constructor(private val limit: Float, var rgba: Int) {
             return getStep(entity, (entity.getRenderData()?.healthSmooth?: entity.health) / StaticPlayerHelper.getMaxHealth(entity).toDouble())
         }
 
-        fun getStep(entity: EntityLivingBase, health: Double): HealthStep {
-            return if (entity is EntityPlayer && (entity.capabilities.isCreativeMode || entity.isSpectator)) CREATIVE else getStep(health)
+        fun getStep(entity: EntityLivingBase?, health: Double): HealthStep {
+            var state = GOOD
+            if (entity == null) state = INVALID
+            if (entity is EntityPlayer) {
+                Minecraft().connection?.playerInfoMap?.firstOrNull { it.gameProfile.id == entity.uniqueID }?.gameType?.let {
+                    if (it.isCreative)
+                        state = CREATIVE
+                    else if (!it.isSurvivalOrAdventure)
+                        state = INVALID
+                }
+            }
+            return if (state != GOOD) state
+            else getStep(health)
+        }
+
+        fun getStep(entity: PlayerInfo, health: Double): HealthStep {
+            var state = GOOD
+            if (entity.player == null) state = INVALID
+            else Minecraft().connection?.playerInfoMap?.firstOrNull { it.gameProfile.id == entity.uuid }?.gameType?.let {
+                if (it.isCreative)
+                    state = CREATIVE
+                else if (!it.isSurvivalOrAdventure)
+                    state = INVALID
+            }?: let { state = INVALID }
+
+            return if (state != GOOD) state
+            else getStep(health)
         }
 
         fun getStep(health: Double): HealthStep {

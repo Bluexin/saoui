@@ -189,14 +189,13 @@ class HudDrawContext(player: EntityPlayer, val mc: Minecraft, itemRenderer: Rend
     }
 
     override fun ptHp(index: Int): Float {
-        return pt[index].player?.let { player ->
-            player.getRenderData()?.healthSmooth?: player.health
-        }?: 0f
-
+        return pt[index].let {
+            it.player?.getRenderData()?.healthSmooth?: it.health
+        }
     }
 
     override fun ptMaxHp(index: Int): Float {
-        return pt[index].player?.maxHealth?: 0f
+        return pt[index].maxHealth
     }
 
     override fun ptHpPct(index: Int): Float {
@@ -208,7 +207,8 @@ class HudDrawContext(player: EntityPlayer, val mc: Minecraft, itemRenderer: Rend
     }
 
     override fun ptHealthStep(index: Int): HealthStep {
-        return getStep(ptHpPct(index).toDouble())
+        val ptMember = pt[index]
+        return getStep(ptMember, ptHpPct(index).toDouble())
     }
 
     override fun foodLevel(): Float {

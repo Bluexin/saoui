@@ -59,7 +59,7 @@ enum class ColorState(var rgba: Int) {
      * Turquoise.
      * Used for creative players by default.
      */
-    CREATIVE(0xB32DE3FF.toInt()),
+    CREATIVE(0xBBF6F3FF.toInt()),
 
     /**
      * Black.

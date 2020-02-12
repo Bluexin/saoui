@@ -28,6 +28,7 @@ import com.saomc.saoui.util.IconCore
 import com.teamwizardry.librarianlib.features.animator.Easing
 import com.teamwizardry.librarianlib.features.gui.component.supporting.delegate
 import com.teamwizardry.librarianlib.features.helpers.vec
+import com.teamwizardry.librarianlib.features.kotlin.Minecraft
 import com.teamwizardry.librarianlib.features.math.Vec2d
 import net.minecraft.entity.player.EntityPlayer
 import java.lang.ref.WeakReference
@@ -167,8 +168,8 @@ class CategoryButton(private val delegate: IconElement, parent: INeoParent? = nu
     }
 
     @CoreGUIDsl
-    fun partyMenu(player: EntityPlayer): CategoryButton {
-        val partyElement = PartyElement(player, this)
+    fun partyMenu(): CategoryButton {
+        val partyElement = PartyElement()
         val cat = CategoryButton(partyElement, this)
         +cat
         return cat
@@ -184,7 +185,7 @@ class CategoryButton(private val delegate: IconElement, parent: INeoParent? = nu
 
     @CoreGUIDsl
     fun profile(player: EntityPlayer, body: (CategoryButton.() -> Unit)? = null): CategoryButton {
-        val cat = CategoryButton(ProfileElement(player, this), this, body)
+        val cat = CategoryButton(ProfileElement(player, player.uniqueID == Minecraft().player.uniqueID), this, body)
         +cat
         return cat
     }
@@ -219,7 +220,7 @@ fun INeoParent.optionButton(option: OptionCore): IconLabelElement {
 
 
 fun INeoParent.optionCategory(option: OptionCore): CategoryButton {
-    val cat = CategoryButton(IconLabelElement(IconCore.OPTION, option.displayName))
+    val cat = CategoryButton(IconLabelElement(IconCore.OPTION, option.displayName, description = option.description.toMutableList()))
     option.subOptions.forEach {
         cat += if (it.isCategory) optionCategory(it)
         else optionButton(it)

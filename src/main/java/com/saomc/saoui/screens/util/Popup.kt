@@ -17,12 +17,14 @@
 
 package com.saomc.saoui.screens.util
 
+import be.bluexin.saomclib.party.PlayerInfo
 import com.saomc.saoui.GLCore
 import com.saomc.saoui.GLCore.glTexturedRectV2
 import com.saomc.saoui.SAOCore
 import com.saomc.saoui.SoundCore
 import com.saomc.saoui.api.elements.IconElement
 import com.saomc.saoui.api.elements.basicAnimation
+import com.saomc.saoui.api.events.ProfileInfoEvent
 import com.saomc.saoui.play
 import com.saomc.saoui.screens.CoreGUI
 import com.saomc.saoui.screens.ItemIcon
@@ -30,11 +32,13 @@ import com.saomc.saoui.screens.unaryPlus
 import com.saomc.saoui.util.ColorIntent
 import com.saomc.saoui.util.ColorUtil
 import com.saomc.saoui.util.IconCore
+import com.saomc.saoui.util.PlayerStats
 import com.teamwizardry.librarianlib.features.animator.Easing
 import com.teamwizardry.librarianlib.features.helpers.vec
 import com.teamwizardry.librarianlib.features.math.Vec2d
 import net.minecraft.client.Minecraft
 import net.minecraft.util.ResourceLocation
+import net.minecraftforge.common.MinecraftForge
 import kotlin.math.max
 
 open class Popup<T : Any>(var title: String, var text: List<String>, var footer: String, private val buttons: Map<IconElement, T>) : CoreGUI<T>(Vec2d.ZERO) {
@@ -43,6 +47,9 @@ open class Popup<T : Any>(var title: String, var text: List<String>, var footer:
     internal /*private*/ var expansion = 0f
     internal /*private*/ var currheight = h * 0.625
     internal /*private*/ var eol = 1f
+
+    var mouseSet: Boolean = false
+    override var previousMouse: Vec2d = Vec2d(0.0, 0.0)
 
     companion object {
         private const val w = 220.0
@@ -139,11 +146,13 @@ open class Popup<T : Any>(var title: String, var text: List<String>, var footer:
 
         GLCore.glBindTexture(rl)
         GLCore.color(ColorUtil.DEFAULT_COLOR.multiplyAlpha(alpha))
-        glTexturedRectV2(-w / 2.0, -h / 2.0, width = w, height = step1, srcX = 0.0, srcY = 0.0, srcWidth = 256.0, srcHeight = 64.0) // Title bar
-        glTexturedRectV2(-w / 2.0, -h / 2.0 + step1, width = w, height = shadows, srcX = 0.0, srcY = 64.0, srcWidth = 256.0, srcHeight = 32.0) // Top shadow
-        glTexturedRectV2(-w / 2.0, -h / 2.0 + step1 + shadows, width = w, height = step3, srcX = 0.0, srcY = 96.0, srcWidth = 256.0, srcHeight = 32.0) // Text lines
-        glTexturedRectV2(-w / 2.0, -h / 2.0 + step1 + shadows + step3, width = w, height = shadows, srcX = 0.0, srcY = 128.0, srcWidth = 256.0, srcHeight = 32.0) // Bottom shadow
-        glTexturedRectV2(-w / 2.0, -h / 2.0 + step1 + shadows + step3 + shadows, width = w, height = step5, srcX = 0.0, srcY = 160.0, srcWidth = 256.0, srcHeight = 96.0) // Button bar
+        val posX = -w / 2.0
+        val posY = -h / 2.0
+        glTexturedRectV2(posX, posY, width = w, height = step1, srcX = 0.0, srcY = 0.0, srcWidth = 256.0, srcHeight = 64.0) // Title bar
+        glTexturedRectV2(posX, posY + step1, width = w, height = shadows, srcX = 0.0, srcY = 64.0, srcWidth = 256.0, srcHeight = 32.0) // Top shadow
+        glTexturedRectV2(posX, posY + step1 + shadows, width = w, height = step3, srcX = 0.0, srcY = 96.0, srcWidth = 256.0, srcHeight = 32.0) // Text lines
+        glTexturedRectV2(posX, posY + step1 + shadows + step3, width = w, height = shadows, srcX = 0.0, srcY = 128.0, srcWidth = 256.0, srcHeight = 32.0) // Bottom shadow
+        glTexturedRectV2(posX, posY + step1 + shadows + step3 + shadows, width = w, height = step5, srcX = 0.0, srcY = 160.0, srcWidth = 256.0, srcHeight = 96.0) // Button bar
 
         if (alpha > 0.03f) GLCore.glString(title, -GLCore.glStringWidth(title) / 2, (-h / 2.0 + step1 / 2).toInt(), ColorUtil.DEFAULT_BOX_FONT_COLOR.multiplyAlpha(alpha), centered = true)
         (text.indices).forEach {
@@ -170,6 +179,21 @@ open class Popup<T : Any>(var title: String, var text: List<String>, var footer:
         GLCore.popMatrix()
 
         super.drawScreen(mouseX, mouseY, partialTicks)
+    }
+
+    override fun mouseClickMove(mouseX: Int, mouseY: Int, clickedMouseButton: Int, timeSinceLastClick: Long) {
+        if (!mouseSet){
+            previousMouse = Vec2d(mouseX.toDouble(), mouseY.toDouble())
+            mouseSet = true
+        }
+        pos = pos.add(mouseX - previousMouse.x, mouseY - previousMouse.y)
+        previousMouse = Vec2d(mouseX.toDouble(), mouseY.toDouble())
+        super.mouseClickMove(mouseX, mouseY, clickedMouseButton, timeSinceLastClick)
+    }
+
+    override fun mouseReleased(mouseX: Int, mouseY: Int, state: Int) {
+        mouseSet = false
+        super.mouseReleased(mouseX, mouseY, state)
     }
 
     override fun onGuiClosed() {
@@ -199,13 +223,13 @@ open class Popup<T : Any>(var title: String, var text: List<String>, var footer:
 }
 
 class PopupYesNo(title: String, text: List<String>, footer: String) : Popup<PopupYesNo.Result>(title, text, footer, mapOf(
-        IconElement(IconCore.CONFIRM)
+        IconElement(IconCore.CONFIRM, description = mutableListOf("Confirm"))
                 .setBgColor(ColorIntent.NORMAL, ColorUtil.CONFIRM_COLOR)
                 .setBgColor(ColorIntent.HOVERED, ColorUtil.CONFIRM_COLOR_LIGHT)
                 .setFontColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
                 .setFontColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
                 to Result.YES,
-        IconElement(IconCore.CANCEL)
+        IconElement(IconCore.CANCEL, description = mutableListOf("Cancel"))
                 .setBgColor(ColorIntent.NORMAL, ColorUtil.CANCEL_COLOR)
                 .setBgColor(ColorIntent.HOVERED, ColorUtil.CANCEL_COLOR_LIGHT)
                 .setFontColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
@@ -309,5 +333,16 @@ class PopupHotbarSelection(title: String, text: List<String>, footer: String) : 
             }
             return map
         }
+    }
+}
+
+class PopupPlayerInspect(player: PlayerInfo, elements: List<IconElement>): Popup<Int>(player.username, player.player?.let{
+    val playerInfo = ProfileInfoEvent(it, PlayerStats.instance().stats.getStatsString(it))
+    MinecraftForge.EVENT_BUS.post(playerInfo)
+    playerInfo.info
+}?: listOf("Player data unknown"), "", elements.associateBy({it}, {elements.indexOf(it)})){
+
+    init {
+        result = -1
     }
 }
