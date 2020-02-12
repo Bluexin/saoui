@@ -10,6 +10,7 @@ import be.bluexin.saomclib.party.PlayerInfo
 import be.bluexin.saomclib.party.playerInfo
 import com.saomc.saoui.screens.CoreGUIDsl
 import com.saomc.saoui.util.IconCore
+import com.saomc.saoui.util.PlayerIcon
 import com.teamwizardry.librarianlib.features.kotlin.Minecraft
 import net.minecraft.client.resources.I18n
 import net.minecraft.entity.player.EntityPlayer
@@ -95,10 +96,9 @@ class PartyElement : IconLabelElement(IconCore.PARTY, I18n.format("sao.element.p
     fun partyExtras() {
         val party = partyCap.partyData
 
-        if ((party != null && party.isLeader(player)) || party == null) +CategoryButton(IconLabelElement(IconCore.PARTY, I18n.format("sao.party.invite")), this.tlParent) {
-            @Suppress("UNCHECKED_CAST")
+        if ((party != null && party.isLeader(player)) || party == null) +CategoryButton(IconLabelElement(IconCore.INVITE, I18n.format("sao.party.invite")), this.tlParent) {
             Minecraft().connection?.playerInfoMap?.filter { it.gameProfile.id != player.uniqueID }?.forEach {
-                +CategoryButton(IconLabelElement(IconCore.INVITE, it.gameProfile.name), this.tlParent).onClick { _, _ ->
+                +CategoryButton(IconLabelElement(PlayerIcon(PlayerInfo(it.gameProfile.id, it.gameProfile.name)), it.gameProfile.name), this.tlParent).onClick { _, _ ->
                     Type.INVITE.updateServer(PlayerInfo(it.gameProfile.id, it.gameProfile.name), PartyType.MAIN)
                     true
                 }
@@ -110,7 +110,7 @@ class PartyElement : IconLabelElement(IconCore.PARTY, I18n.format("sao.element.p
         }
 
         partyCap.inviteData.forEach {inviteParty ->
-            +CategoryButton(IconLabelElement(IconCore.PARTY, I18n.format("sao.party.invited", inviteParty.leaderInfo.username)), this.tlParent) {
+            +CategoryButton(IconLabelElement(PlayerIcon(inviteParty.leaderInfo), I18n.format("sao.party.invited", inviteParty.leaderInfo.username)), this.tlParent) {
                 +CategoryButton(IconLabelElement(IconCore.CONFIRM, I18n.format("sao.misc.accept")), this.tlParent).onClick { _, _ ->
                     Type.ACCEPTINVITE.updateServer(player.playerInfo(), PartyType.INVITE)
                     true

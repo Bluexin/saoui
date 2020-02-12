@@ -2,11 +2,11 @@ package com.saomc.saoui.api.elements
 
 import be.bluexin.saomclib.capabilities.getPartyCapability
 import be.bluexin.saomclib.party.PlayerInfo
-import com.saomc.saoui.util.IconCore
+import com.saomc.saoui.util.PlayerIcon
 import com.teamwizardry.librarianlib.features.kotlin.Minecraft
 import net.minecraft.client.resources.I18n
 
-class PTMemberElement(val player: PlayerInfo): IconLabelElement(IconCore.FRIEND, if (party?.isInvited(player) == true) I18n.format("sao.party.player_invited", player.username) else player.username) {
+class PTMemberElement(val player: PlayerInfo): IconLabelElement(PlayerIcon(player), if (party?.isInvited(player) == true) I18n.format("sao.party.player_invited", player.username) else player.username) {
 
     val invited = party?.isInvited(player)?: false
 
