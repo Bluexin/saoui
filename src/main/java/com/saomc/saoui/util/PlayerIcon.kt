@@ -11,13 +11,14 @@ import net.minecraft.util.ResourceLocation
 
 class PlayerIcon(val player: PlayerInfo): IIcon {
 
+    private val texture = getSkin()
 
-    fun getSkin(): ResourceLocation{
-        Minecraft().skinManager.loadSkinFromCache(player.gameProfile).get(MinecraftProfileTexture.Type.SKIN)?.let {
-            return Minecraft().skinManager.loadSkin(it, MinecraftProfileTexture.Type.SKIN)
-        }?: return DefaultPlayerSkin.getDefaultSkin(player.uuid)
-        //val resource = AbstractClientPlayer.getLocationSkin(name)
-        //AbstractClientPlayer.getDownloadImageSkin(resource, name).loadTexture(Minecraft().resourceManager)
+    private fun getSkin(): ResourceLocation{
+        return if (player.isOnline) {
+            Minecraft().skinManager.loadSkinFromCache(player.gameProfile).get(MinecraftProfileTexture.Type.SKIN)?.let {
+                Minecraft().skinManager.loadSkin(it, MinecraftProfileTexture.Type.SKIN)
+            } ?: DefaultPlayerSkin.getDefaultSkin(player.uuid)
+        } else DefaultPlayerSkin.getDefaultSkin(player.uuid)
     }
 
     override fun glDraw(x: Int, y: Int, z: Float) {
@@ -25,8 +26,7 @@ class PlayerIcon(val player: PlayerInfo): IIcon {
         GLCore.glBlend(true)
         GLCore.depth(true)
         GlStateManager.enableBlendProfile(GlStateManager.Profile.PLAYER_SKIN)
-        GLCore.glBindTexture(getSkin())
-        //getSkin(player.username)
+        GLCore.glBindTexture(texture)
         GLCore.glTexturedRectV2(x.toDouble(), y.toDouble(), width = 16.0, height = 16.0, srcWidth = 32.0, srcHeight = 32.0, srcX = 32.0, srcY = 31.0)
         GlStateManager.disableBlendProfile(GlStateManager.Profile.PLAYER_SKIN)
         GLCore.glBlend(false)

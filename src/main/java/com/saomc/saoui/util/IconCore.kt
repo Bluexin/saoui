@@ -22,10 +22,7 @@ import com.saomc.saoui.GLCore.glTexturedRectV2
 import com.saomc.saoui.SAOCore
 import com.saomc.saoui.api.screens.IIcon
 import net.minecraft.util.ResourceLocation
-import net.minecraftforge.fml.relauncher.Side
-import net.minecraftforge.fml.relauncher.SideOnly
 
-@SideOnly(Side.CLIENT)
 enum class IconCore : IIcon {
 
     NONE {
