@@ -31,6 +31,7 @@ import com.teamwizardry.librarianlib.features.kotlin.get
 import com.teamwizardry.librarianlib.features.kotlin.isNotEmpty
 import com.teamwizardry.librarianlib.features.kotlin.toolClasses
 import com.teamwizardry.librarianlib.features.math.Vec2d
+import net.minecraft.block.Block
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.RenderHelper
 import net.minecraft.client.resources.I18n
@@ -69,8 +70,8 @@ fun ItemFilterElement.itemList(inventory: Container, filter: IItemFilter) {
     }
 }
 
-class ItemStackElement(private val slot: Slot, pos: Vec2d, override var selected: Boolean, private val filter: (iss: ItemStack) -> Boolean) :
-        IconLabelElement(icon = ItemIcon { slot.stack }, pos = pos) {
+class ItemStackElement(private val slot: Slot, pos: Vec2d, override var highlighted: Boolean, private val filter: (iss: ItemStack) -> Boolean) :
+        IconLabelElement(icon = slot.stack.toIcon(), pos = pos) {
 
     init {
         onClick { _, button ->
@@ -84,7 +85,7 @@ class ItemStackElement(private val slot: Slot, pos: Vec2d, override var selected
                             PopupItem.Result.USE -> handleUse()
                             else -> {}
                         }
-                        selected = false
+                        highlighted = false
                     }
             true
         }
@@ -230,6 +231,10 @@ class ItemIcon(private val itemStack: () -> ItemStack) : IIcon {
 //        itemRenderer.renderItemOverlays(fontRenderer, itemStack, x, y)
     }
 }
+
+fun Item.toIcon(): ItemIcon = ItemIcon { ItemStack(this) }
+fun Block.toIcon(): ItemIcon = ItemIcon { ItemStack(this) }
+fun ItemStack.toIcon(): ItemIcon = ItemIcon { this }
 
 fun ItemStack.itemDesc(): List<String> {
     val stringBuilder = mutableListOf<String>()

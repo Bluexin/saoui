@@ -23,25 +23,27 @@ import com.saomc.saoui.GLCore.glTexturedRectV2
 import com.saomc.saoui.SAOCore
 import com.saomc.saoui.SoundCore
 import com.saomc.saoui.api.elements.IconElement
+import com.saomc.saoui.api.elements.IconTextElement
 import com.saomc.saoui.api.elements.basicAnimation
+import com.saomc.saoui.api.elements.getRequirementDesc
 import com.saomc.saoui.api.events.ProfileInfoEvent
 import com.saomc.saoui.play
 import com.saomc.saoui.screens.CoreGUI
 import com.saomc.saoui.screens.ItemIcon
 import com.saomc.saoui.screens.unaryPlus
-import com.saomc.saoui.util.ColorIntent
-import com.saomc.saoui.util.ColorUtil
-import com.saomc.saoui.util.IconCore
-import com.saomc.saoui.util.PlayerStats
+import com.saomc.saoui.util.*
 import com.teamwizardry.librarianlib.features.animator.Easing
 import com.teamwizardry.librarianlib.features.helpers.vec
 import com.teamwizardry.librarianlib.features.math.Vec2d
+import net.minecraft.advancements.Advancement
 import net.minecraft.client.Minecraft
+import net.minecraft.item.crafting.IRecipe
 import net.minecraft.util.ResourceLocation
 import net.minecraftforge.common.MinecraftForge
 import kotlin.math.max
+import kotlin.math.min
 
-open class Popup<T : Any>(var title: String, var text: List<String>, var footer: String, private val buttons: Map<IconElement, T>) : CoreGUI<T>(Vec2d.ZERO) {
+open class Popup<T : Any>(open var title: String, open var text: List<String>, open var footer: String, internal val buttons: Map<IconElement, T>) : CoreGUI<T>(Vec2d.ZERO) {
 
     private val rl = ResourceLocation(SAOCore.MODID, "textures/menu/parts/alertbg.png")
     internal /*private*/ var expansion = 0f
@@ -52,8 +54,8 @@ open class Popup<T : Any>(var title: String, var text: List<String>, var footer:
     override var previousMouse: Vec2d = Vec2d(0.0, 0.0)
 
     companion object {
-        private const val w = 220.0
-        private const val h = 160.0
+        internal const val w = 220.0
+        internal const val h = 160.0
     }
 
     override fun initGui() {
@@ -344,5 +346,120 @@ class PopupPlayerInspect(player: PlayerInfo, elements: List<IconElement>): Popup
 
     init {
         result = -1
+    }
+}
+
+class PopupCraft(val recipe: IRecipe): Popup<Int>(recipe.recipeOutput.displayName, recipe.recipeOutput.itemDesc(), "", getButtons()){
+    private val countPerCraft = recipe.recipeOutput.count
+    override var result: Int = countPerCraft
+    override var footer = ""
+            get() = "Craft $result ${recipe.recipeOutput.displayName}"
+
+
+    override fun initGui() {
+        val animDuration = 20f
+
+        elements.clear()
+
+        pos = vec(width / 2.0, height / 2.0)
+        destination = pos
+
+        val childrenXSeparator = w / buttons.size
+        val childrenXOffset = (-w / 2) + (childrenXSeparator / 2 - 9)
+        val childrenYOffset = h * 0.1875 - 9 + h * 0.03125 * (text.size)
+
+        buttons.asSequence().forEachIndexed { index, entry ->
+            val button = entry.key
+            val result = entry.value
+            button.onClick { _, _ ->
+                if (result == 0){
+                    CraftingUtil.craft(recipe, this.result / countPerCraft)
+                    onGuiClosed()
+                }
+                else {
+                    //Add result to current stack count
+                    this.result += (countPerCraft * result)
+                    //If less than one, make it one
+                    this.result = max(this.result, countPerCraft)
+                    //If higher than maximum craft size, reduce
+                    this.result = min(this.result, CraftingUtil.getMaxStack(recipe))
+                }
+                true
+            }
+            button.pos = vec(childrenXOffset + childrenXSeparator * index, childrenYOffset)
+            button.destination = button.pos
+            +basicAnimation(button, "opacity") {
+                duration = animDuration
+                from = 0f
+                easing = Easing.easeInQuint
+            }
+            +basicAnimation(button, "pos") {
+                duration = animDuration
+                from = vec(button.pos.x, h * 0.125 - 9)
+                easing = Easing.easeInQuint
+            }
+            +basicAnimation(button, "scale") {
+                duration = animDuration
+                from = Vec2d.ZERO
+                easing = object : Easing() {
+                    override fun invoke(progress: Float): Float {
+                        val t = easeInQuint(progress)
+                        return if (t < 0.2f) t * 4 + 0.2f
+                        else 1f
+                    }
+
+                }
+            }
+            +button
+
+        }
+        +basicAnimation(this, "expansion") {
+            to = 1f
+            duration = animDuration
+            easing = Easing.easeInQuint
+        }
+        +basicAnimation(this, "currheight") {
+            to = h
+            duration = animDuration
+            easing = Easing.easeInQuint
+        }
+        SoundCore.MESSAGE.play()
+
+    }
+
+    override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
+        super.drawScreen(mouseX, mouseY, partialTicks)
+    }
+
+    companion object{
+        fun getButtons(): Map<IconElement, Int>{
+            return mapOf(
+                    Pair(IconTextElement("-10", mutableListOf("Decrease by 10")), -10),
+                    Pair(IconTextElement("-1", mutableListOf("Decrease by 1")), -1),
+                    Pair(IconElement(IconCore.CONFIRM, description = mutableListOf("Craft")), 0),
+                    Pair(IconTextElement("1", mutableListOf("Increase by 1")), 1),
+                    Pair(IconTextElement("10", mutableListOf("Increase by 10")), 10)
+            )
+        }
+    }
+
+
+}
+
+class PopupAdvancement(advancement: Advancement): Popup<PopupAdvancement.Result>(advancement.displayText.unformattedText, advancement.getRequirementDesc(), "", mapOf(
+        IconTextElement("<--", description = mutableListOf("Previous"))
+                to Result.PREVIOUS,
+        IconTextElement("-->", description = mutableListOf("Next"))
+                to Result.NEXT
+)){
+
+    init {
+        result = Result.NONE
+    }
+
+    enum class Result {
+        NONE,
+        NEXT,
+        PREVIOUS;
     }
 }

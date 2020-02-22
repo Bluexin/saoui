@@ -15,7 +15,7 @@ class PlayerIcon(val player: PlayerInfo): IIcon {
 
     private fun getSkin(): ResourceLocation{
         return if (player.isOnline) {
-            Minecraft().skinManager.loadSkinFromCache(player.gameProfile).get(MinecraftProfileTexture.Type.SKIN)?.let {
+            Minecraft().skinManager.loadSkinFromCache(player.gameProfile)[MinecraftProfileTexture.Type.SKIN]?.let {
                 Minecraft().skinManager.loadSkin(it, MinecraftProfileTexture.Type.SKIN)
             } ?: DefaultPlayerSkin.getDefaultSkin(player.uuid)
         } else DefaultPlayerSkin.getDefaultSkin(player.uuid)

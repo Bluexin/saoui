@@ -36,7 +36,9 @@ notificationPartyLeaveShortText=%s left the party
 notificationPartyLeaderTitle=Party Leader Changed
 notificationPartyLeaderShortText=You're the new leader
 notificationPartyNewLeaderTitle=Party Leader Changed
-notificationPartyNewLeaderShortText=$s is the new leader
+notificationPartyNewLeaderShortText=%s is the new leader
+
+notificationCraftingTitle=Crafting x%s %s
 
 
 # Inventory
@@ -102,6 +104,9 @@ guiCrafting=Crafting
 guiSprinting=Sprinting
 guiSneaking=Sneaking
 
+# Crafting
+guiCraftConfirm=Are you sure you want to craft this?
+
 
 # Misc
 guiOptions=Options..
@@ -166,6 +171,8 @@ optionLightHud=Lighter HUD
 optionLightHud.desc=Disable screen clutter
 optionAltAbsorbPos=Alt Absorb Value Pos
 optionAltAbsorbPos.desc=Alt Absorb Value Pos
+optionEnemyOnscreenHealth=Enemy On-Screen Health
+optionEnemyOnscreenHealth.desc=Shows enemy health bars on screen
 optionHideOfflineParty=Hide offline party
 optionHideOfflineParty.desc=Hide offline party members
 
@@ -322,6 +329,16 @@ sao.party.kick=Kick Player
 sao.party.cancel=Cancel Invitation
 sao.party.leave=Leave party
 sao.party.player_invited=[?] %s
+
+# Quests
+sao.element.quest=Quests
+sao.element.quest.inProgress=Incomplete Quests
+sao.element.quest.completed=Completed Quests
+
+# Recipes
+sao.element.recipes=Recipes
+sao.element.recipes.unlocked=Unlocked Recipes
+sao.element.recipes.locked=Locked Recipes
 
 # Temporary
 saoui.invited=You have been invited to %s's party. Open the menu to accept!

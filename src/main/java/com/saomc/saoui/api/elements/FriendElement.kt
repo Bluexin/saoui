@@ -96,7 +96,7 @@ class FriendElement(override var parent: INeoParent?): IconLabelElement(IconCore
     @CoreGUIDsl
     fun removeFriend(player: PlayerInfo){
         +CategoryButton(IconLabelElement(PlayerIcon(player), player.username), tlParent){
-            selected = player.isOnline
+            highlighted = player.isOnline
             onClick { _, _ ->
                 val party = Minecraft().player.getPartyCapability().partyData
                 (tlParent as? CoreGUI<*>)?.openGui(

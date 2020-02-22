@@ -30,6 +30,7 @@ import com.saomc.saoui.screens.menus.IngameMenu
 import com.saomc.saoui.screens.util.NotificationAlert
 import com.saomc.saoui.screens.util.Popup
 import com.saomc.saoui.screens.util.PopupYesNo
+import com.saomc.saoui.util.CraftingUtil
 import com.saomc.saoui.util.IconCore
 import com.teamwizardry.librarianlib.features.kotlin.Minecraft
 import com.teamwizardry.librarianlib.features.kotlin.localize
@@ -49,6 +50,13 @@ import kotlin.math.pow
 object EventCore {
 
     val notifications: MutableList<Popup<*>> = mutableListOf()
+
+    @SubscribeEvent
+    fun playerTickListener(e: TickEvent.PlayerTickEvent) {
+        if (CraftingUtil.craftReady) {
+            CraftingUtil.getCraft()
+        }
+    }
 
     @SubscribeEvent
     fun clientTickListener(e: TickEvent.ClientTickEvent) {

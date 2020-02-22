@@ -59,7 +59,7 @@ enum class IconCore : IIcon {
     SNEAKING;
 
     override fun glDraw(x: Int, y: Int, z: Float) {
-        GLCore.color(1f, 1f, 1f, 1f)
+        //GLCore.color(1f, 1f, 1f, 1f)
         GLCore.glBlend(true)
         GLCore.glBindTexture(rl)
         glTexturedRectV2(x.toDouble(), y.toDouble(), width = 16.0, height = 16.0, srcX = 0.0, srcY = 0.0, srcWidth = 256.0, srcHeight = 256.0)

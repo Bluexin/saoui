@@ -19,13 +19,17 @@ package com.saomc.saoui.screens.ingame
 
 import be.bluexin.saomclib.capabilities.getPartyCapability
 import be.bluexin.saomclib.party.PlayerInfo
-import be.bluexin.saomclib.profile
 import com.saomc.saoui.GLCore
+import com.saomc.saoui.capabilities.getRenderData
 import com.saomc.saoui.config.ConfigHandler
 import com.saomc.saoui.config.OptionCore
+import com.saomc.saoui.resources.StringNames
 import com.saomc.saoui.themes.ThemeLoader
 import com.saomc.saoui.themes.elements.HudPartType
 import com.saomc.saoui.themes.util.HudDrawContext
+import com.saomc.saoui.util.ColorUtil
+import com.teamwizardry.librarianlib.features.kotlin.Minecraft
+import com.teamwizardry.librarianlib.features.math.Vec2d
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.Gui
 import net.minecraft.client.gui.GuiOverlayDebug
@@ -33,8 +37,10 @@ import net.minecraft.client.gui.ScaledResolution
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.renderer.OpenGlHelper
 import net.minecraft.client.resources.I18n
+import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.util.StringUtils
+import net.minecraft.util.math.AxisAlignedBB
 import net.minecraftforge.client.GuiIngameForge
 import net.minecraftforge.client.event.RenderGameOverlayEvent
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType
@@ -82,6 +88,8 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
 
         if (OptionCore.FORCE_HUD.isEnabled && !this.mc.playerController.shouldDrawHUD() && this.mc.renderViewEntity is EntityPlayer) {
             if (renderHealth) renderHealth(width, height)
+            //TODO add option//
+            if (OptionCore.ENEMY_ONSCREEN_HEALTH.isEnabled) renderEnemyHealth(width, height)
             if (renderArmor) renderArmor(width, height)
             if (renderFood) renderFood(width, height)
             if (renderHealthMount) renderHealthMount(width, height)
@@ -132,9 +140,9 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
             super.renderAir(width, height)
         else {
             if (pre(AIR)) return
-            mc.profile("air") {
+            //mc.profile("air") {
                 ThemeLoader.HUD.draw(HudPartType.AIR, context)
-            }
+            //}
             post(AIR)
         }
     }
@@ -150,9 +158,10 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
     override fun renderPotionEffects(resolution: ScaledResolution) {
         if (OptionCore.VANILLA_UI.isEnabled) super.renderPotionEffects(resolution)
         else {
-            mc.profile("potionEffects") {
-                ThemeLoader.HUD.draw(HudPartType.EFFECTS, context)
-            }
+            ThemeLoader.HUD.draw(HudPartType.EFFECTS, context)
+            //mc.profile("potionEffects") {
+                //
+            //}
         }
     }
 
@@ -167,7 +176,9 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
             super.renderHealth(width, height)
         else {
             if (pre(HEALTH)) return
-            mc.profile("health") { ThemeLoader.HUD.draw(HudPartType.HEALTH_BOX, context) }
+            //mc.profile("health") {
+                ThemeLoader.HUD.draw(HudPartType.HEALTH_BOX, context)
+            //}
             post(HEALTH)
         }
         renderParty()
@@ -197,13 +208,41 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
         mc.profiler.endSection()
     }
 
+    fun renderEnemyHealth(width: Int, height: Int) {
+        mc.profiler.startSection("enemy health")
+        //TODO Add player's focused entity on top of list, as well as players last attacked entity
+        val entities: List<EntityLivingBase> = Minecraft().world.getEntitiesInAABBexcluding(Minecraft().player, AxisAlignedBB(Minecraft().player.position.add(-10, -5, -10), Minecraft().player.position.add(10, 5, 10))){
+            it is EntityLivingBase && it.getRenderData()?.isAggressive == true
+        }.map { it as EntityLivingBase }.sortedBy { entityLivingBase -> entityLivingBase.getDistance(Minecraft().player) }.take(5)
+        val baseY = 35
+        val h = 15.0
+        val offset = width - 20.0
+        GLCore.glCullFace(false)
+        GLCore.glBlend(true)
+        entities.sortedBy { it.health / it.maxHealth }.forEachIndexed { index, entity ->
+            GLCore.glBindTexture(if (OptionCore.SAO_UI.isEnabled) StringNames.entities else StringNames.entitiesCustom)
+            val health = entity.health / entity.maxHealth
+            HealthStep.VERY_LOW.glColor()
+            GLCore.glTexturedRectV2(offset - 1, baseY + 1.5 + index * h, zLevel.toDouble(), -79.0 * health, 14.0, 1.0, 0.0, srcWidth = 255.0, srcHeight = 30.0)
+            GLCore.color(1.0F, 1.0F, 1.0F, 1.0F)
+            GLCore.glTexturedRectV2(offset, baseY + index * h, zLevel.toDouble(), -80.0, 15.0, 1.0, 30.0, srcWidth = 255.0, srcHeight = 30.0)
+            var name = entity.displayName.formattedText
+            if (name.length > 10) name = name.substring(0, 10)
+            GLCore.glString(name, Vec2d(offset - GLCore.glStringWidth(name) - 5, baseY + 1 + index * h + (13 - fontRenderer.FONT_HEIGHT) / 2), ColorUtil.DEFAULT_COLOR.rgba)
+        }
+        GLCore.glCullFace(true)
+        mc.profiler.endSection()
+    }
+
     override fun renderFood(width: Int, height: Int) {
         if (OptionCore.VANILLA_UI.isEnabled) {
             GLCore.glBindTexture(Gui.ICONS)
             super.renderFood(width, height)
         } else {
             if (pre(FOOD)) return
-            mc.profile("foodNew") { ThemeLoader.HUD.draw(HudPartType.FOOD, context) }
+            //mc.profile("foodNew") {
+                ThemeLoader.HUD.draw(HudPartType.FOOD, context)
+            //}
             post(FOOD)
         }
     }

@@ -47,20 +47,25 @@ open class IconLabelElement(icon: IIcon, open val label: String = "", pos: Vec2d
     override fun draw(mouse: Vec2d, partialTicks: Float) {
         if (opacity < 0.03 || scale == Vec2d.ZERO) return
         GLCore.pushMatrix()
+        var transparency = if (isFocus())
+            opacity
+        else
+            opacity / 2
+        if (transparency < 0f) transparency = 0f
         if (scale != Vec2d.ONE) GLCore.glScalef(scale.xf, scale.yf, 1f)
-        val mouseCheck = mouse in this
+        val mouseCheck = mouse in this || selected
         GLCore.glBlend(true)
         GLCore.depth(true)
-        GLCore.color(ColorUtil.multiplyAlpha(getColor(mouse), opacity))
+        GLCore.color(ColorUtil.multiplyAlpha(getColor(mouse), transparency))
         GLCore.glBindTexture(StringNames.slot)
         GLCore.glTexturedRectV2(pos.x, pos.y, width = width.toDouble(), height = height.toDouble(), srcX = 0.0, srcY = 40.0, srcWidth = 84.0, srcHeight = 18.0)
         if (mouseCheck && OptionCore.MOUSE_OVER_EFFECT.isEnabled)
             mouseOverEffect()
-        val color = ColorUtil.multiplyAlpha(getTextColor(mouse), opacity)
+        val color = ColorUtil.multiplyAlpha(getTextColor(mouse), transparency)
         GLCore.color(color)
         if (icon.rl != null) GLCore.glBindTexture(icon.rl!!)
         icon.glDrawUnsafe(pos + vec(1, 1))
-        if (this.selected || mouse in this)
+        if (this.highlighted || mouseCheck)
             GLCore.glString(label, pos + vec(22, height / 2), color, shadow = OptionCore.TEXT_SHADOW.isEnabled, centered = true)
         else
             GLCore.glString(label, pos + vec(22, height / 2), color, shadow = false, centered = true)
@@ -74,7 +79,7 @@ open class IconLabelElement(icon: IIcon, open val label: String = "", pos: Vec2d
 
         drawChildren(mouse, partialTicks)
         GLCore.popMatrix()
-        if (mouseCheck) {
+        if (mouse in this) {
             drawHoveringText(mouse)
             GLCore.lighting(false)
             GLCore.depth(false)

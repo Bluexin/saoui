@@ -75,6 +75,7 @@ enum class OptionCore(
     SMOOTH_HEALTH("optionSmoothHealth", value = true, isCategory = false, category = HEALTH_OPTIONS, restricted = false),
     REMOVE_HPXP("optionLightHud", value = false, isCategory = false, category = HEALTH_OPTIONS, restricted = false),
     ALT_ABSORB_POS("optionAltAbsorbPos", value = false, isCategory = false, category = HEALTH_OPTIONS, restricted = false),
+    ENEMY_ONSCREEN_HEALTH("optionEnemyOnscreenHealth", value = false, isCategory = false, category = HEALTH_OPTIONS, restricted = false),
     HIDE_OFFLINE_PARTY("optionHideOfflineParty", value = false, isCategory = false, category = HEALTH_OPTIONS, restricted = false),
     // Health Bars
     INNOCENT_HEALTH("optionInnocentHealthBars", value = true, isCategory = false, category = ENTITY_HEALTH_BARS, restricted = false),

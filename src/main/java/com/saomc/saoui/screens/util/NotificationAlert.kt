@@ -1,6 +1,7 @@
 package com.saomc.saoui.screens.util
 
 import com.saomc.saoui.SoundCore
+import com.saomc.saoui.api.screens.IIcon
 import com.saomc.saoui.play
 import com.saomc.saoui.util.IconCore
 import com.teamwizardry.librarianlib.features.kotlin.Minecraft
@@ -8,7 +9,7 @@ import net.minecraft.client.gui.toasts.GuiToast
 import net.minecraft.client.gui.toasts.IToast
 import net.minecraft.client.renderer.GlStateManager
 
-class NotificationAlert(val icon: IconCore, val title: String, val subtitle: String): IToast {
+class NotificationAlert(val icon: IIcon, val title: String, val subtitle: String): IToast {
 
     private var firstDrawTime: Long = 0
     private var newDisplay = true

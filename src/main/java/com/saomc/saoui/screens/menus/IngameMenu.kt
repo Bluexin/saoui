@@ -30,6 +30,8 @@ import com.saomc.saoui.play
 import com.saomc.saoui.screens.CoreGUI
 import com.saomc.saoui.screens.itemList
 import com.saomc.saoui.screens.util.PopupYesNo
+import com.saomc.saoui.util.AdvancementUtil
+import com.saomc.saoui.util.CraftingUtil
 import com.saomc.saoui.util.IconCore
 import com.saomc.saoui.util.UIUtil
 import com.teamwizardry.librarianlib.features.helpers.vec
@@ -72,10 +74,10 @@ class IngameMenu : CoreGUI<Unit>(Vec2d.ZERO) {
                         }
                         category(IconCore.SKILLS, "解散") {
                             onClick { _, _ ->
-                                selected = true
+                                highlighted = true
                                 openGui(PopupYesNo("Disolve", "パーチイを解散しますか？", "")) += {
                                     mc.player.message("Result: $it")
-                                    selected = false
+                                    highlighted = false
                                 }
                                 true
                             }
@@ -92,6 +94,7 @@ class IngameMenu : CoreGUI<Unit>(Vec2d.ZERO) {
                             }
                         }
                     }
+                    crafting()
                     profile(mc.player)
                 },
                 tlCategory(IconCore.SOCIAL, index++) {
@@ -100,7 +103,14 @@ class IngameMenu : CoreGUI<Unit>(Vec2d.ZERO) {
                     friendMenu()
                 },
                 tlCategory(IconCore.MESSAGE, index++),
-                tlCategory(IconCore.NAVIGATION, index++),
+                tlCategory(IconCore.NAVIGATION, index++){
+                    category(IconCore.QUEST, format("sao.element.quest")){
+                        AdvancementUtil.getCategories().forEach {
+                            advancementCategory(it)
+                        }
+                    }
+                    recipes()
+                },
                 tlCategory(IconCore.SETTINGS, index++) {
                     category(IconCore.OPTION, format("sao.element.options")) {
                         category(IconCore.OPTION, format("guiOptions")) {
@@ -145,7 +155,10 @@ class IngameMenu : CoreGUI<Unit>(Vec2d.ZERO) {
     override fun updateScreen() {
         if (loggingOut)
             UIUtil.closeGame()
-        else super.updateScreen()
+        else {
+            CraftingUtil.updateItemHelper()
+            super.updateScreen()
+        }
     }
 
     fun addItemCategories(button: CategoryButton, filter: IItemFilter){

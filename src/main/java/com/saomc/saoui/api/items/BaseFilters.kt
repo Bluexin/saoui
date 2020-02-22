@@ -20,7 +20,7 @@ package com.saomc.saoui.api.items
 import baubles.api.BaublesApi
 import baubles.api.IBauble
 import com.saomc.saoui.api.screens.IIcon
-import com.saomc.saoui.screens.util.ItemIcon
+import com.saomc.saoui.screens.util.toIcon
 import com.saomc.saoui.util.IconCore
 import com.teamwizardry.librarianlib.features.kotlin.Minecraft
 import com.teamwizardry.librarianlib.features.kotlin.toolClasses
@@ -50,7 +50,7 @@ enum class BaseFilters(val filter: (ItemStack, Boolean) -> Boolean) : IItemFilte
     ARMOR({  _, _ -> false }) {
         override val icon: IIcon
             //get() = IconCore.ARMOR
-            get() = ItemIcon{ItemStack(Items.IRON_HORSE_ARMOR)}
+            get() = Items.IRON_HORSE_ARMOR.toIcon()
         override val category: IItemFilter
             get() = EQUIPMENT
         override val displayName: String
@@ -63,7 +63,7 @@ enum class BaseFilters(val filter: (ItemStack, Boolean) -> Boolean) : IItemFilte
         mc.player.inventoryContainer.inventorySlots.first { it.slotIndex == 39 }.isItemValid(stack)
     }) {
         override val icon: IIcon
-            get() = ItemIcon{ItemStack(Items.CHAINMAIL_HELMET)}
+            get() = Items.CHAINMAIL_HELMET.toIcon()
 
         override val displayName: String
             get() = I18n.format("sao.element.helmet")
@@ -80,7 +80,7 @@ enum class BaseFilters(val filter: (ItemStack, Boolean) -> Boolean) : IItemFilte
         mc.player.inventoryContainer.inventorySlots.first { it.slotIndex == 38 }.isItemValid(stack)
     }) {
         override val icon: IIcon
-            get() = ItemIcon{ItemStack(Items.CHAINMAIL_CHESTPLATE)}
+            get() = Items.CHAINMAIL_CHESTPLATE.toIcon()
 
         override val displayName: String
             get() = I18n.format("sao.element.chestplates")
@@ -97,7 +97,7 @@ enum class BaseFilters(val filter: (ItemStack, Boolean) -> Boolean) : IItemFilte
         mc.player.inventoryContainer.inventorySlots.first { it.slotIndex == 37 }.isItemValid(stack)
     }) {
         override val icon: IIcon
-            get() = ItemIcon{ItemStack(Items.CHAINMAIL_LEGGINGS)}
+            get() = Items.CHAINMAIL_LEGGINGS.toIcon()
 
         override val displayName: String
             get() = I18n.format("sao.element.leggings")
@@ -114,7 +114,7 @@ enum class BaseFilters(val filter: (ItemStack, Boolean) -> Boolean) : IItemFilte
         mc.player.inventoryContainer.inventorySlots.first { it.slotIndex == 36 }.isItemValid(stack)
     }) {
         override val icon: IIcon
-            get() = ItemIcon{ItemStack(Items.CHAINMAIL_BOOTS)}
+            get() = Items.CHAINMAIL_BOOTS.toIcon()
 
         override val displayName: String
             get() = I18n.format("sao.element.boots")
@@ -131,7 +131,7 @@ enum class BaseFilters(val filter: (ItemStack, Boolean) -> Boolean) : IItemFilte
             stack.item is com.teamwizardry.librarianlib.features.base.item.IShieldItem
     }) {
         override val icon: IIcon
-            get() = ItemIcon{ItemStack(Items.SHIELD)}
+            get() = Items.SHIELD.toIcon()
 
         override val displayName: String
             get() = I18n.format("sao.element.shields")
@@ -143,7 +143,7 @@ enum class BaseFilters(val filter: (ItemStack, Boolean) -> Boolean) : IItemFilte
 
     WEAPONS({ _, _ -> false }) {
         override val icon: IIcon
-            get() = ItemIcon{ItemStack(Items.SPECTRAL_ARROW)}
+            get() = Items.SPECTRAL_ARROW.toIcon()
 
         override val category: IItemFilter
             get() = EQUIPMENT
@@ -157,7 +157,7 @@ enum class BaseFilters(val filter: (ItemStack, Boolean) -> Boolean) : IItemFilte
 
     SWORDS({ stack, _ -> stack.item is ItemSword || stack.toolClasses.contains("sword")}) {
         override val icon: IIcon
-            get() = ItemIcon{ItemStack(Items.IRON_SWORD)}
+            get() = Items.IRON_SWORD.toIcon()
 
         override val displayName: String
             get() = I18n.format("sao.element.swords")
@@ -168,7 +168,7 @@ enum class BaseFilters(val filter: (ItemStack, Boolean) -> Boolean) : IItemFilte
 
     BOWS({ stack, _ -> stack.item is ItemBow || stack.item.getItemUseAction(stack) == EnumAction.BOW || stack.toolClasses.contains("bow")}) {
         override val icon: IIcon
-            get() = ItemIcon{ItemStack(Items.BOW)}
+            get() = Items.BOW.toIcon()
 
         override val displayName: String
             get() = I18n.format("sao.element.bows")
@@ -179,7 +179,7 @@ enum class BaseFilters(val filter: (ItemStack, Boolean) -> Boolean) : IItemFilte
 
     TOOLS({ _, _ -> false }) {
         override val icon: IIcon
-            get() = ItemIcon{ItemStack(Items.IRON_HOE)}
+            get() = Items.IRON_HOE.toIcon()
 
         override val category: IItemFilter
             get() = EQUIPMENT
@@ -193,7 +193,7 @@ enum class BaseFilters(val filter: (ItemStack, Boolean) -> Boolean) : IItemFilte
 
     PICKAXES({ stack, _ -> stack.item is ItemPickaxe || stack.toolClasses.contains("pickaxe")}) {
         override val icon: IIcon
-            get() = ItemIcon{ItemStack(Items.IRON_PICKAXE)}
+            get() = Items.IRON_PICKAXE.toIcon()
 
         override val displayName: String
             get() = I18n.format("sao.element.pickaxe")
@@ -204,7 +204,7 @@ enum class BaseFilters(val filter: (ItemStack, Boolean) -> Boolean) : IItemFilte
 
     AXES({ stack, _ -> stack.item is ItemAxe || stack.toolClasses.contains("axe")}) {
         override val icon: IIcon
-            get() = ItemIcon{ItemStack(Items.IRON_AXE)}
+            get() = Items.IRON_AXE.toIcon()
 
         override val displayName: String
             get() = I18n.format("sao.element.axe")
@@ -215,7 +215,7 @@ enum class BaseFilters(val filter: (ItemStack, Boolean) -> Boolean) : IItemFilte
 
     SHOVELS({ stack, _ -> stack.item is ItemSpade}) {
         override val icon: IIcon
-            get() = ItemIcon{ItemStack(Items.IRON_SHOVEL)}
+            get() = Items.IRON_SHOVEL.toIcon()
 
         override val displayName: String
             get() = I18n.format("sao.element.shovel")
@@ -230,7 +230,7 @@ enum class BaseFilters(val filter: (ItemStack, Boolean) -> Boolean) : IItemFilte
                 (item is ItemTool || item is ItemHoe || item is ItemShears)
     }) {
         override val icon: IIcon
-            get() = ItemIcon{ItemStack(Items.SHEARS)}
+            get() = Items.SHEARS.toIcon()
 
         override val displayName: String
             get() = I18n.format("sao.element.compattools")
@@ -241,7 +241,7 @@ enum class BaseFilters(val filter: (ItemStack, Boolean) -> Boolean) : IItemFilte
 
     ACCESSORY({ stack, _ -> baublesLoaded && stack.item is IBauble }) {
         override val icon: IIcon
-            get() = ItemIcon{ItemStack(Items.GHAST_TEAR)}
+            get() = Items.GHAST_TEAR.toIcon()
 
         override val displayName: String
             get() = I18n.format("sao.element.accessory")
@@ -262,7 +262,7 @@ enum class BaseFilters(val filter: (ItemStack, Boolean) -> Boolean) : IItemFilte
         val action = stack.itemUseAction
         action == EnumAction.DRINK || action == EnumAction.EAT }) {
         override val icon: IIcon
-            get() = ItemIcon{ItemStack(Items.APPLE)}
+            get() = Items.APPLE.toIcon()
 
         override val displayName: String
             get() = I18n.format("sao.element.consumables")
@@ -273,7 +273,7 @@ enum class BaseFilters(val filter: (ItemStack, Boolean) -> Boolean) : IItemFilte
 
     BLOCKS({ stack, _ -> stack.item is ItemBlock}) {
         override val icon: IIcon
-            get() = ItemIcon{ItemStack(Blocks.COBBLESTONE)}
+            get() = Blocks.COBBLESTONE.toIcon()
         override val displayName: String
             get() = I18n.format("sao.element.blocks")
 
@@ -286,7 +286,7 @@ enum class BaseFilters(val filter: (ItemStack, Boolean) -> Boolean) : IItemFilte
      */
     MATERIALS({ stack, _ -> ItemFilterRegister.findFilter(stack) == MATERIALS}) {
         override val icon: IIcon
-            get() = ItemIcon{ItemStack(Items.IRON_INGOT)}
+            get() = Items.IRON_INGOT.toIcon()
 
         override val displayName: String
             get() = I18n.format("sao.element.materials")

@@ -66,6 +66,9 @@ class RenderCapability : AbstractEntityCapability() {
             else field
         }
 
+    val isAggressive: Boolean
+    get() = colorStateHandler.colorState == ColorState.KILLER
+
     fun update(partialTicks: Float){
         updateHealthSmooth(partialTicks)
         colorStateHandler.tick()

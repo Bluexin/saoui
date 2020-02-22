@@ -46,9 +46,9 @@ import kotlin.math.min
  */
 open class IconElement(val icon: IIcon, override var pos: Vec2d = Vec2d.ZERO, override var destination: Vec2d = pos, var width: Int = 19, var height: Int = 19, open val description: MutableList<String> = mutableListOf()) : NeoParent() {
 
-
     val RES_ITEM_GLINT = ResourceLocation("textures/misc/enchanted_item_glint.png")
-    private var onClickBody: (Vec2d, MouseButton) -> Boolean = { _, _ -> true }
+    var onClickBody: (Vec2d, MouseButton) -> Boolean = { _, _ -> true }
+        private set
     private var onClickOutBody: (Vec2d, MouseButton) -> Unit = { _, _ -> Unit }
 
     val bgColorScheme = mutableMapOf(
@@ -69,7 +69,7 @@ open class IconElement(val icon: IIcon, override var pos: Vec2d = Vec2d.ZERO, ov
         val count = visibleElementsSequence.count()
         return if (count == 0) emptySequence()
         else {
-            val selectedIdx = if (visibleElementsSequence.any { it is CategoryButton }) visibleElementsSequence.indexOfFirst { it.selected } else -1
+            val selectedIdx = if (visibleElementsSequence.any { it is CategoryButton }) visibleElementsSequence.indexOfFirst { it.highlighted } else -1
             when {
                 selectedIdx >= 0 -> {
                     val skipFront = (selectedIdx - (count / 2 - (count + 1) % 2) + count) % count
@@ -86,25 +86,29 @@ open class IconElement(val icon: IIcon, override var pos: Vec2d = Vec2d.ZERO, ov
 
     override fun draw(mouse: Vec2d, partialTicks: Float) {
         if (opacity < 0.03 || scale == Vec2d.ZERO) return
+        var transparency = if (isFocus())
+                opacity
+            else
+                opacity / 2
+        if (transparency < 0f) transparency = 0f
         GLCore.pushMatrix()
         if (scale != Vec2d.ONE) GLCore.glScalef(scale.xf, scale.yf, 1f)
-        val mouseCheck = mouse in this
+        val mouseCheck = mouse in this || selected
         GLCore.glBlend(true)
-        GLCore.depth(true)
-        GLCore.color(ColorUtil.multiplyAlpha(getColor(mouse), opacity))
+        GLCore.color(ColorUtil.multiplyAlpha(getColor(mouse), transparency))
         GLCore.glBindTexture(StringNames.gui)
         GLCore.glTexturedRectV2(pos.x, pos.y, width = width.toDouble(), height = height.toDouble(), srcX = 1.0, srcY = 26.0)
         if (mouseCheck && OptionCore.MOUSE_OVER_EFFECT.isEnabled)
             mouseOverEffect()
-        GLCore.color(ColorUtil.multiplyAlpha(getTextColor(mouse), opacity))
+        GLCore.color(ColorUtil.multiplyAlpha(getTextColor(mouse), transparency))
         if (icon.rl != null) {
             GLCore.glBindTexture(icon.rl!!)
-            icon.glDrawUnsafe(pos + vec(1, 1))
+            icon.glDraw(pos + vec(1, 1), 5f)
         }
         if (icon is ItemIcon)
-            icon.glDrawUnsafe(pos + vec(1, 1))
+            icon.glDraw(pos + vec(1, 1), 5f)
 
-        GLCore.depth(false)
+        GLCore.glBlend(false)
         /*GlStateManager.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE)
         GLCore.glBindTexture(StringNames.gui)
         val bb = boundingBox
@@ -114,7 +118,7 @@ open class IconElement(val icon: IIcon, override var pos: Vec2d = Vec2d.ZERO, ov
 
         drawChildren(mouse, partialTicks)
         GLCore.popMatrix()
-        if (mouseCheck) {
+        if (mouse in this) {
             drawHoveringText(mouse)
             GLCore.lighting(false)
         }
@@ -123,6 +127,7 @@ open class IconElement(val icon: IIcon, override var pos: Vec2d = Vec2d.ZERO, ov
     fun mouseOverEffect(){
         //TODO Fix player render model
         GLCore.glBindTexture(RES_ITEM_GLINT)
+        GLCore.depth(true)
         GlStateManager.depthMask(false)
         GlStateManager.depthFunc(514)
         GLCore.glBlend(true)
@@ -146,6 +151,7 @@ open class IconElement(val icon: IIcon, override var pos: Vec2d = Vec2d.ZERO, ov
         GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA)
         GlStateManager.depthFunc(515)
         GlStateManager.depthMask(true)
+        GLCore.depth(false)
     }
 
     open fun drawHoveringText(mouse: Vec2d) {
@@ -222,31 +228,28 @@ open class IconElement(val icon: IIcon, override var pos: Vec2d = Vec2d.ZERO, ov
 
     open fun getColor(mouse: Vec2d): Int {
         return if (disabled) bgColorScheme[ColorIntent.DISABLED] ?: ColorUtil.DISABLED_COLOR.rgba
-        else if (selected || mouse in this) {
+        else if (highlighted || mouse in this || selected) {
             bgColorScheme[ColorIntent.HOVERED] ?: ColorUtil.DEFAULT_COLOR.rgba
         } else bgColorScheme[ColorIntent.NORMAL] ?: ColorUtil.HOVER_COLOR.rgba
     }
 
     open fun getTextColor(mouse: Vec2d): Int {
         return if (disabled) fontColorScheme[ColorIntent.DISABLED]
-                ?: ColorUtil.DISABLED_FONT_COLOR.rgba else if (selected || mouse in this) {
+                ?: ColorUtil.DISABLED_FONT_COLOR.rgba else if (highlighted || mouse in this || selected) {
             fontColorScheme[ColorIntent.HOVERED] ?: ColorUtil.HOVER_FONT_COLOR.rgba
         } else fontColorScheme[ColorIntent.NORMAL] ?: ColorUtil.DEFAULT_FONT_COLOR.rgba
     }
 
     override fun mouseClicked(pos: Vec2d, mouseButton: MouseButton): Boolean {
-//        SAOCore.LOGGER.info("$pos $mouseButton Checking $this")
-        if (this.parent is CategoryButton && this.selected && this.elementsSequence.none { it is CategoryButton && it.selected }) {
+        if (this.parent is CategoryButton && this.highlighted && this.elementsSequence.none { it is CategoryButton && it.highlighted }) {
             @Suppress("NON_EXHAUSTIVE_WHEN")
             when (mouseButton) {
                 MouseButton.SCROLL_UP -> {
                     --scroll
-//                    SAOCore.LOGGER.info("Scroll: $scroll")
                     return true
                 }
                 MouseButton.SCROLL_DOWN -> {
                     ++scroll
-//                    SAOCore.LOGGER.info("Scroll: $scroll")
                     return true
                 }
             }
@@ -255,7 +258,6 @@ open class IconElement(val icon: IIcon, override var pos: Vec2d = Vec2d.ZERO, ov
         else {
             val children = childrenOrderedForRendering() // childrenOrderedForAppearing
             val c = validElementsSequence .take(7).count()
-//            val c = children.count()
             var npos = pos - this.pos - vec(childrenXOffset, childrenYOffset - (c + c % 2 - 2) * childrenYSeparator / 2.0)
             var ok = false
             children.forEach {
@@ -268,6 +270,10 @@ open class IconElement(val icon: IIcon, override var pos: Vec2d = Vec2d.ZERO, ov
                 false
             }
         }
+    }
+
+    override fun keyTyped(typedChar: Char, keyCode: Int) {
+
     }
 
     fun setBgColor(intent: ColorIntent, rgba: Int): IconElement {
@@ -299,6 +305,8 @@ open class IconElement(val icon: IIcon, override var pos: Vec2d = Vec2d.ZERO, ov
 
     override var visible = true
 
+    override var highlighted = false
+
     override var selected = false
 
     override var disabled = false
@@ -320,6 +328,6 @@ open class IconElement(val icon: IIcon, override var pos: Vec2d = Vec2d.ZERO, ov
     }
 
     override fun toString(): String {
-        return "NeoIconElement(icon=$icon, pos=$pos, destination=$destination, visible=$visible, selected=$selected, disabled=$disabled, opacity=$opacity)"
+        return "NeoIconElement(icon=$icon, pos=$pos, destination=$destination, visible=$visible, selected=$highlighted, disabled=$disabled, opacity=$opacity)"
     }
 }

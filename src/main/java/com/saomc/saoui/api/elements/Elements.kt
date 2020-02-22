@@ -40,6 +40,17 @@ interface INeoParent {
     val tlParent: INeoParent
         get() = parent?.tlParent ?: this
 
+    val controllingParent: INeoParent?
+    get() {
+        return if (parent is CoreGUI<*>)
+            parent
+        else if (parent is CategoryButton)
+            if (parent!!.parent is CoreGUI<*>)
+                parent!!.parent
+            else parent!!.parent?.parent
+        else parent?.parent
+    }
+
     fun move(delta: Vec2d) {
         CoreGUI.animator.removeAnimationsFor(this)
         destination += delta
@@ -59,6 +70,17 @@ interface INeoParent {
         set(_) = Unit
 
     fun mouseClicked(pos: Vec2d, mouseButton: MouseButton) = false
+
+    fun keyTyped(typedChar: Char, keyCode: Int)
+
+    var isOpen: Boolean
+
+    fun isFocus(): Boolean {
+        return isOpen || parent?.isOpen == true ||{
+            (controllingParent as? CategoryButton)?.elements?.none { it.isOpen }?:
+            (controllingParent as? CoreGUI<*>)?.elements?.none { it.isOpen }?:parent?.isOpen?: true
+        }.invoke()
+    }
 
 }
 
@@ -86,7 +108,11 @@ interface NeoElement : INeoParent {
         get() = true
         set(_) = Unit
 
-    val selected
+    var selected
+        get() = false
+        set(_) = Unit
+
+    val highlighted
         get() = false
 
     val disabled
@@ -106,6 +132,10 @@ interface NeoElement : INeoParent {
 }
 
 abstract class NeoParent : NeoElement {
+
+    override var isOpen: Boolean = false
+
+    override var selected: Boolean = false
 
     override var scroll = -3
         set(value) {

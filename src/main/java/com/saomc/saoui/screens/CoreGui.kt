@@ -41,8 +41,8 @@ import org.lwjgl.input.Mouse
  *
  * @author Bluexin
  */
-abstract class CoreGUI<T : Any>(override var pos: Vec2d, override var destination: Vec2d = pos) : GuiScreen(), INeoParent {
-    protected val elements = mutableListOf<NeoElement>()
+abstract class CoreGUI<T : Any>(final override var pos: Vec2d, override var destination: Vec2d = pos) : GuiScreen(), INeoParent {
+    val elements = mutableListOf<NeoElement>()
 
     var viewSet: Boolean = false
     var playerView: Vec2f = Vec2f.ZERO
@@ -53,6 +53,8 @@ abstract class CoreGUI<T : Any>(override var pos: Vec2d, override var destinatio
         private set
 
     override var parent: INeoParent? = null
+
+    override var isOpen: Boolean = true
 
     override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
         GLCore.glBlend(true)
@@ -160,11 +162,38 @@ abstract class CoreGUI<T : Any>(override var pos: Vec2d, override var destinatio
 
     override fun keyTyped(typedChar: Char, keyCode: Int) { // TODO: keyboard nav (should also support controller)
         if (subGui == null) {
-            if (keyCode == 1) {
+            if (keyCode == Keyboard.KEY_ESCAPE) {
                 this.onGuiClosed()
                 if (this.parent == null) {
                     mc.displayGuiScreen(null)
                     if (this.mc.currentScreen == null) this.mc.setIngameFocus()
+                }
+            }
+            else {
+                elements.firstOrNull { it.isOpen && it.selected }?.keyTyped(typedChar, keyCode) ?: let {
+                    // If no elements are open and focuseds
+                    if (keyCode == Minecraft().gameSettings.keyBindForward.keyCode || keyCode == Keyboard.KEY_UP) {
+                        val selected = elements.firstOrNull { it.selected }
+                        var index = elements.indexOf(selected)
+                        if (index == -1) index = 0
+                        else if (--index < 0) index = elements.size.minus(1)
+                        selected?.selected = false
+                        elements[index].selected = true
+                    } else if (keyCode == Minecraft().gameSettings.keyBindBack.keyCode || keyCode == Keyboard.KEY_DOWN) {
+                        val selected = elements.firstOrNull { it.selected }
+                        var index = elements.indexOf(selected)
+                        if (++index >= elements.size) index = 0
+                        selected?.selected = false
+                        elements[index].selected = true
+                    } else if (keyCode == Minecraft().gameSettings.keyBindRight.keyCode || keyCode == Keyboard.KEY_RIGHT || keyCode == Minecraft().gameSettings.keyBindJump.keyCode || keyCode == Keyboard.KEY_RETURN) {
+                        val selected = elements.firstOrNull { it.selected } ?: return
+                        if (selected is CategoryButton) {
+                            selected.open()
+                        }
+                        else if (selected is IconElement) {
+                            selected.onClickBody(selected.pos, MouseButton.LEFT)
+                        }
+                    }
                 }
             }
         } else subGui?.keyTyped(typedChar, keyCode)

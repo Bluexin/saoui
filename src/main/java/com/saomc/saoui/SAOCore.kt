@@ -26,6 +26,7 @@ import com.saomc.saoui.config.OptionCore
 import com.saomc.saoui.events.EventCore
 import com.saomc.saoui.screens.CoreGUI
 import com.saomc.saoui.themes.ThemeLoader
+import com.saomc.saoui.util.AdvancementUtil
 import com.saomc.saoui.util.DefaultStatsProvider
 import com.saomc.saoui.util.PlayerStats
 import com.teamwizardry.librarianlib.features.kotlin.Minecraft
@@ -36,6 +37,7 @@ import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.fml.common.Loader
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.common.event.FMLInitializationEvent
+import net.minecraftforge.fml.common.event.FMLLoadCompleteEvent
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent
 import net.minecraftforge.fml.common.eventhandler.EventBus
@@ -80,6 +82,7 @@ object SAOCore {
                 e.printStackTrace()
             }
         }
+
     }
 
     @Mod.EventHandler
@@ -102,6 +105,11 @@ object SAOCore {
             if (handler == null) LOGGER.warn("Unable to unregister Mantle health renderer!")
             else MinecraftForge.EVENT_BUS.unregister(handler)
         }
+    }
+
+    @Mod.EventHandler
+    fun loadComplete(event: FMLLoadCompleteEvent){
+        AdvancementUtil.generateList()
     }
 
     private fun confDir(genDir: File): File {

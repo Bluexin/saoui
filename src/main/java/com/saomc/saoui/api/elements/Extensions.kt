@@ -21,16 +21,26 @@ import com.saomc.saoui.SoundCore
 import com.saomc.saoui.api.screens.IIcon
 import com.saomc.saoui.config.OptionCore
 import com.saomc.saoui.play
+import com.saomc.saoui.screens.CoreGUI
 import com.saomc.saoui.screens.CoreGUIDsl
 import com.saomc.saoui.screens.MouseButton
 import com.saomc.saoui.screens.unaryPlus
+import com.saomc.saoui.screens.util.PopupAdvancement
+import com.saomc.saoui.screens.util.toIcon
+import com.saomc.saoui.util.AdvancementUtil
 import com.saomc.saoui.util.IconCore
+import com.saomc.saoui.util.getProgress
 import com.teamwizardry.librarianlib.features.animator.Easing
 import com.teamwizardry.librarianlib.features.gui.component.supporting.delegate
 import com.teamwizardry.librarianlib.features.helpers.vec
 import com.teamwizardry.librarianlib.features.kotlin.Minecraft
 import com.teamwizardry.librarianlib.features.math.Vec2d
+import net.minecraft.advancements.Advancement
+import net.minecraft.client.resources.I18n
 import net.minecraft.entity.player.EntityPlayer
+import net.minecraft.init.Items
+import net.minecraftforge.fml.common.registry.ForgeRegistries
+import org.lwjgl.input.Keyboard
 import java.lang.ref.WeakReference
 import kotlin.math.max
 import kotlin.math.min
@@ -40,7 +50,7 @@ import kotlin.math.min
  *
  * @author Bluexin
  */
-class CategoryButton(private val delegate: IconElement, parent: INeoParent? = null, private val init: (CategoryButton.() -> Unit)? = null) : IconElement(delegate.icon, delegate.pos) {
+class CategoryButton(val delegate: IconElement, parent: INeoParent? = null, private val init: (CategoryButton.() -> Unit)? = null) : IconElement(delegate.icon, delegate.pos) {
 
     override var pos by delegate::pos.delegate
     override var destination by delegate::destination.delegate
@@ -53,6 +63,7 @@ class CategoryButton(private val delegate: IconElement, parent: INeoParent? = nu
     override val childrenYSeparator by delegate::childrenYSeparator.delegate
     override val listed by delegate::listed.delegate
     override var visible by delegate::visible.delegate
+    override var highlighted by delegate::highlighted.delegate
     override var selected by delegate::selected.delegate
     override var disabled by delegate::disabled.delegate
     override var opacity by delegate::opacity.delegate
@@ -100,8 +111,40 @@ class CategoryButton(private val delegate: IconElement, parent: INeoParent? = nu
         init?.invoke(this)
     }
 
+    override fun keyTyped(typedChar: Char, keyCode: Int) {
+        elements.firstOrNull { it.isOpen && it.selected }?.keyTyped(typedChar, keyCode) ?: let {
+            if (keyCode == Minecraft().gameSettings.keyBindForward.keyCode || keyCode == Keyboard.KEY_UP) {
+                val selected = elements.firstOrNull { it.selected }
+                var index = elements.indexOf(selected)
+                if (index == -1) index = 0
+                else if (--index < 0) index = elements.size.minus(1)
+                selected?.selected = false
+                elements[index].selected = true
+            } else if (keyCode == Minecraft().gameSettings.keyBindBack.keyCode || keyCode == Keyboard.KEY_DOWN) {
+                val selected = elements.firstOrNull { it.selected }
+                var index = elements.indexOf(selected)
+                if (++index >= elements.size) index = 0
+                selected?.selected = false
+                elements[index].selected = true
+            } else if (keyCode == Minecraft().gameSettings.keyBindRight.keyCode || keyCode == Keyboard.KEY_RIGHT || keyCode == Minecraft().gameSettings.keyBindJump.keyCode || keyCode == Keyboard.KEY_RETURN){
+                val selected = elements.firstOrNull { it.selected } ?: return
+                if (selected is CategoryButton) {
+                    selected.open()
+                }
+                else if (selected is IconElement) {
+                    selected.onClickBody(selected.pos, MouseButton.LEFT)
+                }
+            }
+            else if (keyCode == Minecraft().gameSettings.keyBindLeft.keyCode || keyCode == Keyboard.KEY_LEFT || keyCode == Minecraft().gameSettings.keyBindAttack.keyCode){
+                close(false)
+            }
+        }
+    }
+
     fun open(reInit: Boolean = false) {
+        highlighted = true
         selected = true
+        isOpen = true
 
         if (reInit) elementsSequence.forEach(NeoElement::show) else {
             val children = childrenOrderedForAppearing().toList()
@@ -120,11 +163,13 @@ class CategoryButton(private val delegate: IconElement, parent: INeoParent? = nu
         delegate.scroll = -3
         elements.forEach {
             it.hide()
-            if (it is CategoryButton && it.selected) {
+            if (it is CategoryButton && it.highlighted) {
                 it.close()
             }
         }
+        highlighted = false
         selected = false
+        isOpen = false
         if (!reInit) tlParent.move(vec(boundingBox.width(), 0))
         openAnim?.get()?.terminated = true
         openAnim = null
@@ -145,7 +190,7 @@ class CategoryButton(private val delegate: IconElement, parent: INeoParent? = nu
         val count = validElementsSequence.count()
         return if (count == 0) emptySequence()
         else {
-            val selectedIdx = if (validElementsSequence.any { it is CategoryButton }) validElementsSequence.indexOfFirst { it.selected } else -1
+            val selectedIdx = if (validElementsSequence.any { it is CategoryButton }) validElementsSequence.indexOfFirst { it.highlighted } else -1
             when {
                 selectedIdx >= 0 -> {
                     val skipFront = (selectedIdx - (count / 2 - (count + 1) % 2) + count) % count
@@ -190,8 +235,86 @@ class CategoryButton(private val delegate: IconElement, parent: INeoParent? = nu
         return cat
     }
 
+    @CoreGUIDsl
+    fun crafting(): CategoryButton {
+        val cat = CategoryButton(CraftingElement(), this)
+        +cat
+        return cat
+    }
+
+    @CoreGUIDsl
+    fun recipes(): CategoryButton {
+        val cat = CategoryButton(IconLabelElement(IconCore.CRAFTING, I18n.format("sao.element.recipes")), this){
+            addRecipes(AdvancementUtil.getRecipes())
+        }
+        +cat
+        return cat
+    }
+
+    @CoreGUIDsl
+    fun advancementCategory(advancement: Advancement): CategoryButton{
+        return if (advancement.getProgress() != null && advancement.getProgress()!!.isDone) {
+            val cat = CategoryButton(AdvancementElement(advancement, true), this) {
+                category(Items.WRITTEN_BOOK.toIcon(), I18n.format("sao.element.quest.completed")) {
+                    addAdvancements(AdvancementUtil.getAdvancements(advancement, true))
+                }
+                category(Items.WRITABLE_BOOK.toIcon(), I18n.format("sao.element.quest.inProgress")) {
+                    addAdvancements(AdvancementUtil.getAdvancements(advancement, false))
+                }
+            }
+            +cat
+            cat
+        }
+        else advancement(advancement)
+    }
+
+    @CoreGUIDsl
+    fun addAdvancements(advancements: Sequence<Advancement>){
+        advancements.forEach {
+            advancement(it)
+        }
+    }
+
+    @CoreGUIDsl
+    fun advancement(advancement: Advancement): CategoryButton{
+        val parent = this
+        val cat = CategoryButton(AdvancementElement(advancement), this) {
+            onClick { vec, mouse ->
+                (tlParent as CoreGUI<*>).openGui(PopupAdvancement(advancement)) += {
+                    var index = parent.elements.indexOf(this)
+                    when (it){
+                        PopupAdvancement.Result.NEXT -> {
+                            if (++index >= parent.elements.size)
+                                index = 0
+                            parent.elements[index].mouseClicked(vec, mouse)
+                        }
+                        PopupAdvancement.Result.PREVIOUS ->  {
+                            if (--index < 0)
+                                index = parent.elements.size.minus(1)
+                            parent.elements[index].mouseClicked(vec, mouse)
+                        }
+                        else -> {}
+                    }
+                }
+                true
+            }
+        }
+        +cat
+        return cat
+
+    }
+
+    @CoreGUIDsl
+    fun addRecipes(advancements: Sequence<Advancement>){
+        advancements.forEach {advancement ->
+            advancement.rewards.recipes.forEach { recipe ->
+                +CategoryButton(RecipeElement(advancement, ForgeRegistries.RECIPES.getValue(recipe)!!), this)
+            }
+        }
+    }
+
     fun reInit() {
-        val wasOpen = this.selected
+        val wasOpen = this.highlighted
         if (wasOpen) this.close(true)
         this.elements.clear()
         this.delegate.elements.clear()
@@ -206,7 +329,7 @@ class CategoryButton(private val delegate: IconElement, parent: INeoParent? = nu
 
 fun INeoParent.optionButton(option: OptionCore): IconLabelElement {
     val but = object : IconLabelElement(IconCore.OPTION, option.displayName) {
-        override var selected: Boolean
+        override var highlighted: Boolean
             get() = option.isEnabled
             set(value) = if (value) option.enable() else option.disable()
     }
@@ -228,4 +351,5 @@ fun INeoParent.optionCategory(option: OptionCore): CategoryButton {
     cat.parent = this
     return cat
 }
+
 

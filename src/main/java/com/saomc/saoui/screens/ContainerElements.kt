@@ -70,7 +70,7 @@ fun CategoryButton.itemList(inventory: Container, filter: (iss: ItemStack) -> Bo
     }
 }
 
-class ItemStackElement(private val slot: Slot, pos: Vec2d, override var selected: Boolean, private val filter: (iss: ItemStack) -> Boolean) :
+class ItemStackElement(private val slot: Slot, pos: Vec2d, override var highlighted: Boolean, private val filter: (iss: ItemStack) -> Boolean) :
         IconLabelElement(icon = ItemIcon { slot.stack }, pos = pos) {
 
     init {
@@ -85,7 +85,7 @@ class ItemStackElement(private val slot: Slot, pos: Vec2d, override var selected
                             PopupItem.Result.USE -> handleUse()
                             else -> {}
                         }
-                        selected = false
+                        highlighted = false
                     }
             true
         }
