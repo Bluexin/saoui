@@ -25,7 +25,6 @@ import com.saomc.saoui.renders.StaticRenderer
 import com.saomc.saoui.screens.CoreGUI
 import com.saomc.saoui.screens.DeathGui
 import com.saomc.saoui.screens.menus.IngameMenu
-import com.teamwizardry.librarianlib.features.kotlin.Minecraft
 import net.minecraft.client.gui.GuiGameOver
 import net.minecraft.client.gui.GuiIngameMenu
 import net.minecraft.client.gui.GuiMainMenu
@@ -34,7 +33,6 @@ import net.minecraft.client.gui.inventory.GuiInventory
 import net.minecraft.entity.EntityLivingBase
 import net.minecraftforge.client.event.GuiOpenEvent
 import net.minecraftforge.client.event.RenderLivingEvent
-import net.minecraftforge.client.event.RenderPlayerEvent
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
 import java.util.*
@@ -66,7 +64,6 @@ internal object RenderHandler {
     }
 
     fun guiInstance(e: GuiOpenEvent) {
-
         if (e.gui is GuiIngameMenu) {
                 if (EventCore.mc.currentScreen !is CoreGUI<*>) e.gui = IngameMenu()
         }
@@ -84,23 +81,10 @@ internal object RenderHandler {
         }
     }
 
-    fun renderPlayer(e: RenderPlayerEvent.Post) {
-        if (!OptionCore.UI_ONLY.isEnabled) {
-            e.entityPlayer.getRenderData()?.update(e.partialRenderTick)
-            if (e.entityPlayer != null) {
-                StaticRenderer.render(e.renderer.renderManager, e.entityPlayer, e.x, e.y, e.z)
-            }
-        }
-    }
 
     fun renderEntity(e: RenderLivingEvent.Post<*>) {
         if (!OptionCore.UI_ONLY.isEnabled) {
-            Minecraft().profiler.startSection("setupRenderEntity")
             e.entity.getRenderData()?.update(e.partialRenderTick)
-            if (e.entity.uniqueID != EventCore.mc.player.uniqueID) {
-                StaticRenderer.render(e.renderer.renderManager, e.entity, e.x, e.y, e.z)
-            }
-            Minecraft().profiler.endSection()
         }
     }
 

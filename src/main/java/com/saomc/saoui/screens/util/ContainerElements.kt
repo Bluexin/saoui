@@ -18,8 +18,8 @@
 package com.saomc.saoui.screens.util
 
 import com.saomc.saoui.GLCore
+import com.saomc.saoui.api.elements.CategoryButton
 import com.saomc.saoui.api.elements.IconLabelElement
-import com.saomc.saoui.api.elements.ItemFilterElement
 import com.saomc.saoui.api.items.IItemFilter
 import com.saomc.saoui.api.screens.IIcon
 import com.saomc.saoui.events.EventCore.mc
@@ -36,33 +36,29 @@ import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.RenderHelper
 import net.minecraft.client.resources.I18n
 import net.minecraft.client.util.ITooltipFlag
-import net.minecraft.init.Blocks
-import net.minecraft.init.Items
-import net.minecraft.inventory.ClickType
-import net.minecraft.inventory.Container
-import net.minecraft.inventory.IInventory
-import net.minecraft.inventory.Slot
+import net.minecraft.inventory.*
 import net.minecraft.item.*
 import net.minecraft.util.ResourceLocation
 import net.minecraftforge.fml.common.registry.ForgeRegistries
 
 
 @CoreGUIDsl
-fun ItemFilterElement.itemList(inventory: Container, filter: IItemFilter) {
+fun CategoryButton.itemList(inventory: Container, filter: IItemFilter) {
     inventory.inventorySlots.forEach { slot ->
-        +ItemStackElement(slot, Vec2d.ZERO, filter.getValidSlots().contains(slot), filter)
+        +ItemStackElement(slot, filter.getValidSlots(), Vec2d.ZERO, filter.getValidSlots().contains(slot), filter)
     }
     +object : IconLabelElement(icon = IconCore.NONE, label = I18n.format("gui.empty")) {
         private var mark = false
 
-        override var valid: Boolean = true
+        override var valid: Boolean
             get() {
                 if (mark) return false
                 mark = true
-                val r = !this@itemList.validElementsSequence.any()
+                val r = this@itemList.validElementsSequence.none()
                 mark = false
                 return r
             }
+            set(_) {}
 
         override var disabled: Boolean
             get() = true
@@ -70,7 +66,7 @@ fun ItemFilterElement.itemList(inventory: Container, filter: IItemFilter) {
     }
 }
 
-class ItemStackElement(private val slot: Slot, pos: Vec2d, override var highlighted: Boolean, private val filter: (iss: ItemStack) -> Boolean) :
+class ItemStackElement(private val slot: Slot, val equipSlots: Set<Slot>, pos: Vec2d, override var highlighted: Boolean, private val filter: (iss: ItemStack) -> Boolean) :
         IconLabelElement(icon = slot.stack.toIcon(), pos = pos) {
 
     init {
@@ -80,9 +76,7 @@ class ItemStackElement(private val slot: Slot, pos: Vec2d, override var highligh
                     (tlParent as CoreGUI<*>).openGui(PopupItem(label, itemStack.itemDesc(), if (mc.gameSettings.advancedItemTooltips) ForgeRegistries.ITEMS.getKey(itemStack.item).toString() else "")) += {
                         when (it){
                             PopupItem.Result.EQUIP -> handleEquip()
-                            PopupItem.Result.TRADE -> handleTrade()
                             PopupItem.Result.DROP -> handleDrop()
-                            PopupItem.Result.USE -> handleUse()
                             else -> {}
                         }
                         highlighted = false
@@ -93,41 +87,36 @@ class ItemStackElement(private val slot: Slot, pos: Vec2d, override var highligh
     }
 
     private fun handleEquip(){
-        val test = ItemStack(Blocks.COBBLESTONE)
-        val test2 = ItemStack(Items.APPLE)
-        val otherSlot = mc.player.inventoryContainer.inventorySlots
-                .asSequence()
-                .filter { slot -> slot.isItemValid(itemStack) && !slot.isItemValid(test) && !slot.isItemValid(test2) }
-                .toList()
-        if (otherSlot.isNullOrEmpty() || otherSlot.size > 1){
-            (tlParent as CoreGUI<*>).openGui(PopupHotbarSelection(label, "Select a slot", "")) += {
-                if (it != PopupHotbarSelection.Result.CANCEL)
-                    if (it.slot != slotID)
-                        swapItems(it.slot)
+        if (equipSlots.size > 1){
+            (tlParent as CoreGUI<*>).openGui(PopupSlotSelection(label, listOf("Select a slot"), "", equipSlots.filter { it != slot }.toSet())) += {
+                if (it != -1)
+                    swapItems(equipSlots.first { slot -> slot.slotNumber == it })
             }
         }
-        else
-            swapItems(otherSlot[0].slotNumber)
-        /*
-        else if (otherSlot.size == 1){ TODO Do this better, disabled until then
-            val other = otherSlot[0].stack
-            if (other.isNotEmpty) {
-                val otherLabel = I18n.format("saoui.formatItem", other.getTooltip(mc.player, ITooltipFlag.TooltipFlags.NORMAL)[0])
-                (tlParent as CoreGUI<*>).openGui(PopupYesNo("$otherLabel -> $label", compare(other, 0), "Are you sure you want to replace this?")) += {
-                    if (it == PopupYesNo.Result.YES) {
-                        swapItems(otherSlot[0].slotNumber)
+        else if (equipSlots.first() == slot){
+            var stack = itemStack
+            mc.player.openContainer.inventorySlots
+                    .filter { it.slotNumber !in IntRange(0, 4) && it.isItemValid(stack) && it.hasStack && it.stack.count != it.stack.maxStackSize && ContainerPlayer.canAddItemToSlot(it, stack, true) }
+                    .any slotCheck@{
+                        stack = moveItems(it)
+                        stack.isEmpty
                     }
-                }
+            if (stack.isNotEmpty) {
+                mc.player.openContainer.inventorySlots
+                        .filter { it.slotNumber !in IntRange(0, 4) && !it.hasStack && it.isItemValid(stack) }
+                        .any slotCheck@{
+                            stack = moveItems(it)
+                            stack.isEmpty
+                        }
             }
-            else
-                swapItems(otherSlot[0].slotNumber)
-        }*/
+            if (stack.isNotEmpty)
+                throwItem()
+        }
+        else
+            swapItems(equipSlots.first())
 
-
-    }
-
-    private fun handleTrade(){
-
+        mc.player.openContainer.detectAndSendChanges()
+        (controllingParent as? CategoryButton)?.reInit()
     }
 
     private fun handleDrop(){
@@ -138,15 +127,18 @@ class ItemStackElement(private val slot: Slot, pos: Vec2d, override var highligh
         }
     }
 
-    private fun handleUse(){
+    /**
+     * Will pickup or place item, and return
+     * the currently held item
+     */
+    fun moveItems(slot: Slot): ItemStack{
+        return mc.playerController.windowClick(mc.player.openContainer.windowId, slot.slotNumber, 0, ClickType.PICKUP, mc.player)
     }
 
-    fun swapItems(otherSlot: Int){
-        if (mc.player.inventory.isItemValidForSlot(otherSlot, itemStack)) {
-            mc.playerController.windowClick(mc.player.inventoryContainer.windowId, otherSlot, 0, ClickType.PICKUP, mc.player)
-            mc.playerController.windowClick(mc.player.inventoryContainer.windowId, slotID, 0, ClickType.PICKUP, mc.player)
-            mc.playerController.windowClick(mc.player.inventoryContainer.windowId, otherSlot, 0, ClickType.PICKUP, mc.player)
-        }
+    fun swapItems(otherSlot: Slot) {
+        mc.playerController.windowClick(mc.player.inventoryContainer.windowId, otherSlot.slotNumber, 0, ClickType.PICKUP, mc.player)
+        mc.playerController.windowClick(mc.player.inventoryContainer.windowId, slotID, 0, ClickType.PICKUP, mc.player)
+        mc.playerController.windowClick(mc.player.inventoryContainer.windowId, otherSlot.slotNumber, 0, ClickType.PICKUP, mc.player)
     }
 
     fun throwItem(){
@@ -190,8 +182,9 @@ class ItemStackElement(private val slot: Slot, pos: Vec2d, override var highligh
     private val slotID
         get() = slot.slotNumber
 
-    override var valid: Boolean = true
+    override var valid: Boolean
         get() = itemStack.isNotEmpty
+        set(_) {}
 
     override val label: String
         get() = if (itemStack.isNotEmpty) {
@@ -208,7 +201,6 @@ class ItemIcon(private val itemStack: () -> ItemStack) : IIcon {
     override fun glDraw(x: Int, y: Int, z: Float) {
         val f = itemStack().animationsToGo.toFloat()/* - partialTicks*/
         RenderHelper.disableStandardItemLighting()
-        RenderHelper.enableGUIStandardItemLighting()
 
         itemRenderer.zLevel += z
 

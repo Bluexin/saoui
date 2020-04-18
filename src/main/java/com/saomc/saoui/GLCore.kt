@@ -61,6 +61,17 @@ object GLCore {
         color(red, green, blue, alpha)
     }
 
+    fun color(rgba: Int, lightLevel: Float) {
+        val red = (rgba shr 24 and 0xFF).toFloat() / 0xFF
+        val green = (rgba shr 16 and 0xFF).toFloat() / 0xFF
+        val blue = (rgba shr 8 and 0xFF).toFloat() / 0xFF
+        val alpha = (rgba and 0xFF).toFloat() / 0xFF
+        val light = max(lightLevel, 0.15f)
+
+
+        color(red * light, green * light, blue * light, alpha)
+    }
+
     private fun glFontColor(rgba: Int): Int {
         val alpha = rgba and 0xFF
         val red = rgba shr 24 and 0xFF

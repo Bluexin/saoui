@@ -19,6 +19,8 @@ package com.saomc.saoui.screens.ingame
 
 import be.bluexin.saomclib.capabilities.getPartyCapability
 import be.bluexin.saomclib.party.PlayerInfo
+import com.google.common.base.Predicate
+import com.google.common.base.Predicates
 import com.saomc.saoui.GLCore
 import com.saomc.saoui.capabilities.getRenderData
 import com.saomc.saoui.config.ConfigHandler
@@ -37,8 +39,10 @@ import net.minecraft.client.gui.ScaledResolution
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.renderer.OpenGlHelper
 import net.minecraft.client.resources.I18n
+import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
+import net.minecraft.util.EntitySelectors
 import net.minecraft.util.StringUtils
 import net.minecraft.util.math.AxisAlignedBB
 import net.minecraftforge.client.GuiIngameForge
@@ -50,6 +54,7 @@ import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
 import org.lwjgl.opengl.GL11
 import java.util.*
+
 
 @SideOnly(Side.CLIENT)
 class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
@@ -121,7 +126,7 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
     }
 
     override fun renderHotbar(res: ScaledResolution, partialTicks: Float) {
-        if (OptionCore.DEFAULT_HOTBAR.isEnabled) super.renderHotbar(res, partialTicks)
+        if (OptionCore.DEFAULT_HOTBAR.isEnabled || OptionCore.VANILLA_UI.isEnabled) super.renderHotbar(res, partialTicks)
         else {
             if (pre(HOTBAR)) return
             if (mc.playerController?.isSpectator == true)
@@ -211,9 +216,13 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
     fun renderEnemyHealth(width: Int, height: Int) {
         mc.profiler.startSection("enemy health")
         //TODO Add player's focused entity on top of list, as well as players last attacked entity
-        val entities: List<EntityLivingBase> = Minecraft().world.getEntitiesInAABBexcluding(Minecraft().player, AxisAlignedBB(Minecraft().player.position.add(-10, -5, -10), Minecraft().player.position.add(10, 5, 10))){
-            it is EntityLivingBase && it.getRenderData()?.isAggressive == true
-        }.map { it as EntityLivingBase }.sortedBy { entityLivingBase -> entityLivingBase.getDistance(Minecraft().player) }.take(5)
+        val entities: MutableList<EntityLivingBase> = mutableListOf()
+        val trackedEntity = getMouseOver(mc.renderPartialTicks)
+        if (trackedEntity is EntityLivingBase) entities.add(trackedEntity)
+        entities.addAll(Minecraft().world.getEntitiesInAABBexcluding(Minecraft().player, AxisAlignedBB(Minecraft().player.position.add(-10, -5, -10), Minecraft().player.position.add(10, 5, 10))){
+            it is EntityLivingBase && it.getRenderData()?.isAggressive == true && !entities.contains(it)
+        }.map { it as EntityLivingBase }.sortedBy { entityLivingBase -> entityLivingBase.getDistance(Minecraft().player) }.take(5))
+        if (entities.isEmpty()) return
         val baseY = 35
         val h = 15.0
         val offset = width - 20.0
@@ -222,7 +231,10 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
         entities.sortedBy { it.health / it.maxHealth }.forEachIndexed { index, entity ->
             GLCore.glBindTexture(if (OptionCore.SAO_UI.isEnabled) StringNames.entities else StringNames.entitiesCustom)
             val health = entity.health / entity.maxHealth
-            HealthStep.VERY_LOW.glColor()
+            if (entity.getRenderData() != null)
+                GLCore.color(entity.getRenderData()!!.getColorStateHandler().colorState.rgba)
+            else
+                HealthStep.VERY_LOW.glColor()
             GLCore.glTexturedRectV2(offset - 1, baseY + 1.5 + index * h, zLevel.toDouble(), -79.0 * health, 14.0, 1.0, 0.0, srcWidth = 255.0, srcHeight = 30.0)
             GLCore.color(1.0F, 1.0F, 1.0F, 1.0F)
             GLCore.glTexturedRectV2(offset, baseY + index * h, zLevel.toDouble(), -80.0, 15.0, 1.0, 30.0, srcWidth = 255.0, srcHeight = 30.0)
@@ -233,6 +245,52 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
         GLCore.glCullFace(true)
         mc.profiler.endSection()
     }
+
+    /**
+     * Gets the block or object that is being moused over.
+     */
+    fun getMouseOver(partialTicks: Float): Entity? {
+        mc.profiler.startSection("track enemy")
+        val entity = mc.renderViewEntity
+        var pointedEntity: Entity? = null
+        if (entity != null) {
+            if (mc.world != null) {
+                mc.pointedEntity = null
+                val d0 = 64.0
+                val vec3d = entity.getPositionEyes(partialTicks)
+                val vec3d1 = entity.getLook(1.0f)
+                val vec3d2 = vec3d.add(vec3d1.x * d0, vec3d1.y * d0, vec3d1.z * d0)
+                val list = mc.world.getEntitiesInAABBexcluding(entity, entity.entityBoundingBox.expand(vec3d1.x * d0, vec3d1.y * d0, vec3d1.z * d0).grow(1.0, 1.0, 1.0), Predicates.and(EntitySelectors.NOT_SPECTATING, Predicate { p_apply_1_ -> p_apply_1_ != null && p_apply_1_.canBeCollidedWith() }))
+                var d2 = d0
+                for (j in list.indices) {
+                    val entity1 = list[j]
+                    val axisalignedbb = entity1.entityBoundingBox.grow(entity1.collisionBorderSize.toDouble())
+                    val raytraceresult = axisalignedbb.calculateIntercept(vec3d, vec3d2)
+                    if (axisalignedbb.contains(vec3d)) {
+                        if (d2 >= 0.0) {
+                            pointedEntity = entity1
+                            d2 = 0.0
+                        }
+                    } else if (raytraceresult != null) {
+                        val d3 = vec3d.distanceTo(raytraceresult.hitVec)
+                        if (d3 < d2 || d2 == 0.0) {
+                            if (entity1.lowestRidingEntity === entity.lowestRidingEntity && !entity1.canRiderInteract()) {
+                                if (d2 == 0.0) {
+                                    pointedEntity = entity1
+                                }
+                            } else {
+                                pointedEntity = entity1
+                                d2 = d3
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        mc.profiler.endSection()
+        return pointedEntity
+    }
+
 
     override fun renderFood(width: Int, height: Int) {
         if (OptionCore.VANILLA_UI.isEnabled) {

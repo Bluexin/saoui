@@ -3,6 +3,7 @@ package com.saomc.saoui.util
 import com.google.common.collect.Lists
 import com.saomc.saoui.screens.util.CraftingAlert
 import com.teamwizardry.librarianlib.features.kotlin.Minecraft
+import net.minecraft.client.entity.EntityPlayerSP
 import net.minecraft.client.gui.recipebook.RecipeList
 import net.minecraft.client.util.RecipeBookClient
 import net.minecraft.client.util.RecipeItemHelper
@@ -15,10 +16,8 @@ import java.util.function.Consumer
 
 object CraftingUtil {
 
-    val player
+    val player: EntityPlayerSP
         get() = Minecraft().player
-    val craftingInventory
-        get() = ContainerWorkbench()
     val world: World
         get() = Minecraft().world
     val recipeList = RecipeList()
@@ -50,12 +49,12 @@ object CraftingUtil {
     }
 
     fun anyValidRecipes(tab: CreativeTabs): Boolean{
-        return RecipeBookClient.RECIPES_BY_TAB[tab]?.any { it.containsCraftableRecipes() }?: false
+        return RecipeBookClient.RECIPES_BY_TAB[tab]?.any { it.containsCraftableRecipes() && it.recipes.any { recipe -> canCraft(recipe) } }?: false
     }
 
     fun getRecipes(tab: CreativeTabs): MutableSet<IRecipe>{
         val recipes: MutableSet<IRecipe> = mutableSetOf()
-        RecipeBookClient.RECIPES_BY_TAB[tab]?.forEach { recipeList -> recipes.addAll(recipeList.recipes.filter { recipe -> recipe.canFit(3, 3) }) }
+        RecipeBookClient.RECIPES_BY_TAB[tab]?.forEach { recipeList -> recipes.addAll(recipeList.recipes.filter { recipe -> recipe.canFit(2, 2) && canCraft(recipe) }) }
         return recipes
     }
 

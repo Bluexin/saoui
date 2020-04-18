@@ -51,7 +51,7 @@ import javax.xml.bind.JAXBException
 object SAOCore {
     const val MODID = "saoui"
     const val NAME = "Sword Art Online UI"
-    const val VERSION = "2.0.9"
+    const val VERSION = "2.1.0"
     const val DEPS = "required-after:saomclib@[1.4.5,);after:mantle;required-after:librarianlib@[4.19.2,)"
 
     val mc = Minecraft()

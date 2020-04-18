@@ -20,6 +20,8 @@ package com.saomc.saoui.api.elements
 import com.saomc.saoui.GLCore
 import com.saomc.saoui.api.screens.IIcon
 import com.saomc.saoui.config.OptionCore
+import com.saomc.saoui.elements.DrawType
+import com.saomc.saoui.elements.IElement
 import com.saomc.saoui.resources.StringNames
 import com.saomc.saoui.screens.unaryPlus
 import com.saomc.saoui.util.ColorUtil
@@ -44,14 +46,12 @@ open class IconLabelElement(icon: IIcon, open val label: String = "", pos: Vec2d
             width = value.widthI()
         }
 
-    override fun draw(mouse: Vec2d, partialTicks: Float) {
-        if (opacity < 0.03 || scale == Vec2d.ZERO) return
+    /**
+     * @see IElement.drawBackground
+     */
+    override fun drawBackground(mouse: Vec2d, partialTicks: Float) {
+        if (!canDraw) return
         GLCore.pushMatrix()
-        var transparency = if (isFocus())
-            opacity
-        else
-            opacity / 2
-        if (transparency < 0f) transparency = 0f
         if (scale != Vec2d.ONE) GLCore.glScalef(scale.xf, scale.yf, 1f)
         val mouseCheck = mouse in this || selected
         GLCore.glBlend(true)
@@ -61,29 +61,45 @@ open class IconLabelElement(icon: IIcon, open val label: String = "", pos: Vec2d
         GLCore.glTexturedRectV2(pos.x, pos.y, width = width.toDouble(), height = height.toDouble(), srcX = 0.0, srcY = 40.0, srcWidth = 84.0, srcHeight = 18.0)
         if (mouseCheck && OptionCore.MOUSE_OVER_EFFECT.isEnabled)
             mouseOverEffect()
+        GLCore.glBlend(false)
+        GLCore.depth(false)
+        GLCore.color(1f, 1f, 1f, 1f)
+        drawChildren(mouse, partialTicks, DrawType.BACKGROUND)
+        GLCore.popMatrix()
+    }
+
+    /**
+     * @see IElement.draw
+     */
+    override fun draw(mouse: Vec2d, partialTicks: Float){
+        if (!canDraw) return
+        GLCore.pushMatrix()
+        GLCore.glBlend(true)
         val color = ColorUtil.multiplyAlpha(getTextColor(mouse), transparency)
         GLCore.color(color)
         if (icon.rl != null) GLCore.glBindTexture(icon.rl!!)
         icon.glDrawUnsafe(pos + vec(1, 1))
-        if (this.highlighted || mouseCheck)
+        if (this.highlighted || (mouse in this || selected))
             GLCore.glString(label, pos + vec(22, height / 2), color, shadow = OptionCore.TEXT_SHADOW.isEnabled, centered = true)
         else
             GLCore.glString(label, pos + vec(22, height / 2), color, shadow = false, centered = true)
-
-        /*GlStateManager.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE)
-        GLCore.glBindTexture(StringNames.gui)
-        val bb = boundingBox
-        GLCore.color(0xFF0000FF.toInt())
-        GLCore.glTexturedRectV2(pos = Vec3d(bb.pos.x, bb.pos.y, 0.0), size = bb.size, srcPos = vec(0, 61), srcSize = vec(4, 4))
-        GlStateManager.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL)*/
-
-        drawChildren(mouse, partialTicks)
+        GLCore.glBlend(false)
+        GLCore.color(1f, 1f, 1f, 1f)
+        drawChildren(mouse, partialTicks, DrawType.DRAW)
         GLCore.popMatrix()
+    }
+
+    /**
+     * @see IElement.drawForeground
+     */
+    override fun drawForeground(mouse: Vec2d, partialTicks: Float) {
+        if (!canDraw) return
         if (mouse in this) {
             drawHoveringText(mouse)
             GLCore.lighting(false)
             GLCore.depth(false)
         }
+        drawChildren(mouse, partialTicks, DrawType.FOREGROUND)
     }
 
     override fun toString(): String {

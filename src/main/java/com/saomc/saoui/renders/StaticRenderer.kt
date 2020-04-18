@@ -25,13 +25,18 @@ import com.saomc.saoui.effects.DeathParticles
 import com.saomc.saoui.resources.StringNames
 import com.saomc.saoui.screens.ingame.HealthStep
 import com.saomc.saoui.social.StaticPlayerHelper
+import com.saomc.saoui.util.ColorUtil
 import com.teamwizardry.librarianlib.features.kotlin.Minecraft
+import com.teamwizardry.librarianlib.features.kotlin.renderPosX
+import com.teamwizardry.librarianlib.features.kotlin.renderPosY
+import com.teamwizardry.librarianlib.features.kotlin.renderPosZ
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.entity.RenderManager
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats
 import net.minecraft.entity.Entity
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.monster.EntityMob
+import net.minecraft.world.EnumSkyBlock
 import net.minecraftforge.fml.common.Loader
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
@@ -49,23 +54,61 @@ object StaticRenderer { // TODO: add usage of scale, offset etc from capability
     private const val HEALTH_RANGE = 0.975
     private const val HEALTH_OFFSET = 0.75f
     private const val HEALTH_HEIGHT = 0.21
+    private var partialTicks = -1f
+    private val mc = Minecraft.getMinecraft()
 
-    fun render(renderManager: RenderManager, living: EntityLivingBase, x: Double, y: Double, z: Double) {
-        val mc = Minecraft.getMinecraft()
+    /**
+     * Caches the player view for all entities,
+     */
+    private var playerView = arrayOfNulls<Pair<Double, Double>>(HEALTH_COUNT + 1)
+
+    /**
+     * Caches the cursor view for all entities,
+     */
+    private var cursorView = Pair(0.0, 0.0)
+
+    fun render() {
+        val renderManager = Minecraft().renderManager
+        if (mc.renderPartialTicks != partialTicks)
+            updateView(renderManager)
+        Minecraft().renderPartialTicks
         mc.profiler.startSection("setupStaticRender")
 
-        val dead = living.health <= 0
+        GLCore.glBindTexture(if (OptionCore.SAO_UI.isEnabled) StringNames.entities else StringNames.entitiesCustom)
+        Minecraft().world.loadedEntityList.asSequence().filter { it is EntityLivingBase && it != Minecraft().player}.forEach {
+            val living = it as EntityLivingBase
+            if (living.isInWater && !mc.player.world.getBlockState(mc.player.position.up()).material.isLiquid){
+                val state = mc.player.world.getBlockState(living.position.up(2))
+                if (state.material.isLiquid || state.material.isSolid || state.material.blocksLight())
+                    return@forEach
+            }
+            val x = (living.lastTickPosX + (living.posX - living.lastTickPosX) * partialTicks.toDouble()) - renderManager.renderPosX
+            val y = (living.lastTickPosY + (living.posY - living.lastTickPosY) * partialTicks.toDouble()) - renderManager.renderPosY
+            val z = (living.lastTickPosZ + (living.posZ - living.lastTickPosZ) * partialTicks.toDouble()) - renderManager.renderPosZ
+            val dead = living.health <= 0
 
-        if (living.deathTime == 1) living.deathTime++
+            if (living.deathTime == 1) living.deathTime++
 
-        if (!dead && !living.isInvisibleToPlayer(mc.player) && living != mc.player) {
-            living.getRenderData()?.let {renderCap ->
-                val state = renderCap.getColorStateHandler().colorState
-                if (checkHealth(state)) doRenderHealthBar(renderManager, mc, living, x, y, z, sqrt(64))
-                if (checkCrystal(state)) doRenderColorCursor(renderManager, mc, living, x, y, z, sqrt(64), state)
+            if (!dead && !living.isInvisibleToPlayer(mc.player) && living != mc.player) {
+                living.getRenderData()?.let {renderCap ->
+                    val state = renderCap.getColorStateHandler().colorState
+                    if (checkCrystal(state)) doRenderColorCursor(renderManager, living, x, y, z, sqrt(64), state)
+                    if (checkHealth(state)) doRenderHealthBar(renderManager, living, x, y, z, sqrt(64))
+                }
             }
         }
         mc.profiler.endSection()
+    }
+
+    fun updateView(renderManager: RenderManager){
+        partialTicks = mc.renderPartialTicks
+        for (i in 0..HEALTH_COUNT){
+            val value = i.toDouble() / HEALTH_COUNT
+            val rad = Math.toRadians((renderManager.playerViewY - 135).toDouble()) + (value - 0.5) * Math.PI * HEALTH_ANGLE
+            playerView[i] = Pair(cos(rad), sin(rad))
+        }
+        val a = mc.world.totalWorldTime % 40 / 20.0 * Math.PI
+        cursorView = Pair(cos(a), sin(a))
     }
 
     fun checkHealth(color: ColorState): Boolean{
@@ -94,8 +137,8 @@ object StaticRenderer { // TODO: add usage of scale, offset etc from capability
         }
     }
 
-    private fun doRenderColorCursor(renderManager: RenderManager, mc: Minecraft, entity: EntityLivingBase, x: Double, y: Double, z: Double, distance: Int, color: ColorState) {
-        mc.profiler.startSection("renderColorCursor")
+    private fun doRenderColorCursor(renderManager: RenderManager, entity: EntityLivingBase, x: Double, y: Double, z: Double, distance: Int, color: ColorState) {
+
         if (entity.ridingEntity != null) return
 
         if (entity.world.isRemote) {
@@ -120,14 +163,19 @@ object StaticRenderer { // TODO: add usage of scale, offset etc from capability
                 GLCore.glBlend(true)
                 GLCore.tryBlendFuncSeparate(770, 771, 1, 0)
 
-                GLCore.glBindTexture(if (OptionCore.SAO_UI.isEnabled) StringNames.entities else StringNames.entitiesCustom)
-                GLCore.color(color.rgba)
+
+
+                val sunBrightness = limit(cos(entity.world.getCelestialAngleRadians(1.0f).toDouble()).toFloat() * 2.0f + 0.2f, 0.0f, 1.0f)
+                val light = entity.world.getLightFor(EnumSkyBlock.SKY, entity.position) / 15.0f * sunBrightness
+                GLCore.color(color.rgba, light)
                 GLCore.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX)
 
                 if (OptionCore.SPINNING_CRYSTALS.isEnabled) {
                     val a = entity.world.totalWorldTime % 40 / 20.0 * Math.PI
-                    val cos = cos(a)//Math.PI / 3 * 2);
-                    val sin = sin(a)//Math.PI / 3 * 2);
+                    //val cos = cos(a)//Math.PI / 3 * 2);
+                    //val sin = sin(a)//Math.PI / 3 * 2);
+                    val cos = cursorView.first
+                    val sin = cursorView.second
 
                     if (a > Math.PI / 2 && a <= Math.PI * 3 / 2) {
                         GLCore.addVertex(9.0 * cos, -1.0, 9.0 * sin, 0.125, 0.25)
@@ -164,42 +212,48 @@ object StaticRenderer { // TODO: add usage of scale, offset etc from capability
                 GLCore.popMatrix()
             }
         }
-        mc.profiler.endSection()
     }
 
-    private fun doRenderHealthBar(renderManager: RenderManager, mc: Minecraft, living: EntityLivingBase, x: Double, y: Double, z: Double, distance: Int) {
-        mc.profiler.startSection("renderHealthBars")
-        mc.profiler.startSection("initCheck")
+    fun limit(value: Float, min: Float, max: Float): Float {
+        if (java.lang.Float.isNaN(value) || value <= min) {
+            return min
+        }
+        return if (value >= max) {
+            max
+        } else value
+    }
+
+    private fun doRenderHealthBar(renderManager: RenderManager, living: EntityLivingBase, x: Double, y: Double, z: Double, distance: Int) {
         if (living.ridingEntity != null && living.ridingEntity === mc.player) return
         if (living.health > living.maxHealth) return
         if (Loader.isModLoaded("neat")) return
-        mc.profiler.endSection()
-
 
         val d3 = living.getDistanceSq(renderManager.renderViewEntity)
 
         if (d3 <= distance) {
-            GLCore.glBindTexture(if (OptionCore.SAO_UI.isEnabled) StringNames.entities else StringNames.entitiesCustom)
             GLCore.pushMatrix()
             GLCore.depth(true)
             GLCore.glCullFace(false)
             GLCore.glBlend(true)
+            GLCore.lighting(false)
 
             GLCore.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA)
 
             val hitPoints = (getHealthFactor(living) * HEALTH_COUNT).toInt()
-            useColor(living)
+            val sunBrightness = limit(cos(living.world.getCelestialAngleRadians(1.0f).toDouble()).toFloat() * 2.0f + 0.2f, 0.0f, 1.0f)
+            val light = living.world.getLightFor(EnumSkyBlock.SKY, living.position) / 15.0f * sunBrightness
+            useColor(living, light)
 
-            val sizeMult = if (living.isChild && living is EntityMob) 0.5f else 1.0f
+            val size = if (living.isChild && living is EntityMob) 0.5f else 1.0f
+            val width = size.toDouble() * living.width.toDouble() * HEALTH_RANGE
+            val height = size * living.height * HEALTH_OFFSET
 
             GLCore.begin(GL11.GL_TRIANGLE_STRIP, DefaultVertexFormats.POSITION_TEX)
             for (i in 0..hitPoints) {
                 val value = (i + HEALTH_COUNT - hitPoints).toDouble() / HEALTH_COUNT
-                val rad = Math.toRadians((renderManager.playerViewY - 135).toDouble()) + (value - 0.5) * Math.PI * HEALTH_ANGLE
-
-                val x0 = x + sizeMult.toDouble() * living.width.toDouble() * HEALTH_RANGE * cos(rad)
-                val y0 = y + sizeMult * living.height * HEALTH_OFFSET
-                val z0 = z + sizeMult.toDouble() * living.width.toDouble() * HEALTH_RANGE * sin(rad)
+                val x0 = x + width * playerView[i + HEALTH_COUNT - hitPoints]!!.first
+                val y0 = y + height
+                val z0 = z + width * playerView[i + HEALTH_COUNT - hitPoints]!!.second
 
                 val uv = value - (HEALTH_COUNT - hitPoints).toDouble() / HEALTH_COUNT
 
@@ -209,16 +263,15 @@ object StaticRenderer { // TODO: add usage of scale, offset etc from capability
 
             GLCore.draw()
 
-            GLCore.color(1f, 1f, 1f, 1f)
+            GLCore.color(ColorUtil.DEFAULT_COLOR.rgba, light)
             GLCore.begin(GL11.GL_TRIANGLE_STRIP, DefaultVertexFormats.POSITION_TEX)
 
             for (i in 0..HEALTH_COUNT) {
                 val value = i.toDouble() / HEALTH_COUNT
-                val rad = Math.toRadians((renderManager.playerViewY - 135).toDouble()) + (value - 0.5) * Math.PI * HEALTH_ANGLE
 
-                val x0 = x + sizeMult.toDouble() * living.width.toDouble() * HEALTH_RANGE * cos(rad)
-                val y0 = y + sizeMult * living.height * HEALTH_OFFSET
-                val z0 = z + sizeMult.toDouble() * living.width.toDouble() * HEALTH_RANGE * sin(rad)
+                val x0 = x + width * playerView[i]!!.first
+                val y0 = y + height
+                val z0 = z + width * playerView[i]!!.second
 
                 GLCore.addVertex(x0, y0 + HEALTH_HEIGHT, z0, 1.0 - value, 0.125)
                 GLCore.addVertex(x0, y0, z0, 1.0 - value, 0.25)
@@ -227,9 +280,9 @@ object StaticRenderer { // TODO: add usage of scale, offset etc from capability
             GLCore.draw()
 
             GLCore.glCullFace(true)
+            GLCore.lighting(true)
             GLCore.popMatrix()
         }
-        mc.profiler.endSection()
     }
 
     fun doSpawnDeathParticles(mc: Minecraft, living: Entity) {
@@ -259,11 +312,11 @@ object StaticRenderer { // TODO: add usage of scale, offset etc from capability
         mc.profiler.endSection()
     }
 
-    private fun useColor(living: Entity) {
+    private fun useColor(living: Entity, light: Float) {
         if (living is EntityLivingBase) {
-            HealthStep.getStep(living).glColor()
+            GLCore.color(HealthStep.getStep(living).rgba, light)
         } else {
-            HealthStep.GOOD.glColor()
+            GLCore.color(HealthStep.GOOD.rgba, light)
         }
     }
 

@@ -7,10 +7,10 @@ import net.minecraft.util.ResourceLocation
 object ThemeLoader {
 
     fun loadTextures(textures: List<ResourceLocation>){
-        textures.forEach { Minecraft.getMinecraft().getTextureManager().loadTexture(it, SimpleTexture(it)) }
+        textures.forEach { Minecraft.getMinecraft().textureManager.loadTexture(it, SimpleTexture(it)) }
     }
 
     fun unloadTextures(textures: List<ResourceLocation>){
-        textures.forEach { Minecraft.getMinecraft().getTextureManager().deleteTexture(it) }
+        textures.forEach { Minecraft.getMinecraft().textureManager.deleteTexture(it) }
     }
 }

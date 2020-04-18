@@ -81,7 +81,9 @@ abstract class CoreGUI<T : Any>(final override var pos: Vec2d, override var dest
         GLCore.translate(pos.x, pos.y, 0.0)
 
         val mousePos = if (subGui == null) vec(mouseX, mouseY) - pos else Vec2d.NEG_INFINITY
+        elements.forEach { it.drawBackground(mousePos, partialTicks) }
         elements.forEach { it.draw(mousePos, partialTicks) }
+        elements.forEach { it.drawForeground(mousePos, partialTicks) }
 
         //GLCore.lighting(false)
 

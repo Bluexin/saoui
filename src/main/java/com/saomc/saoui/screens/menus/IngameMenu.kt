@@ -20,7 +20,6 @@ package com.saomc.saoui.screens.menus
 import be.bluexin.saomclib.message
 import com.saomc.saoui.SoundCore
 import com.saomc.saoui.api.elements.CategoryButton
-import com.saomc.saoui.api.elements.ItemFilterElement
 import com.saomc.saoui.api.elements.optionCategory
 import com.saomc.saoui.api.items.IItemFilter
 import com.saomc.saoui.api.items.ItemFilterRegister
@@ -28,8 +27,8 @@ import com.saomc.saoui.config.OptionCore
 import com.saomc.saoui.events.EventCore
 import com.saomc.saoui.play
 import com.saomc.saoui.screens.CoreGUI
-import com.saomc.saoui.screens.itemList
 import com.saomc.saoui.screens.util.PopupYesNo
+import com.saomc.saoui.screens.util.itemList
 import com.saomc.saoui.util.AdvancementUtil
 import com.saomc.saoui.util.CraftingUtil
 import com.saomc.saoui.util.IconCore
@@ -145,7 +144,6 @@ class IngameMenu : CoreGUI<Unit>(Vec2d.ZERO) {
     override fun initGui() {
         elements.clear()
         defaultElements.forEach { elements.add(it) }
-        updateInventory()
 
         pos = vec(width / 2.0 - 10, (height - elements.size * 20) / 2.0)
         destination = pos
@@ -167,12 +165,8 @@ class IngameMenu : CoreGUI<Unit>(Vec2d.ZERO) {
                 if (filter.subFilters.isNotEmpty())
                     filter.subFilters.forEach { subFilter -> addItemCategories(this, subFilter) }
             }
-            else itemList(mc.player.inventoryContainer, filter, filter.getValidSlots())
+            else itemList(mc.player.inventoryContainer, filter)
         }
-    }
-
-    fun updateInventory(){
-        elements.asSequence().filter { it is ItemFilterElement }.forEach { (it as ItemFilterElement).updateInventory() }
     }
 
     override fun doesGuiPauseGame(): Boolean {

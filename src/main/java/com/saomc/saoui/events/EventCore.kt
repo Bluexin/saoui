@@ -24,9 +24,9 @@ import be.bluexin.saomclib.packets.party.updateServer
 import be.bluexin.saomclib.party.playerInfo
 import com.saomc.saoui.capabilities.getRenderData
 import com.saomc.saoui.effects.RenderDispatcher
+import com.saomc.saoui.renders.StaticRenderer
 import com.saomc.saoui.screens.CoreGUI
 import com.saomc.saoui.screens.ingame.IngameGUI
-import com.saomc.saoui.screens.menus.IngameMenu
 import com.saomc.saoui.screens.util.NotificationAlert
 import com.saomc.saoui.screens.util.Popup
 import com.saomc.saoui.screens.util.PopupYesNo
@@ -51,7 +51,7 @@ object EventCore {
 
     val notifications: MutableList<Popup<*>> = mutableListOf()
 
-    @SubscribeEvent
+    @SubscribeEvent(receiveCanceled = true)
     fun playerTickListener(e: TickEvent.PlayerTickEvent) {
         if (CraftingUtil.craftReady) {
             CraftingUtil.getCraft()
@@ -76,11 +76,6 @@ object EventCore {
     }
 
     @SubscribeEvent
-    fun renderPlayerListener(e: RenderPlayerEvent.Post) {
-        //RenderHandler.renderPlayer(e)
-    }
-
-    @SubscribeEvent
     fun renderEntityListener(e: RenderLivingEvent.Post<*>) {
         RenderHandler.renderEntity(e)
     }
@@ -94,6 +89,7 @@ object EventCore {
     @SubscribeEvent
     fun renderWorldListener(event: RenderWorldLastEvent) {
         RenderDispatcher.dispatch()
+        if (Minecraft().player != null && Minecraft().renderManager.renderViewEntity != null) StaticRenderer.render()
     }
 
     @SubscribeEvent
@@ -211,7 +207,7 @@ object EventCore {
     }
 
     fun inventoryUpdate(){
-        (mc.currentScreen as? IngameMenu)?.updateInventory()
+        //TODO Fix me
     }
 
     internal val mc = Minecraft.getMinecraft()

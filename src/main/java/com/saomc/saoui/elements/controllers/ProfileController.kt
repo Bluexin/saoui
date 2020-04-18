@@ -1,8 +1,9 @@
-package com.saomc.saoui.api.elements
+package com.saomc.saoui.elements.controllers
 
 import com.saomc.saoui.GLCore
 import com.saomc.saoui.SAOCore
 import com.saomc.saoui.config.OptionCore
+import com.saomc.saoui.elements.Element
 import com.saomc.saoui.resources.StringNames
 import com.saomc.saoui.screens.CoreGUI
 import com.saomc.saoui.screens.util.toIcon
@@ -22,37 +23,26 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
 
+class ProfileController(controller: IController, val player: EntityPlayer): Controller(Element(IconCore.NONE, controller), controller) {
 
-class ProfileElement(var player: EntityPlayer, val isMain: Boolean = true) : IconLabelElement(IconCore.PROFILE) {
-
+    override var function = {}
+    val isMain = player.equals(Minecraft().player)
     override val listed: Boolean
         get() = !isMain
-
-    var w = 165
-    var h = 256
+    var w = 170
+    var h = 240
     val size = 40
-
-    override var pos: Vec2d= if (isMain) Vec2d(-w - 25.0, -(h / 2.0) - 25) else super.pos
-
+    override var pos: Vec2d= if (isMain) Vec2d(-w - 20.0, -(h / 2.0) - 13) else super.pos
+    override var boundingBox: BoundingBox2D = if (isMain) BoundingBox2D(pos , pos) else BoundingBox2D(pos, pos + vec(w, h))
+    override var destination: Vec2d = if (isMain) Vec2d(-w - 20.0, -(h / 2.0) - 13) else super.destination
+    override var scroll: Int = 0
     val left = pos.x + w / 2 - 10
     val top = pos.y + h / 2
-
-    override var destination: Vec2d = if (isMain) Vec2d(-w - 20.0, -(h / 2.0) - 13) else super.destination
-
-    override val boundingBox: BoundingBox2D
-        get() = if (isMain) BoundingBox2D(pos , pos) else BoundingBox2D(pos, pos + vec(w, h))
-
-    override val childrenYOffset: Int
-        get() = 0
-    override val childrenYSeparator: Int
-        get() = 0
-
-
     private val rl = ResourceLocation(SAOCore.MODID, "textures/menu/parts/profilebg.png")
 
     init {
         Minecraft().player.armorInventoryList.forEachIndexed { index, itemStack ->
-            val icon = IconElement(itemStack.toIcon())
+            val icon = Element(itemStack.toIcon(), this)
             icon.pos = when (index){
                 0 -> Vec2d(left - w + 20, top + 50)
                 1 -> Vec2d(left - w + 20, top + 70)
@@ -68,7 +58,6 @@ class ProfileElement(var player: EntityPlayer, val isMain: Boolean = true) : Ico
     override fun drawBackground(mouse: Vec2d, partialTicks: Float) {
         if (opacity < 0.03 || scale == Vec2d.ZERO) return
         GLCore.pushMatrix()
-        GLCore.glBlend(true)
         GLCore.color(ColorUtil.DEFAULT_COLOR)
         GLCore.glBindTexture(rl)
 
@@ -84,13 +73,12 @@ class ProfileElement(var player: EntityPlayer, val isMain: Boolean = true) : Ico
         (0 until profile.size).forEach {
             GLCore.glString(profile[it], pos.xi + (w / 2) - 10 + (-GLCore.glStringWidth(profile[it]) / 2), (pos.y + 180 + (it * GLCore.glStringHeight())).toInt(), ColorUtil.DEFAULT_FONT_COLOR.rgba, centered = false)
         }
-        GLCore.glBlend(false)
         GLCore.popMatrix()
     }
 
     override fun draw(mouse: Vec2d, partialTicks: Float) {
-        if (canDraw)
-            drawCharacter(left, top)
+        if (opacity < 0.03 || scale == Vec2d.ZERO) return
+        drawCharacter(left, top)
     }
 
     private fun drawCharacter(x: Double, y: Double) {
@@ -110,6 +98,4 @@ class ProfileElement(var player: EntityPlayer, val isMain: Boolean = true) : Ico
     override fun move(delta: Vec2d) {
         CoreGUI.animator.removeAnimationsFor(this)
     }
-
 }
-

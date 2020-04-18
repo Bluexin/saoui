@@ -20,9 +20,10 @@ package com.saomc.saoui.api.elements
 import com.saomc.saoui.GLCore
 import com.saomc.saoui.api.screens.IIcon
 import com.saomc.saoui.config.OptionCore
+import com.saomc.saoui.elements.DrawType
 import com.saomc.saoui.resources.StringNames
-import com.saomc.saoui.screens.ItemIcon
 import com.saomc.saoui.screens.MouseButton
+import com.saomc.saoui.screens.util.ItemIcon
 import com.saomc.saoui.util.ColorIntent
 import com.saomc.saoui.util.ColorUtil
 import com.teamwizardry.librarianlib.features.helpers.vec
@@ -36,6 +37,7 @@ import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.util.ResourceLocation
 import net.minecraftforge.fml.client.config.GuiUtils
+import java.util.*
 import kotlin.math.max
 import kotlin.math.min
 
@@ -44,12 +46,35 @@ import kotlin.math.min
  *
  * @author Bluexin
  */
-open class IconElement(val icon: IIcon, override var pos: Vec2d = Vec2d.ZERO, override var destination: Vec2d = pos, var width: Int = 19, var height: Int = 19, open val description: MutableList<String> = mutableListOf()) : NeoParent() {
+open class IconElement(val icon: IIcon, override var pos: Vec2d = Vec2d.ZERO, override var destination: Vec2d = pos, var width: Int = 19, var height: Int = 19, open val description: MutableList<String> = mutableListOf()) : NeoParent {
 
     val RES_ITEM_GLINT = ResourceLocation("textures/misc/enchanted_item_glint.png")
     var onClickBody: (Vec2d, MouseButton) -> Boolean = { _, _ -> true }
         private set
     private var onClickOutBody: (Vec2d, MouseButton) -> Unit = { _, _ -> Unit }
+
+    override val elements: MutableList<NeoElement> = mutableListOf()
+
+    override var scroll = -3
+        set(value) {
+            val c = validElementsSequence.count()
+            if (c > 6) field = (value /*+ c*/) % (c)
+//            SAOCore.LOGGER.info("Result: $field (tried $value)")
+        }
+
+    val transparency: Float
+        get() {
+            var transparency = if (isFocus())
+                opacity
+            else
+                opacity / 2
+            if (transparency < 0f)
+                transparency = 0f
+            return transparency
+        }
+
+    val canDraw: Boolean
+        get() = opacity >= 0.03 || scale != Vec2d.ZERO
 
     val bgColorScheme = mutableMapOf(
             ColorIntent.NORMAL to ColorUtil.DEFAULT_COLOR.rgba,
@@ -84,13 +109,8 @@ open class IconElement(val icon: IIcon, override var pos: Vec2d = Vec2d.ZERO, ov
         }
     }
 
-    override fun draw(mouse: Vec2d, partialTicks: Float) {
-        if (opacity < 0.03 || scale == Vec2d.ZERO) return
-        var transparency = if (isFocus())
-                opacity
-            else
-                opacity / 2
-        if (transparency < 0f) transparency = 0f
+    override fun drawBackground(mouse: Vec2d, partialTicks: Float) {
+        if (!canDraw) return
         GLCore.pushMatrix()
         if (scale != Vec2d.ONE) GLCore.glScalef(scale.xf, scale.yf, 1f)
         val mouseCheck = mouse in this || selected
@@ -100,6 +120,16 @@ open class IconElement(val icon: IIcon, override var pos: Vec2d = Vec2d.ZERO, ov
         GLCore.glTexturedRectV2(pos.x, pos.y, width = width.toDouble(), height = height.toDouble(), srcX = 1.0, srcY = 26.0)
         if (mouseCheck && OptionCore.MOUSE_OVER_EFFECT.isEnabled)
             mouseOverEffect()
+        GLCore.glBlend(false)
+        GLCore.color(1f, 1f, 1f, 1f)
+        drawChildren(mouse, partialTicks, DrawType.BACKGROUND)
+        GLCore.popMatrix()
+    }
+
+    override fun draw(mouse: Vec2d, partialTicks: Float) {
+        if (!canDraw) return
+        GLCore.pushMatrix()
+        GLCore.glBlend(true)
         GLCore.color(ColorUtil.multiplyAlpha(getTextColor(mouse), transparency))
         if (icon.rl != null) {
             GLCore.glBindTexture(icon.rl!!)
@@ -109,25 +139,23 @@ open class IconElement(val icon: IIcon, override var pos: Vec2d = Vec2d.ZERO, ov
             icon.glDraw(pos + vec(1, 1), 5f)
 
         GLCore.glBlend(false)
-        /*GlStateManager.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_LINE)
-        GLCore.glBindTexture(StringNames.gui)
-        val bb = boundingBox
-        GLCore.color(0xFF0000FF.toInt())
-        GLCore.glTexturedRectV2(pos = Vec3d(bb.pos.x, bb.pos.y, 0.0), size = bb.size, srcPos = vec(0, 61), srcSize = vec(4, 4))
-        GlStateManager.glPolygonMode(GL11.GL_FRONT_AND_BACK, GL11.GL_FILL)*/
-
-        drawChildren(mouse, partialTicks)
+        GLCore.color(1f, 1f, 1f, 1f)
+        drawChildren(mouse, partialTicks, DrawType.DRAW)
         GLCore.popMatrix()
+    }
+
+    override fun drawForeground(mouse: Vec2d, partialTicks: Float) {
+        if (!canDraw) return
         if (mouse in this) {
             drawHoveringText(mouse)
             GLCore.lighting(false)
         }
+        drawChildren(mouse, partialTicks, DrawType.FOREGROUND)
     }
 
     fun mouseOverEffect(){
-        //TODO Fix player render model
         GLCore.glBindTexture(RES_ITEM_GLINT)
-        GLCore.depth(true)
+        //GLCore.depth(true)
         GlStateManager.depthMask(false)
         GlStateManager.depthFunc(514)
         GLCore.glBlend(true)
@@ -151,11 +179,11 @@ open class IconElement(val icon: IIcon, override var pos: Vec2d = Vec2d.ZERO, ov
         GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA)
         GlStateManager.depthFunc(515)
         GlStateManager.depthMask(true)
-        GLCore.depth(false)
+        //GLCore.depth(false)
     }
 
     open fun drawHoveringText(mouse: Vec2d) {
-        GuiUtils.drawHoveringText(description, mouse.xi, mouse.yi, Minecraft().displayWidth, Minecraft().displayHeight, -1, GLCore.glFont)
+        GuiUtils.drawHoveringText(description, mouse.xi, mouse.yi, Minecraft().displayWidth, Minecraft().displayHeight, width - 20, GLCore.glFont)
         /*GuiUtils.drawHoveringText(description, mouse.xi, mouse.yi, width, height, -1, GLCore.glFont)
         if (description.isNotEmpty()) {
             GlStateManager.disableRescaleNormal()
@@ -206,7 +234,7 @@ open class IconElement(val icon: IIcon, override var pos: Vec2d = Vec2d.ZERO, ov
         }*/
     }
 
-    protected open fun drawChildren(mouse: Vec2d, partialTicks: Float) {
+    fun drawChildren(mouse: Vec2d, partialTicks: Float, drawType: DrawType) {
         if (visibleElementsSequence.count() > 0) {
             val c = validElementsSequence.take(7).count()
             val centering = ((c + c % 2 - 2) * childrenYSeparator) / 2.0
@@ -214,14 +242,22 @@ open class IconElement(val icon: IIcon, override var pos: Vec2d = Vec2d.ZERO, ov
             var nmouse = mouse - pos - vec(childrenXOffset, childrenYOffset - centering)
             childrenOrderedForRendering().forEachIndexed { i, it ->
                 if (c == 7 && (i == 0 || i == 6)) it.opacity /= 2
-                it.draw(nmouse, partialTicks)
+                when (drawType){
+                    DrawType.BACKGROUND -> it.drawBackground(nmouse, partialTicks)
+                    DrawType.DRAW -> it.draw(nmouse, partialTicks)
+                    DrawType.FOREGROUND -> it.drawForeground(nmouse, partialTicks)
+                }
                 GLCore.translate(childrenXSeparator.toDouble(), childrenYSeparator.toDouble(), 0.0)
                 nmouse -= vec(childrenXSeparator, childrenYSeparator)
                 if (c == 7 && (i == 0 || i == 6)) it.opacity *= 2
             }
             nmouse = mouse - pos - vec(childrenXOffset, childrenYOffset - centering)
             otherElementsSequence.forEach {
-                it.draw(nmouse, partialTicks)
+                when (drawType){
+                    DrawType.BACKGROUND -> it.drawBackground(nmouse, partialTicks)
+                    DrawType.DRAW -> it.draw(nmouse, partialTicks)
+                    DrawType.FOREGROUND -> it.drawForeground(nmouse, partialTicks)
+                }
             }
         }
     }
@@ -237,7 +273,7 @@ open class IconElement(val icon: IIcon, override var pos: Vec2d = Vec2d.ZERO, ov
         return if (disabled) fontColorScheme[ColorIntent.DISABLED]
                 ?: ColorUtil.DISABLED_FONT_COLOR.rgba else if (highlighted || mouse in this || selected) {
             fontColorScheme[ColorIntent.HOVERED] ?: ColorUtil.HOVER_FONT_COLOR.rgba
-        } else fontColorScheme[ColorIntent.NORMAL] ?: ColorUtil.DEFAULT_FONT_COLOR.rgba
+        } else if (transparency <= 0.5f) {fontColorScheme[ColorIntent.DISABLED] ?: ColorUtil.DISABLED_FONT_COLOR.rgba} else fontColorScheme[ColorIntent.NORMAL] ?: ColorUtil.DEFAULT_FONT_COLOR.rgba
     }
 
     override fun mouseClicked(pos: Vec2d, mouseButton: MouseButton): Boolean {
@@ -292,6 +328,8 @@ open class IconElement(val icon: IIcon, override var pos: Vec2d = Vec2d.ZERO, ov
 
     override val childrenXOffset = 25
     override val childrenYSeparator = 20
+    override var parent: INeoParent? = null
+    override val futureOperations: MutableList<NeoParent.() -> Unit> = LinkedList()
 
     open fun onClick(body: (Vec2d, MouseButton) -> Boolean): NeoElement {
         onClickBody = body
@@ -306,6 +344,8 @@ open class IconElement(val icon: IIcon, override var pos: Vec2d = Vec2d.ZERO, ov
     override var visible = true
 
     override var highlighted = false
+
+    override var isOpen: Boolean = false
 
     override var selected = false
 

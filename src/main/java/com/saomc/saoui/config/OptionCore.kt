@@ -49,7 +49,7 @@ enum class OptionCore(
     //Main Categories
     UI("optCatUI", value = false, isCategory = true, category = null, restricted = false),
     THEME("optTheme", value = false, isCategory = true, category = null, restricted = false),
-    ENTITIES("optTheme", value = false, isCategory = true, category = null, restricted = false),
+    ENTITIES("optEntities", value = false, isCategory = true, category = null, restricted = false),
     HEALTH_OPTIONS("optCatHealth", value = false, isCategory = true, category = null, restricted = false),
     HOTBAR_OPTIONS("optCatHotBar", value = false, isCategory = true, category = null, restricted = false),
     EFFECTS("optCatEffects", value = false, isCategory = true, category = null, restricted = false),
@@ -75,7 +75,7 @@ enum class OptionCore(
     SMOOTH_HEALTH("optionSmoothHealth", value = true, isCategory = false, category = HEALTH_OPTIONS, restricted = false),
     REMOVE_HPXP("optionLightHud", value = false, isCategory = false, category = HEALTH_OPTIONS, restricted = false),
     ALT_ABSORB_POS("optionAltAbsorbPos", value = false, isCategory = false, category = HEALTH_OPTIONS, restricted = false),
-    ENEMY_ONSCREEN_HEALTH("optionEnemyOnscreenHealth", value = false, isCategory = false, category = HEALTH_OPTIONS, restricted = false),
+    ENEMY_ONSCREEN_HEALTH("optionEnemyOnscreenHealth", value = true, isCategory = false, category = HEALTH_OPTIONS, restricted = false),
     HIDE_OFFLINE_PARTY("optionHideOfflineParty", value = false, isCategory = false, category = HEALTH_OPTIONS, restricted = false),
     // Health Bars
     INNOCENT_HEALTH("optionInnocentHealthBars", value = true, isCategory = false, category = ENTITY_HEALTH_BARS, restricted = false),
@@ -134,6 +134,7 @@ enum class OptionCore(
         MinecraftForge.EVENT_BUS.post(OptionTriggerEvent(this))
         return this.value
     }
+
 
     /**
      * @return Returns true if the Option is selected/enabled

@@ -29,7 +29,6 @@ import com.saomc.saoui.api.elements.getRequirementDesc
 import com.saomc.saoui.api.events.ProfileInfoEvent
 import com.saomc.saoui.play
 import com.saomc.saoui.screens.CoreGUI
-import com.saomc.saoui.screens.ItemIcon
 import com.saomc.saoui.screens.unaryPlus
 import com.saomc.saoui.util.*
 import com.teamwizardry.librarianlib.features.animator.Easing
@@ -37,6 +36,7 @@ import com.teamwizardry.librarianlib.features.helpers.vec
 import com.teamwizardry.librarianlib.features.math.Vec2d
 import net.minecraft.advancements.Advancement
 import net.minecraft.client.Minecraft
+import net.minecraft.inventory.Slot
 import net.minecraft.item.crafting.IRecipe
 import net.minecraft.util.ResourceLocation
 import net.minecraftforge.common.MinecraftForge
@@ -252,30 +252,18 @@ class PopupYesNo(title: String, text: List<String>, footer: String) : Popup<Popu
 }
 
 class PopupItem(title: String, text: List<String>, footer: String) : Popup<PopupItem.Result>(title, text, footer, mapOf(
-        IconElement(IconCore.EQUIPMENT)
+        IconElement(IconCore.EQUIPMENT, description = mutableListOf("Equip"))
                 .setBgColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
                 .setBgColor(ColorIntent.HOVERED, ColorUtil.HOVER_COLOR)
                 .setFontColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
                 .setFontColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
                 to Result.EQUIP,
-        IconElement(IconCore.CRAFTING)
-                .setBgColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
-                .setBgColor(ColorIntent.HOVERED, ColorUtil.HOVER_COLOR)
-                .setFontColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
-                .setFontColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
-                to Result.USE,
-        IconElement(IconCore.CANCEL)
+        IconElement(IconCore.CANCEL, description = mutableListOf("Drop"))
                 .setBgColor(ColorIntent.NORMAL, ColorUtil.CANCEL_COLOR)
                 .setBgColor(ColorIntent.HOVERED, ColorUtil.CANCEL_COLOR_LIGHT)
                 .setFontColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
                 .setFontColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
-                to Result.DROP,
-        IconElement(IconCore.PARTY)
-                .setBgColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
-                .setBgColor(ColorIntent.HOVERED, ColorUtil.HOVER_COLOR)
-                .setFontColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
-                .setFontColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
-                to Result.TRADE
+                to Result.DROP
 )) {
 
     constructor(title: String, text: String, footer: String) : this(title, listOf(text), footer)
@@ -286,10 +274,26 @@ class PopupItem(title: String, text: List<String>, footer: String) : Popup<Popup
 
     enum class Result {
         EQUIP,
-        USE,
         DROP,
-        TRADE,
         CANCEL
+    }
+}
+
+class PopupSlotSelection(title: String, text: List<String>, footer: String, slots: Set<Slot>) : Popup<Int>(title, text, footer, getButtons(slots)) {
+
+    init {
+        result = -1
+    }
+
+    companion object{
+
+        fun getButtons(slots: Set<Slot>): Map<IconElement, Int>{
+            val map = mutableMapOf<IconElement, Int>()
+            slots.forEach {
+                map[IconElement(it.stack.toIcon())] = it.slotNumber
+            }
+            return map
+        }
     }
 }
 
@@ -352,8 +356,9 @@ class PopupPlayerInspect(player: PlayerInfo, elements: List<IconElement>): Popup
 class PopupCraft(val recipe: IRecipe): Popup<Int>(recipe.recipeOutput.displayName, recipe.recipeOutput.itemDesc(), "", getButtons()){
     private val countPerCraft = recipe.recipeOutput.count
     override var result: Int = countPerCraft
-    override var footer = ""
-            get() = "Craft $result ${recipe.recipeOutput.displayName}"
+    override var footer
+        get() = "Craft $result ${recipe.recipeOutput.displayName}"
+        set(_) {}
 
 
     override fun initGui() {
@@ -425,10 +430,6 @@ class PopupCraft(val recipe: IRecipe): Popup<Int>(recipe.recipeOutput.displayNam
         }
         SoundCore.MESSAGE.play()
 
-    }
-
-    override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
-        super.drawScreen(mouseX, mouseY, partialTicks)
     }
 
     companion object{

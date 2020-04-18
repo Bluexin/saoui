@@ -60,7 +60,7 @@ enum class BaseFilters(val filter: (ItemStack, Boolean) -> Boolean) : IItemFilte
     },
 
     HELMET({ stack, _ ->
-        mc.player.inventoryContainer.inventorySlots.first { it.slotIndex == 39 }.isItemValid(stack)
+        mc.player.inventoryContainer.inventorySlots.first { it.slotNumber == 5 }.isItemValid(stack)
     }) {
         override val icon: IIcon
             get() = Items.CHAINMAIL_HELMET.toIcon()
@@ -72,12 +72,12 @@ enum class BaseFilters(val filter: (ItemStack, Boolean) -> Boolean) : IItemFilte
             get() = ARMOR
 
         override fun getValidSlots(): Set<Slot> {
-            return IItemFilter.getPlayerSlots(mc.player.inventory, 39)
+            return IItemFilter.getPlayerSlots(5)
         }
     },
 
     CHESTPLATES({ stack, _ ->
-        mc.player.inventoryContainer.inventorySlots.first { it.slotIndex == 38 }.isItemValid(stack)
+        mc.player.openContainer.inventorySlots.first { it.slotNumber == 6 }.isItemValid(stack)
     }) {
         override val icon: IIcon
             get() = Items.CHAINMAIL_CHESTPLATE.toIcon()
@@ -89,12 +89,12 @@ enum class BaseFilters(val filter: (ItemStack, Boolean) -> Boolean) : IItemFilte
             get() = ARMOR
 
         override fun getValidSlots(): Set<Slot> {
-            return IItemFilter.getPlayerSlots(mc.player.inventory, 38)
+            return IItemFilter.getPlayerSlots(6)
         }
     },
 
     LEGGINS({ stack, _ ->
-        mc.player.inventoryContainer.inventorySlots.first { it.slotIndex == 37 }.isItemValid(stack)
+        mc.player.inventoryContainer.inventorySlots.first { it.slotNumber == 7 }.isItemValid(stack)
     }) {
         override val icon: IIcon
             get() = Items.CHAINMAIL_LEGGINGS.toIcon()
@@ -106,12 +106,12 @@ enum class BaseFilters(val filter: (ItemStack, Boolean) -> Boolean) : IItemFilte
             get() = ARMOR
 
         override fun getValidSlots(): Set<Slot> {
-            return IItemFilter.getPlayerSlots(Minecraft().player.inventory, 37)
+            return IItemFilter.getPlayerSlots(7)
         }
     },
 
     BOOTS({ stack, _ ->
-        mc.player.inventoryContainer.inventorySlots.first { it.slotIndex == 36 }.isItemValid(stack)
+        mc.player.inventoryContainer.inventorySlots.first { it.slotNumber == 8 }.isItemValid(stack)
     }) {
         override val icon: IIcon
             get() = Items.CHAINMAIL_BOOTS.toIcon()
@@ -123,7 +123,7 @@ enum class BaseFilters(val filter: (ItemStack, Boolean) -> Boolean) : IItemFilte
             get() = ARMOR
 
         override fun getValidSlots(): Set<Slot> {
-            return IItemFilter.getPlayerSlots(mc.player.inventory, 36)
+            return IItemFilter.getPlayerSlots(8)
         }
     },
 
@@ -138,6 +138,10 @@ enum class BaseFilters(val filter: (ItemStack, Boolean) -> Boolean) : IItemFilte
 
         override val category: IItemFilter
             get() = ARMOR
+
+        override fun getValidSlots(): Set<Slot> {
+            return IItemFilter.getPlayerSlots(45)
+        }
     },
 
 

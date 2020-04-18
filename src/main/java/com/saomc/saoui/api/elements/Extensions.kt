@@ -72,7 +72,9 @@ class CategoryButton(val delegate: IconElement, parent: INeoParent? = null, priv
     override fun onClickOut(body: (Vec2d, MouseButton) -> Unit) = delegate.onClickOut(body)
     override fun hide() = delegate.hide()
     override fun show() = delegate.show()
+    override fun drawBackground(mouse: Vec2d, partialTicks: Float) = delegate.drawBackground(mouse, partialTicks)
     override fun draw(mouse: Vec2d, partialTicks: Float) = delegate.draw(mouse, partialTicks)
+    override fun drawForeground(mouse: Vec2d, partialTicks: Float) = delegate.drawForeground(mouse, partialTicks)
     override fun contains(pos: Vec2d) = delegate.contains(pos)
     override fun update() {
         super.update()
@@ -328,7 +330,7 @@ class CategoryButton(val delegate: IconElement, parent: INeoParent? = null, priv
 }
 
 fun INeoParent.optionButton(option: OptionCore): IconLabelElement {
-    val but = object : IconLabelElement(IconCore.OPTION, option.displayName) {
+    val but = object : IconLabelElement(IconCore.OPTION, option.displayName, description = option.description.toMutableList()) {
         override var highlighted: Boolean
             get() = option.isEnabled
             set(value) = if (value) option.enable() else option.disable()

@@ -25,7 +25,6 @@ import com.teamwizardry.librarianlib.features.helpers.vec
 import com.teamwizardry.librarianlib.features.kotlin.plus
 import com.teamwizardry.librarianlib.features.math.BoundingBox2D
 import com.teamwizardry.librarianlib.features.math.Vec2d
-import java.util.*
 
 /**
  * Part of saoui by Bluexin, released under GNU GPLv3.
@@ -85,7 +84,9 @@ interface INeoParent {
 }
 
 interface NeoElement : INeoParent {
+    fun drawBackground(mouse: Vec2d, partialTicks: Float)
     fun draw(mouse: Vec2d, partialTicks: Float)
+    fun drawForeground(mouse: Vec2d, partialTicks: Float)
 
     val boundingBox: BoundingBox2D
 
@@ -112,8 +113,9 @@ interface NeoElement : INeoParent {
         get() = false
         set(_) = Unit
 
-    val highlighted
+    var highlighted
         get() = false
+        set(_) = Unit
 
     val disabled
         get() = false
@@ -131,28 +133,25 @@ interface NeoElement : INeoParent {
     fun update() = Unit
 }
 
-abstract class NeoParent : NeoElement {
+interface NeoParent : NeoElement {
 
-    override var isOpen: Boolean = false
+    override var isOpen: Boolean
 
-    override var selected: Boolean = false
+    override var selected: Boolean
 
-    override var scroll = -3
-        set(value) {
-            val c = validElementsSequence.count()
-            if (c > 6) field = (value /*+ c*/) % (c)
-//            SAOCore.LOGGER.info("Result: $field (tried $value)")
-        }
+    open val elements: MutableList<NeoElement>
 
-    open val elements = mutableListOf<NeoElement>()
+    open val elementsSequence
+        get() =  elements.asSequence().filter(NeoElement::listed)
 
-    open val elementsSequence by lazy { elements.asSequence().filter(NeoElement::listed) }
+    open val otherElementsSequence
+        get() =  elements.asSequence().filter { !it.listed }
 
-    open val otherElementsSequence by lazy { elements.asSequence().filter { !it.listed }  }
+    open val validElementsSequence
+        get() =  elementsSequence.filter(NeoElement::valid)
 
-    open val validElementsSequence by lazy { elementsSequence.filter(NeoElement::valid) }
-
-    open val visibleElementsSequence by lazy { validElementsSequence.filter(NeoElement::visible) }
+    open val visibleElementsSequence
+        get() =  validElementsSequence.filter(NeoElement::visible)
 
     override fun update() {
         super.update()
@@ -196,14 +195,18 @@ abstract class NeoParent : NeoElement {
                 }
             }*/
 
-    open val childrenXOffset = 0
-    open val childrenYOffset = 0
-    open val childrenXSeparator = 0
-    open val childrenYSeparator = 0
+    open val childrenXOffset
+        get() = 0
+    open val childrenYOffset
+        get() = 0
+    open val childrenXSeparator
+        get() = 0
+    open val childrenYSeparator
+        get() = 0
 
-    override var parent: INeoParent? = null
+    override var parent: INeoParent?
 
-    private val futureOperations: MutableList<NeoParent.() -> Unit> = LinkedList()
+    val futureOperations: MutableList<NeoParent.() -> Unit>
 
     fun performLater(block: NeoParent.() -> Unit) {
         futureOperations += block

@@ -20,7 +20,6 @@ package com.saomc.saoui.api.items
 import com.saomc.saoui.api.screens.IIcon
 import com.saomc.saoui.util.IconCore
 import com.teamwizardry.librarianlib.features.kotlin.Minecraft
-import net.minecraft.inventory.IInventory
 import net.minecraft.inventory.Slot
 import net.minecraft.item.ItemStack
 
@@ -69,20 +68,20 @@ interface IItemFilter : (ItemStack, Boolean) -> Boolean, (ItemStack) -> Boolean 
     fun getValidSlots(): Set<Slot> {return hotbarSlots()}
 
     companion object {
-        fun getPlayerSlots(inventory: IInventory, slotID: Int): Set<Slot>{
-            return Minecraft().player.inventoryContainer.inventorySlots
-                    .filter { slot -> slot.inventory == inventory && slot.slotIndex == slotID }
+        fun getPlayerSlots(slotID: Int): Set<Slot>{
+            return Minecraft().player.openContainer.inventorySlots
+                    .filter { it.slotNumber == slotID }
                     .toSet()
         }
 
-        fun getPlayerSlots(inventory: IInventory, slotID: IntRange): Set<Slot>{
-            return Minecraft().player.inventoryContainer.inventorySlots
-                    .filter { slot -> slot.inventory == inventory && slotID.contains(slot.slotIndex) }
+        fun getPlayerSlots(slotID: IntRange): Set<Slot>{
+            return Minecraft().player.openContainer.inventorySlots
+                    .filter { slotID.contains(it.slotNumber) }
                     .toSet()
         }
 
         fun hotbarSlots(): Set<Slot>{
-            return getPlayerSlots(Minecraft().player.inventory, 0..8)
+            return getPlayerSlots(36..44)
         }
 
     }
