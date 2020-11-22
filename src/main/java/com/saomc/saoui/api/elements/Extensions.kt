@@ -86,7 +86,7 @@ class CategoryButton(val delegate: IconElement, parent: INeoParent? = null, priv
         delegate.parent = this
 
         delegate.onClick { _, _ ->
-            if (elements.isNotEmpty() && !selected) {
+            if (elements.isNotEmpty() && !selected && !disabled) {
                 open()
                 SoundCore.MENU_POPUP.play()
             }

@@ -58,7 +58,7 @@ open class IconLabelElement(icon: IIcon, open var label: String = "", pos: Vec2d
         GLCore.color(ColorUtil.multiplyAlpha(getColor(mouse), transparency))
         GLCore.glBindTexture(StringNames.slot)
         GLCore.glTexturedRectV2(pos.x, pos.y, width = width.toDouble(), height = height.toDouble(), srcX = 0.0, srcY = 40.0, srcWidth = 84.0, srcHeight = 18.0)
-        if (mouseCheck && OptionCore.MOUSE_OVER_EFFECT.isEnabled)
+        if (mouseCheck && OptionCore.MOUSE_OVER_EFFECT.isEnabled && !disabled)
             mouseOverEffect()
         GLCore.glBlend(false)
         GLCore.depth(false)

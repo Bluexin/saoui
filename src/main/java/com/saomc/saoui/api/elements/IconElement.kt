@@ -128,9 +128,9 @@ open class IconElement(val icon: IIcon, override var pos: Vec2d = Vec2d.ZERO, ov
         GLCore.color(ColorUtil.multiplyAlpha(getColor(mouse), transparency))
         GLCore.glBindTexture(StringNames.gui)
         GLCore.glTexturedRectV2(pos.x, pos.y, width = width.toDouble(), height = height.toDouble(), srcX = 1.0, srcY = 26.0)
-        if (mouseCheck && OptionCore.MOUSE_OVER_EFFECT.isEnabled)
-            mouseOverEffect()
         GLCore.glBlend(false)
+        if (mouseCheck && OptionCore.MOUSE_OVER_EFFECT.isEnabled && !disabled)
+            mouseOverEffect()
         GLCore.color(1f, 1f, 1f, 1f)
         drawChildren(mouse, partialTicks, DrawType.BACKGROUND)
         GLCore.popMatrix()
@@ -165,7 +165,7 @@ open class IconElement(val icon: IIcon, override var pos: Vec2d = Vec2d.ZERO, ov
 
     fun mouseOverEffect(){
         GLCore.glBindTexture(RES_ITEM_GLINT)
-        //GLCore.depth(true)
+        GLCore.depth(true)
         GlStateManager.depthMask(false)
         GlStateManager.depthFunc(514)
         GLCore.glBlend(true)
@@ -186,9 +186,9 @@ open class IconElement(val icon: IIcon, override var pos: Vec2d = Vec2d.ZERO, ov
         GLCore.glTexturedRectV2(pos.x, pos.y, width = width.toDouble(), height = height.toDouble())
         GLCore.popMatrix()
         GlStateManager.matrixMode(5888)
-        GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA)
+        GLCore.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA.factor, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA.factor)
         GlStateManager.depthFunc(515)
-        GlStateManager.depthMask(true)
+        GLCore.depthMask(true)
         //GLCore.depth(false)
     }
 

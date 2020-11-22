@@ -136,6 +136,7 @@ class IngameMenu(elements: MutableList<NeoElement> = mutableListOf()) : CoreGUI<
                 Companion.tlCategory(IconCore.SOCIAL, index++) {
                     category(IconCore.GUILD, format("sao.element.guild")) {
                         this.delegate.disabled = !SAOCore.isSAOMCLibServerSide
+                        disabled = true
                     }
                     partyMenu()
                     friendMenu()
@@ -148,6 +149,7 @@ class IngameMenu(elements: MutableList<NeoElement> = mutableListOf()) : CoreGUI<
                         }
                     }
                     recipes()
+                    disabled = true
                 },
                 Companion.tlCategory(IconCore.SETTINGS, index) {
                     category(IconCore.OPTION, format("sao.element.options")) {
