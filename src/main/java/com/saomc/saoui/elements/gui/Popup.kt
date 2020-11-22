@@ -15,21 +15,21 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.saomc.saoui.screens.util
+package com.saomc.saoui.elements.gui
 
 import be.bluexin.saomclib.party.PlayerInfo
 import com.saomc.saoui.GLCore
 import com.saomc.saoui.GLCore.glTexturedRectV2
 import com.saomc.saoui.SAOCore
 import com.saomc.saoui.SoundCore
-import com.saomc.saoui.api.elements.IconElement
-import com.saomc.saoui.api.elements.IconTextElement
 import com.saomc.saoui.api.elements.basicAnimation
 import com.saomc.saoui.api.elements.getRequirementDesc
 import com.saomc.saoui.api.events.ProfileInfoEvent
-import com.saomc.saoui.elements.gui.unaryPlus
+import com.saomc.saoui.elements.IconElement
+import com.saomc.saoui.elements.IconTextElement
 import com.saomc.saoui.play
-import com.saomc.saoui.screens.CoreGUI
+import com.saomc.saoui.screens.util.itemDesc
+import com.saomc.saoui.screens.util.toIcon
 import com.saomc.saoui.util.*
 import com.teamwizardry.librarianlib.features.animator.Easing
 import com.teamwizardry.librarianlib.features.helpers.vec
@@ -43,7 +43,7 @@ import net.minecraftforge.common.MinecraftForge
 import kotlin.math.max
 import kotlin.math.min
 
-open class Popup<T : Any>(open var title: String, open var text: List<String>, open var footer: String, internal val buttons: Map<IconElement, T>) : CoreGUI<T>(Vec2d.ZERO) {
+open class Popup<T : Any>(open var title: String, open var text: List<String>, open var footer: String, internal val buttons: Map<IconElement, T>) : CoreGUI<T>() {
 
     private val rl = ResourceLocation(SAOCore.MODID, "textures/menu/parts/alertbg.png")
     internal /*private*/ var expansion = 0f
@@ -64,7 +64,7 @@ open class Popup<T : Any>(open var title: String, open var text: List<String>, o
         elements.clear()
 
         pos = vec(width / 2.0, height / 2.0)
-        destination = pos
+        //destination = pos
 
         val childrenXSeparator = w / buttons.size
         val childrenXOffset = (-w / 2) + (childrenXSeparator / 2 - 9)
@@ -184,7 +184,7 @@ open class Popup<T : Any>(open var title: String, open var text: List<String>, o
     }
 
     override fun mouseClickMove(mouseX: Int, mouseY: Int, clickedMouseButton: Int, timeSinceLastClick: Long) {
-        if (!mouseSet){
+        if (!mouseSet) {
             previousMouse = Vec2d(mouseX.toDouble(), mouseY.toDouble())
             mouseSet = true
         }
@@ -222,7 +222,6 @@ open class Popup<T : Any>(open var title: String, open var text: List<String>, o
 
         SoundCore.DIALOG_CLOSE.play()
     }
-
 }
 
 class PopupYesNo(title: String, text: List<String>, footer: String) : Popup<PopupYesNo.Result>(title, text, footer, mapOf(
@@ -306,9 +305,9 @@ class PopupSlotSelection(title: String, text: List<String>, footer: String, slot
         result = -1
     }
 
-    companion object{
+    companion object {
 
-        fun getButtons(slots: Set<Slot>): Map<IconElement, Int>{
+        fun getButtons(slots: Set<Slot>): Map<IconElement, Int> {
             val map = mutableMapOf<IconElement, Int>()
             slots.forEach {
                 map[IconElement(it.stack.toIcon())] = it.slotNumber
@@ -347,10 +346,10 @@ class PopupHotbarSelection(title: String, text: List<String>, footer: String) : 
 
     companion object {
 
-        fun getHotbarList():Map<IconElement, Result>{
+        fun getHotbarList(): Map<IconElement, Result> {
             val map = linkedMapOf<IconElement, Result>()
             val inventory = Minecraft.getMinecraft().player.inventoryContainer
-            for (i in 36..44){
+            for (i in 36..44) {
                 val stack = inventory.getSlot(i).stack
                 map[IconElement(stack.toIcon())
                         .setBgColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
@@ -363,18 +362,18 @@ class PopupHotbarSelection(title: String, text: List<String>, footer: String) : 
     }
 }
 
-class PopupPlayerInspect(player: PlayerInfo, elements: List<IconElement>): Popup<Int>(player.username, player.player?.let{
+class PopupPlayerInspect(player: PlayerInfo, elements: List<IconElement>) : Popup<Int>(player.username, player.player?.let {
     val playerInfo = ProfileInfoEvent(it, PlayerStats.instance().stats.getStatsString(it))
     MinecraftForge.EVENT_BUS.post(playerInfo)
     playerInfo.info
-}?: listOf("Player data unknown"), "", elements.associateBy({it}, {elements.indexOf(it)})){
+} ?: listOf("Player data unknown"), "", elements.associateBy({ it }, { elements.indexOf(it) })) {
 
     init {
         result = -1
     }
 }
 
-class PopupCraft(val recipe: IRecipe): Popup<Int>(recipe.recipeOutput.displayName, recipe.recipeOutput.itemDesc(), "", getButtons()){
+class PopupCraft(val recipe: IRecipe) : Popup<Int>(recipe.recipeOutput.displayName, recipe.recipeOutput.itemDesc(), "", getButtons()) {
     private val countPerCraft = recipe.recipeOutput.count
     override var result: Int = countPerCraft
     override var footer
@@ -388,7 +387,7 @@ class PopupCraft(val recipe: IRecipe): Popup<Int>(recipe.recipeOutput.displayNam
         elements.clear()
 
         pos = vec(width / 2.0, height / 2.0)
-        destination = pos
+        //destination = pos
 
         val childrenXSeparator = w / buttons.size
         val childrenXOffset = (-w / 2) + (childrenXSeparator / 2 - 9)
@@ -398,11 +397,10 @@ class PopupCraft(val recipe: IRecipe): Popup<Int>(recipe.recipeOutput.displayNam
             val button = entry.key
             val result = entry.value
             button.onClick { _, _ ->
-                if (result == 0){
+                if (result == 0) {
                     CraftingUtil.craft(recipe, this.result / countPerCraft)
                     onGuiClosed()
-                }
-                else {
+                } else {
                     //Add result to current stack count
                     this.result += (countPerCraft * result)
                     //If less than one, make it one
@@ -453,14 +451,14 @@ class PopupCraft(val recipe: IRecipe): Popup<Int>(recipe.recipeOutput.displayNam
 
     }
 
-    companion object{
-        fun getButtons(): Map<IconElement, Int>{
+    companion object {
+        fun getButtons(): Map<IconElement, Int> {
             return mapOf(
-                    Pair(IconTextElement("-10", mutableListOf("Decrease by 10")), -10),
-                    Pair(IconTextElement("-1", mutableListOf("Decrease by 1")), -1),
+                    Pair(IconTextElement("-10", description = mutableListOf("Decrease by 10")), -10),
+                    Pair(IconTextElement("-1", description = mutableListOf("Decrease by 1")), -1),
                     Pair(IconElement(IconCore.CONFIRM, description = mutableListOf("Craft")), 0),
-                    Pair(IconTextElement("1", mutableListOf("Increase by 1")), 1),
-                    Pair(IconTextElement("10", mutableListOf("Increase by 10")), 10)
+                    Pair(IconTextElement("1", description = mutableListOf("Increase by 1")), 1),
+                    Pair(IconTextElement("10", description = mutableListOf("Increase by 10")), 10)
             )
         }
     }
@@ -468,12 +466,12 @@ class PopupCraft(val recipe: IRecipe): Popup<Int>(recipe.recipeOutput.displayNam
 
 }
 
-class PopupAdvancement(advancement: Advancement): Popup<PopupAdvancement.Result>(advancement.displayText.unformattedText, advancement.getRequirementDesc(), "", mapOf(
+class PopupAdvancement(advancement: Advancement) : Popup<PopupAdvancement.Result>(advancement.displayText.unformattedText, advancement.getRequirementDesc(), "", mapOf(
         IconTextElement("<--", description = mutableListOf("Previous"))
                 to Result.PREVIOUS,
         IconTextElement("-->", description = mutableListOf("Next"))
                 to Result.NEXT
-)){
+)) {
 
     init {
         result = Result.NONE

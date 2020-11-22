@@ -21,12 +21,14 @@ import be.bluexin.saomclib.events.PartyEvent
 import be.bluexin.saomclib.packets.party.PartyType
 import be.bluexin.saomclib.packets.party.Type
 import be.bluexin.saomclib.packets.party.updateServer
+import be.bluexin.saomclib.party.PlayerInfo
 import be.bluexin.saomclib.party.playerInfo
 import com.saomc.saoui.capabilities.getRenderData
 import com.saomc.saoui.effects.RenderDispatcher
 import com.saomc.saoui.renders.StaticRenderer
 import com.saomc.saoui.screens.CoreGUI
 import com.saomc.saoui.screens.ingame.IngameGUI
+import com.saomc.saoui.screens.menus.IngameMenu
 import com.saomc.saoui.screens.util.NotificationAlert
 import com.saomc.saoui.screens.util.Popup
 import com.saomc.saoui.screens.util.PopupYesNo
@@ -118,32 +120,35 @@ object EventCore {
 
     @SubscribeEvent
     fun partyJoin(e: PartyEvent.Join){
-        if (e.player == Minecraft().player.playerInfo()){
+        if (e.player == player){
             NotificationAlert.new(IconCore.PARTY, "notificationPartyJoinedTitle".localize(), "notificationPartyJoinedShortText".localize(e.partyData.leaderInfo.username))
         }
-        else NotificationAlert.new(IconCore.PARTY, "notificationPartyAddedTitle".localize(), "notificationPartyAddedShortText".localize(e.player.username))
+        else if (e.partyData.isMember(player))
+            NotificationAlert.new(IconCore.PARTY, "notificationPartyAddedTitle".localize(), "notificationPartyAddedShortText".localize(e.player.username))
     }
 
     @SubscribeEvent
     fun partyLeft(e: PartyEvent.Leave){
-        if (e.player == Minecraft().player.playerInfo()){
+        if (e.player == player){
             NotificationAlert.new(IconCore.PARTY, "notificationPartyLeftTitle".localize(), "notificationPartyLeftShortText".localize(e.partyData.leaderInfo.username))
         }
-        else NotificationAlert.new(IconCore.PARTY, "notificationPartyLeaveTitle".localize(), "notificationPartyLeaveShortText".localize(e.player.username))
+        else if (e.partyData.isMember(player))
+            NotificationAlert.new(IconCore.PARTY, "notificationPartyLeaveTitle".localize(), "notificationPartyLeaveShortText".localize(e.player.username))
     }
 
     @SubscribeEvent
     fun partyLeaderChange(e: PartyEvent.LeaderChanged){
-        if (e.newLeader == Minecraft().player.playerInfo()){
+        if (e.newLeader == player){
             NotificationAlert.new(IconCore.PARTY, "notificationPartyLeaderTitle".localize(), "notificationPartyLeaderShortText".localize())
         }
-        else NotificationAlert.new(IconCore.PARTY, "notificationPartyNewLeaderTitle".localize(), "notificationPartyNewLeaderShortText".localize(e.newLeader.username))
+        else if (e.partyData.isMember(player))
+            NotificationAlert.new(IconCore.PARTY, "notificationPartyNewLeaderTitle".localize(), "notificationPartyNewLeaderShortText".localize(e.newLeader.username))
     }
 
     @SubscribeEvent
     fun partyInvite(e: PartyEvent.Invited) {
         val p = e.partyData
-        if (e.player.equals(Minecraft().player)) {
+        if (e.player == player){
             val builder = StringBuilder()
             builder.append("${"guiPartyInviteText".localize(p.leaderInfo.username)}\n\n")
             builder.append("Members: ${p.membersInfo.first().username}\n")
@@ -210,5 +215,13 @@ object EventCore {
         //TODO Fix me
     }
 
+    @SubscribeEvent
+    fun onDisconnect(e: FMLNetworkEvent.ClientDisconnectionFromServerEvent){
+        IngameMenu.hasChecked = false
+    }
+
     internal val mc = Minecraft.getMinecraft()
+
+    // Safe reference to player
+    internal val player = PlayerInfo(Minecraft().session.profile)
 }

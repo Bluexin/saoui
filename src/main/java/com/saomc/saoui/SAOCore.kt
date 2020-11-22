@@ -17,12 +17,14 @@
 
 package com.saomc.saoui
 
+import be.bluexin.saomclib.SAOMCLib
 import be.bluexin.saomclib.capabilities.CapabilitiesHandler
 import com.saomc.saoui.api.events.EventInitStatsProvider
 import com.saomc.saoui.capabilities.RenderCapability
 import com.saomc.saoui.config.ConfigHandler
 import com.saomc.saoui.config.FriendData
 import com.saomc.saoui.config.OptionCore
+import com.saomc.saoui.elements.registry.ElementRegistry
 import com.saomc.saoui.events.EventCore
 import com.saomc.saoui.screens.CoreGUI
 import com.saomc.saoui.themes.ThemeLoader
@@ -51,18 +53,19 @@ import javax.xml.bind.JAXBException
 object SAOCore {
     const val MODID = "saoui"
     const val NAME = "Sword Art Online UI"
-    const val VERSION = "2.1.0"
+    const val VERSION = "2.1.1"
     const val DEPS = "required-after:saomclib@[1.4.6,);after:mantle;required-after:librarianlib@[4.19.2,)"
 
     val mc = Minecraft()
 
     val saoConfDir: File = confDir(File(Minecraft().gameDir, "config"))
+    val isSAOMCLibServerSide: Boolean
+        get() = SAOMCLib.proxy.isServerSideLoaded
 
     @JvmStatic
     @Mod.InstanceFactory
     fun shenanigan() = this
 
-    const val UNKNOWN_TIME_DELAY = -1f
     val LOGGER: Logger = LogManager.getLogger(MODID)
 
     @Mod.EventHandler
@@ -110,6 +113,7 @@ object SAOCore {
     @Mod.EventHandler
     fun loadComplete(event: FMLLoadCompleteEvent){
         AdvancementUtil.generateList()
+        ElementRegistry.initRegistry()
     }
 
     private fun confDir(genDir: File): File {

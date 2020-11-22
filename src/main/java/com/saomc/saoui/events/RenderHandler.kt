@@ -24,7 +24,6 @@ import com.saomc.saoui.playAtEntity
 import com.saomc.saoui.renders.StaticRenderer
 import com.saomc.saoui.screens.CoreGUI
 import com.saomc.saoui.screens.DeathGui
-import com.saomc.saoui.screens.menus.IngameMenu
 import net.minecraft.client.gui.GuiGameOver
 import net.minecraft.client.gui.GuiIngameMenu
 import net.minecraft.client.gui.GuiMainMenu
@@ -65,7 +64,9 @@ internal object RenderHandler {
 
     fun guiInstance(e: GuiOpenEvent) {
         if (e.gui is GuiIngameMenu) {
-                if (EventCore.mc.currentScreen !is CoreGUI<*>) e.gui = IngameMenu()
+                if (EventCore.mc.currentScreen !is CoreGUI<*>) {
+                    e.gui = com.saomc.saoui.elements.gui.IngameMenu()
+                }
         }
         else if (e.gui is GuiInventory && !OptionCore.DEFAULT_INVENTORY.isEnabled) {
             when {

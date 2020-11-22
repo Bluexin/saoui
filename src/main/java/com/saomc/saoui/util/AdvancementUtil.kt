@@ -37,9 +37,9 @@ object AdvancementUtil {
 
     fun getCategories(): Set<Advancement> = ADVANCEMENT_LIST.roots.filter { !it.id.path.contains("recipe") && !it.children.none() }.toSet()
 
-    fun getRecipes(): Sequence<Advancement> {
+    fun getRecipes(): List<Advancement> {
         return getAdvancements().asSequence().filter {
-            it.id.path.contains("recipe") && it.parent != null }
+            it.id.path.contains("recipe") && it.parent != null }.toList()
     }
 
     fun generateList() {

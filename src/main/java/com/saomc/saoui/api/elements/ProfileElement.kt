@@ -28,6 +28,8 @@ class ProfileElement(var player: EntityPlayer, val isMain: Boolean = true) : Ico
     override val listed: Boolean
         get() = !isMain
 
+    override var valid: Boolean = false
+
     var w = 165
     var h = 256
     val size = 40

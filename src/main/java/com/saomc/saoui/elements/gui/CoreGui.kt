@@ -15,20 +15,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.saomc.saoui.screens
+package com.saomc.saoui.elements.gui
 
 import com.saomc.saoui.GLCore
-import com.saomc.saoui.api.elements.CategoryButton
-import com.saomc.saoui.api.elements.INeoParent
-import com.saomc.saoui.api.elements.IconElement
-import com.saomc.saoui.api.elements.NeoElement
+import com.saomc.saoui.api.elements.basicAnimation
+import com.saomc.saoui.api.elements.plusAssign
 import com.saomc.saoui.api.screens.IIcon
 import com.saomc.saoui.config.OptionCore
+import com.saomc.saoui.elements.IElement
+import com.saomc.saoui.elements.IconElement
+import com.teamwizardry.librarianlib.features.animator.Animation
 import com.teamwizardry.librarianlib.features.animator.Animator
+import com.teamwizardry.librarianlib.features.animator.Easing
 import com.teamwizardry.librarianlib.features.helpers.vec
 import com.teamwizardry.librarianlib.features.kotlin.Minecraft
 import com.teamwizardry.librarianlib.features.kotlin.clamp
 import com.teamwizardry.librarianlib.features.kotlin.minus
+import com.teamwizardry.librarianlib.features.kotlin.plus
 import com.teamwizardry.librarianlib.features.math.Vec2d
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiScreen
@@ -43,38 +46,35 @@ import org.lwjgl.input.Mouse
  *
  * @author Bluexin
  */
-abstract class CoreGUI<T : Any>(final override var pos: Vec2d, override var destination: Vec2d = pos, val elements: MutableList<NeoElement> = mutableListOf()) : GuiScreen(), INeoParent {
+abstract class CoreGUI<T : Any>(val parentGUI: GuiScreen? = null) : GuiScreen() {
 
     var viewSet: Boolean = false
     var playerView: Vec2f = Vec2f.ZERO
     open var previousMouse: Vec2d = Vec2d(0.0, 0.0)
-    open var originPos = pos
+    var pos: Vec2d = Vec2d.ZERO
+    var destination: Vec2d = pos
+    open var originPos = Vec2d.ZERO
+    val elements: MutableList<IElement> = mutableListOf()
 
     var subGui: CoreGUI<*>? = null
         private set
-
-    override var parent: INeoParent? = null
-
-    override var isOpen: Boolean = true
 
     override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
         GLCore.glBlend(true)
         GLCore.pushMatrix()
 
         if (OptionCore.UI_MOVEMENT.isEnabled) {
-            if (!viewSet){
+            if (!viewSet) {
                 playerView = Vec2f(Minecraft().player.rotationYaw, Minecraft().player.rotationPitch)
                 previousMouse = Vec2d(mouseX.toDouble(), mouseY.toDouble())
                 viewSet = true
-            }
-            else {
+            } else {
                 Minecraft().player.rotationYaw = playerView.x - ((width / 2 - mouseX) / 2) * 0.25F
                 Minecraft().player.rotationPitch = playerView.y - ((height / 2 - mouseY) / 2) * 0.25F
                 pos = pos.add((mouseX - previousMouse.x) * 0.25, (mouseY - previousMouse.y) * 0.25)
                 previousMouse = Vec2d(mouseX.toDouble(), mouseY.toDouble())
             }
-        }
-        else if (viewSet){
+        } else if (viewSet) {
             Minecraft().player.rotationYaw = playerView.x
             Minecraft().player.rotationPitch = playerView.y
             pos = originPos
@@ -94,7 +94,7 @@ abstract class CoreGUI<T : Any>(final override var pos: Vec2d, override var dest
     }
 
     override fun updateScreen() {
-        subGui?.updateScreen() ?: elements.forEach(NeoElement::update)
+        subGui?.updateScreen() ?: elements.forEach(IElement::update)
     }
 
     override fun handleMouseInput() {
@@ -113,8 +113,9 @@ abstract class CoreGUI<T : Any>(final override var pos: Vec2d, override var dest
         this.mouseClicked(vec(mouseX, mouseY), MouseButton.fromInt(mouseButton))
     }
 
-    override fun mouseClicked(pos: Vec2d, mouseButton: MouseButton): Boolean {
-        return subGui?.mouseClicked(pos, mouseButton) ?: elements.filter { it.mouseClicked(pos - this.pos, mouseButton) }.any()
+    fun mouseClicked(pos: Vec2d, mouseButton: MouseButton): Boolean {
+        return subGui?.mouseClicked(pos, mouseButton)
+                ?: elements.filter { it.mouseClicked(pos - this.pos, mouseButton) }.any()
     }
 
     override fun mouseClickMove(mouseX: Int, mouseY: Int, clickedMouseButton: Int, timeSinceLastClick: Long) {
@@ -127,22 +128,20 @@ abstract class CoreGUI<T : Any>(final override var pos: Vec2d, override var dest
 
     override fun doesGuiPauseGame() = OptionCore.GUI_PAUSE.isEnabled
 
-    fun tlCategory(icon: IIcon, body: (CategoryButton.() -> Unit)? = null) {
-        this.elements += CategoryButton(IconElement(icon, vec(0, 25 * elements.size)), this, body)
+    @CoreGUIDsl
+    fun tlCategory(icon: IIcon, index: Int, body: (IElement.() -> Unit)? = null): IElement {
+        val cat = IconElement(icon, null, vec(0, 25 * index), init = body)
+        +cat
+        return cat
     }
 
-    fun tlCategory(icon: IIcon, index: Int, body: (CategoryButton.() -> Unit)? = null): CategoryButton {
-        return CategoryButton(IconElement(icon, vec(0, 25 * index)), this, body)
-    }
-
-    operator fun NeoElement.unaryPlus() {
+    operator fun IElement.unaryPlus() {
         this@CoreGUI.elements += this
     }
 
     fun <R : Any> openGui(gui: CoreGUI<R>): CoreGUI<R> {
         check(subGui == null) { "Already opened a sub gui of type ${subGui!!::class.qualifiedName}" }
         subGui = gui
-        gui.parent = this
         KeyBinding.unPressAllKeys()
 
         while (Mouse.next());
@@ -165,13 +164,12 @@ abstract class CoreGUI<T : Any>(final override var pos: Vec2d, override var dest
         if (subGui == null) {
             if (keyCode == Keyboard.KEY_ESCAPE) {
                 this.onGuiClosed()
-                if (this.parent == null) {
+                if (this.parentGUI == null) {
                     mc.displayGuiScreen(null)
                     if (this.mc.currentScreen == null) this.mc.setIngameFocus()
                 }
-            }
-            else {
-                elements.firstOrNull { it.isOpen && it.selected }?.keyTyped(typedChar, keyCode) ?: let {
+            } else {
+                elements.firstOrNull { it.hasOpened && it.selected }?.keyTyped(typedChar, keyCode) ?: let {
                     // If no elements are open and focuseds
                     if (keyCode == Minecraft().gameSettings.keyBindForward.keyCode || keyCode == Keyboard.KEY_UP) {
                         val selected = elements.firstOrNull { it.selected }
@@ -188,12 +186,8 @@ abstract class CoreGUI<T : Any>(final override var pos: Vec2d, override var dest
                         elements[index].selected = true
                     } else if (keyCode == Minecraft().gameSettings.keyBindRight.keyCode || keyCode == Keyboard.KEY_RIGHT || keyCode == Minecraft().gameSettings.keyBindJump.keyCode || keyCode == Keyboard.KEY_RETURN) {
                         val selected = elements.firstOrNull { it.selected } ?: return
-                        if (selected is CategoryButton) {
-                            selected.open()
-                        }
-                        else if (selected is IconElement) {
-                            selected.onClickBody(selected.pos, MouseButton.LEFT)
-                        }
+                        selected.onClickBody(selected.pos, MouseButton.LEFT)
+
                     }
                 }
             }
@@ -204,10 +198,20 @@ abstract class CoreGUI<T : Any>(final override var pos: Vec2d, override var dest
         super.onGuiClosed()
 
         this.elements.forEach {
-            (it as? CategoryButton)?.close()
+            it.close()
         }
 
         this.callbacks.forEach { it(result) }
+    }
+
+    fun move(delta: Vec2d) {
+        animator.removeAnimationsFor(this)
+        destination += delta
+        +basicAnimation(this, "pos") {
+            to = destination
+            duration = 10f
+            easing = Easing.easeInOutQuint
+        }
     }
 
     open lateinit var result: T
@@ -238,3 +242,9 @@ enum class MouseButton {
     }
 }
 
+operator fun Animation<*>.unaryPlus() {
+    CoreGUI.animator += this
+}
+
+@DslMarker
+annotation class CoreGUIDsl

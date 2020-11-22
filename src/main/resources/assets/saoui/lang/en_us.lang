@@ -40,6 +40,9 @@ notificationPartyNewLeaderShortText=%s is the new leader
 
 notificationCraftingTitle=Crafting x%s %s
 
+notificationSAOMCLibTitle=No SAOMCLib detected
+notificationSAOMCLibDesc=Certain features have been disabled
+notificationSAOMCLibDesc2=such as party, guilds, and some crafting functions.
 
 # Inventory
 guiWeapons=Weapons
@@ -305,6 +308,7 @@ sao.element.guild=Guild
 sao.element.party=Party
 sao.element.friends=Friends
 sao.element.add_friend=Add Friend
+sao.element.offline_friends=Offline Friends
 sao.element.add=Add
 sao.element.remove_friend=Remove Friend
 sao.element.invite=Invite
