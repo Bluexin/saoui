@@ -52,6 +52,7 @@
                         <xs:enumeration value="PARTY"/>
                         <xs:enumeration value="FOOD"/>
                         <xs:enumeration value="EFFECTS"/>
+                        <xs:enumeration value="AIR"/>
                     </xs:restriction>
                 </xs:simpleType>
             </xs:element>

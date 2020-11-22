@@ -145,9 +145,9 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
             super.renderAir(width, height)
         else {
             if (pre(AIR)) return
-            //mc.profile("air") {
-                ThemeLoader.HUD.draw(HudPartType.AIR, context)
-            //}
+            mc.profiler.startSection("air")
+            ThemeLoader.HUD.draw(HudPartType.AIR, context)
+            mc.profiler.endSection()
             post(AIR)
         }
     }
@@ -298,9 +298,9 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
             super.renderFood(width, height)
         } else {
             if (pre(FOOD)) return
-            //mc.profile("foodNew") {
-                ThemeLoader.HUD.draw(HudPartType.FOOD, context)
-            //}
+            mc.profiler.startSection("food")
+            ThemeLoader.HUD.draw(HudPartType.FOOD, context)
+            mc.profiler.endSection()
             post(FOOD)
         }
     }
