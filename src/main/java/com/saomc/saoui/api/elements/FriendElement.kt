@@ -6,7 +6,6 @@ import be.bluexin.saomclib.packets.party.Type
 import be.bluexin.saomclib.packets.party.updateServer
 import be.bluexin.saomclib.party.PlayerInfo
 import com.saomc.saoui.screens.CoreGUI
-import com.saomc.saoui.screens.CoreGUIDsl
 import com.saomc.saoui.screens.util.PopupPlayerInspect
 import com.saomc.saoui.social.friends.FriendCore
 import com.saomc.saoui.util.IconCore
@@ -41,15 +40,16 @@ class FriendElement(override var parent: INeoParent?): IconLabelElement(IconCore
             }
         }
 
+        +CategoryButton(IconLabelElement(IconCore.LOGOUT, I18n.format("sao.element.offline_friends")), this.tlParent){
+            FriendCore.getOfflineList().sortedBy { it.username }.forEach { player ->
+                removeFriend(player)
+            }
+        }
 
-        val friendList = FriendCore.getFriendList()
-        friendList.sortedBy { it.username }
-        friendList.filter { it.isOnline }.forEach {player ->
+        FriendCore.getOnlineList().sortedBy { it.username }.forEach {player ->
             removeFriend(player)
         }
-        friendList.filter { !it.isOnline }.forEach {player ->
-            removeFriend(player)
-        }
+
         if (!this.selected) elements.forEach { it.hide() }
         dirty = false
     }
@@ -60,7 +60,6 @@ class FriendElement(override var parent: INeoParent?): IconLabelElement(IconCore
     }
 
 
-    @CoreGUIDsl
     private fun addFriend(player: PlayerInfo){
         addFriendButton.category(PlayerIcon(player), player.username){
             onClick { _, _ ->
@@ -93,7 +92,6 @@ class FriendElement(override var parent: INeoParent?): IconLabelElement(IconCore
         }
     }
 
-    @CoreGUIDsl
     fun removeFriend(player: PlayerInfo){
         +CategoryButton(IconLabelElement(PlayerIcon(player), player.username), tlParent){
             highlighted = player.isOnline

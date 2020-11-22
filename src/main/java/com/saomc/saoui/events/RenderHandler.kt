@@ -65,7 +65,9 @@ internal object RenderHandler {
 
     fun guiInstance(e: GuiOpenEvent) {
         if (e.gui is GuiIngameMenu) {
-                if (EventCore.mc.currentScreen !is CoreGUI<*>) e.gui = IngameMenu()
+                if (EventCore.mc.currentScreen !is CoreGUI<*>) {
+                    e.gui = IngameMenu()
+                }
         }
         else if (e.gui is GuiInventory && !OptionCore.DEFAULT_INVENTORY.isEnabled) {
             when {

@@ -44,4 +44,8 @@ object FriendCore {
         return friendList.filter { isFriendOnline(it) }
     }
 
+    fun getOfflineList(): List<PlayerInfo>{
+        return friendList.filter { !isFriendOnline(it) }
+    }
+
 }

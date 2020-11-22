@@ -50,6 +50,11 @@ interface INeoParent {
         else parent?.parent
     }
 
+    val controllingGUI: CoreGUI<*>?
+    get() {
+        return tlParent as? CoreGUI<*>
+    }
+
     fun move(delta: Vec2d) {
         CoreGUI.animator.removeAnimationsFor(this)
         destination += delta
@@ -99,6 +104,9 @@ interface NeoElement : INeoParent {
 
     operator fun contains(pos: Vec2d) = pos in boundingBox
 
+    fun init(){}
+
+
     val listed
         get() = true
 
@@ -131,6 +139,7 @@ interface NeoElement : INeoParent {
     fun show() = Unit
 
     fun update() = Unit
+
 }
 
 interface NeoParent : NeoElement {
@@ -141,16 +150,16 @@ interface NeoParent : NeoElement {
 
     open val elements: MutableList<NeoElement>
 
-    open val elementsSequence
+    val elementsSequence
         get() =  elements.asSequence().filter(NeoElement::listed)
 
-    open val otherElementsSequence
+    val otherElementsSequence
         get() =  elements.asSequence().filter { !it.listed }
 
-    open val validElementsSequence
+    val validElementsSequence
         get() =  elementsSequence.filter(NeoElement::valid)
 
-    open val visibleElementsSequence
+    val visibleElementsSequence
         get() =  validElementsSequence.filter(NeoElement::visible)
 
     override fun update() {
@@ -162,26 +171,28 @@ interface NeoParent : NeoElement {
         this.futureOperations.clear()
     }
 
-    open operator fun plusAssign(element: NeoElement) {
-        if (elements.isNotEmpty()) {
-            val bb1 = elements[0].idealBoundingBox
-            val bbNew = element.idealBoundingBox
-            if (bb1.widthI() >= bbNew.widthI()) {
-                element.idealBoundingBox = BoundingBox2D(bbNew.min, vec(bb1.width(), bbNew.height()))
-            } else {
-                elements.forEach {
-                    val bb = it.idealBoundingBox
-                    it.idealBoundingBox = BoundingBox2D(bb.min, vec(bbNew.width(), bb.height()))
+    operator fun plusAssign(element: NeoElement) {
+        if (elements.none { it == element }) {
+            if (elements.isNotEmpty()) {
+                val bb1 = elements[0].idealBoundingBox
+                val bbNew = element.idealBoundingBox
+                if (bb1.widthI() >= bbNew.widthI()) {
+                    element.idealBoundingBox = BoundingBox2D(bbNew.min, vec(bb1.width(), bbNew.height()))
+                } else {
+                    elements.forEach {
+                        val bb = it.idealBoundingBox
+                        it.idealBoundingBox = BoundingBox2D(bb.min, vec(bbNew.width(), bb.height()))
+                    }
+                    element.idealBoundingBox = bbNew
                 }
-                element.idealBoundingBox = bbNew
-            }
-        } else element.idealBoundingBox = element.idealBoundingBox
-        elements += element
+            } else element.idealBoundingBox = element.idealBoundingBox
+            elements += element
 
-        element.parent = this
+            element.parent = this
+        }
     }
 
-    open operator fun NeoElement.unaryPlus() {
+    operator fun NeoElement.unaryPlus() {
         this@NeoParent += this
     }
 
@@ -195,13 +206,13 @@ interface NeoParent : NeoElement {
                 }
             }*/
 
-    open val childrenXOffset
+    val childrenXOffset
         get() = 0
-    open val childrenYOffset
+    val childrenYOffset
         get() = 0
-    open val childrenXSeparator
+    val childrenXSeparator
         get() = 0
-    open val childrenYSeparator
+    val childrenYSeparator
         get() = 0
 
     override var parent: INeoParent?

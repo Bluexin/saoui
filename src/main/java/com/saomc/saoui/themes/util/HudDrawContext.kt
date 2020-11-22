@@ -105,7 +105,7 @@ class HudDrawContext(player: EntityPlayer, val mc: Minecraft, itemRenderer: Rend
      * Aka partialTicks
      */
     fun setTime(time: Float) {
-        hp = player.getRenderData()?.healthSmooth ?: player.health
+        hp = player.getRenderData()!!.healthSmooth
         maxHp = getMaxHealth(player)
         healthStep = getStep(player, hpPct())
         partialTicks = time

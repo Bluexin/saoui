@@ -24,7 +24,6 @@ import com.saomc.saoui.api.items.IItemFilter
 import com.saomc.saoui.api.screens.IIcon
 import com.saomc.saoui.events.EventCore.mc
 import com.saomc.saoui.screens.CoreGUI
-import com.saomc.saoui.screens.CoreGUIDsl
 import com.saomc.saoui.screens.MouseButton
 import com.saomc.saoui.util.IconCore
 import com.teamwizardry.librarianlib.features.kotlin.get
@@ -41,8 +40,6 @@ import net.minecraft.item.*
 import net.minecraft.util.ResourceLocation
 import net.minecraftforge.fml.common.registry.ForgeRegistries
 
-
-@CoreGUIDsl
 fun CategoryButton.itemList(inventory: Container, filter: IItemFilter) {
     inventory.inventorySlots.forEach { slot ->
         +ItemStackElement(slot, filter.getValidSlots(), Vec2d.ZERO, filter.getValidSlots().contains(slot), filter)
@@ -186,12 +183,11 @@ class ItemStackElement(private val slot: Slot, val equipSlots: Set<Slot>, pos: V
         get() = itemStack.isNotEmpty
         set(_) {}
 
-    override val label: String
+    override var label: String = ""
         get() = if (itemStack.isNotEmpty) {
             if (itemStack.count > 1) I18n.format("saoui.formatItems", itemStack.getTooltip(mc.player, ITooltipFlag.TooltipFlags.NORMAL)[0], itemStack.count)
             else I18n.format("saoui.formatItem", itemStack.getTooltip(mc.player, ITooltipFlag.TooltipFlags.NORMAL)[0])
         } else I18n.format("gui.empty")
-
 
 }
 

@@ -41,8 +41,7 @@ import org.lwjgl.input.Mouse
  *
  * @author Bluexin
  */
-abstract class CoreGUI<T : Any>(final override var pos: Vec2d, override var destination: Vec2d = pos) : GuiScreen(), INeoParent {
-    val elements = mutableListOf<NeoElement>()
+abstract class CoreGUI<T : Any>(final override var pos: Vec2d, override var destination: Vec2d = pos, val elements: MutableList<NeoElement> = mutableListOf()) : GuiScreen(), INeoParent {
 
     var viewSet: Boolean = false
     var playerView: Vec2f = Vec2f.ZERO
@@ -126,12 +125,10 @@ abstract class CoreGUI<T : Any>(final override var pos: Vec2d, override var dest
 
     override fun doesGuiPauseGame() = OptionCore.GUI_PAUSE.isEnabled
 
-    @CoreGUIDsl
     fun tlCategory(icon: IIcon, body: (CategoryButton.() -> Unit)? = null) {
         this.elements += CategoryButton(IconElement(icon, vec(0, 25 * elements.size)), this, body)
     }
 
-    @CoreGUIDsl
     fun tlCategory(icon: IIcon, index: Int, body: (CategoryButton.() -> Unit)? = null): CategoryButton {
         return CategoryButton(IconElement(icon, vec(0, 25 * index)), this, body)
     }

@@ -75,7 +75,7 @@ configurations {
 
 dependencies {
     compile "net.shadowfacts:Forgelin:${forgelin_version}"
-    compile "be.bluexin:saomc-lib:1.12.2-1.4.6-SNAPSHOT"
+    compile "be.bluexin:saomc-lib:1.12.2-1.4.8-SNAPSHOT"
     compile "com.teamwizardry.librarianlib:librarianlib-1.12.2:4.19.+"
     shade 'be.bluexin.gnu.jel:gnu-jel:2.1.3'
     compile 'be.bluexin.gnu.jel:gnu-jel:2.1.3'

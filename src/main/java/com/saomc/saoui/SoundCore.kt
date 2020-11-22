@@ -18,6 +18,7 @@
 package com.saomc.saoui
 
 import com.teamwizardry.librarianlib.features.kotlin.Minecraft
+import net.minecraft.client.audio.PositionedSoundRecord
 import net.minecraft.entity.Entity
 import net.minecraft.util.ResourceLocation
 import net.minecraft.util.SoundCategory
@@ -44,5 +45,5 @@ enum class SoundCore {
     }
 }
 
-fun SoundCore.play() = Minecraft().player.playSound(this.sound, 1.0f, 1.0f)
+fun SoundCore.play() = Minecraft().soundHandler.playSound(PositionedSoundRecord.getMasterRecord(this.sound, 1.0f))
 fun SoundCore.playAtEntity(ent: Entity) = ent.world.playSound(ent.posX, ent.posY, ent.posZ, this.sound, SoundCategory.AMBIENT, 1.0f, 1.0f, true)

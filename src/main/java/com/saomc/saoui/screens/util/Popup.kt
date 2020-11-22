@@ -222,6 +222,7 @@ open class Popup<T : Any>(open var title: String, open var text: List<String>, o
 
         SoundCore.DIALOG_CLOSE.play()
     }
+
 }
 
 class PopupYesNo(title: String, text: List<String>, footer: String) : Popup<PopupYesNo.Result>(title, text, footer, mapOf(
@@ -248,6 +249,26 @@ class PopupYesNo(title: String, text: List<String>, footer: String) : Popup<Popu
     enum class Result {
         YES,
         NO
+    }
+}
+
+class PopupNotice(title: String, text: List<String>, footer: String) : Popup<PopupNotice.Result>(title, text, footer, mapOf(
+        IconElement(IconCore.CONFIRM, description = mutableListOf("Confirm"))
+                .setBgColor(ColorIntent.NORMAL, ColorUtil.CONFIRM_COLOR)
+                .setBgColor(ColorIntent.HOVERED, ColorUtil.CONFIRM_COLOR_LIGHT)
+                .setFontColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
+                .setFontColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
+                to Result.YES
+)) {
+
+    constructor(title: String, text: String, footer: String) : this(title, listOf(text), footer)
+
+    init {
+        result = Result.YES
+    }
+
+    enum class Result {
+        YES
     }
 }
 
@@ -331,7 +352,7 @@ class PopupHotbarSelection(title: String, text: List<String>, footer: String) : 
             val inventory = Minecraft.getMinecraft().player.inventoryContainer
             for (i in 36..44){
                 val stack = inventory.getSlot(i).stack
-                map[IconElement(icon = ItemIcon { stack })
+                map[IconElement(stack.toIcon())
                         .setBgColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
                         .setBgColor(ColorIntent.HOVERED, ColorUtil.HOVER_COLOR)
                         .setFontColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)

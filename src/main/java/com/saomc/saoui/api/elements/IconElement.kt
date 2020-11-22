@@ -18,14 +18,16 @@
 package com.saomc.saoui.api.elements
 
 import com.saomc.saoui.GLCore
+import com.saomc.saoui.api.elements.registry.DrawType
 import com.saomc.saoui.api.screens.IIcon
 import com.saomc.saoui.config.OptionCore
-import com.saomc.saoui.elements.DrawType
 import com.saomc.saoui.resources.StringNames
 import com.saomc.saoui.screens.MouseButton
+import com.saomc.saoui.screens.unaryPlus
 import com.saomc.saoui.screens.util.ItemIcon
 import com.saomc.saoui.util.ColorIntent
 import com.saomc.saoui.util.ColorUtil
+import com.teamwizardry.librarianlib.features.animator.Easing
 import com.teamwizardry.librarianlib.features.helpers.vec
 import com.teamwizardry.librarianlib.features.kotlin.Minecraft
 import com.teamwizardry.librarianlib.features.kotlin.clamp
@@ -61,6 +63,14 @@ open class IconElement(val icon: IIcon, override var pos: Vec2d = Vec2d.ZERO, ov
             if (c > 6) field = (value /*+ c*/) % (c)
 //            SAOCore.LOGGER.info("Result: $field (tried $value)")
         }
+
+    override fun init() {
+        +basicAnimation(this, "pos") {
+            duration = 20f
+            from = Vec2d.ZERO
+            easing = Easing.easeInOutQuint
+        }
+    }
 
     val transparency: Float
         get() {

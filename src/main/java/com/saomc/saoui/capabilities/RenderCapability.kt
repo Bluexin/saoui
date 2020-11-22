@@ -20,7 +20,6 @@ package com.saomc.saoui.capabilities
 import be.bluexin.saomclib.capabilities.AbstractCapability
 import be.bluexin.saomclib.capabilities.AbstractEntityCapability
 import be.bluexin.saomclib.capabilities.Key
-import be.bluexin.saomclib.capabilities.getPartyCapability
 import com.saomc.saoui.SAOCore
 import com.saomc.saoui.api.entity.rendering.*
 import com.teamwizardry.librarianlib.features.kotlin.Minecraft
@@ -75,8 +74,8 @@ class RenderCapability : AbstractEntityCapability() {
     }
 
     fun updateHealthSmooth(partialTicks: Float){
-        Minecraft().profiler.startSection("updateHealthSmooth")
-        if (Minecraft().player.getPartyCapability().partyData?.isMember(theEnt.uniqueID) == true) {
+        if (theEnt is EntityPlayer){
+            Minecraft().profiler.startSection("updateHealthSmooth")
             when {
                 theEnt.health == theEnt.maxHealth -> healthSmooth = theEnt.maxHealth
                 theEnt.health <= 0 -> {
@@ -87,8 +86,9 @@ class RenderCapability : AbstractEntityCapability() {
                 else -> healthSmooth = theEnt.health
             }
             healthSmooth = max(0.0f, healthSmooth)
-        } else healthSmooth = -1f
-        Minecraft().profiler.endSection()
+            Minecraft().profiler.endSection()
+        }
+        else healthSmooth = -1f
     }
 
     private fun gameTimeDelay(time: Float): Float {

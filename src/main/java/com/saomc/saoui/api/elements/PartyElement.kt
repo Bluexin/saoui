@@ -8,7 +8,6 @@ import be.bluexin.saomclib.packets.party.updateServer
 import be.bluexin.saomclib.party.IPartyData
 import be.bluexin.saomclib.party.PlayerInfo
 import be.bluexin.saomclib.party.playerInfo
-import com.saomc.saoui.screens.CoreGUIDsl
 import com.saomc.saoui.util.IconCore
 import com.saomc.saoui.util.PlayerIcon
 import com.teamwizardry.librarianlib.features.kotlin.Minecraft
@@ -58,7 +57,6 @@ class PartyElement : IconLabelElement(IconCore.PARTY, I18n.format("sao.element.p
         if (!this.selected) elements.forEach { it.hide() }
     }
 
-    @CoreGUIDsl
     fun partyList() {
         val party = partyCap.partyData
 
@@ -75,7 +73,6 @@ class PartyElement : IconLabelElement(IconCore.PARTY, I18n.format("sao.element.p
         }
     }
 
-    @CoreGUIDsl
     fun partyMemberButton(party: IPartyData, player: PlayerInfo, ourPlayer: EntityPlayer, invited: Boolean = false): CategoryButton =
             CategoryButton(PTMemberElement(player), this.tlParent) {
                 +CategoryButton(IconLabelElement(IconCore.HELP, I18n.format("sao.element.inspect")), this.tlParent)
@@ -92,7 +89,6 @@ class PartyElement : IconLabelElement(IconCore.PARTY, I18n.format("sao.element.p
                 }
             }
 
-    @CoreGUIDsl
     fun partyExtras() {
         val party = partyCap.partyData
 

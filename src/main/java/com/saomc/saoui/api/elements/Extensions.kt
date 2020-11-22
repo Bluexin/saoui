@@ -17,12 +17,12 @@
 
 package com.saomc.saoui.api.elements
 
+import com.saomc.saoui.SAOCore
 import com.saomc.saoui.SoundCore
 import com.saomc.saoui.api.screens.IIcon
 import com.saomc.saoui.config.OptionCore
 import com.saomc.saoui.play
 import com.saomc.saoui.screens.CoreGUI
-import com.saomc.saoui.screens.CoreGUIDsl
 import com.saomc.saoui.screens.MouseButton
 import com.saomc.saoui.screens.unaryPlus
 import com.saomc.saoui.screens.util.PopupAdvancement
@@ -30,7 +30,6 @@ import com.saomc.saoui.screens.util.toIcon
 import com.saomc.saoui.util.AdvancementUtil
 import com.saomc.saoui.util.IconCore
 import com.saomc.saoui.util.getProgress
-import com.teamwizardry.librarianlib.features.animator.Easing
 import com.teamwizardry.librarianlib.features.gui.component.supporting.delegate
 import com.teamwizardry.librarianlib.features.helpers.vec
 import com.teamwizardry.librarianlib.features.kotlin.Minecraft
@@ -81,6 +80,7 @@ class CategoryButton(val delegate: IconElement, parent: INeoParent? = null, priv
         delegate.update()
     }
 
+
     init {
         this.parent = parent
         delegate.parent = this
@@ -102,13 +102,7 @@ class CategoryButton(val delegate: IconElement, parent: INeoParent? = null, priv
             if (selected) close()
         }
 
-        if (delegate !is IconLabelElement) { // TL Category TODO: move to their actual creation
-            +basicAnimation(this, "pos") {
-                duration = 10f
-                from = Vec2d.ZERO
-                easing = Easing.easeInOutQuint
-            }
-        }
+        delegate.init()
 
         init?.invoke(this)
     }
@@ -157,7 +151,9 @@ class CategoryButton(val delegate: IconElement, parent: INeoParent? = null, priv
             }
             +anim
             openAnim = WeakReference(anim)
-            tlParent.move(vec(-boundingBox.width(), 0))
+
+            if (controllingParent is CoreGUI<*>) tlParent.move(Vec2d.ZERO)
+            else tlParent.move(vec(-boundingBox.width(), 0))
         }
     }
 
@@ -207,22 +203,20 @@ class CategoryButton(val delegate: IconElement, parent: INeoParent? = null, priv
         }
     }
 
-    @CoreGUIDsl
     fun category(icon: IIcon, label: String, body: (CategoryButton.() -> Unit)? = null): CategoryButton {
         val cat = CategoryButton(IconLabelElement(icon, label), this, body)
         +cat
         return cat
     }
 
-    @CoreGUIDsl
     fun partyMenu(): CategoryButton {
         val partyElement = PartyElement()
+        partyElement.disabled = !SAOCore.isSAOMCLibServerSide
         val cat = CategoryButton(partyElement, this)
         +cat
         return cat
     }
 
-    @CoreGUIDsl
     fun friendMenu(): CategoryButton {
         val friendElement = FriendElement(this)
         val cat = CategoryButton(friendElement, this)
@@ -230,21 +224,18 @@ class CategoryButton(val delegate: IconElement, parent: INeoParent? = null, priv
         return cat
     }
 
-    @CoreGUIDsl
     fun profile(player: EntityPlayer, body: (CategoryButton.() -> Unit)? = null): CategoryButton {
         val cat = CategoryButton(ProfileElement(player, player.uniqueID == Minecraft().player.uniqueID), this, body)
         +cat
         return cat
     }
 
-    @CoreGUIDsl
     fun crafting(): CategoryButton {
         val cat = CategoryButton(CraftingElement(), this)
         +cat
         return cat
     }
 
-    @CoreGUIDsl
     fun recipes(): CategoryButton {
         val cat = CategoryButton(IconLabelElement(IconCore.CRAFTING, I18n.format("sao.element.recipes")), this){
             addRecipes(AdvancementUtil.getRecipes())
@@ -253,7 +244,6 @@ class CategoryButton(val delegate: IconElement, parent: INeoParent? = null, priv
         return cat
     }
 
-    @CoreGUIDsl
     fun advancementCategory(advancement: Advancement): CategoryButton{
         return if (advancement.getProgress() != null && advancement.getProgress()!!.isDone) {
             val cat = CategoryButton(AdvancementElement(advancement, true), this) {
@@ -270,14 +260,12 @@ class CategoryButton(val delegate: IconElement, parent: INeoParent? = null, priv
         else advancement(advancement)
     }
 
-    @CoreGUIDsl
     fun addAdvancements(advancements: Sequence<Advancement>){
         advancements.forEach {
             advancement(it)
         }
     }
 
-    @CoreGUIDsl
     fun advancement(advancement: Advancement): CategoryButton{
         val parent = this
         val cat = CategoryButton(AdvancementElement(advancement), this) {
@@ -306,10 +294,9 @@ class CategoryButton(val delegate: IconElement, parent: INeoParent? = null, priv
 
     }
 
-    @CoreGUIDsl
-    fun addRecipes(advancements: Sequence<Advancement>){
-        advancements.forEach {advancement ->
-            advancement.rewards.recipes.forEach { recipe ->
+    fun addRecipes(advancements: List<Advancement>){
+        advancements.forEach { advancement ->
+            advancement.rewards.recipes?.forEach { recipe ->
                 +CategoryButton(RecipeElement(advancement, ForgeRegistries.RECIPES.getValue(recipe)!!), this)
             }
         }

@@ -28,7 +28,7 @@ import java.util.stream.Stream
  * @author Bluexin
  */
 object ConfigHandler {
-    var lastVersion: String = ""
+    var lastVersion: String = "1.0"
     var IGNORE_UPDATE: Boolean = false
     var DEBUG = false
     var debugFakePT: Int = 0
@@ -44,6 +44,7 @@ object ConfigHandler {
 
         lastVersion = config.get(Configuration.CATEGORY_GENERAL, "lastUpdate", "nothing").string
         IGNORE_UPDATE = config.get(Configuration.CATEGORY_GENERAL, "ignoreUpdate", false).boolean
+
 
         OptionCore.values().filter{ it.isCategory }
                 .forEach { c ->
@@ -79,7 +80,6 @@ object ConfigHandler {
 
     fun saveVersion(version: String) {
         config.get(Configuration.CATEGORY_GENERAL, "last.update", lastVersion).set(version)
-        config.save()
         config.save()
     }
 

@@ -19,4 +19,5 @@ class InventoryGui : CoreGUI<Unit>(Vec2d.ZERO) {
     fun setupSlot(slot: Slot){
         //inventories.putIfAbsent(slot.inventory, tlCategory(IconCore.ITEMS))
     }
+
 }

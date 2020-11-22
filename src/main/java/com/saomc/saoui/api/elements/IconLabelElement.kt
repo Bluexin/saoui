@@ -18,10 +18,9 @@
 package com.saomc.saoui.api.elements
 
 import com.saomc.saoui.GLCore
+import com.saomc.saoui.api.elements.registry.DrawType
 import com.saomc.saoui.api.screens.IIcon
 import com.saomc.saoui.config.OptionCore
-import com.saomc.saoui.elements.DrawType
-import com.saomc.saoui.elements.IElement
 import com.saomc.saoui.resources.StringNames
 import com.saomc.saoui.screens.unaryPlus
 import com.saomc.saoui.util.ColorUtil
@@ -36,7 +35,7 @@ import kotlin.math.max
  *
  * @author Bluexin
  */
-open class IconLabelElement(icon: IIcon, open val label: String = "", pos: Vec2d = Vec2d.ZERO, override val description: MutableList<String> = mutableListOf()) : IconElement(icon, pos, width = 84, height = 18) {
+open class IconLabelElement(icon: IIcon, open var label: String = "", pos: Vec2d = Vec2d.ZERO, override val description: MutableList<String> = mutableListOf()) : IconElement(icon, pos, width = 84, height = 18) {
 
     override val boundingBox get() = BoundingBox2D(pos, pos + vec(width, height))
 
