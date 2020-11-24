@@ -158,6 +158,10 @@ object GLCore {
         Tessellator.getInstance().buffer.pos(x, y, z).tex(srcX, srcY).color(red, green, blue, alpha).endVertex()
     }
 
+    fun addVertex(x: Float, y: Float, z: Float, srcX: Double, srcY: Double, red: Float, green: Float, blue: Float, alpha: Float) {
+        Tessellator.getInstance().buffer.normal(x, y, z).tex(srcX, srcY).color(red, green, blue, alpha).endVertex()
+    }
+
     @JvmOverloads
     fun begin(glMode: Int = GL11.GL_QUADS, format: VertexFormat = DefaultVertexFormats.POSITION_TEX_COLOR) {
         Tessellator.getInstance().buffer.begin(glMode, format)

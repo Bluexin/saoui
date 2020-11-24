@@ -51,7 +51,7 @@
                         <texture>saoui:textures/guiedt.png</texture>
                         <h cache="STATIC">2.0</h>
                         <rgba>healthStep == CREATIVE? 0xCD840400:
-                            statusEffects.contains(ROTTEN)? 0x829C40FF:
+                            statusEffects.contains(ROTTEN)? 0xD045FFFF:
                             0xF5AB2AFF</rgba>
                         <srcH cache="STATIC">2.0</srcH>
                         <srcW>115.0 * foodPct</srcW>

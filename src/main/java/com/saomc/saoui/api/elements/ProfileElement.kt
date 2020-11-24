@@ -23,31 +23,21 @@ import kotlin.math.min
 import kotlin.math.roundToInt
 
 
-class ProfileElement(var player: EntityPlayer, val isMain: Boolean = true) : IconLabelElement(IconCore.PROFILE) {
-
-    override val listed: Boolean
-        get() = !isMain
-
-    override var valid: Boolean = false
+class ProfileElement(var player: EntityPlayer, override var listed: Boolean) : IconElement(IconCore.PROFILE) {
 
     var w = 165
     var h = 256
     val size = 40
 
-    override var pos: Vec2d= if (isMain) Vec2d(-w - 25.0, -(h / 2.0) - 25) else super.pos
+    override var pos: Vec2d= if (!listed) Vec2d(-w - 25.0, -(h / 2.0) - 25) else super.pos
 
     val left = pos.x + w / 2 - 10
     val top = pos.y + h / 2
 
-    override var destination: Vec2d = if (isMain) Vec2d(-w - 20.0, -(h / 2.0) - 13) else super.destination
+    override var destination: Vec2d = if (!listed) Vec2d(-w - 20.0, -(h / 2.0) - 13) else super.destination
 
     override val boundingBox: BoundingBox2D
-        get() = if (isMain) BoundingBox2D(pos , pos) else BoundingBox2D(pos, pos + vec(w, h))
-
-    override val childrenYOffset: Int
-        get() = 0
-    override val childrenYSeparator: Int
-        get() = 0
+        get() = if (!listed) BoundingBox2D(pos , pos) else BoundingBox2D(pos, pos + vec(w, h))
 
 
     private val rl = ResourceLocation(SAOCore.MODID, "textures/menu/parts/profilebg.png")
@@ -68,31 +58,38 @@ class ProfileElement(var player: EntityPlayer, val isMain: Boolean = true) : Ico
     }
 
     override fun drawBackground(mouse: Vec2d, partialTicks: Float) {
-        if (opacity < 0.03 || scale == Vec2d.ZERO) return
-        GLCore.pushMatrix()
-        GLCore.glBlend(true)
-        GLCore.color(ColorUtil.DEFAULT_COLOR)
-        GLCore.glBindTexture(rl)
+        if (canDraw) {
+            GLCore.pushMatrix()
+            GLCore.glBlend(true)
+            GLCore.color(ColorUtil.DEFAULT_COLOR.multiplyAlpha(transparency))
+            GLCore.glBindTexture(rl)
 
-        val shadowY = size / 2 + max(min((mouse.y - pos.y), 0.0), -size / 2 + 2.0)
-        GLCore.glTexturedRectV2(pos.x, pos.y, width = w.toDouble(), height = h.toDouble())
+            val shadowY = size / 2 + max(min((mouse.y - pos.y), 0.0), -size / 2 + 2.0)
+            GLCore.glTexturedRectV2(pos.x, pos.y, width = w.toDouble(), height = h.toDouble())
 
 
-        GLCore.glBindTexture(StringNames.gui)
-        GLCore.glTexturedRectV2( left - size / 2, top - shadowY / 2, width = size.toDouble(), height = shadowY, srcX = 200.0, srcY = 85.0, srcWidth = 56.0, srcHeight = 30.0)
+            GLCore.glBindTexture(StringNames.gui)
+            GLCore.glTexturedRectV2(left - size / 2, top - shadowY / 2, width = size.toDouble(), height = shadowY, srcX = 200.0, srcY = 85.0, srcWidth = 56.0, srcHeight = 30.0)
 
-        GLCore.glString(player.displayNameString, pos.xi + 50 + (player.displayNameString.length / 2), pos.yi + 20, ColorUtil.DEFAULT_BOX_FONT_COLOR.rgba, shadow = false, centered = true)
-        val profile = PlayerStats.instance().stats.getStatsString(player)
-        (0 until profile.size).forEach {
-            GLCore.glString(profile[it], pos.xi + (w / 2) - 10 + (-GLCore.glStringWidth(profile[it]) / 2), (pos.y + 180 + (it * GLCore.glStringHeight())).toInt(), ColorUtil.DEFAULT_FONT_COLOR.rgba, centered = false)
+            GLCore.glString(player.displayNameString, pos.xi + 50 + (player.displayNameString.length / 2), pos.yi + 20, ColorUtil.DEFAULT_BOX_FONT_COLOR.rgba, shadow = false, centered = true)
+            val profile = PlayerStats.instance().stats.getStatsString(player)
+            val color = if (transparency < 1.0f) ColorUtil.DEFAULT_BOX_FONT_COLOR.rgba else ColorUtil.DEFAULT_FONT_COLOR.rgba
+            (0 until profile.size).forEach {
+                GLCore.glString(profile[it], pos.xi + (w / 2) - 10 + (-GLCore.glStringWidth(profile[it]) / 2), (pos.y + 180 + (it * GLCore.glStringHeight())).toInt(), color, centered = false)
+            }
+            GLCore.glBlend(false)
+            GLCore.color(1f, 1f, 1f, 1f)
+            GLCore.popMatrix()
         }
-        GLCore.glBlend(false)
-        GLCore.popMatrix()
     }
 
     override fun draw(mouse: Vec2d, partialTicks: Float) {
-        if (canDraw)
+        if (canDraw) {
             drawCharacter(left, top)
+        }
+    }
+
+    override fun drawForeground(mouse: Vec2d, partialTicks: Float) {
     }
 
     private fun drawCharacter(x: Double, y: Double) {

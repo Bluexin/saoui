@@ -115,8 +115,6 @@ class DeathParticles private constructor(world: World, xCoord: Double, yCoord: D
         val cos = cos(a)
         val sin = sin(a)
 
-
-
         if (a < Math.PI) {
             GLCore.addVertex(xPos + x1 * cos, yPos + y1, zPos + z1 * sin, 0.0, 1.0, this.particleRed * colorIntensity, this.particleGreen * colorIntensity, this.particleBlue * colorIntensity, 1f)
             GLCore.addVertex(xPos + x2 * cos, yPos + y2, zPos + z2 * sin, 1.0, 1.0, this.particleRed * colorIntensity, this.particleGreen * colorIntensity, this.particleBlue * colorIntensity, 1f)
@@ -161,16 +159,14 @@ class DeathParticles private constructor(world: World, xCoord: Double, yCoord: D
         var queuedRenders: Queue<DeathParticles> = ArrayDeque()
 
         internal fun dispatchQueuedRenders() {
-            RenderDispatcher.particleFxCount = 0
-
             Minecraft.getMinecraft().renderEngine.bindTexture(StringNames.particleLarge)
 
             GLCore.glAlphaTest(true)
-            GLCore.glBlend(true)
-            GLCore.begin()
-            queuedRenders.forEach { p -> p.renderQueued() }
-            GLCore.draw()
-            GLCore.glBlend(false)
+            //GLCore.glBlend(true)
+            queuedRenders.forEach { p ->
+                p.renderQueued()
+            }
+            //GLCore.glBlend(false)
 
             queuedRenders.clear()
         }

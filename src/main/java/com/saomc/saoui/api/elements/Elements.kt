@@ -32,13 +32,12 @@ import com.teamwizardry.librarianlib.features.math.Vec2d
  * @author Bluexin
  */
 interface INeoParent {
+
     var parent: INeoParent?
         get() = null
         set(_) = Unit
-
     val tlParent: INeoParent
         get() = parent?.tlParent ?: this
-
     val controllingParent: INeoParent?
     get() {
         return if (parent is CoreGUI<*>)
@@ -49,12 +48,16 @@ interface INeoParent {
             else parent!!.parent?.parent
         else parent?.parent
     }
-
     val controllingGUI: CoreGUI<*>?
     get() {
         return tlParent as? CoreGUI<*>
     }
-
+    var pos: Vec2d
+    var destination: Vec2d
+    var scroll
+        get() = 0
+        set(_) = Unit
+    var isOpen: Boolean
     fun move(delta: Vec2d) {
         CoreGUI.animator.removeAnimationsFor(this)
         destination += delta
@@ -65,20 +68,8 @@ interface INeoParent {
         }
     }
 
-    var pos: Vec2d
-
-    var destination: Vec2d
-
-    var scroll
-        get() = 0
-        set(_) = Unit
-
     fun mouseClicked(pos: Vec2d, mouseButton: MouseButton) = false
-
     fun keyTyped(typedChar: Char, keyCode: Int)
-
-    var isOpen: Boolean
-
     fun isFocus(): Boolean {
         return isOpen || parent?.isOpen == true ||{
             (controllingParent as? CategoryButton)?.elements?.none { it.isOpen }?:
@@ -89,55 +80,45 @@ interface INeoParent {
 }
 
 interface NeoElement : INeoParent {
-    fun drawBackground(mouse: Vec2d, partialTicks: Float)
-    fun draw(mouse: Vec2d, partialTicks: Float)
-    fun drawForeground(mouse: Vec2d, partialTicks: Float)
+
 
     val boundingBox: BoundingBox2D
-
     var idealBoundingBox
         get() = boundingBox
         /**
          * The set method is used to apply changes. Not ideal but idk between this and [boundingBox]
          */
         set(_) {}
-
-    operator fun contains(pos: Vec2d) = pos in boundingBox
-
-    fun init(){}
-
-
     val listed
         get() = true
-
     val visible
         get() = true
-
     var valid
         get() = true
         set(_) = Unit
-
     var selected
         get() = false
         set(_) = Unit
-
     var highlighted
         get() = false
         set(_) = Unit
-
     val disabled
         get() = false
-
     var opacity
         get() = 1f
         set(_) = Unit
-
     val scale
         get() = Vec2d.ONE
+    val canDraw: Boolean
+        get() = opacity >= 0.03 || scale != Vec2d.ZERO
 
+    fun drawBackground(mouse: Vec2d, partialTicks: Float)
+    fun draw(mouse: Vec2d, partialTicks: Float)
+    fun drawForeground(mouse: Vec2d, partialTicks: Float)
+    operator fun contains(pos: Vec2d) = pos in boundingBox
+    fun init(){}
     fun hide() = Unit
     fun show() = Unit
-
     fun update() = Unit
 
 }
@@ -145,23 +126,29 @@ interface NeoElement : INeoParent {
 interface NeoParent : NeoElement {
 
     override var isOpen: Boolean
-
     override var selected: Boolean
-
     open val elements: MutableList<NeoElement>
-
     val elementsSequence
-        get() =  elements.asSequence().filter(NeoElement::listed)
-
+        get() = elements.asSequence()
     val otherElementsSequence
-        get() =  elements.asSequence().filter { !it.listed }
-
+        get() =  elementsSequence.filter { !it.listed && it.visible }
+    val listedElementsSequence
+        get() =  elementsSequence.filter(NeoElement::listed)
     val validElementsSequence
-        get() =  elementsSequence.filter(NeoElement::valid)
-
+        get() =  listedElementsSequence.filter(NeoElement::valid)
     val visibleElementsSequence
         get() =  validElementsSequence.filter(NeoElement::visible)
 
+    val childrenXOffset
+        get() = 0
+    val childrenYOffset
+        get() = 0
+    val childrenXSeparator
+        get() = 0
+    val childrenYSeparator
+        get() = 0
+    override var parent: INeoParent?
+    val futureOperations: MutableList<NeoParent.() -> Unit>
     override fun update() {
         super.update()
 
@@ -205,20 +192,6 @@ interface NeoParent : NeoElement {
                     r
                 }
             }*/
-
-    val childrenXOffset
-        get() = 0
-    val childrenYOffset
-        get() = 0
-    val childrenXSeparator
-        get() = 0
-    val childrenYSeparator
-        get() = 0
-
-    override var parent: INeoParent?
-
-    val futureOperations: MutableList<NeoParent.() -> Unit>
-
     fun performLater(block: NeoParent.() -> Unit) {
         futureOperations += block
     }

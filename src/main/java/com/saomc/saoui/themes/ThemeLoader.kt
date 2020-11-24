@@ -28,6 +28,7 @@ import com.saomc.saoui.api.entity.rendering.ColorState
 import com.saomc.saoui.screens.ingame.HealthStep
 import com.saomc.saoui.themes.elements.Hud
 import com.saomc.saoui.util.ColorUtil
+import com.teamwizardry.librarianlib.features.kotlin.Minecraft
 import net.minecraft.client.Minecraft
 import net.minecraft.util.ResourceLocation
 import java.io.IOException
@@ -57,14 +58,16 @@ object ThemeLoader {
 
         val context = JAXBContext.newInstance(Hud::class.java)
         val um = context.createUnmarshaller()
-
         try {
-            Minecraft.getMinecraft().resourceManager.getResource(hudRL).inputStream.use { HUD = um.unmarshal(it) as Hud }
+            Minecraft().resourceManager.getResource(hudRL).inputStream.use { HUD = um.unmarshal(it) as Hud }
         } catch (e: IOException) {
             e.printStackTrace()
         }
 
         HUD.setup()
+
+
+        //(Minecraft().resourceManager as SimpleReloadableResourceManager).reloadlisteners
 
         SAOCore.LOGGER.info("Loaded theme and set it up in " + (System.currentTimeMillis() - start) + "ms.")
     }

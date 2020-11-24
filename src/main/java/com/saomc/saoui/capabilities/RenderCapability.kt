@@ -96,7 +96,7 @@ class RenderCapability : AbstractEntityCapability() {
     }
 
     private fun gameFPS(): Int {
-        return Minecraft().limitFramerate
+        return net.minecraft.client.Minecraft.getDebugFPS()
     }
 
     /**

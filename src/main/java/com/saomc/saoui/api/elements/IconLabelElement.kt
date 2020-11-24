@@ -38,11 +38,26 @@ import kotlin.math.max
 open class IconLabelElement(icon: IIcon, open var label: String = "", pos: Vec2d = Vec2d.ZERO, override val description: MutableList<String> = mutableListOf()) : IconElement(icon, pos, width = 84, height = 18) {
 
     override val boundingBox get() = BoundingBox2D(pos, pos + vec(width, height))
-
     override var idealBoundingBox: BoundingBox2D
         get() = BoundingBox2D(pos, pos + vec(max(26 + GLCore.glStringWidth(label), width), height))
         set(value) { // FIXME: this makes it so unintuitive :shock:
             width = value.widthI()
+        }
+    override val childrenXOffset get() = width + 5
+    override var visible: Boolean
+        get() = super.visible
+        set(value) {
+            if (value && !super.visible) {
+                opacity = 0f
+                if (listed) {
+                    +basicAnimation(this, "opacity") {
+                        from = 0f
+                        to = 1f
+                        duration = 4f
+                    }
+                }
+            }
+            super.visible = value
         }
 
     /**
@@ -104,24 +119,6 @@ open class IconLabelElement(icon: IIcon, open var label: String = "", pos: Vec2d
     override fun toString(): String {
         return "NeoIconLabelElement(label='$label', width=$width, height=$height)\n\t${super.toString()}"
     }
-
-    override val childrenXOffset get() = width + 5
-
-    override var visible: Boolean
-        get() = super.visible
-        set(value) {
-            if (value && !super.visible) {
-                opacity = 0f
-                if (listed) {
-                    +basicAnimation(this, "opacity") {
-                        from = 0f
-                        to = 1f
-                        duration = 4f
-                    }
-                }
-            }
-            super.visible = value
-        }
 
 
 }

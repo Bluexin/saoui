@@ -30,10 +30,8 @@ import org.lwjgl.opengl.GL11
 @SideOnly(Side.CLIENT)
 object RenderDispatcher {
 
-    var particleFxCount = 0
-
     fun dispatch() {
-
+        GLCore.begin()
         GLCore.glBlend(true)
         GLCore.blendFunc(GL11.GL_ONE, GL11.GL_ONE)
         GLCore.lighting(false)
@@ -42,5 +40,6 @@ object RenderDispatcher {
         Minecraft().profiler.endSection()
         GLCore.blendFunc(GL11.GL_ONE, GL11.GL_ZERO)
         GLCore.glBlend(false)
+        GLCore.draw()
     }
 }

@@ -29,19 +29,17 @@ import com.teamwizardry.librarianlib.features.animator.animations.ScheduledEvent
 open class IndexedScheduledCounter(val delay: Float, maxIdx: Int = 0, private val callBack: (Int) -> Unit) : Animation<ScheduledEventAnimation.PointlessAnimatableObject>(ScheduledEventAnimation.PointlessAnimatableObject,
         AnimatableProperty.get(ScheduledEventAnimation.PointlessAnimatableObject::class.java, "field")) {
 
-    init {
-        duration = delay * maxIdx
-    }
-
     var maxIdx = maxIdx
         set(value) {
             field = value
             duration = delay * maxIdx
         }
-
     private val lerper = LerperHandler.getLerperOrError(Int::class.javaPrimitiveType!!)
-
     private var currentIdx = -1
+
+    init {
+        duration = delay * maxIdx
+    }
 
     override fun update(time: Float) {
         val progress = Easing.linear(timeFraction(time))

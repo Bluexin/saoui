@@ -67,19 +67,7 @@ class CategoryButton(val delegate: IconElement, parent: INeoParent? = null, priv
     override var disabled by delegate::disabled.delegate
     override var opacity by delegate::opacity.delegate
     override var scale by delegate::scale.delegate
-    override fun onClick(body: (Vec2d, MouseButton) -> Boolean) = delegate.onClick(body)
-    override fun onClickOut(body: (Vec2d, MouseButton) -> Unit) = delegate.onClickOut(body)
-    override fun hide() = delegate.hide()
-    override fun show() = delegate.show()
-    override fun drawBackground(mouse: Vec2d, partialTicks: Float) = delegate.drawBackground(mouse, partialTicks)
-    override fun draw(mouse: Vec2d, partialTicks: Float) = delegate.draw(mouse, partialTicks)
-    override fun drawForeground(mouse: Vec2d, partialTicks: Float) = delegate.drawForeground(mouse, partialTicks)
-    override fun contains(pos: Vec2d) = delegate.contains(pos)
-    override fun update() {
-        super.update()
-        delegate.update()
-    }
-
+    private var openAnim: WeakReference<IndexedScheduledCounter>? = null
 
     init {
         this.parent = parent
@@ -105,6 +93,19 @@ class CategoryButton(val delegate: IconElement, parent: INeoParent? = null, priv
         delegate.init()
 
         init?.invoke(this)
+    }
+
+    override fun onClick(body: (Vec2d, MouseButton) -> Boolean) = delegate.onClick(body)
+    override fun onClickOut(body: (Vec2d, MouseButton) -> Unit) = delegate.onClickOut(body)
+    override fun hide() = delegate.hide()
+    override fun show() = delegate.show()
+    override fun drawBackground(mouse: Vec2d, partialTicks: Float) = delegate.drawBackground(mouse, partialTicks)
+    override fun draw(mouse: Vec2d, partialTicks: Float) = delegate.draw(mouse, partialTicks)
+    override fun drawForeground(mouse: Vec2d, partialTicks: Float) = delegate.drawForeground(mouse, partialTicks)
+    override fun contains(pos: Vec2d) = delegate.contains(pos)
+    override fun update() {
+        super.update()
+        delegate.update()
     }
 
     override fun keyTyped(typedChar: Char, keyCode: Int) {
@@ -173,8 +174,6 @@ class CategoryButton(val delegate: IconElement, parent: INeoParent? = null, priv
         openAnim = null
     }
 
-    private var openAnim: WeakReference<IndexedScheduledCounter>? = null
-
     override operator fun plusAssign(element: NeoElement) {
         delegate += element
         element.hide()
@@ -225,7 +224,7 @@ class CategoryButton(val delegate: IconElement, parent: INeoParent? = null, priv
     }
 
     fun profile(player: EntityPlayer, body: (CategoryButton.() -> Unit)? = null): CategoryButton {
-        val cat = CategoryButton(ProfileElement(player, player.uniqueID == Minecraft().player.uniqueID), this, body)
+        val cat = CategoryButton(ProfileElement(player, player != Minecraft().player), this, body)
         +cat
         return cat
     }
