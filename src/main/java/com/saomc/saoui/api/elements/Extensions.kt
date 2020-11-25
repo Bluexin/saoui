@@ -30,6 +30,7 @@ import com.saomc.saoui.screens.util.toIcon
 import com.saomc.saoui.util.AdvancementUtil
 import com.saomc.saoui.util.IconCore
 import com.saomc.saoui.util.getProgress
+import com.saomc.saoui.util.getRecipes
 import com.teamwizardry.librarianlib.features.gui.component.supporting.delegate
 import com.teamwizardry.librarianlib.features.helpers.vec
 import com.teamwizardry.librarianlib.features.kotlin.Minecraft
@@ -295,7 +296,7 @@ class CategoryButton(val delegate: IconElement, parent: INeoParent? = null, priv
 
     fun addRecipes(advancements: List<Advancement>){
         advancements.forEach { advancement ->
-            advancement.rewards.recipes?.forEach { recipe ->
+            advancement.rewards.getRecipes()?.forEach { recipe ->
                 +CategoryButton(RecipeElement(advancement, ForgeRegistries.RECIPES.getValue(recipe)!!), this)
             }
         }

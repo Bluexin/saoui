@@ -118,4 +118,4 @@ object AdvancementUtil {
     }
 }
 
-fun Advancement.getProgress() = Minecraft().connection?.advancementManager?.advancementToProgress?.get(this)
+fun Advancement.getProgress() = Minecraft().connection?.advancementManager?.getAdvancementToProgress()?.get(this)
