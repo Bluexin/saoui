@@ -47,6 +47,19 @@
                         <x>18.0 + usernamewidth</x>
                         <y cache="STATIC">3.0</y>
                     </glRectangle>
+                    <glRectangle name="air bar">
+                        <texture>saoui:textures/guiedt.png</texture>
+                        <h cache="STATIC">9.0</h>
+                        <rgba>healthStep == CREATIVE? 0x00000000:
+                            statusEffects.contains(WET)? 0x2ADDF580:
+                            0x00000000</rgba>
+                        <srcH cache="STATIC">9.0</srcH>
+                        <srcW>215.0 * airPct</srcW>
+                        <srcY cache="STATIC">188.0</srcY>
+                        <w>215.0 * airPct</w>
+                        <x>18.0 + usernamewidth</x>
+                        <y cache="STATIC">3.0</y>
+                    </glRectangle>
                     <glRectangle name="hunger bar">
                         <texture>saoui:textures/guiedt.png</texture>
                         <h cache="STATIC">2.0</h>
@@ -424,28 +437,6 @@
                             </rawElement>
                         </children>
                     </repetitionGroup>
-                </children>
-            </value>
-        </entry>
-        <entry>
-            <key>AIR</key>
-            <value name="air">
-                <x cache="STATIC">2.0</x>
-                <y cache="STATIC">2.0</y>
-                <children>
-                    <glRectangle name="air bar">
-                        <texture>saoui:textures/guiedt.png</texture>
-                        <h cache="STATIC">9.0</h>
-                        <rgba>healthStep == CREATIVE? 0x00000000:
-                            statusEffects.contains(WET)? 0x2ADDF580:
-                            0x00000000</rgba>
-                        <srcH cache="STATIC">9.0</srcH>
-                        <srcW>215.0 * airPct</srcW>
-                        <srcY cache="STATIC">188.0</srcY>
-                        <w>215.0 * airPct</w>
-                        <x>18.0 + usernamewidth</x>
-                        <y cache="STATIC">3.0</y>
-                    </glRectangle>
                 </children>
             </value>
         </entry>

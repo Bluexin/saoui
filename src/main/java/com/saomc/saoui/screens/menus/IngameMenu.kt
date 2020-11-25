@@ -35,6 +35,7 @@ import com.saomc.saoui.screens.CoreGUI
 import com.saomc.saoui.screens.util.PopupNotice
 import com.saomc.saoui.screens.util.PopupYesNo
 import com.saomc.saoui.screens.util.itemList
+import com.saomc.saoui.themes.ThemeResourceLoader
 import com.saomc.saoui.util.AdvancementUtil
 import com.saomc.saoui.util.CraftingUtil
 import com.saomc.saoui.util.IconCore
@@ -44,7 +45,9 @@ import com.teamwizardry.librarianlib.features.kotlin.Minecraft
 import com.teamwizardry.librarianlib.features.math.Vec2d
 import net.minecraft.client.gui.GuiIngameMenu
 import net.minecraft.client.gui.GuiOptions
+import net.minecraft.client.gui.GuiScreen
 import net.minecraft.client.resources.I18n.format
+import net.minecraft.client.resources.SimpleReloadableResourceManager
 import net.minecraftforge.common.MinecraftForge
 
 /**
@@ -129,6 +132,8 @@ class IngameMenu(elements: MutableList<NeoElement> = mutableListOf()) : CoreGUI<
                                 for (i in 1..10) category(IconCore.SKILLS, "3.3.$i")
                             }
                         }
+
+                        disabled = true
                     }
                     crafting()
                     profile(Companion.mc.player)
@@ -154,10 +159,17 @@ class IngameMenu(elements: MutableList<NeoElement> = mutableListOf()) : CoreGUI<
                 Companion.tlCategory(IconCore.SETTINGS, index) {
                     category(IconCore.OPTION, format("sao.element.options")) {
                         category(IconCore.OPTION, format("guiOptions")) {
+                            /*
                             onClick { _, _ ->
                                 Companion.mc.displayGuiScreen(GuiOptions(controllingGUI, EventCore.mc.gameSettings))
                                 true
+                            }*/
+
+                            onClick { _, _ ->
+                                val gui = GuiOptions(controllingGUI as? GuiScreen, EventCore.mc.gameSettings)
+                                true
                             }
+                            disabled = true
                         }
                         OptionCore.tlOptions.forEach {
                             +optionCategory(it)
@@ -168,6 +180,13 @@ class IngameMenu(elements: MutableList<NeoElement> = mutableListOf()) : CoreGUI<
                             Companion.mc.displayGuiScreen(GuiIngameMenu())
                             true
                         }
+                    }
+                    category(IconCore.OPTION, format("Reload Theme")) {
+                        onClick { _, _ ->
+                            (Minecraft().resourceManager as SimpleReloadableResourceManager).reloadResourcePack(ThemeResourceLoader)
+                            true
+                        }
+                        disabled = true
                     }
                     category(IconCore.LOGOUT, if (OptionCore.LOGOUT()) format("sao.element.logout") else "") {
                         onClick { _, _ ->

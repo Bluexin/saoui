@@ -32,6 +32,7 @@ object ConfigHandler {
     var IGNORE_UPDATE: Boolean = false
     var DEBUG = false
     var debugFakePT: Int = 0
+    var lastThemeUsed: String = "default"
     var config: Configuration = Configuration(File(saoConfDir, "main.cfg"))
         private set
 
@@ -65,6 +66,8 @@ object ConfigHandler {
         }
 
         debugFakePT = config.getInt("debugFakePT", Configuration.CATEGORY_GENERAL, 0, 0, 10, "Amount of fake party members, 0 to disable.")
+
+        lastThemeUsed = config.getString("lastThemeUsed", Configuration.CATEGORY_GENERAL, "default", "The last used theme loaded. If invalid, defaults to sao's theme")
 
         config.save()
     }
