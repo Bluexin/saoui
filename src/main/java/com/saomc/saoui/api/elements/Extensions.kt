@@ -170,7 +170,11 @@ class CategoryButton(val delegate: IconElement, parent: INeoParent? = null, priv
         highlighted = false
         selected = false
         isOpen = false
-        if (!reInit) tlParent.move(vec(boundingBox.width(), 0))
+        if (!reInit) {
+            if (tlParent != parent) {
+                tlParent.move(vec(boundingBox.width(), 0))
+            }
+        }
         openAnim?.get()?.terminated = true
         openAnim = null
     }

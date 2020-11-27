@@ -59,7 +59,7 @@ enum class OptionCore(
     DEFAULT_INVENTORY("optionDefaultInv", value = true, isCategory = false, category = UI, restricted = false),
     DEFAULT_DEATH_SCREEN("optionDefaultDeath", value = false, isCategory = false, category = UI, restricted = false),
     DEFAULT_DEBUG("optionDefaultDebug", value = false, isCategory = false, category = UI, restricted = false),
-    FORCE_HUD("optionForceHud", value = true, isCategory = false, category = UI, restricted = false),
+    ALWAYS_SHOW("optionAlwaysShow", value = true, isCategory = false, category = UI, restricted = false),
     LOGOUT("optionLogout", value = true, isCategory = false, category = UI, restricted = false),
     GUI_PAUSE("optionGuiPause", value = false, isCategory = false, category = UI, restricted = false),
     UI_MOVEMENT("optionUIMovement", value = true, isCategory = false, category = UI, restricted = false),

@@ -46,7 +46,6 @@ abstract class CoreGUI<T : Any>(final override var pos: Vec2d, override var dest
     var viewSet: Boolean = false
     var playerView: Vec2f = Vec2f.ZERO
     open var previousMouse: Vec2d = Vec2d(0.0, 0.0)
-    open var originPos = pos
 
     var subGui: CoreGUI<*>? = null
         private set
@@ -75,7 +74,6 @@ abstract class CoreGUI<T : Any>(final override var pos: Vec2d, override var dest
         else if (viewSet){
             Minecraft().player.rotationYaw = playerView.x
             Minecraft().player.rotationPitch = playerView.y
-            pos = originPos
         }
         GLCore.translate(pos.x, pos.y, 0.0)
 
