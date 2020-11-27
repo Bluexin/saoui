@@ -64,7 +64,7 @@ enum class StatusEffects : IIcon {
     @Suppress("unused")
     override fun glDraw(x: Int, y: Int, z: Float) {
         GLCore.glBindTexture(resource)
-        GLCore.glTexturedRectV2(x.toDouble(), y.toDouble(), z.toDouble(), 16.0, 16.0, srcWidth = 64.0, srcHeight = 64.0, textureW = 64, textureH = 64)
+        GLCore.glTexturedRectV2(x.toDouble(), y.toDouble(), z.toDouble(), 16.0, 16.0, srcWidth = 15.0, srcHeight = 16.0, textureW = 16, textureH = 16)
     }
 
     companion object {

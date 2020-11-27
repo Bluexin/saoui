@@ -56,6 +56,10 @@ repositories {
         name 'Forgelin'
         url "http://maven.shadowfacts.net/"
     }
+    maven {
+        name = "Jitpack.io"
+        url = uri("https://jitpack.io")
+    }
 }
 
 reobf {
@@ -76,6 +80,8 @@ dependencies {
     compile "net.shadowfacts:Forgelin:${forgelin_version}"
     compile "be.bluexin:saomc-lib:1.12.2-1.4.+"
     compile "com.teamwizardry.librarianlib:librarianlib-1.12.2:4.19.+"
+    //compile 'com.github.thecodewarrior:bitfont:-SNAPSHOT'
+    compile 'com.ibm.icu:icu4j:63.1'
     shade 'be.bluexin.gnu.jel:gnu-jel:2.1.3'
     compile 'be.bluexin.gnu.jel:gnu-jel:2.1.3'
     shade 'com.helger:ph-css:6.1.1'
