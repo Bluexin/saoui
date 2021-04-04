@@ -89,8 +89,8 @@ object StaticRenderer { // TODO: add usage of scale, offset etc from capability
             if (!dead && !living.isInvisibleToPlayer(mc.player) && living != mc.player) {
                 living.getRenderData()?.let {renderCap ->
                     val state = renderCap.colorStateHandler.colorState
-                    if (checkCrystal(state)) doRenderColorCursor(renderManager, living, x, y, z, sqrt(64), state)
-                    if (checkHealth(state)) doRenderHealthBar(renderManager, living, x, y, z, sqrt(64))
+                    if (checkCrystal(state) && renderCap.colorStateHandler.shouldDrawCrystal()) doRenderColorCursor(renderManager, living, x, y, z, sqrt(64), state)
+                    if (checkHealth(state) && renderCap.colorStateHandler.shouldDrawHealth()) doRenderHealthBar(renderManager, living, x, y, z, sqrt(64))
                 }
             }
         }

@@ -35,6 +35,22 @@ public interface IColorStateHandler {
     ColorState getColorState();
 
     /**
+     * Called every render tick.
+     * Use this to toggle crystals.
+     */
+    default boolean shouldDrawCrystal() {
+        return true;
+    }
+
+    /**
+     * Called every render tick.
+     * Use this to toggle health bars.
+     */
+    default boolean shouldDrawHealth() {
+        return true;
+    }
+
+    /**
      * Called every tick.
      * Use this to handle anything special.
      */
