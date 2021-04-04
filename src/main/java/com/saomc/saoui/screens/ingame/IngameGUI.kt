@@ -211,9 +211,9 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
         mc.profiler.startSection("enemy health")
         val entities: MutableList<EntityLivingBase> = mutableListOf()
         val trackedEntity = getMouseOver(mc.renderPartialTicks)
-        if (trackedEntity is EntityLivingBase) context.setTargetEntity(trackedEntity)
+        if (trackedEntity is EntityLivingBase && trackedEntity.getRenderData()?.colorStateHandler?.shouldDrawHealth() == true) context.setTargetEntity(trackedEntity)
         entities.addAll(Client.minecraft.world.getEntitiesInAABBexcluding(Client.minecraft.player, AxisAlignedBB(Client.minecraft.player.position.add(-10, -5, -10), Client.minecraft.player.position.add(10, 5, 10))){
-            it is EntityLivingBase && it.getRenderData()?.isAggressive == true && !entities.contains(it)
+            it is EntityLivingBase && it.getRenderData()?.isAggressive == true && it.getRenderData()?.colorStateHandler?.shouldDrawHealth() == true && !entities.contains(it)
         }.map { it as EntityLivingBase }.sortedBy { entityLivingBase -> entityLivingBase.getDistance(Client.minecraft.player) }.take(5))
         entities.sortBy { it.health / it.maxHealth }
         context.setNearbyEntities(entities)
