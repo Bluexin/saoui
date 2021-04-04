@@ -20,6 +20,7 @@ package com.saomc.saoui.themes.util
 import com.saomc.saoui.api.themes.IHudDrawContext
 import com.saomc.saoui.effects.StatusEffects
 import com.saomc.saoui.screens.ingame.HealthStep
+import net.minecraft.entity.EntityLivingBase
 
 /**
  * Part of saoui by Bluexin.
@@ -56,7 +57,7 @@ class StaticCachedExpression<out T>(expression: CompiledExpressionWrapper<T>) : 
         override fun inWater() = false
         override fun air() = 0
         override fun armor() = 1
-        override fun ptHealthStep(index: Int) = HealthStep.CREATIVE
+        override fun ptHealthStep(index: Int) = HealthStep.INVALID
         override fun ptName(index: Int) = ""
         override fun ptHp(index: Int) = 0f
         override fun ptMaxHp(index: Int) = 0f
@@ -75,6 +76,7 @@ class StaticCachedExpression<out T>(expression: CompiledExpressionWrapper<T>) : 
         override fun scaledheight() = 0
         override fun offhandEmpty(slot: Int) = false
         override fun strWidth(s: String) = 0
+        override fun strHeight(): Int = 0
         override fun absorption() = 0f
         override fun level() = 0
         override fun experience() = 0f
@@ -87,6 +89,18 @@ class StaticCachedExpression<out T>(expression: CompiledExpressionWrapper<T>) : 
         override fun foodLevel() = 0f
         override fun saturationLevel() = 0f
         override fun statusEffects() = mutableListOf<StatusEffects>()
+        override fun nearbyEntities() = mutableListOf<EntityLivingBase>()
+        override fun entityName(index: Int) = ""
+        override fun entityHp(index: Int) = 0f
+        override fun entityMaxHp(index: Int) = 0f
+        override fun entityHpPct(index: Int) = 0f
+        override fun entityHealthStep(index: Int) = HealthStep.INVALID
+        override fun targetEntity() = null
+        override fun targetName() = ""
+        override fun targetHp() = 0f
+        override fun targetMaxHp() = 0f
+        override fun targetHpPct() = 0f
+        override fun targetHealthStep()= HealthStep.INVALID
     }
 
     override fun invoke(ctx: IHudDrawContext) = cache

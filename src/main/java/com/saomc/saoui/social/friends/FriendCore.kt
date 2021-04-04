@@ -2,7 +2,7 @@ package com.saomc.saoui.social.friends
 
 import be.bluexin.saomclib.party.PlayerInfo
 import com.saomc.saoui.config.FriendData
-import com.teamwizardry.librarianlib.features.kotlin.Minecraft
+import com.teamwizardry.librarianlib.features.kotlin.Client
 import java.util.*
 
 object FriendCore {
@@ -37,7 +37,7 @@ object FriendCore {
     }
 
     fun isFriendOnline(playerInfo: PlayerInfo): Boolean{
-        return Minecraft().connection?.playerInfoMap?.any { it.displayName?.formattedText?.equals(playerInfo.username, true)?: false } ?: false
+        return Client.minecraft.connection?.playerInfoMap?.any { it.displayName?.formattedText?.equals(playerInfo.username, true)?: false } ?: false
     }
 
     fun getOnlineList(): List<PlayerInfo>{

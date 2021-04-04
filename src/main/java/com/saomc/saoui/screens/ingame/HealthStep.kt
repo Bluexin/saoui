@@ -21,7 +21,7 @@ import be.bluexin.saomclib.party.PlayerInfo
 import com.saomc.saoui.GLCore
 import com.saomc.saoui.capabilities.getRenderData
 import com.saomc.saoui.social.StaticPlayerHelper
-import com.teamwizardry.librarianlib.features.kotlin.Minecraft
+import com.teamwizardry.librarianlib.features.kotlin.Client
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraftforge.fml.relauncher.Side
@@ -60,7 +60,7 @@ enum class HealthStep constructor(private val limit: Float, var rgba: Int) {
             var state = GOOD
             if (entity == null) state = INVALID
             if (entity is EntityPlayer) {
-                Minecraft().connection?.playerInfoMap?.firstOrNull { it.gameProfile.id == entity.uniqueID }?.gameType?.let {
+                Client.minecraft.connection?.playerInfoMap?.firstOrNull { it.gameProfile.id == entity.uniqueID }?.gameType?.let {
                     if (it.isCreative)
                         state = CREATIVE
                     else if (!it.isSurvivalOrAdventure)
@@ -74,7 +74,7 @@ enum class HealthStep constructor(private val limit: Float, var rgba: Int) {
         fun getStep(entity: PlayerInfo, health: Double): HealthStep {
             var state = GOOD
             if (entity.player == null) state = INVALID
-            else Minecraft().connection?.playerInfoMap?.firstOrNull { it.gameProfile.id == entity.uuid }?.gameType?.let {
+            else Client.minecraft.connection?.playerInfoMap?.firstOrNull { it.gameProfile.id == entity.uuid }?.gameType?.let {
                 if (it.isCreative)
                     state = CREATIVE
                 else if (!it.isSurvivalOrAdventure)

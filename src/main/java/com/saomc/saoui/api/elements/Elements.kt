@@ -22,7 +22,6 @@ import com.saomc.saoui.screens.MouseButton
 import com.saomc.saoui.screens.unaryPlus
 import com.teamwizardry.librarianlib.features.animator.Easing
 import com.teamwizardry.librarianlib.features.helpers.vec
-import com.teamwizardry.librarianlib.features.kotlin.plus
 import com.teamwizardry.librarianlib.features.math.BoundingBox2D
 import com.teamwizardry.librarianlib.features.math.Vec2d
 
@@ -71,10 +70,7 @@ interface INeoParent {
     fun mouseClicked(pos: Vec2d, mouseButton: MouseButton) = false
     fun keyTyped(typedChar: Char, keyCode: Int)
     fun isFocus(): Boolean {
-        return isOpen || parent?.isOpen == true ||{
-            (controllingParent as? CategoryButton)?.elements?.none { it.isOpen }?:
-            (controllingParent as? CoreGUI<*>)?.elements?.none { it.isOpen }?:parent?.isOpen?: true
-        }.invoke()
+        return isOpen || parent?.isOpen == true || (controllingParent as? CategoryButton)?.elements?.none { it.isOpen } ?: (controllingParent as? CoreGUI<*>)?.elements?.none { it.isOpen } ?: parent?.isOpen ?: true
     }
 
 }
@@ -152,21 +148,21 @@ interface NeoParent : NeoElement {
     override fun update() {
         super.update()
 
-        this.elements.forEach(NeoElement::update)
+        this.elementsSequence.forEach(NeoElement::update)
 
         this.futureOperations.forEach { it() }
         this.futureOperations.clear()
     }
 
     operator fun plusAssign(element: NeoElement) {
-        if (elements.none { it == element }) {
+        if (elementsSequence.none { it == element }) {
             if (elements.isNotEmpty()) {
                 val bb1 = elements[0].idealBoundingBox
                 val bbNew = element.idealBoundingBox
                 if (bb1.widthI() >= bbNew.widthI()) {
                     element.idealBoundingBox = BoundingBox2D(bbNew.min, vec(bb1.width(), bbNew.height()))
                 } else {
-                    elements.forEach {
+                    elementsSequence.forEach {
                         val bb = it.idealBoundingBox
                         it.idealBoundingBox = BoundingBox2D(bb.min, vec(bbNew.width(), bb.height()))
                     }

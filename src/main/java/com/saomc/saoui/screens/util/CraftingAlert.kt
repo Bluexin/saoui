@@ -3,7 +3,7 @@ package com.saomc.saoui.screens.util
 import com.saomc.saoui.SoundCore
 import com.saomc.saoui.play
 import com.saomc.saoui.util.CraftingUtil
-import com.teamwizardry.librarianlib.features.kotlin.Minecraft
+import com.teamwizardry.librarianlib.features.kotlin.Client
 import net.minecraft.client.gui.Gui
 import net.minecraft.client.gui.toasts.GuiToast
 import net.minecraft.client.gui.toasts.IToast
@@ -45,7 +45,7 @@ class CraftingAlert(private val itemStack: ItemStack): IToast {
 
     companion object{
         fun new (stack: ItemStack){
-            Minecraft().toastGui.add(CraftingAlert(stack))
+            Client.minecraft.toastGui.add(CraftingAlert(stack))
         }
     }
 

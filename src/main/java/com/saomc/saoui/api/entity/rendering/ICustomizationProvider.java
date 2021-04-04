@@ -26,31 +26,31 @@ import net.minecraft.nbt.NBTTagCompound;
  *
  * @author Bluexin
  */
-public interface ICustomizationProvider {
+public abstract class ICustomizationProvider {
     /**
      * @return offset along the X axis to use for rendering
      */
-    double getXOffset();
+    abstract double getXOffset();
 
     /**
      * @return offset along the Y axis to use for rendering
      */
-    double getYOffset();
+    abstract double getYOffset();
 
     /**
      * @return offset along the Z axis to use for rendering
      */
-    double getZOffset();
+    abstract double getZOffset();
 
     /**
      * @return scale to use for rendering
      */
-    double getScale();
+    abstract double getScale();
 
     /**
      * @return number of HP bars to render
      */
-    int getBarCount();
+    abstract int getBarCount();
 
     /**
      * Save any data to NBT format.
@@ -60,7 +60,7 @@ public interface ICustomizationProvider {
      *
      * @param tag the NBT tag to save to
      */
-    default void save(NBTTagCompound tag) {
+    public void save(NBTTagCompound tag) {
     }
 
     /**
@@ -71,6 +71,6 @@ public interface ICustomizationProvider {
      *
      * @param tag the NBT tag to save to
      */
-    default void load(NBTTagCompound tag) {
+    public void load(NBTTagCompound tag) {
     }
 }

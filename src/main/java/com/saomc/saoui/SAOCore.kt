@@ -23,16 +23,13 @@ import com.saomc.saoui.api.events.EventInitStatsProvider
 import com.saomc.saoui.capabilities.RenderCapability
 import com.saomc.saoui.config.ConfigHandler
 import com.saomc.saoui.config.FriendData
-import com.saomc.saoui.config.OptionCore
 import com.saomc.saoui.events.EventCore
 import com.saomc.saoui.screens.CoreGUI
 import com.saomc.saoui.themes.ThemeLoader
 import com.saomc.saoui.util.AdvancementUtil
 import com.saomc.saoui.util.DefaultStatsProvider
 import com.saomc.saoui.util.PlayerStats
-import com.teamwizardry.librarianlib.features.kotlin.Minecraft
-import net.minecraft.client.Minecraft
-import net.minecraft.client.resources.IReloadableResourceManager
+import com.teamwizardry.librarianlib.features.kotlin.Client
 import net.minecraft.entity.EntityLivingBase
 import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.fml.common.Loader
@@ -46,18 +43,18 @@ import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap
-import javax.xml.bind.JAXBException
+
 
 @Mod(modid = SAOCore.MODID, name = SAOCore.NAME, version = SAOCore.VERSION, clientSideOnly = true, dependencies = SAOCore.DEPS, acceptableSaveVersions = "*", canBeDeactivated = true)
 object SAOCore {
     const val MODID = "saoui"
     const val NAME = "Sword Art Online UI"
     const val VERSION = "2.1.4"
-    const val DEPS = "required-after:saomclib@[1.4.8,);after:mantle;required-after:librarianlib@[4.19.2,)"
+    const val DEPS = "required-after:saomclib@[1.4.8,);after:mantle;required-after:librarianlib@[4.22,)"
 
-    val mc = Minecraft()
+    val mc = Client.minecraft
 
-    val saoConfDir: File = confDir(File(Minecraft().gameDir, "config"))
+    val saoConfDir: File = confDir(File(Client.minecraft.gameDir, "config"))
     val isSAOMCLibServerSide: Boolean
         get() = SAOMCLib.proxy.isServerSideLoaded
 
@@ -77,20 +74,12 @@ object SAOCore {
 
         CapabilitiesHandler.registerEntityCapability(RenderCapability::class.java, RenderCapability.Storage()) { `object`: Any -> `object` is EntityLivingBase }
 
-        (Minecraft.getMinecraft().resourceManager as IReloadableResourceManager).registerReloadListener { resourceManager ->
-            try {
-                ThemeLoader.load()
-            } catch (e: JAXBException) {
-                e.printStackTrace()
-            }
-        }
-
+        ThemeLoader.themeFolder =  File(event.sourceFile, "assets/saoui/themes")
     }
 
     @Mod.EventHandler
     fun init(event: FMLInitializationEvent) {
         val s = EventInitStatsProvider(DefaultStatsProvider())
-        if (OptionCore.CUSTOM_FONT.isEnabled) GLCore.setFont(Minecraft.getMinecraft(), OptionCore.CUSTOM_FONT.isEnabled)
         MinecraftForge.EVENT_BUS.post(s)
         PlayerStats.init(s.implementation)
         CoreGUI.animator // Let's force things to init early
@@ -112,10 +101,13 @@ object SAOCore {
     @Mod.EventHandler
     fun loadComplete(event: FMLLoadCompleteEvent){
         AdvancementUtil.generateList()
+        ThemeLoader.load()
         //ElementRegistry.initRegistry()
     }
 
     private fun confDir(genDir: File): File {
         return File(genDir, MODID)
     }
+
+
 }

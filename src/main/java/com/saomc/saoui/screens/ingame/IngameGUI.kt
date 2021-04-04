@@ -25,13 +25,10 @@ import com.saomc.saoui.GLCore
 import com.saomc.saoui.capabilities.getRenderData
 import com.saomc.saoui.config.ConfigHandler
 import com.saomc.saoui.config.OptionCore
-import com.saomc.saoui.resources.StringNames
 import com.saomc.saoui.themes.ThemeLoader
 import com.saomc.saoui.themes.elements.HudPartType
 import com.saomc.saoui.themes.util.HudDrawContext
-import com.saomc.saoui.util.ColorUtil
-import com.teamwizardry.librarianlib.features.kotlin.Minecraft
-import com.teamwizardry.librarianlib.features.math.Vec2d
+import com.teamwizardry.librarianlib.features.kotlin.Client
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.Gui
 import net.minecraft.client.gui.GuiOverlayDebug
@@ -61,13 +58,9 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
 
     private var eventParent: RenderGameOverlayEvent? = null
     private var offsetUsername: Int = 0
-    private val debugOverlay: GuiOverlayDebugForge
+    private val debugOverlay: GuiOverlayDebugForge = GuiOverlayDebugForge(mc)
 
     private lateinit var context: HudDrawContext
-
-    init {
-        this.debugOverlay = GuiOverlayDebugForge(mc)
-    }
 
     override fun renderGameOverlay(partialTicks: Float) {
         mc.profiler.startSection("setup")
@@ -216,21 +209,25 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
 
     fun renderEnemyHealth(width: Int, height: Int) {
         mc.profiler.startSection("enemy health")
-        //TODO Add player's focused entity on top of list, as well as players last attacked entity
         val entities: MutableList<EntityLivingBase> = mutableListOf()
         val trackedEntity = getMouseOver(mc.renderPartialTicks)
-        if (trackedEntity is EntityLivingBase) entities.add(trackedEntity)
-        entities.addAll(Minecraft().world.getEntitiesInAABBexcluding(Minecraft().player, AxisAlignedBB(Minecraft().player.position.add(-10, -5, -10), Minecraft().player.position.add(10, 5, 10))){
+        if (trackedEntity is EntityLivingBase) context.setTargetEntity(trackedEntity)
+        entities.addAll(Client.minecraft.world.getEntitiesInAABBexcluding(Client.minecraft.player, AxisAlignedBB(Client.minecraft.player.position.add(-10, -5, -10), Client.minecraft.player.position.add(10, 5, 10))){
             it is EntityLivingBase && it.getRenderData()?.isAggressive == true && !entities.contains(it)
-        }.map { it as EntityLivingBase }.sortedBy { entityLivingBase -> entityLivingBase.getDistance(Minecraft().player) }.take(5))
-        if (entities.isEmpty()) return
+        }.map { it as EntityLivingBase }.sortedBy { entityLivingBase -> entityLivingBase.getDistance(Client.minecraft.player) }.take(5))
+        entities.sortBy { it.health / it.maxHealth }
+        context.setNearbyEntities(entities)
         val baseY = 35
         val h = 15.0
         val offset = width - 20.0
         GLCore.glCullFace(false)
         GLCore.glBlend(true)
+        ThemeLoader.HUD.draw(HudPartType.ENTITY_HEALTH_HUD, context)
+        HealthStep
+        /*
+
         entities.sortedBy { it.health / it.maxHealth }.forEachIndexed { index, entity ->
-            GLCore.glBindTexture(if (OptionCore.SAO_UI.isEnabled) StringNames.entities else StringNames.entitiesCustom)
+            GLCore.glBindTexture(StringNames.entities)
             val health = entity.health / entity.maxHealth
             if (entity.getRenderData() != null)
                 GLCore.color(entity.getRenderData()!!.getColorStateHandler().colorState.rgba)
@@ -244,6 +241,10 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
             GLCore.glString(name, Vec2d(offset - GLCore.glStringWidth(name) - 5, baseY + 1 + index * h + (13 - fontRenderer.FONT_HEIGHT) / 2), ColorUtil.DEFAULT_COLOR.rgba)
         }
         GLCore.glCullFace(true)
+
+         */
+
+
         mc.profiler.endSection()
     }
 

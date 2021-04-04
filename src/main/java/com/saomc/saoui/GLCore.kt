@@ -17,8 +17,10 @@
 
 package com.saomc.saoui
 
+import com.saomc.saoui.themes.ThemeLoader
 import com.saomc.saoui.util.ColorUtil
 import com.teamwizardry.librarianlib.features.helpers.vec
+import com.teamwizardry.librarianlib.features.kotlin.Client
 import com.teamwizardry.librarianlib.features.math.Vec2d
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.FontRenderer
@@ -98,7 +100,14 @@ object GLCore {
 
     fun setFont(mc: Minecraft, custom: Boolean) {
         if (mc.textureManager == null) return
-        val fontLocation = if (custom) ResourceLocation(SAOCore.MODID, "textures/ascii.png") else ResourceLocation("textures/font/ascii.png")
+        val font = ResourceLocation(SAOCore.MODID, "textures/${ThemeLoader.currentTheme}/ascii.png")
+        val fontLocation: ResourceLocation =
+        if (custom && checkTexture(font)){
+            font
+        }
+        else {
+            ResourceLocation("textures/font/ascii.png")
+        }
         mc.fontRenderer = FontRenderer(mc.gameSettings, fontLocation, mc.textureManager, false)
         if (mc.gameSettings.language != null) {
             mc.fontRenderer.unicodeFlag = mc.isUnicode
@@ -120,6 +129,19 @@ object GLCore {
     @JvmOverloads
     fun glBindTexture(location: ResourceLocation, textureManager: TextureManager = glTextureManager) {
         textureManager.bindTexture(location)
+    }
+
+    /**
+     * Checks to make sure the texture is valid, returning false means the texture is invalid.
+     */
+    @JvmOverloads
+    fun checkTexture(location: ResourceLocation, textureManager: TextureManager = glTextureManager): Boolean {
+        return try {
+            Client.minecraft.resourceManager.getResource(location)
+            true
+        } catch (e: Exception) {
+            false
+        }
     }
 
     @JvmOverloads

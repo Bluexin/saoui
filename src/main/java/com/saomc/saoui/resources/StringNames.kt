@@ -17,7 +17,10 @@
 
 package com.saomc.saoui.resources
 
+import com.saomc.saoui.GLCore
 import com.saomc.saoui.SAOCore
+import com.saomc.saoui.effects.StatusEffects
+import com.saomc.saoui.themes.ThemeLoader
 import net.minecraft.util.ResourceLocation
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
@@ -25,9 +28,53 @@ import net.minecraftforge.fml.relauncher.SideOnly
 @SideOnly(Side.CLIENT)
 object StringNames {
 
-    val gui = ResourceLocation(SAOCore.MODID, "textures/guiedt.png")
-    val slot = ResourceLocation(SAOCore.MODID, "textures/slot.png")
-    val entities = ResourceLocation(SAOCore.MODID, "textures/entities.png")
-    val entitiesCustom = ResourceLocation(SAOCore.MODID, "textures/entitiescustom.png")
-    val particleLarge = ResourceLocation(SAOCore.MODID, "textures/particlelarge.png")
+    fun init(){
+        gui = if (GLCore.checkTexture(ResourceLocation(SAOCore.MODID, "textures/${ThemeLoader.currentTheme}/gui.png"))){
+            ResourceLocation(SAOCore.MODID, "textures/${ThemeLoader.currentTheme}/gui.png")
+        }
+        else {
+            SAOCore.LOGGER.info("Theme {${ThemeLoader.currentTheme}} missing custom gui data, will default to sao.")
+            defaultGui
+        }
+        /*
+        slot = if (GLCore.checkTexture(ResourceLocation(SAOCore.MODID, "textures/slot.png"))){
+            ResourceLocation(SAOCore.MODID, "textures/slot.png")
+        }
+        else defaultSlot*/
+        slot = defaultSlot
+        entities = if (GLCore.checkTexture(ResourceLocation(SAOCore.MODID, "textures/${ThemeLoader.currentTheme}/entities.png"))){
+            ResourceLocation(SAOCore.MODID, "textures/${ThemeLoader.currentTheme}/entities.png")
+        }
+        else {
+            SAOCore.LOGGER.info("Theme {${ThemeLoader.currentTheme}} missing custom entity health bars, will default to sao.")
+            defaultEntities
+        }
+        particleLarge = if (GLCore.checkTexture(ResourceLocation(SAOCore.MODID, "textures/${ThemeLoader.currentTheme}/particlelarge.png"))){
+            ResourceLocation(SAOCore.MODID, "textures/${ThemeLoader.currentTheme}/particlelarge.png")
+        }
+        else {
+            SAOCore.LOGGER.info("Theme {${ThemeLoader.currentTheme}} missing custom death particles, will default to sao.")
+            defaultParticleLarge
+        }
+        val missingEffects = StatusEffects.values().filter { !GLCore.checkTexture(ResourceLocation(SAOCore.MODID, "textures/${ThemeLoader.currentTheme}/status_icons/${it.name.toLowerCase()}.png")) }
+        statusIcons = if (missingEffects.isEmpty()){
+            "textures/${ThemeLoader.currentTheme}/status_icons/"
+        } else {
+            SAOCore.LOGGER.info("Theme {${ThemeLoader.currentTheme}} missing custom status icons, will default to sao.")
+            SAOCore.LOGGER.info("Missing Effects: ${missingEffects.map { it.name }}")
+            defaultStatusIcons
+        }
+    }
+
+    lateinit var gui: ResourceLocation
+    lateinit var slot: ResourceLocation
+    lateinit var entities: ResourceLocation
+    lateinit var particleLarge: ResourceLocation
+    lateinit var statusIcons: String
+
+    val defaultGui = ResourceLocation(SAOCore.MODID, "textures/sao/gui.png")
+    val defaultSlot = ResourceLocation(SAOCore.MODID, "textures/slot.png")
+    val defaultEntities = ResourceLocation(SAOCore.MODID, "textures/sao/entities.png")
+    val defaultParticleLarge = ResourceLocation(SAOCore.MODID, "textures/sao/particlelarge.png")
+    const val defaultStatusIcons = "textures/sao/status_icons/"
 }

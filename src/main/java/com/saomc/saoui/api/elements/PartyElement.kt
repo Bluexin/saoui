@@ -54,7 +54,7 @@ class PartyElement : IconLabelElement(IconCore.PARTY, I18n.format("sao.element.p
         // Don't bother with updating party functions if single player.
         if (1 < Minecraft().integratedServer?.currentPlayerCount?: 2)
             partyList()
-        if (!this.selected) elements.forEach { it.hide() }
+        if (!this.selected) elementsSequence.forEach { it.hide() }
     }
 
     fun partyList() {

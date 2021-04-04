@@ -346,3 +346,5 @@ sao.element.recipes.locked=Locked Recipes
 
 # Temporary
 saoui.invited=You have been invited to %s's party. Open the menu to accept!
+saoui.wip=WIP - Not finished
+saoui.server=Feature only supported on dedicated servers with saomclib

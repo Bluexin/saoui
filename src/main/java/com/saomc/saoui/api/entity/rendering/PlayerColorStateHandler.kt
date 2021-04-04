@@ -20,7 +20,7 @@ package com.saomc.saoui.api.entity.rendering
 import com.saomc.saoui.SAOCore
 import com.saomc.saoui.api.entity.rendering.ColorState.*
 import com.saomc.saoui.capabilities.getRenderData
-import com.teamwizardry.librarianlib.features.kotlin.Minecraft
+import com.teamwizardry.librarianlib.features.kotlin.Client
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.util.ResourceLocation
@@ -51,8 +51,8 @@ class PlayerColorStateHandler(thePlayer: EntityPlayer) : IColorStateHandler {
      * Use this to handle anything special.
      */
     override fun tick() {
-        if (--tickForGamePlayCheck <= 0 && Minecraft().connection != null) {
-            val gamemode = Minecraft().connection!!.playerInfoMap.firstOrNull { it.gameProfile.id == thePlayer.get()?.uniqueID }?.gameType
+        if (--tickForGamePlayCheck <= 0 && Client.minecraft.connection != null) {
+            val gamemode = Client.minecraft.connection!!.playerInfoMap.firstOrNull { it.gameProfile.id == thePlayer.get()?.uniqueID }?.gameType
             if (gamemode != null) {
                 currentState = when {
                     gamemode.isCreative -> {
@@ -91,7 +91,7 @@ class PlayerColorStateHandler(thePlayer: EntityPlayer) : IColorStateHandler {
      */
     fun hit(target: EntityPlayer) {
         //TODO Fix Me
-        val targetState = target.getRenderData()?.getColorStateHandler()?.colorState
+        val targetState = target.getRenderData()?.colorStateHandler?.colorState
         if (targetState !== KILLER && targetState !== VIOLENT && this.currentState !== KILLER) {
             this.currentState = VIOLENT
             this.ticksForRedemption = TICKS_PER_STATE
@@ -105,7 +105,7 @@ class PlayerColorStateHandler(thePlayer: EntityPlayer) : IColorStateHandler {
      */
     fun kill(target: EntityPlayer) {
         //TODO Fix Me
-        val targetState =target.getRenderData()?.getColorStateHandler()?.colorState
+        val targetState =target.getRenderData()?.colorStateHandler?.colorState
         if (targetState !== KILLER && targetState !== VIOLENT) {
             if (this.currentState === KILLER)
                 this.ticksForRedemption += TICKS_PER_STATE

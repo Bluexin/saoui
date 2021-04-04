@@ -44,7 +44,7 @@ internal object RenderHandler {
     private var menuGUI = true
 
     fun deathHandlers() {
-        deadHandlers.forEach { ent ->
+        deadHandlers.removeIf { ent ->
             val deadStart = ent.deathTime == 1
             val deadExactly = ent.deathTime >= 18
             if (deadStart) {
@@ -54,9 +54,10 @@ internal object RenderHandler {
 
             if (deadExactly) {
                 StaticRenderer.doSpawnDeathParticles(EventCore.mc, ent)
+                return@removeIf true
             }
+            false
         }
-        deadHandlers.removeIf { ent -> ent.deathTime >= 18 }
     }
 
     fun addDeadMob(ent: EntityLivingBase) {

@@ -29,7 +29,7 @@ import net.minecraft.util.ResourceLocation;
  *
  * @author Bluexin
  */
-public class StaticCustomizationProvider implements ICustomizationProvider {
+public class StaticCustomizationProvider extends ICustomizationProvider {
 
     private static final String KEY = new ResourceLocation(SAOCore.MODID, "staticProvider").toString();
 

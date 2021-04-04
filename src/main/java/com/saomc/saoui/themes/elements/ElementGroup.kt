@@ -79,6 +79,7 @@ open class ElementGroup : Element(), ElementParent {
         this.elements.forEach { it.draw(ctx) }
     }
 
+
     override fun setup(parent: ElementParent): Boolean {
         if (this.texture != null) this.rl = ResourceLocation(this.texture)
         val res = super.setup(parent)

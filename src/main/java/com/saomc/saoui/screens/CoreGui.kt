@@ -24,9 +24,8 @@ import com.saomc.saoui.config.OptionCore
 import com.teamwizardry.librarianlib.features.animator.Animation
 import com.teamwizardry.librarianlib.features.animator.Animator
 import com.teamwizardry.librarianlib.features.helpers.vec
-import com.teamwizardry.librarianlib.features.kotlin.Minecraft
+import com.teamwizardry.librarianlib.features.kotlin.Client
 import com.teamwizardry.librarianlib.features.kotlin.clamp
-import com.teamwizardry.librarianlib.features.kotlin.minus
 import com.teamwizardry.librarianlib.features.math.Vec2d
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.GuiScreen
@@ -60,20 +59,20 @@ abstract class CoreGUI<T : Any>(final override var pos: Vec2d, override var dest
 
         if (OptionCore.UI_MOVEMENT.isEnabled) {
             if (!viewSet){
-                playerView = Vec2f(Minecraft().player.rotationYaw, Minecraft().player.rotationPitch)
+                playerView = Vec2f(Client.minecraft.player.rotationYaw, Client.minecraft.player.rotationPitch)
                 previousMouse = Vec2d(mouseX.toDouble(), mouseY.toDouble())
                 viewSet = true
             }
             else {
-                Minecraft().player.rotationYaw = playerView.x - ((width / 2 - mouseX) / 2) * 0.25F
-                Minecraft().player.rotationPitch = playerView.y - ((height / 2 - mouseY) / 2) * 0.25F
+                Client.minecraft.player.rotationYaw = playerView.x - ((width / 2 - mouseX) / 2) * 0.25F
+                Client.minecraft.player.rotationPitch = playerView.y - ((height / 2 - mouseY) / 2) * 0.25F
                 pos = pos.add((mouseX - previousMouse.x) * 0.25, (mouseY - previousMouse.y) * 0.25)
                 previousMouse = Vec2d(mouseX.toDouble(), mouseY.toDouble())
             }
         }
         else if (viewSet){
-            Minecraft().player.rotationYaw = playerView.x
-            Minecraft().player.rotationPitch = playerView.y
+            Client.minecraft.player.rotationYaw = playerView.x
+            Client.minecraft.player.rotationPitch = playerView.y
         }
         GLCore.translate(pos.x, pos.y, 0.0)
 
@@ -169,20 +168,20 @@ abstract class CoreGUI<T : Any>(final override var pos: Vec2d, override var dest
             else {
                 elements.firstOrNull { it.isOpen && it.selected }?.keyTyped(typedChar, keyCode) ?: let {
                     // If no elements are open and focuseds
-                    if (keyCode == Minecraft().gameSettings.keyBindForward.keyCode || keyCode == Keyboard.KEY_UP) {
+                    if (keyCode == Client.minecraft.gameSettings.keyBindForward.keyCode || keyCode == Keyboard.KEY_UP) {
                         val selected = elements.firstOrNull { it.selected }
                         var index = elements.indexOf(selected)
                         if (index == -1) index = 0
                         else if (--index < 0) index = elements.size.minus(1)
                         selected?.selected = false
                         elements[index].selected = true
-                    } else if (keyCode == Minecraft().gameSettings.keyBindBack.keyCode || keyCode == Keyboard.KEY_DOWN) {
+                    } else if (keyCode == Client.minecraft.gameSettings.keyBindBack.keyCode || keyCode == Keyboard.KEY_DOWN) {
                         val selected = elements.firstOrNull { it.selected }
                         var index = elements.indexOf(selected)
                         if (++index >= elements.size) index = 0
                         selected?.selected = false
                         elements[index].selected = true
-                    } else if (keyCode == Minecraft().gameSettings.keyBindRight.keyCode || keyCode == Keyboard.KEY_RIGHT || keyCode == Minecraft().gameSettings.keyBindJump.keyCode || keyCode == Keyboard.KEY_RETURN) {
+                    } else if (keyCode == Client.minecraft.gameSettings.keyBindRight.keyCode || keyCode == Keyboard.KEY_RIGHT || keyCode == Client.minecraft.gameSettings.keyBindJump.keyCode || keyCode == Keyboard.KEY_RETURN) {
                         val selected = elements.firstOrNull { it.selected } ?: return
                         if (selected is CategoryButton) {
                             selected.open()

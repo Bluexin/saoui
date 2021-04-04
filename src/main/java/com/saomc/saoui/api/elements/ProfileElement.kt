@@ -10,8 +10,7 @@ import com.saomc.saoui.util.ColorUtil
 import com.saomc.saoui.util.IconCore
 import com.saomc.saoui.util.PlayerStats
 import com.teamwizardry.librarianlib.features.helpers.vec
-import com.teamwizardry.librarianlib.features.kotlin.Minecraft
-import com.teamwizardry.librarianlib.features.kotlin.plus
+import com.teamwizardry.librarianlib.features.kotlin.Client
 import com.teamwizardry.librarianlib.features.math.BoundingBox2D
 import com.teamwizardry.librarianlib.features.math.Vec2d
 import net.minecraft.client.gui.inventory.GuiInventory
@@ -43,7 +42,7 @@ class ProfileElement(var player: EntityPlayer, override var listed: Boolean) : I
     private val rl = ResourceLocation(SAOCore.MODID, "textures/menu/parts/profilebg.png")
 
     init {
-        Minecraft().player.armorInventoryList.forEachIndexed { index, itemStack ->
+        Client.minecraft.player.armorInventoryList.forEachIndexed { index, itemStack ->
             val icon = IconElement(itemStack.toIcon())
             icon.pos = when (index){
                 0 -> Vec2d(left - w + 20, top + 50)

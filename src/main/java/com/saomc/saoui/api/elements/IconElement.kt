@@ -29,10 +29,8 @@ import com.saomc.saoui.util.ColorIntent
 import com.saomc.saoui.util.ColorUtil
 import com.teamwizardry.librarianlib.features.animator.Easing
 import com.teamwizardry.librarianlib.features.helpers.vec
-import com.teamwizardry.librarianlib.features.kotlin.Minecraft
+import com.teamwizardry.librarianlib.features.kotlin.Client
 import com.teamwizardry.librarianlib.features.kotlin.clamp
-import com.teamwizardry.librarianlib.features.kotlin.minus
-import com.teamwizardry.librarianlib.features.kotlin.plus
 import com.teamwizardry.librarianlib.features.math.BoundingBox2D
 import com.teamwizardry.librarianlib.features.math.Vec2d
 import net.minecraft.client.Minecraft
@@ -40,6 +38,7 @@ import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.util.ResourceLocation
 import net.minecraftforge.fml.client.config.GuiUtils
 import java.util.*
+import kotlin.collections.set
 import kotlin.math.max
 import kotlin.math.min
 
@@ -53,7 +52,7 @@ open class IconElement(val icon: IIcon, override var pos: Vec2d = Vec2d.ZERO, ov
     val RES_ITEM_GLINT = ResourceLocation("textures/misc/enchanted_item_glint.png")
     var onClickBody: (Vec2d, MouseButton) -> Boolean = { _, _ -> true }
         private set
-    private var onClickOutBody: (Vec2d, MouseButton) -> Unit = { _, _ -> Unit }
+    private var onClickOutBody: (Vec2d, MouseButton) -> Unit = { _, _ -> }
     override val elements: MutableList<NeoElement> = mutableListOf()
     override var scroll = -3
         set(value) {
@@ -197,7 +196,7 @@ open class IconElement(val icon: IIcon, override var pos: Vec2d = Vec2d.ZERO, ov
     }
 
     open fun drawHoveringText(mouse: Vec2d) {
-        GuiUtils.drawHoveringText(description, mouse.xi, mouse.yi, Minecraft().displayWidth, Minecraft().displayHeight, width - 20, GLCore.glFont)
+        GuiUtils.drawHoveringText(description, mouse.xi, mouse.yi, Client.minecraft.displayWidth, Client.minecraft.displayHeight, width - 20, GLCore.glFont)
         /*GuiUtils.drawHoveringText(description, mouse.xi, mouse.yi, width, height, -1, GLCore.glFont)
         if (description.isNotEmpty()) {
             GlStateManager.disableRescaleNormal()

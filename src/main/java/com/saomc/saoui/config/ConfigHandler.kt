@@ -32,7 +32,7 @@ object ConfigHandler {
     var IGNORE_UPDATE: Boolean = false
     var DEBUG = false
     var debugFakePT: Int = 0
-    var lastThemeUsed: String = "default"
+    var lastThemeUsed: String = "sao"
     var config: Configuration = Configuration(File(saoConfDir, "main.cfg"))
         private set
 
@@ -67,7 +67,7 @@ object ConfigHandler {
 
         debugFakePT = config.getInt("debugFakePT", Configuration.CATEGORY_GENERAL, 0, 0, 10, "Amount of fake party members, 0 to disable.")
 
-        lastThemeUsed = config.getString("lastThemeUsed", Configuration.CATEGORY_GENERAL, "default", "The last used theme loaded. If invalid, defaults to sao's theme")
+        lastThemeUsed = config.getString("lastThemeUsed", Configuration.CATEGORY_GENERAL, "sao", "The last used theme loaded. If invalid, defaults to sao's theme")
 
         config.save()
     }
@@ -77,7 +77,13 @@ object ConfigHandler {
         saveAllOptions()
     }
 
-    private fun saveAllOptions() {
+    fun saveAllOptions() {
+        config.save()
+    }
+
+    fun saveTheme(theme: String) {
+        config.get(Configuration.CATEGORY_GENERAL, "lastThemeUsed", lastThemeUsed).set(theme)
+        lastThemeUsed = theme
         config.save()
     }
 

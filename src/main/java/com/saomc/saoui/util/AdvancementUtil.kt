@@ -2,7 +2,7 @@ package com.saomc.saoui.util
 
 import com.google.gson.JsonParseException
 import com.saomc.saoui.SAOCore
-import com.teamwizardry.librarianlib.features.kotlin.Minecraft
+import com.teamwizardry.librarianlib.features.kotlin.Client
 import net.minecraft.advancements.Advancement
 import net.minecraft.advancements.AdvancementList
 import net.minecraft.advancements.AdvancementManager
@@ -32,7 +32,7 @@ object AdvancementUtil {
     }
 
     fun getAdvancements(): Set<Advancement> {
-        return ADVANCEMENT_LIST.advancements.toSet().also { Minecraft().connection?.advancementManager?.advancementList?.advancements }
+        return ADVANCEMENT_LIST.advancements.toSet().also { Client.minecraft.connection?.advancementManager?.advancementList?.advancements }
     }
 
     fun getCategories(): Set<Advancement> = ADVANCEMENT_LIST.roots.filter { !it.id.path.contains("recipe") && !it.children.none() }.toSet()
@@ -118,4 +118,4 @@ object AdvancementUtil {
     }
 }
 
-fun Advancement.getProgress() = Minecraft().connection?.advancementManager?.getAdvancementToProgress()?.get(this)
+fun Advancement.getProgress() = Client.minecraft.connection?.advancementManager?.getAdvancementToProgress()?.get(this)

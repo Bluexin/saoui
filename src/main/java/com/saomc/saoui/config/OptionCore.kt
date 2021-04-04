@@ -64,10 +64,10 @@ enum class OptionCore(
     GUI_PAUSE("optionGuiPause", value = false, isCategory = false, category = UI, restricted = false),
     UI_MOVEMENT("optionUIMovement", value = true, isCategory = false, category = UI, restricted = false),
     // Themes
-    @Deprecated("Themes are a thing now")
-    VANILLA_UI("optionDefaultUI", value = false, isCategory = false, category = THEME, restricted = true),
-    @Deprecated("Themes are a thing now")
-    SAO_UI("optionSAOUI", value = true, isCategory = false, category = THEME, restricted = true),
+    //@Deprecated("Themes are a thing now")
+    VANILLA_UI("optionDefaultUI", value = false, isCategory = false, category = THEME, restricted = false),
+    //@Deprecated("Themes are a thing now")
+    //SAO_UI("optionSAOUI", value = true, isCategory = false, category = THEME, restricted = true),
     // Entity Options
     ENTITY_HEALTH_BARS("optionEntityHealthBars", value = false, isCategory = true, category = ENTITIES, restricted = false),
     ENTITY_CRYSTALS("optionEntityCrystals", value = false, isCategory = true, category = ENTITIES, restricted = false),

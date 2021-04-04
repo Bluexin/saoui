@@ -10,7 +10,7 @@ import com.saomc.saoui.screens.util.PopupPlayerInspect
 import com.saomc.saoui.social.friends.FriendCore
 import com.saomc.saoui.util.IconCore
 import com.saomc.saoui.util.PlayerIcon
-import com.teamwizardry.librarianlib.features.kotlin.Minecraft
+import com.teamwizardry.librarianlib.features.kotlin.Client
 import net.minecraft.client.resources.I18n
 
 class FriendElement(override var parent: INeoParent?): IconLabelElement(IconCore.FRIEND, I18n.format("sao.element.friends")) {
@@ -33,9 +33,9 @@ class FriendElement(override var parent: INeoParent?): IconLabelElement(IconCore
         elements.clear()
         +CategoryButton(IconLabelElement(IconCore.FRIEND, I18n.format("sao.element.add_friend")), this.tlParent)
         addFriendButton = elements.first() as CategoryButton
-        Minecraft().connection?.playerInfoMap?.forEach {
+        Client.minecraft.connection?.playerInfoMap?.forEach {
             val playerInfo = PlayerInfo(it.gameProfile.id, it.gameProfile.name)
-            if (!FriendCore.isFriend(playerInfo) && playerInfo.uuid != Minecraft().player.uniqueID){
+            if (!FriendCore.isFriend(playerInfo) && playerInfo.uuid != Client.minecraft.player.uniqueID){
                 addFriend(playerInfo)
             }
         }
@@ -50,7 +50,7 @@ class FriendElement(override var parent: INeoParent?): IconLabelElement(IconCore
             removeFriend(player)
         }
 
-        if (!this.selected) elements.forEach { it.hide() }
+        if (!this.selected) elementsSequence.forEach { it.hide() }
         dirty = false
     }
 
@@ -63,7 +63,7 @@ class FriendElement(override var parent: INeoParent?): IconLabelElement(IconCore
     private fun addFriend(player: PlayerInfo){
         addFriendButton.category(PlayerIcon(player), player.username){
             onClick { _, _ ->
-                val party = Minecraft().player.getPartyCapability().partyData
+                val party = Client.minecraft.player.getPartyCapability().partyData
                 (tlParent as? CoreGUI<*>)?.openGui(
                         PopupPlayerInspect(
                                 player,
@@ -71,7 +71,7 @@ class FriendElement(override var parent: INeoParent?): IconLabelElement(IconCore
                                         IconElement(IconCore.CONFIRM, description = mutableListOf("Add Friend")),
                                         IconElement(IconCore.CANCEL, description = mutableListOf("Cancel"))
                                 ).also {
-                                    if (party != null && party.isLeader(Minecraft().player)) IconElement(IconCore.PARTY, description = mutableListOf("Invite to party")) }
+                                    if (party != null && party.isLeader(Client.minecraft.player)) IconElement(IconCore.PARTY, description = mutableListOf("Invite to party")) }
                         )
                 )?.plusAssign { id ->
                     when (id) {
@@ -96,7 +96,7 @@ class FriendElement(override var parent: INeoParent?): IconLabelElement(IconCore
         +CategoryButton(IconLabelElement(PlayerIcon(player), player.username), tlParent){
             highlighted = player.isOnline
             onClick { _, _ ->
-                val party = Minecraft().player.getPartyCapability().partyData
+                val party = Client.minecraft.player.getPartyCapability().partyData
                 (tlParent as? CoreGUI<*>)?.openGui(
                         PopupPlayerInspect(
                                 player,
@@ -104,7 +104,7 @@ class FriendElement(override var parent: INeoParent?): IconLabelElement(IconCore
                                         IconElement(IconCore.CONFIRM, description = mutableListOf("Remove Friend")),
                                         IconElement(IconCore.CANCEL, description = mutableListOf("Cancel"))
                                 ).also {
-                                    if (party != null && party.isLeader(Minecraft().player)) IconElement(IconCore.PARTY, description = mutableListOf("Invite to party")) }
+                                    if (party != null && party.isLeader(Client.minecraft.player)) IconElement(IconCore.PARTY, description = mutableListOf("Invite to party")) }
                         )
                 )?.plusAssign { id ->
                     when (id) {

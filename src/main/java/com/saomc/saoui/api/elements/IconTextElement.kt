@@ -5,7 +5,6 @@ import com.saomc.saoui.config.OptionCore
 import com.saomc.saoui.util.ColorUtil
 import com.saomc.saoui.util.IconCore
 import com.teamwizardry.librarianlib.features.helpers.vec
-import com.teamwizardry.librarianlib.features.kotlin.plus
 import com.teamwizardry.librarianlib.features.math.Vec2d
 
 class IconTextElement(var text: String, override val description: MutableList<String> = mutableListOf()): IconElement(IconCore.NONE) {

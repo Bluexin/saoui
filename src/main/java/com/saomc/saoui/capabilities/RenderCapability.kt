@@ -22,13 +22,15 @@ import be.bluexin.saomclib.capabilities.AbstractEntityCapability
 import be.bluexin.saomclib.capabilities.Key
 import com.saomc.saoui.SAOCore
 import com.saomc.saoui.api.entity.rendering.*
-import com.teamwizardry.librarianlib.features.kotlin.Minecraft
+import com.saomc.saoui.api.events.ColorStateEvent
+import com.teamwizardry.librarianlib.features.kotlin.Client
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.nbt.NBTBase
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.util.EnumFacing
 import net.minecraft.util.ResourceLocation
+import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.common.capabilities.Capability
 import net.minecraftforge.common.capabilities.CapabilityInject
 import kotlin.math.max
@@ -50,13 +52,13 @@ class RenderCapability : AbstractEntityCapability() {
     /**
      * Where this capability is getting it's customization settings from.
      */
-    private lateinit var customizationProvider: ICustomizationProvider
+    lateinit var customizationProvider: ICustomizationProvider
 
 
     /**
      * Where this capability is getting it's Color State data from.
      */
-    private lateinit var colorStateHandler: IColorStateHandler
+    lateinit var colorStateHandler: IColorStateHandler
 
     var healthSmooth: Float = -1f
         get() {
@@ -75,7 +77,7 @@ class RenderCapability : AbstractEntityCapability() {
 
     fun updateHealthSmooth(partialTicks: Float){
         if (theEnt is EntityPlayer){
-            Minecraft().profiler.startSection("updateHealthSmooth")
+            Client.minecraft.profiler.startSection("updateHealthSmooth")
             when {
                 theEnt.health == theEnt.maxHealth -> healthSmooth = theEnt.maxHealth
                 theEnt.health <= 0 -> {
@@ -86,7 +88,7 @@ class RenderCapability : AbstractEntityCapability() {
                 else -> healthSmooth = theEnt.health
             }
             healthSmooth = max(0.0f, healthSmooth)
-            Minecraft().profiler.endSection()
+            Client.minecraft.profiler.endSection()
         }
         else healthSmooth = -1f
     }
@@ -107,27 +109,25 @@ class RenderCapability : AbstractEntityCapability() {
     override fun setup(param: Any): AbstractCapability {
         super.setup(param)
         theEnt = param as EntityLivingBase
-        customizationProvider = getProvider(param)
-        colorStateHandler = getColorState(param)
+
+        val colorStateEvent = ColorStateEvent(theEnt)
+        MinecraftForge.EVENT_BUS.post(colorStateEvent)
+        customizationProvider = colorStateEvent.provider?: getProvider()
+        colorStateHandler = colorStateEvent.state?: getColorState()
         return this
     }
 
-    private fun getProvider(ent: EntityLivingBase): ICustomizationProvider {
-        return if (ent is ICustomizableEntity) (ent as ICustomizableEntity).provider else StaticCustomizationProvider(0.0, 0.0, 0.0, 1.0, 1) // TODO: implement with event or something
+    private fun getProvider(): ICustomizationProvider {
+        return if (theEnt is ICustomizableEntity) (theEnt as ICustomizableEntity).provider else StaticCustomizationProvider(0.0, 0.0, 0.0, 1.0, 1)
     }
 
-    private fun getColorState(ent: EntityLivingBase): IColorStateHandler {
-        return if (ent is IColorStatedEntity) (ent as IColorStatedEntity).colorState else (ent as? EntityPlayer)?.let { PlayerColorStateHandler(it) }
-                ?: MobColorStateHandler(ent) // TODO: implement with event or something
+    private fun getColorState(): IColorStateHandler {
+        return (theEnt as? IColorStatedEntity)?.colorState ?: (theEnt as? EntityPlayer)?.let { PlayerColorStateHandler(it) }?: MobColorStateHandler(theEnt)
     }
-
-    fun getCustomizationProvider(): ICustomizationProvider { return customizationProvider}
-
-    fun getColorStateHandler(): IColorStateHandler { return colorStateHandler}
 
     class Storage : Capability.IStorage<RenderCapability> {
 
-        override fun writeNBT(capability: Capability<RenderCapability>?, instance: RenderCapability, side: EnumFacing?): NBTBase? {
+        override fun writeNBT(capability: Capability<RenderCapability>?, instance: RenderCapability, side: EnumFacing?): NBTBase {
             val tag = NBTTagCompound()
             instance.customizationProvider.save(tag)
             instance.colorStateHandler.save(tag)

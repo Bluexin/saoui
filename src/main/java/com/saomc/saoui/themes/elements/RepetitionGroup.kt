@@ -28,6 +28,9 @@ import javax.xml.bind.annotation.XmlRootElement
  */
 @XmlRootElement
 open class RepetitionGroup : ElementGroup() {
+
+    val textureLocation: String? = null
+
     protected var amount: CInt? = null
 
     override fun draw(ctx: IHudDrawContext) {

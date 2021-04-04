@@ -1,0 +1,366 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<bl:hud xmlns:bl="http://www.bluexin.be/com/saomc/saoui/hud-schema">
+    <parts>
+
+        <entry>
+            <key>HEALTH_BOX</key>
+            <value name="health box">
+                <x cache="SIZE_CHANGE">scaledwidth / 2 - 138</x>
+                <y cache="STATIC">20.0</y>
+                <children>
+                    <glRectangle name="Barsbg">
+                        <texture>saoui:textures/os/guiedt.png</texture>
+                        <h cache="STATIC">14.0</h>
+                        <rgba>0xAAA7A9B3</rgba>
+                        <srcH cache="STATIC">9.0</srcH>
+                        <srcW>215.0</srcW>
+                        <srcY cache="STATIC">188.0</srcY>
+                        <w>215.0</w>
+                        <x>33.1</x>
+                        <y cache="STATIC">15.4</y>
+                    </glRectangle>
+                    <glRectangle name="health bar">
+                        <texture>saoui:textures/os/guiedt.png</texture>
+                        <rgba>
+                            statusEffects.contains(CURSED)? 0x444444FF:
+                            statusEffects.contains(POISONED)? 0x96C18DFF:
+                            absorption > 0? 0xFFEEADFF:
+                            statusEffects.contains(REGEN)? 0xFFDDE0FF:
+                            healthStep == VERY_LOW? 0xF72100FF:
+                            healthStep == LOW? 0xF72100FF:
+                            healthStep == VERY_DAMAGED? 0xF72100FF:
+                            healthStep == DAMAGED? 0xFFFFFFFF:
+                            healthStep == OKAY? 0xFFFFFFFF:
+                            healthStep == GOOD? 0xFFFFFFFF:
+                            healthStep == CREATIVE? 0xFFFFFFFF:
+                            0xFFFFFFFF
+                        </rgba>
+                        <h cache="STATIC">7.0</h>
+                        <srcH cache="STATIC">9.0</srcH>
+                        <srcW>215.0 * hpPct</srcW>
+                        <srcY cache="STATIC">188.0</srcY>
+                        <w>215.0 * hpPct</w>
+                        <x>33.1</x>
+                        <y cache="STATIC">16.4</y>
+                    </glRectangle>
+                    <glRectangle name="FOOD">
+                        <texture>saoui:textures/os/guiedt1.png</texture>
+                        <rgba>
+                            statusEffects.contains(ROTTEN)? 0x96C18DFF:
+                            statusEffects.contains(STARVING)? 0xF72100FF:
+                            0xFFFFFFFF
+                        </rgba>
+                        <h cache="STATIC">6.0</h>
+                        <srcH cache="STATIC">9.0</srcH>
+                        <srcW>215.0 * foodPct</srcW>
+                        <srcY cache="STATIC">188.0</srcY>
+                        <w>215.0 * foodPct</w>
+                        <x>33.1</x>
+                        <y cache="STATIC">20.4</y>
+                    </glRectangle>
+                    <glRectangle name="EXP">
+                        <texture>saoui:textures/os/guiedt1.png</texture>
+                        <h cache="STATIC">6.0</h>
+                        <srcH cache="STATIC">9.0</srcH>
+                        <srcW>215.0 * experience</srcW>
+                        <srcY cache="STATIC">188.0</srcY>
+                        <w>215.0 * experience</w>
+                        <x>33.1</x>
+                        <y cache="STATIC">22.4</y>
+                    </glRectangle>
+                </children>
+            </value>
+        </entry>
+        <entry>
+            <key>HOTBAR</key>
+            <value name="hotbar">
+                <children>
+                    <elementGroup name="horizontal">
+                        <x cache="SIZE_CHANGE">scaledwidth / 2 - 90</x>
+                        <y cache="SIZE_CHANGE">scaledheight - 23</y>
+                        <children>
+                            <repetitionGroup name="main inventory">
+                                <amount cache="STATIC">9</amount>
+                                <children>
+                                    <glHotbarItem>
+                                        <h cache="STATIC">20.0</h>
+                                        <rgba cache="NONE">i == selectedslot ? HOVER_COLOR.getRgba : 0xCDCDCDAA</rgba>
+                                        <srcH cache="STATIC">20.0</srcH>
+                                        <srcW cache="STATIC">20.0</srcW>
+                                        <srcY cache="STATIC">25.0</srcY>
+                                        <w cache="STATIC">20.0</w>
+                                        <x cache="NONE">20 * i</x>
+                                        <slot cache="NONE">i</slot>
+                                        <itemXoffset cache="STATIC">2</itemXoffset>
+                                        <itemYoffset cache="STATIC">2</itemYoffset>
+                                        <texture>saoui:textures/os/guiedt.png</texture>
+                                    </glHotbarItem>
+                                </children>
+                            </repetitionGroup>
+                            <elementGroup name="offhand">
+                                <enabled>!offhandEmpty(0)</enabled>
+                                <children>
+                                    <glHotbarItem>
+                                        <h cache="STATIC">20.0</h>
+                                        <rgba cache="STATIC">HOVER_COLOR.getRgba</rgba>
+                                        <srcH cache="STATIC">20.0</srcH>
+                                        <srcW cache="STATIC">20.0</srcW>
+                                        <srcY cache="STATIC">25.0</srcY>
+                                        <w cache="STATIC">20.0</w>
+                                        <x cache="STATIC">183</x>
+                                        <slot cache="STATIC">0</slot>
+                                        <itemXoffset cache="STATIC">2</itemXoffset>
+                                        <itemYoffset cache="STATIC">2</itemYoffset>
+                                        <hand cache="STATIC">RIGHT</hand>
+                                        <texture>saoui:textures/os/guiedt.png</texture>
+                                    </glHotbarItem>
+                                    <glHotbarItem>
+                                        <h cache="STATIC">20.0</h>
+                                        <rgba cache="STATIC">HOVER_COLOR.getRgba</rgba>
+                                        <srcH cache="STATIC">20.0</srcH>
+                                        <srcW cache="STATIC">20.0</srcW>
+                                        <srcY cache="STATIC">25.0</srcY>
+                                        <w cache="STATIC">20.0</w>
+                                        <x cache="STATIC">-23</x>
+                                        <slot cache="STATIC">0</slot>
+                                        <itemXoffset cache="STATIC">2</itemXoffset>
+                                        <itemYoffset cache="STATIC">2</itemYoffset>
+                                        <hand cache="STATIC">LEFT</hand>
+                                        <texture>saoui:textures/os/guiedt.png</texture>
+                                    </glHotbarItem>
+                                </children>
+                            </elementGroup>
+                        </children>
+                    </elementGroup>
+                    <glRectangle name="ALline1">
+                        <texture>saoui:textures/os/al.png</texture>
+                        <h cache="STATIC">18.0</h>
+                        <srcH cache="STATIC">9.0</srcH>
+                        <srcW>215.0</srcW>
+                        <srcY cache="STATIC">188.0</srcY>
+                        <w>350.0</w>
+                        <x cache="SIZE_CHANGE">scaledwidth / 2 - 176</x>
+                        <y cache="STATIC">12</y>
+                    </glRectangle>
+                    <glRectangle name="ALline2">
+                        <texture>saoui:textures/os/al2.png</texture>
+                        <rgba>0xAAA7A9B3</rgba>
+                        <h cache="STATIC">25.0</h>
+                        <srcH cache="STATIC">9.0</srcH>
+                        <srcW>215.0</srcW>
+                        <srcY cache="STATIC">188.0</srcY>
+                        <w>350.0</w>
+                        <x cache="SIZE_CHANGE">scaledwidth / 2 - 176</x>
+                        <y cache="SIZE_CHANGE">scaledheight - 35</y>
+                    </glRectangle>
+                    <glRectangle name="ALlineairbar">
+                        <enabled>! (mountHp > 0 || inWater)</enabled>
+                        <texture>saoui:textures/os/al2.png</texture>
+                        <h cache="STATIC">25.0</h>
+                        <srcH cache="STATIC">9.0</srcH>
+                        <srcW>215.0</srcW>
+                        <srcY cache="STATIC">188.0</srcY>
+                        <w>350.0</w>
+                        <x cache="SIZE_CHANGE">scaledwidth / 2 - 176</x>
+                        <y cache="SIZE_CHANGE">scaledheight - 35</y>
+                    </glRectangle>
+                    <glRectangle name="ALlineairbar">
+                        <enabled>hasMount</enabled>
+                        <rgba cache="STATIC">HOVER_COLOR.getRgba</rgba>
+                        <texture>saoui:textures/os/al2.png</texture>
+                        <h cache="STATIC">25.0</h>
+                        <srcH cache="STATIC">9.0</srcH>
+                        <srcW>215.0 * mountHpPct</srcW>
+                        <srcY cache="STATIC">188.0</srcY>
+                        <w>350.0 * mountHpPct</w>
+                        <x cache="SIZE_CHANGE">scaledwidth / 2 - 176</x>
+                        <y cache="SIZE_CHANGE">scaledheight - 35</y>
+                    </glRectangle>
+                    <glRectangle name="ALlineairbar">
+                        <enabled>inWater</enabled>
+                        <rgba>0x6caae0ff</rgba>
+                        <texture>saoui:textures/os/al2.png</texture>
+                        <h cache="STATIC">25.0</h>
+                        <srcH cache="STATIC">9.0</srcH>
+                        <srcW>215.0 * airPct</srcW>
+                        <srcY cache="STATIC">188.0</srcY>
+                        <w>350.0 * airPct</w>
+                        <x cache="SIZE_CHANGE">scaledwidth / 2 - 176</x>
+                        <y cache="SIZE_CHANGE">scaledheight - 35</y>
+                    </glRectangle>
+                    <glRectangle>
+                        <texture>saoui:textures/os/augmabgcolour.png</texture>
+                        <rgba cache="STATIC">HOVER_COLOR.getRgba</rgba>
+                        <srcH cache="STATIC">230.0</srcH>
+                        <srcW>250</srcW>
+                        <srcY cache="STATIC">15.0</srcY>
+                        <srcX cache="STATIC">0.0</srcX>
+                        <h cache="STATIC">20.0</h>
+                        <w cache="STATIC">20.0</w>
+                        <x  cache="SIZE_CHANGE">scaledwidth / 2 - 195</x>
+                        <y>6.2</y>
+                    </glRectangle>
+                    <glRectangle>
+                        <texture>saoui:textures/os/augmamic.png</texture>
+                        <srcH cache="STATIC">230.0</srcH>
+                        <srcW>250</srcW>
+                        <srcY cache="STATIC">15.0</srcY>
+                        <srcX cache="STATIC">0.0</srcX>
+                        <h cache="STATIC">20.0</h>
+                        <w cache="STATIC">20.0</w>
+                        <x  cache="SIZE_CHANGE">scaledwidth / 2 - 195</x>
+                        <y>6.2</y>
+                    </glRectangle>
+                    <glRectangle>
+                        <texture>saoui:textures/os/augmabgcolour.png</texture>
+                        <rgba cache="STATIC">HOVER_COLOR.getRgba</rgba>
+                        <srcH cache="STATIC">230.0</srcH>
+                        <srcW>250</srcW>
+                        <srcY cache="STATIC">15.0</srcY>
+                        <srcX cache="STATIC">0.0</srcX>
+                        <h cache="STATIC">20.0</h>
+                        <w cache="STATIC">20.0</w>
+                        <x  cache="SIZE_CHANGE">scaledwidth / 2 + 172</x>
+                        <y>6.2</y>
+                    </glRectangle>
+                    <glRectangle>
+                    <texture>saoui:textures/os/augmaoptions.png</texture>
+                    <srcH cache="STATIC">230.0</srcH>
+                    <srcW>250</srcW>
+                    <srcY cache="STATIC">15.0</srcY>
+                    <srcX cache="STATIC">0.0</srcX>
+                    <h cache="STATIC">20.0</h>
+                    <w cache="STATIC">20.0</w>
+                    <x  cache="SIZE_CHANGE">scaledwidth / 2 + 172</x>
+                    <y>6.2</y>
+                    </glRectangle>
+                </children>
+            </value>
+        </entry>
+        <entry>
+            <key>EXPERIENCE</key>
+            <value name="exp">
+                <x cache="SIZE_CHANGE">scaledwidth / 2 - 120</x>
+                <y cache="SIZE_CHANGE">38</y>
+                <children>
+                    <glString name="exp string">
+                        <x cache="STATIC">5</x>
+                        <y cache="STATIC">-4</y>
+                        <text>format("displayLvShort", level)</text>
+                    </glString>
+                    <glString name="hp text">
+                        <text>
+                            format("formatHealth", ceil(hp), ceil(maxHp))
+                        </text>
+                        <x cache="STATIC">215</x>
+                        <y cache="STATIC">-4</y>
+                    </glString>
+                </children>
+            </value>
+        </entry>
+        <entry>
+            <key>JUMP_BAR</key>
+            <value name="vanilla horse jump bar">
+                <x cache="SIZE_CHANGE">scaledwidth / 2 - 91</x>
+                <y cache="SIZE_CHANGE">47</y>
+                <texture>saoui:textures/os/horse.png</texture>
+                <children>
+                    <glRectangle name="fill">
+                        <enabled>horsejump > 0</enabled>
+                        <srcY cache="STATIC">89</srcY>
+                        <w>182 * horsejump</w>
+                        <h cache="STATIC">1</h>
+                    </glRectangle>
+                </children>
+            </value>
+        </entry>
+        <entry>
+            <key>PARTY</key>
+            <value name="party">
+                <children>
+                    <repetitionGroup name="member">
+                        <x cache="STATIC">-5</x>
+                        <y cache="STATIC">50</y>
+                        <texture>saoui:textures/os/guiedt.png</texture>
+                        <amount>ptSize</amount>
+                        <children>
+                            <elementGroup name="bg">
+                                <children>
+                                    <glRectangle name="Barsbg">
+                                        <texture>saoui:textures/os/guiedt.png</texture>
+                                        <h cache="STATIC">12.0</h>
+                                        <rgba>0xAAA7A9B3</rgba>
+                                        <srcH cache="STATIC">9.0</srcH>
+                                        <srcW>215.0</srcW>
+                                        <srcY cache="STATIC">188.0</srcY>
+                                        <w>54.0</w>
+                                        <x>38.1</x>
+                                        <y cache="NONE">15 * i + 1</y>
+                                    </glRectangle>
+                                </children>
+                            </elementGroup>
+                            <glRectangle name="health bar">
+                                <texture>saoui:textures/os/guiedt.png</texture>
+                                <rgba>
+                                    ptHealthStep(i) == VERY_LOW? 0xF72100FF:
+                                    ptHealthStep(i) == LOW? 0xF72100FF:
+                                    ptHealthStep(i) == VERY_DAMAGED? 0xF72100FF:
+                                    ptHealthStep(i) == DAMAGED? 0xFFFFFFFF:
+                                    ptHealthStep(i) == OKAY? 0xFFFFFFFF:
+                                    ptHealthStep(i) == GOOD? 0xFFFFFFFF:
+                                    ptHealthStep(i) == CREATIVE? 0xFFFFFFFF:
+                                    0xFFFFFFFF
+                                </rgba>
+                                <srcX cache="STATIC">117</srcX>
+                                <srcY cache="STATIC">197</srcY>
+                                <w cache="NONE">48.0 * ptHpPct(i)</w>
+                                <h cache="STATIC">3.0</h>
+                                <x cache="STATIC">40</x>
+                                <y cache="NONE">15 * i + 5</y>
+                            </glRectangle>
+                            <glString name="pName">
+                                <text>ptName(i).length > 8? ptName(i).substring(0, 8): ptName(i)</text>
+                                <x cache="STATIC">7</x>
+                                <y cache="NONE">15 * i + 8</y>
+                                <rgba>0xFFFFFFFF</rgba>
+                            </glString>
+                        </children>
+                    </repetitionGroup>
+                </children>
+            </value>
+        </entry>
+        <entry>
+            <key>CROSS_HAIR</key>
+            <value name="crosshair">
+                <texture>saoui:textures/os/gui.png</texture>
+                <x cache="SIZE_CHANGE">scaledwidth / 2.0</x>
+                <y cache="SIZE_CHANGE">scaledheight / 2.0</y>
+                <children>
+                    <glRectangle name="dot">
+                        <!--<enabled>!isEnabled(CROSS_HAIR)</enabled>-->
+                        <h cache="STATIC">1.0</h>
+                        <w cache="STATIC">1.0</w>
+                    </glRectangle>
+                    <elementGroup>
+                        <enabled>false</enabled>
+                        <!--<enabled>isEnabled(CROSS_HAIR)</enabled>-->
+                        <children>
+                            <glRectangle name="v">
+                                <h cache="STATIC">10</h>
+                                <w cache="STATIC">2</w>
+                                <x cache="SIZE_CHANGE">-1</x>
+                                <y cache="SIZE_CHANGE">-5</y>
+                            </glRectangle>
+                            <glRectangle name="h">
+                                <h cache="STATIC">2</h>
+                                <w cache="STATIC">10</w>
+                                <x cache="SIZE_CHANGE">-5</x>
+                                <y cache="SIZE_CHANGE">-1</y>
+                            </glRectangle>
+                        </children>
+                    </elementGroup>
+                </children>
+            </value>
+        </entry>
+    </parts>
+</bl:hud>

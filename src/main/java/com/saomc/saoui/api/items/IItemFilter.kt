@@ -19,7 +19,7 @@ package com.saomc.saoui.api.items
 
 import com.saomc.saoui.api.screens.IIcon
 import com.saomc.saoui.util.IconCore
-import com.teamwizardry.librarianlib.features.kotlin.Minecraft
+import com.teamwizardry.librarianlib.features.kotlin.Client
 import net.minecraft.inventory.Slot
 import net.minecraft.item.ItemStack
 
@@ -69,13 +69,13 @@ interface IItemFilter : (ItemStack, Boolean) -> Boolean, (ItemStack) -> Boolean 
 
     companion object {
         fun getPlayerSlots(slotID: Int): Set<Slot>{
-            return Minecraft().player.openContainer.inventorySlots
+            return Client.minecraft.player.openContainer.inventorySlots
                     .filter { it.slotNumber == slotID }
                     .toSet()
         }
 
         fun getPlayerSlots(slotID: IntRange): Set<Slot>{
-            return Minecraft().player.openContainer.inventorySlots
+            return Client.minecraft.player.openContainer.inventorySlots
                     .filter { slotID.contains(it.slotNumber) }
                     .toSet()
         }

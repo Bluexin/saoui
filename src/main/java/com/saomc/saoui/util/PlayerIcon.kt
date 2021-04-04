@@ -4,7 +4,7 @@ import be.bluexin.saomclib.party.PlayerInfo
 import com.mojang.authlib.minecraft.MinecraftProfileTexture
 import com.saomc.saoui.GLCore
 import com.saomc.saoui.api.screens.IIcon
-import com.teamwizardry.librarianlib.features.kotlin.Minecraft
+import com.teamwizardry.librarianlib.features.kotlin.Client
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.resources.DefaultPlayerSkin
 import net.minecraft.util.ResourceLocation
@@ -15,8 +15,8 @@ class PlayerIcon(val player: PlayerInfo): IIcon {
 
     private fun getSkin(): ResourceLocation{
         return if (player.isOnline) {
-            Minecraft().skinManager.loadSkinFromCache(player.gameProfile)[MinecraftProfileTexture.Type.SKIN]?.let {
-                Minecraft().skinManager.loadSkin(it, MinecraftProfileTexture.Type.SKIN)
+            Client.minecraft.skinManager.loadSkinFromCache(player.gameProfile)[MinecraftProfileTexture.Type.SKIN]?.let {
+                Client.minecraft.skinManager.loadSkin(it, MinecraftProfileTexture.Type.SKIN)
             } ?: DefaultPlayerSkin.getDefaultSkin(player.uuid)
         } else DefaultPlayerSkin.getDefaultSkin(player.uuid)
     }

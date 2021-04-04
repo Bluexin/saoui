@@ -70,7 +70,7 @@ class CraftingElement: IconLabelElement(IconCore.CRAFTING, I18n.format("guiCraft
             }
         }
         if (validElementsSequence.none()) +EMPTY
-        if (!this.highlighted) elements.forEach { it.hide() }
+        if (!this.highlighted) elementsSequence.forEach { it.hide() }
     }
 
     fun getTabName(tab: CreativeTabs): String{

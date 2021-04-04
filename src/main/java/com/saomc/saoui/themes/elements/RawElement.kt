@@ -20,6 +20,7 @@ package com.saomc.saoui.themes.elements
 import com.saomc.saoui.GLCore
 import com.saomc.saoui.api.themes.IHudDrawContext
 import com.saomc.saoui.themes.util.CUnit
+import net.minecraft.util.ResourceLocation
 import javax.xml.bind.annotation.XmlRootElement
 
 /**
@@ -30,7 +31,15 @@ import javax.xml.bind.annotation.XmlRootElement
 @XmlRootElement
 class RawElement : Element() {
 
+    private var rl: ResourceLocation? = null
+    private val texture: String? = null
+
     private lateinit var expression: CUnit
+
+    override fun setup(parent: ElementParent): Boolean {
+        if (this.texture != null) this.rl = ResourceLocation(this.texture)
+        return super.setup(parent)
+    }
 
     override fun draw(ctx: IHudDrawContext) {
         GLCore.pushMatrix()

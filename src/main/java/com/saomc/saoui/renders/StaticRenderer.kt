@@ -26,10 +26,7 @@ import com.saomc.saoui.resources.StringNames
 import com.saomc.saoui.screens.ingame.HealthStep
 import com.saomc.saoui.social.StaticPlayerHelper
 import com.saomc.saoui.util.ColorUtil
-import com.teamwizardry.librarianlib.features.kotlin.Minecraft
-import com.teamwizardry.librarianlib.features.kotlin.renderPosX
-import com.teamwizardry.librarianlib.features.kotlin.renderPosY
-import com.teamwizardry.librarianlib.features.kotlin.renderPosZ
+import com.teamwizardry.librarianlib.features.kotlin.*
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.entity.RenderManager
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats
@@ -68,14 +65,14 @@ object StaticRenderer { // TODO: add usage of scale, offset etc from capability
     private var cursorView = Pair(0.0, 0.0)
 
     fun render() {
-        val renderManager = Minecraft().renderManager
+        val renderManager = Client.minecraft.renderManager
         if (mc.renderPartialTicks != partialTicks)
             updateView(renderManager)
-        Minecraft().renderPartialTicks
+        Client.minecraft.renderPartialTicks
         mc.profiler.startSection("setupStaticRender")
 
-        GLCore.glBindTexture(if (OptionCore.SAO_UI.isEnabled) StringNames.entities else StringNames.entitiesCustom)
-        Minecraft().world.loadedEntityList.asSequence().filter { it is EntityLivingBase && it != Minecraft().player}.forEach {
+        GLCore.glBindTexture(StringNames.entities)
+        Client.minecraft.world.loadedEntityList.asSequence().filter { it is EntityLivingBase && it != Client.minecraft.player}.forEach {
             val living = it as EntityLivingBase
             if (living.isInWater && !mc.player.world.getBlockState(mc.player.position.up()).material.isLiquid){
                 val state = mc.player.world.getBlockState(living.position.up(2))
@@ -91,7 +88,7 @@ object StaticRenderer { // TODO: add usage of scale, offset etc from capability
 
             if (!dead && !living.isInvisibleToPlayer(mc.player) && living != mc.player) {
                 living.getRenderData()?.let {renderCap ->
-                    val state = renderCap.getColorStateHandler().colorState
+                    val state = renderCap.colorStateHandler.colorState
                     if (checkCrystal(state)) doRenderColorCursor(renderManager, living, x, y, z, sqrt(64), state)
                     if (checkHealth(state)) doRenderHealthBar(renderManager, living, x, y, z, sqrt(64))
                 }
@@ -286,30 +283,32 @@ object StaticRenderer { // TODO: add usage of scale, offset etc from capability
     }
 
     fun doSpawnDeathParticles(mc: Minecraft, living: Entity) {
-        mc.profiler.startSection("spawnDeathParticles")
-        val world = living.world
+        if (OptionCore.PARTICLES.isEnabled) {
+            mc.profiler.startSection("spawnDeathParticles")
+            val world = living.world
 
-        if (living.world.isRemote) {
-            val colors = arrayOf(floatArrayOf(1f / 0xFF * 0x9A, 1f / 0xFF * 0xFE, 1f / 0xFF * 0x2E), floatArrayOf(1f / 0xFF * 0x01, 1f / 0xFF * 0xFF, 1f / 0xFF * 0xFF), floatArrayOf(1f / 0xFF * 0x08, 1f / 0xFF * 0x08, 1f / 0xFF * 0x8A))
+            if (living.world.isRemote) {
+                val colors = arrayOf(floatArrayOf(1f / 0xFF * 0x9A, 1f / 0xFF * 0xFE, 1f / 0xFF * 0x2E), floatArrayOf(1f / 0xFF * 0x01, 1f / 0xFF * 0xFF, 1f / 0xFF * 0xFF), floatArrayOf(1f / 0xFF * 0x08, 1f / 0xFF * 0x08, 1f / 0xFF * 0x8A))
 
-            val size = living.width * living.height
-            val pieces = max(min(size * 64, 128f), 8f).toInt()
+                val size = living.width * living.height
+                val pieces = max(min(size * 64, 128f), 8f).toInt()
 
-            for (i in 0 until pieces) {
-                val color = colors[i % 3]
+                for (i in 0 until pieces) {
+                    val color = colors[i % 3]
 
-                val x0 = living.width.toDouble() * (Math.random() * 2 - 1) * 0.75
-                val y0 = living.height * Math.random()
-                val z0 = living.width.toDouble() * (Math.random() * 2 - 1) * 0.75
+                    val x0 = living.width.toDouble() * (Math.random() * 2 - 1) * 0.75
+                    val y0 = living.height * Math.random()
+                    val z0 = living.width.toDouble() * (Math.random() * 2 - 1) * 0.75
 
-                mc.effectRenderer.addEffect(DeathParticles(
-                        world,
-                        living.posX + x0, living.posY + y0, living.posZ + z0,
-                        color[0], color[1], color[2]
-                ))
+                    mc.effectRenderer.addEffect(DeathParticles(
+                            world,
+                            living.posX + x0, living.posY + y0, living.posZ + z0,
+                            color[0], color[1], color[2]
+                    ))
+                }
             }
+            mc.profiler.endSection()
         }
-        mc.profiler.endSection()
     }
 
     private fun useColor(living: Entity, light: Float) {
@@ -321,12 +320,12 @@ object StaticRenderer { // TODO: add usage of scale, offset etc from capability
     }
 
     private fun getHealthFactor(living: EntityLivingBase): Float {
-        Minecraft().profiler.startSection("getHealthFactor")
+        Client.minecraft.profiler.startSection("getHealthFactor")
         val normalFactor =living.health / StaticPlayerHelper.getMaxHealth(living)
         val delta = 1.0f - normalFactor
 
         val health = normalFactor + delta * delta / 2 * normalFactor
-        Minecraft().profiler.endSection()
+        Client.minecraft.profiler.endSection()
         return health
     }
 

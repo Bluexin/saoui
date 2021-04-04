@@ -21,6 +21,7 @@ import com.saomc.saoui.effects.StatusEffects;
 import com.saomc.saoui.screens.ingame.HealthStep;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.RenderItem;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 
 import java.util.List;
@@ -99,6 +100,13 @@ public interface IHudDrawContext {
      * @return width in pixels of the provided string with current fontrenderer
      */
     int strWidth(String s);
+
+    /**
+     * Used to get the height in pixels of the font with the current fontrenderer.
+     *
+     * @return height in pixels of the current font with the fontrenderer
+     */
+    int strHeight();
 
     /**
      * @return the current absorption amount the player has
@@ -291,4 +299,83 @@ public interface IHudDrawContext {
      * @return armor value
      */
     int armor();
+
+    // *** NEARBY ENTITIES ***
+
+    /**
+     * @return up to 5 nearby entities
+     */
+    List<EntityLivingBase> nearbyEntities();
+
+    /**
+     * @param i index to check
+     * @return Entity at given index
+     */
+    default EntityLivingBase nearbyEntity(int i) {
+        return nearbyEntities().get(i);
+    }
+
+    /**
+     * @return nearby entity amount
+     */
+    default int nearbyEntitySize() { return nearbyEntities().size(); }
+
+    /**
+     * @param index the index of the entity to check
+     * @return username of the entity at given index
+     */
+    String entityName(int index);
+
+    /**
+     * @param index the index of the entity to check
+     * @return hp of the entity at given index
+     */
+    float entityHp(int index);
+
+    /**
+     * @param index the index of the entity to check
+     * @return max hp of the entity at given index
+     */
+    float entityMaxHp(int index);
+
+    /**
+     * @param index the index of the entity to check
+     * @return hp percent of the entity at given index
+     */
+    float entityHpPct(int index);
+
+    /**
+     * @param index the index of the entity to check
+     * @return health step of the entity at given index
+     */
+    HealthStep entityHealthStep(int index);
+
+
+    // *** TARGET ENTITY ***
+
+    EntityLivingBase targetEntity();
+    /**
+     * @return username of the target
+     */
+    String targetName();
+
+    /**
+     * @return hp of the target
+     */
+    float targetHp();
+
+    /**
+     * @return max hp of the target
+     */
+    float targetMaxHp();
+
+    /**
+     * @return hp percent of the target
+     */
+    float targetHpPct();
+
+    /**
+     * @return health step of the target
+     */
+    HealthStep targetHealthStep();
 }

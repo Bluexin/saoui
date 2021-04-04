@@ -84,31 +84,18 @@ class DeathParticles private constructor(world: World, xCoord: Double, yCoord: D
         val zPos = (this.prevPosZ + (this.posZ - this.prevPosZ) * time.toDouble() - interpPosZ).toFloat()
         val colorIntensity = 1.0f
 
-        val x1: Double
-        val x2: Double
-        val x3: Double
-        val x4: Double
-        val y1: Double
-        val y2: Double
-        val y3: Double
-        val y4: Double
-        val z1: Double
-        val z2: Double
-        val z3: Double
-        val z4: Double
-
-        x1 = (-(this.particleX + f0) * scale).toDouble()
-        y1 = (-this.particleY * scale).toDouble()
-        z1 = (-(this.particleZ + f1) * scale).toDouble()
-        x2 = ((f0 - this.particleX) * scale).toDouble()
-        y2 = (this.particleY * scale).toDouble()
-        z2 = ((f1 - this.particleZ) * scale).toDouble()
-        x3 = ((this.particleX + f0) * scale).toDouble()
-        y3 = (this.particleY * scale).toDouble()
-        z3 = ((this.particleZ + f1) * scale).toDouble()
-        x4 = ((this.particleX - f0) * scale).toDouble()
-        y4 = (-this.particleY * scale).toDouble()
-        z4 = ((this.particleZ - f1) * scale).toDouble()
+        val x1: Double = (-(this.particleX + f0) * scale).toDouble()
+        val y1: Double = (-this.particleY * scale).toDouble()
+        val z1: Double = (-(this.particleZ + f1) * scale).toDouble()
+        val x2: Double = ((f0 - this.particleX) * scale).toDouble()
+        val y2: Double = (this.particleY * scale).toDouble()
+        val z2: Double = ((f1 - this.particleZ) * scale).toDouble()
+        val x3: Double = ((this.particleX + f0) * scale).toDouble()
+        val y3: Double = (this.particleY * scale).toDouble()
+        val z3: Double = ((this.particleZ + f1) * scale).toDouble()
+        val x4: Double = ((this.particleX - f0) * scale).toDouble()
+        val y4: Double = (-this.particleY * scale).toDouble()
+        val z4: Double = ((this.particleZ - f1) * scale).toDouble()
         val e = Minecraft.getMinecraft().player.horizontalFacing
         val q = e == EnumFacing.NORTH || e == EnumFacing.SOUTH
         val a = (if (q) if (rotationY < 1.5f && rotationY > 0.5f) rotationY - 1.0f else rotationY + 1.0f else rotationY) * Math.PI

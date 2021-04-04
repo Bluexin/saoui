@@ -16,9 +16,15 @@
  */
 package com.saomc.saoui.api.entity.rendering
 
-import com.teamwizardry.librarianlib.features.kotlin.Minecraft
+import com.saomc.saoui.util.getAttackClass
+import com.teamwizardry.librarianlib.features.kotlin.Client
+import net.minecraft.entity.EntityLiving
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.IEntityOwnable
+import net.minecraft.entity.ai.EntityAIAttackMelee
+import net.minecraft.entity.ai.EntityAIAttackRanged
+import net.minecraft.entity.ai.EntityAIFindEntityNearestPlayer
+import net.minecraft.entity.ai.EntityAINearestAttackableTarget
 import net.minecraft.entity.monster.EntityPigZombie
 import net.minecraft.entity.monster.IMob
 import net.minecraft.entity.passive.EntityWolf
@@ -45,7 +51,7 @@ class MobColorStateHandler internal constructor(entity: EntityLivingBase) : ICol
      */
     private var cached: ColorState? = null
 
-    private val mc = Minecraft()
+    private val mc = Client.minecraft
 
     @get:SideOnly(Side.CLIENT)
     private val color: ColorState
@@ -60,8 +66,9 @@ class MobColorStateHandler internal constructor(entity: EntityLivingBase) : ICol
                 entity is EntityWolf && entity.isAngry -> ColorState.KILLER
                 entity is EntityPigZombie && entity.isAngry -> ColorState.KILLER
                 entity is IEntityOwnable && entity.owner != null -> if (entity.owner == mc.player) ColorState.INNOCENT else ColorState.VIOLENT
-                entity is IMob -> if (entity.canEntityBeSeen(mc.player)) ColorState.KILLER else ColorState.VIOLENT
+                entity is IMob -> if (entity.canEntityBeSeen(mc.player) || entity.attackingEntity is EntityPlayer) ColorState.KILLER else ColorState.VIOLENT
                 entity is IAnimals -> ColorState.INNOCENT.also { cached = it }
+                entity is EntityLiving -> if (entity.targetTasks.taskEntries.any { it is EntityAIAttackMelee || it is EntityAIAttackRanged || it is EntityAINearestAttackableTarget<*> && it.getAttackClass() is EntityPlayer }) ColorState.KILLER else if ( entity.targetTasks.taskEntries.any {it is EntityAIFindEntityNearestPlayer}) ColorState.VIOLENT else ColorState.INNOCENT
                 else -> ColorState.INVALID
             }
         }

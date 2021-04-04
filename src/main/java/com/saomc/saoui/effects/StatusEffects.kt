@@ -20,6 +20,7 @@ package com.saomc.saoui.effects
 import com.saomc.saoui.GLCore
 import com.saomc.saoui.SAOCore
 import com.saomc.saoui.api.screens.IIcon
+import com.saomc.saoui.resources.StringNames
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.init.MobEffects
@@ -59,12 +60,13 @@ enum class StatusEffects : IIcon {
     RESIST,
     SLOWNESS;
 
-    val resource by lazy { ResourceLocation(SAOCore.MODID, "textures/hud/status_icons/${name.toLowerCase()}.png") }
+    private val icons
+        get() = ResourceLocation(SAOCore.MODID, "${StringNames.statusIcons}${name.toLowerCase()}.png")
 
     @Suppress("unused")
     override fun glDraw(x: Int, y: Int, z: Float) {
-        GLCore.glBindTexture(resource)
-        GLCore.glTexturedRectV2(x.toDouble(), y.toDouble(), z.toDouble(), 16.0, 16.0, srcWidth = 15.0, srcHeight = 16.0, textureW = 16, textureH = 16)
+        GLCore.glBindTexture(icons)
+        GLCore.glTexturedRectV2(x.toDouble(), y.toDouble(), z.toDouble(), 16.0, 16.0, srcWidth = 16.0, srcHeight = 16.0, textureW = 16, textureH = 16)
     }
 
     companion object {
@@ -116,5 +118,5 @@ enum class StatusEffects : IIcon {
         }
     }
 
-    override fun getRL() = resource
+    override fun getRL() = icons
 }

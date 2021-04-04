@@ -22,7 +22,7 @@ import baubles.api.IBauble
 import com.saomc.saoui.api.screens.IIcon
 import com.saomc.saoui.screens.util.toIcon
 import com.saomc.saoui.util.IconCore
-import com.teamwizardry.librarianlib.features.kotlin.Minecraft
+import com.teamwizardry.librarianlib.features.kotlin.Client
 import com.teamwizardry.librarianlib.features.kotlin.toolClasses
 import net.minecraft.client.resources.I18n
 import net.minecraft.entity.player.EntityPlayer
@@ -302,7 +302,7 @@ enum class BaseFilters(val filter: (ItemStack, Boolean) -> Boolean) : IItemFilte
     override fun invoke(stack: ItemStack, equipped: Boolean) = filter(stack, equipped)
 
     companion object {
-        val mc = Minecraft()
+        val mc = Client.minecraft
 
         val baublesLoaded by lazy { Loader.isModLoaded("baubles") }
 

@@ -82,5 +82,10 @@ enum class HudPartType {
     /**
      * Key for the HudPart rendering mount health.
      */
-    MOUNT_HEALTH
+    MOUNT_HEALTH,
+
+    /**
+     * Key for the HudPart rendering entity health on the hud.
+     */
+    ENTITY_HEALTH_HUD;
 }

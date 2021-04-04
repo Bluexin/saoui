@@ -1,6 +1,6 @@
 package com.saomc.saoui.util
 
-import com.teamwizardry.librarianlib.features.kotlin.Minecraft
+import com.teamwizardry.librarianlib.features.kotlin.Client
 import net.minecraft.client.gui.GuiMainMenu
 import net.minecraft.client.gui.GuiMultiplayer
 import net.minecraft.realms.RealmsBridge
@@ -8,7 +8,7 @@ import net.minecraft.realms.RealmsBridge
 
 object UIUtil {
 
-    val mc = Minecraft()
+    val mc = Client.minecraft
 
     fun closeGame(){
         // This check needs to happen before disconnecting packet.

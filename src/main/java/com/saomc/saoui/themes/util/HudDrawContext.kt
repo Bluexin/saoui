@@ -65,8 +65,18 @@ class HudDrawContext(player: EntityPlayer, val mc: Minecraft, itemRenderer: Rend
     private var i = 0
     private var pt: List<PlayerInfo> = listOf()
     private var effects: List<StatusEffects>? = null
+    private var nearbyEntities: List<EntityLivingBase> = listOf()
+    private var targetEntity: EntityLivingBase? = null
     fun setPt(pt: List<PlayerInfo>) {
         this.pt = pt
+    }
+
+    fun setTargetEntity(entity: EntityLivingBase) {
+        this.targetEntity = entity
+    }
+
+    fun setNearbyEntities(entities: List<EntityLivingBase>) {
+        this.nearbyEntities = entities
     }
 
     override fun username(): String {
@@ -154,6 +164,10 @@ class HudDrawContext(player: EntityPlayer, val mc: Minecraft, itemRenderer: Rend
 
     override fun strWidth(s: String): Int {
         return mc.fontRenderer.getStringWidth(s)
+    }
+
+    override fun strHeight(): Int {
+        return mc.fontRenderer.FONT_HEIGHT
     }
 
     override fun absorption(): Float {
@@ -252,6 +266,32 @@ class HudDrawContext(player: EntityPlayer, val mc: Minecraft, itemRenderer: Rend
     override fun armor(): Int {
         return ForgeHooks.getTotalArmorValue(player)
     }
+
+    override fun nearbyEntities(): List<EntityLivingBase> {
+        return nearbyEntities
+    }
+
+    override fun entityName(index: Int): String = nearbyEntities[index].displayName.formattedText
+
+    override fun entityHp(index: Int): Float = nearbyEntities[index].health
+
+    override fun entityMaxHp(index: Int): Float = nearbyEntities[index].maxHealth
+
+    override fun entityHpPct(index: Int): Float = entityHp(index) / entityMaxHp(index)
+
+    override fun entityHealthStep(index: Int): HealthStep = getStep(nearbyEntity(index), entityHpPct(index).toDouble())
+
+    override fun targetEntity(): EntityLivingBase? = targetEntity
+
+    override fun targetName(): String = targetEntity?.displayName?.formattedText?: ""
+
+    override fun targetHp(): Float = targetEntity?.health?: 0F
+
+    override fun targetMaxHp(): Float = targetEntity?.maxHealth?: 0F
+
+    override fun targetHpPct(): Float = if (targetEntity != null) targetHp() / targetMaxHp() else 0f
+
+    override fun targetHealthStep(): HealthStep = getStep(targetEntity, targetHpPct().toDouble())
 
     init {
         this.player = player

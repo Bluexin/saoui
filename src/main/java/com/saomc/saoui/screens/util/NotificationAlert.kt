@@ -4,7 +4,7 @@ import com.saomc.saoui.SoundCore
 import com.saomc.saoui.api.screens.IIcon
 import com.saomc.saoui.play
 import com.saomc.saoui.util.IconCore
-import com.teamwizardry.librarianlib.features.kotlin.Minecraft
+import com.teamwizardry.librarianlib.features.kotlin.Client
 import net.minecraft.client.gui.toasts.GuiToast
 import net.minecraft.client.gui.toasts.IToast
 import net.minecraft.client.renderer.GlStateManager
@@ -37,7 +37,7 @@ class NotificationAlert(val icon: IIcon, val title: String, val subtitle: String
 
     companion object{
         fun new (icon: IconCore, title: String, subtitle: String){
-            Minecraft().toastGui.add(NotificationAlert(icon, title, subtitle))
+            Client.minecraft.toastGui.add(NotificationAlert(icon, title, subtitle))
         }
     }
 }

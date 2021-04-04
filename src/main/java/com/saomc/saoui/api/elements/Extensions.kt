@@ -24,19 +24,21 @@ import com.saomc.saoui.config.OptionCore
 import com.saomc.saoui.play
 import com.saomc.saoui.screens.CoreGUI
 import com.saomc.saoui.screens.MouseButton
+import com.saomc.saoui.screens.menus.IngameMenu
 import com.saomc.saoui.screens.unaryPlus
 import com.saomc.saoui.screens.util.PopupAdvancement
 import com.saomc.saoui.screens.util.toIcon
+import com.saomc.saoui.themes.ThemeLoader
 import com.saomc.saoui.util.AdvancementUtil
 import com.saomc.saoui.util.IconCore
 import com.saomc.saoui.util.getProgress
 import com.saomc.saoui.util.getRecipes
 import com.teamwizardry.librarianlib.features.gui.component.supporting.delegate
 import com.teamwizardry.librarianlib.features.helpers.vec
-import com.teamwizardry.librarianlib.features.kotlin.Minecraft
+import com.teamwizardry.librarianlib.features.kotlin.Client
 import com.teamwizardry.librarianlib.features.math.Vec2d
 import net.minecraft.advancements.Advancement
-import net.minecraft.client.resources.I18n
+import net.minecraft.client.resources.I18n.format
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.init.Items
 import net.minecraftforge.fml.common.registry.ForgeRegistries
@@ -110,22 +112,22 @@ class CategoryButton(val delegate: IconElement, parent: INeoParent? = null, priv
     }
 
     override fun keyTyped(typedChar: Char, keyCode: Int) {
-        elements.firstOrNull { it.isOpen && it.selected }?.keyTyped(typedChar, keyCode) ?: let {
-            if (keyCode == Minecraft().gameSettings.keyBindForward.keyCode || keyCode == Keyboard.KEY_UP) {
-                val selected = elements.firstOrNull { it.selected }
+        elementsSequence.firstOrNull { it.isOpen && it.selected }?.keyTyped(typedChar, keyCode) ?: let {
+            if (keyCode == Client.minecraft.gameSettings.keyBindForward.keyCode || keyCode == Keyboard.KEY_UP) {
+                val selected = elementsSequence.firstOrNull { it.selected }
                 var index = elements.indexOf(selected)
                 if (index == -1) index = 0
                 else if (--index < 0) index = elements.size.minus(1)
                 selected?.selected = false
                 elements[index].selected = true
-            } else if (keyCode == Minecraft().gameSettings.keyBindBack.keyCode || keyCode == Keyboard.KEY_DOWN) {
-                val selected = elements.firstOrNull { it.selected }
+            } else if (keyCode == Client.minecraft.gameSettings.keyBindBack.keyCode || keyCode == Keyboard.KEY_DOWN) {
+                val selected = elementsSequence.firstOrNull { it.selected }
                 var index = elements.indexOf(selected)
                 if (++index >= elements.size) index = 0
                 selected?.selected = false
                 elements[index].selected = true
-            } else if (keyCode == Minecraft().gameSettings.keyBindRight.keyCode || keyCode == Keyboard.KEY_RIGHT || keyCode == Minecraft().gameSettings.keyBindJump.keyCode || keyCode == Keyboard.KEY_RETURN){
-                val selected = elements.firstOrNull { it.selected } ?: return
+            } else if (keyCode == Client.minecraft.gameSettings.keyBindRight.keyCode || keyCode == Keyboard.KEY_RIGHT || keyCode == Client.minecraft.gameSettings.keyBindJump.keyCode || keyCode == Keyboard.KEY_RETURN){
+                val selected = elementsSequence.firstOrNull { it.selected } ?: return
                 if (selected is CategoryButton) {
                     selected.open()
                 }
@@ -133,7 +135,7 @@ class CategoryButton(val delegate: IconElement, parent: INeoParent? = null, priv
                     selected.onClickBody(selected.pos, MouseButton.LEFT)
                 }
             }
-            else if (keyCode == Minecraft().gameSettings.keyBindLeft.keyCode || keyCode == Keyboard.KEY_LEFT || keyCode == Minecraft().gameSettings.keyBindAttack.keyCode){
+            else if (keyCode == Client.minecraft.gameSettings.keyBindLeft.keyCode || keyCode == Keyboard.KEY_LEFT || keyCode == Client.minecraft.gameSettings.keyBindAttack.keyCode){
                 close(false)
             }
         }
@@ -161,7 +163,7 @@ class CategoryButton(val delegate: IconElement, parent: INeoParent? = null, priv
 
     fun close(reInit: Boolean = false) {
         delegate.scroll = -3
-        elements.forEach {
+        elementsSequence.forEach {
             it.hide()
             if (it is CategoryButton && it.highlighted) {
                 it.close()
@@ -207,15 +209,26 @@ class CategoryButton(val delegate: IconElement, parent: INeoParent? = null, priv
         }
     }
 
-    fun category(icon: IIcon, label: String, body: (CategoryButton.() -> Unit)? = null): CategoryButton {
-        val cat = CategoryButton(IconLabelElement(icon, label), this, body)
+    fun addDescription(description: MutableList<String>){
+        delegate.description.addAll(description)
+    }
+
+    fun addDescription(description: String){
+        delegate.description.add(description)
+    }
+
+    fun category(icon: IIcon, label: String, description: MutableList<String> = mutableListOf(), body: (CategoryButton.() -> Unit)? = null): CategoryButton {
+        val cat = CategoryButton(IconLabelElement(icon, label, description = description), this, body)
         +cat
         return cat
     }
 
     fun partyMenu(): CategoryButton {
         val partyElement = PartyElement()
-        partyElement.disabled = !SAOCore.isSAOMCLibServerSide
+        if (!SAOCore.isSAOMCLibServerSide){
+            partyElement.disabled = true
+            partyElement.description.add(format("saoui.server"))
+        }
         val cat = CategoryButton(partyElement, this)
         +cat
         return cat
@@ -229,7 +242,7 @@ class CategoryButton(val delegate: IconElement, parent: INeoParent? = null, priv
     }
 
     fun profile(player: EntityPlayer, body: (CategoryButton.() -> Unit)? = null): CategoryButton {
-        val cat = CategoryButton(ProfileElement(player, player != Minecraft().player), this, body)
+        val cat = CategoryButton(ProfileElement(player, player != Client.minecraft.player), this, body)
         +cat
         return cat
     }
@@ -241,7 +254,7 @@ class CategoryButton(val delegate: IconElement, parent: INeoParent? = null, priv
     }
 
     fun recipes(): CategoryButton {
-        val cat = CategoryButton(IconLabelElement(IconCore.CRAFTING, I18n.format("sao.element.recipes")), this){
+        val cat = CategoryButton(IconLabelElement(IconCore.CRAFTING, format("sao.element.recipes")), this){
             addRecipes(AdvancementUtil.getRecipes())
         }
         +cat
@@ -251,10 +264,10 @@ class CategoryButton(val delegate: IconElement, parent: INeoParent? = null, priv
     fun advancementCategory(advancement: Advancement): CategoryButton{
         return if (advancement.getProgress() != null && advancement.getProgress()!!.isDone) {
             val cat = CategoryButton(AdvancementElement(advancement, true), this) {
-                category(Items.WRITTEN_BOOK.toIcon(), I18n.format("sao.element.quest.completed")) {
+                category(Items.WRITTEN_BOOK.toIcon(), format("sao.element.quest.completed")) {
                     addAdvancements(AdvancementUtil.getAdvancements(advancement, true))
                 }
-                category(Items.WRITABLE_BOOK.toIcon(), I18n.format("sao.element.quest.inProgress")) {
+                category(Items.WRITABLE_BOOK.toIcon(), format("sao.element.quest.inProgress")) {
                     addAdvancements(AdvancementUtil.getAdvancements(advancement, false))
                 }
             }
@@ -337,12 +350,37 @@ fun INeoParent.optionButton(option: OptionCore): IconLabelElement {
 
 fun INeoParent.optionCategory(option: OptionCore): CategoryButton {
     val cat = CategoryButton(IconLabelElement(IconCore.OPTION, option.displayName, description = option.description.toMutableList()))
+    if (option == OptionCore.THEME){
+        ThemeLoader.themeFolder.list()?.forEach {
+            cat += themeButton(it)
+        }
+    }
     option.subOptions.forEach {
-        cat += if (it.isCategory) optionCategory(it)
+        cat += if (it.isCategory) {
+            optionCategory(it)
+        }
         else optionButton(it)
     }
     cat.parent = this
     return cat
 }
 
+
+fun INeoParent.themeButton(theme: String): IconLabelElement {
+    val but = object : IconLabelElement(IconCore.OPTION, theme, description = mutableListOf("Change theme to $theme")) {
+        override var highlighted: Boolean
+            get() = ThemeLoader.currentTheme == label && !OptionCore.VANILLA_UI.isEnabled
+            set(_) = (Unit)
+
+    }
+    but.onClick { _, _ ->
+        ThemeLoader.load(but.label)
+        OptionCore.VANILLA_UI.disable()
+        Client.minecraft.displayGuiScreen(null)
+        Client.minecraft.displayGuiScreen(IngameMenu())
+        true
+    }
+    but.parent = this
+    return but
+}
 

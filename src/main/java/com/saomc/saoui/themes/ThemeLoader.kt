@@ -23,16 +23,26 @@ import com.helger.css.decl.CSSStyleRule
 import com.helger.css.decl.visit.CSSVisitor
 import com.helger.css.decl.visit.DefaultCSSVisitor
 import com.helger.css.reader.CSSReader
+import com.saomc.saoui.GLCore
 import com.saomc.saoui.SAOCore
 import com.saomc.saoui.api.entity.rendering.ColorState
+import com.saomc.saoui.config.ConfigHandler
+import com.saomc.saoui.config.OptionCore
+import com.saomc.saoui.resources.StringNames
 import com.saomc.saoui.screens.ingame.HealthStep
 import com.saomc.saoui.themes.elements.Hud
 import com.saomc.saoui.util.ColorUtil
-import com.teamwizardry.librarianlib.features.kotlin.Minecraft
+import com.teamwizardry.librarianlib.features.kotlin.Client
 import net.minecraft.client.Minecraft
+import net.minecraft.client.resources.IResourceManager
 import net.minecraft.util.ResourceLocation
+import net.minecraftforge.client.resource.IResourceType
+import net.minecraftforge.client.resource.ISelectiveResourceReloadListener
+import net.minecraftforge.fml.client.FMLFolderResourcePack
+import java.io.File
 import java.io.IOException
 import java.nio.charset.StandardCharsets
+import java.util.function.Predicate
 import javax.xml.bind.JAXBContext
 import javax.xml.bind.JAXBException
 
@@ -41,40 +51,59 @@ import javax.xml.bind.JAXBException
  *
  * @author Bluexin
  */
-object ThemeLoader {
+object ThemeLoader: ISelectiveResourceReloadListener {
 
     // TODO: tests
     // TODO: theme versions
     // TODO: loading reporter (amount of issues, details, missing keys, ..?)
 
     lateinit var HUD: Hud
+    lateinit var themeFolder: File
+    lateinit var currentTheme: String
 
     @Throws(JAXBException::class)
-    fun load() {
-        loadCss()
+    fun load(theme: String = ConfigHandler.lastThemeUsed) {
+        val location =  if (theme.isNotBlank() && themeFolder.list()?.contains(theme) == true) {
+            currentTheme = theme
+            "themes/${theme}"
+        }
+            else if (themeFolder.list()?.contains(ConfigHandler.lastThemeUsed) == true){
+            currentTheme = ConfigHandler.lastThemeUsed
+            "themes/${ConfigHandler.lastThemeUsed}"
+        }
+            else {
+            currentTheme = "sao"
+            "themes/sao"
+        }
+
+        ConfigHandler.saveTheme(currentTheme)
+
+        if (OptionCore.CUSTOM_FONT.isEnabled) GLCore.setFont(Minecraft.getMinecraft(), OptionCore.CUSTOM_FONT.isEnabled)
+
+        loadCss(location)
 
         val start = System.currentTimeMillis()
-        val hudRL = ResourceLocation(SAOCore.MODID, "themes/hud.xml")
+        val hudRL = ResourceLocation(SAOCore.MODID, "$location/hud.xml")
+
 
         val context = JAXBContext.newInstance(Hud::class.java)
         val um = context.createUnmarshaller()
         try {
-            Minecraft().resourceManager.getResource(hudRL).inputStream.use { HUD = um.unmarshal(it) as Hud }
+            Client.minecraft.resourceManager.getResource(hudRL).inputStream.use { HUD = um.unmarshal(it) as Hud }
         } catch (e: IOException) {
             e.printStackTrace()
         }
 
         HUD.setup()
 
-
-        //(Minecraft().resourceManager as SimpleReloadableResourceManager).reloadlisteners
+        StringNames.init()
 
         SAOCore.LOGGER.info("Loaded theme and set it up in " + (System.currentTimeMillis() - start) + "ms.")
     }
 
-    fun loadCss() {
+    fun loadCss(location: String) {
         val start = System.currentTimeMillis()
-        val cssRl = ResourceLocation(SAOCore.MODID, "themes/style.css")
+        val cssRl = ResourceLocation(SAOCore.MODID, "$location/style.css")
 
         try {
             val aCSS = CSSReader.readFromStream(object : IHasInputStream {
@@ -188,6 +217,13 @@ object ThemeLoader {
         }
 
         SAOCore.LOGGER.info("Loaded CSS in " + (System.currentTimeMillis() - start) + "ms.")
+
+    }
+
+    override fun onResourceManagerReload(resourceManager: IResourceManager, types: Predicate<IResourceType>) {
+        if (resourceManager is FMLFolderResourcePack && resourceManager.fmlContainer.modId == SAOCore.MODID){
+            load()
+        }
 
     }
 }
