@@ -21,6 +21,7 @@ import com.saomc.saoui.GLCore
 import com.saomc.saoui.api.elements.*
 import com.saomc.saoui.api.screens.IIcon
 import com.saomc.saoui.config.OptionCore
+import com.saomc.saoui.screens.util.Popup
 import com.teamwizardry.librarianlib.features.animator.Animation
 import com.teamwizardry.librarianlib.features.animator.Animator
 import com.teamwizardry.librarianlib.features.helpers.vec
@@ -52,6 +53,13 @@ abstract class CoreGUI<T : Any>(final override var pos: Vec2d, override var dest
     override var parent: INeoParent? = null
 
     override var isOpen: Boolean = true
+
+    val getPopup: Popup<*>?
+    get() {
+        return if (this is Popup<*>)
+            this
+        else subGui?.getPopup
+    }
 
     override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
         GLCore.glBlend(true)

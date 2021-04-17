@@ -17,6 +17,7 @@
 
 package com.saomc.saoui.api.elements
 
+import com.saomc.saoui.SAOCore
 import com.saomc.saoui.screens.CoreGUI
 import com.saomc.saoui.screens.MouseButton
 import com.saomc.saoui.screens.unaryPlus
@@ -58,7 +59,12 @@ interface INeoParent {
         set(_) = Unit
     var isOpen: Boolean
     fun move(delta: Vec2d) {
-        CoreGUI.animator.removeAnimationsFor(this)
+        try {
+            CoreGUI.animator.removeAnimationsFor(this)
+        } catch (e: ConcurrentModificationException){
+            SAOCore.LOGGER.fatal("Element caused a concurrent modification exception on animation")
+            e.printStackTrace()
+        }
         destination += delta
         +basicAnimation(this, "pos") {
             to = destination

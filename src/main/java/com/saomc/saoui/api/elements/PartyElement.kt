@@ -10,7 +10,7 @@ import be.bluexin.saomclib.party.PlayerInfo
 import be.bluexin.saomclib.party.playerInfo
 import com.saomc.saoui.util.IconCore
 import com.saomc.saoui.util.PlayerIcon
-import com.teamwizardry.librarianlib.features.kotlin.Minecraft
+import com.teamwizardry.librarianlib.features.kotlin.Client
 import net.minecraft.client.resources.I18n
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraftforge.common.MinecraftForge
@@ -19,9 +19,9 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 class PartyElement : IconLabelElement(IconCore.PARTY, I18n.format("sao.element.party")) {
 
     //val partyElements = mutableListOf<PTMemberElement>()
-    val partyCap by lazy { Minecraft().player.getPartyCapability() }
+    val partyCap by lazy { Client.minecraft.player.getPartyCapability() }
 
-    val player: EntityPlayer = Minecraft().player
+    val player: EntityPlayer = Client.minecraft.player
 
     /**
      * Override the default element sequence to merge our party elements while keeping them separate.
@@ -52,7 +52,7 @@ class PartyElement : IconLabelElement(IconCore.PARTY, I18n.format("sao.element.p
                                     partyCap.partyData?.isInvited(it.player) != true}
         //elements[0].valid = !(partyCap.partyData?.isLeader(Minecraft().player) == false)
         // Don't bother with updating party functions if single player.
-        if (1 < Minecraft().integratedServer?.currentPlayerCount?: 2)
+        if (1 < Client.minecraft.integratedServer?.currentPlayerCount?: 2)
             partyList()
         if (!this.selected) elementsSequence.forEach { it.hide() }
     }
@@ -61,12 +61,12 @@ class PartyElement : IconLabelElement(IconCore.PARTY, I18n.format("sao.element.p
         val party = partyCap.partyData
 
         if (party != null) {
-            party.membersInfo.filter { !it.equals(player) }.forEach {ptmember ->
+            party.getMembers().filter { !it.equals(player) }.forEach {ptmember ->
                 if (elements.none { it is PTMemberElement && !it.equals(ptmember) })
                     +partyMemberButton(party, ptmember, player)
             }
 
-            party.invitedInfo.mapNotNull { it.key }.forEach {ptmember ->
+            party.getInvited().forEach {ptmember ->
                 if (elements.none { it is PTMemberElement && !it.equals(ptmember) })
                     +partyMemberButton(party, ptmember, player, true)
             }
@@ -93,7 +93,7 @@ class PartyElement : IconLabelElement(IconCore.PARTY, I18n.format("sao.element.p
         val party = partyCap.partyData
 
         if ((party != null && party.isLeader(player)) || party == null) +CategoryButton(IconLabelElement(IconCore.INVITE, I18n.format("sao.party.invite")), this.tlParent) {
-            Minecraft().connection?.playerInfoMap?.filter { it.gameProfile.id != player.uniqueID }?.forEach {
+            Client.minecraft.connection?.playerInfoMap?.filter { it.gameProfile.id != player.uniqueID }?.forEach {
                 +CategoryButton(IconLabelElement(PlayerIcon(PlayerInfo(it.gameProfile.id, it.gameProfile.name)), it.gameProfile.name), this.tlParent).onClick { _, _ ->
                     Type.INVITE.updateServer(PlayerInfo(it.gameProfile.id, it.gameProfile.name), PartyType.MAIN)
                     true

@@ -24,6 +24,7 @@ import com.teamwizardry.librarianlib.features.kotlin.Client
 import com.teamwizardry.librarianlib.features.math.Vec2d
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.FontRenderer
+import net.minecraft.client.renderer.BufferBuilder
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.renderer.Tessellator
 import net.minecraft.client.renderer.texture.TextureManager
@@ -45,7 +46,12 @@ object GLCore {
     private val mc = Minecraft.getMinecraft()
     val glFont: FontRenderer get() = mc.fontRenderer
     private val glTextureManager get() = mc.textureManager
+    val tessellator: Tessellator
+        get() = Tessellator.getInstance()
+    val bufferBuilder: BufferBuilder
+        get() = tessellator.buffer
 
+    @JvmOverloads
     fun color(red: Float, green: Float, blue: Float, alpha: Float = 1f) {
         GlStateManager.color(red, green, blue, alpha)
     }
@@ -134,8 +140,7 @@ object GLCore {
     /**
      * Checks to make sure the texture is valid, returning false means the texture is invalid.
      */
-    @JvmOverloads
-    fun checkTexture(location: ResourceLocation, textureManager: TextureManager = glTextureManager): Boolean {
+    fun checkTexture(location: ResourceLocation): Boolean {
         return try {
             Client.minecraft.resourceManager.getResource(location)
             true
@@ -159,52 +164,50 @@ object GLCore {
     fun glTexturedRectV2(x: Double, y: Double, z: Double = 0.0, width: Double, height: Double, srcX: Double = 0.0, srcY: Double = 0.0, srcWidth: Double = width, srcHeight: Double = height, textureW: Int = 256, textureH: Int = 256) {
         val f = 1f / textureW
         val f1 = 1f / textureH
-        val tessellator = Tessellator.getInstance()
-        tessellator.buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX)
-        tessellator.buffer.pos(x, y + height, z).tex((srcX.toFloat() * f).toDouble(), ((srcY + srcHeight).toFloat() * f1).toDouble()).endVertex()
-        tessellator.buffer.pos(x + width, y + height, z).tex(((srcX + srcWidth).toFloat() * f).toDouble(), ((srcY + srcHeight).toFloat() * f1).toDouble()).endVertex()
-        tessellator.buffer.pos(x + width, y, z).tex(((srcX + srcWidth).toFloat() * f).toDouble(), (srcY.toFloat() * f1).toDouble()).endVertex()
-        tessellator.buffer.pos(x, y, z).tex((srcX.toFloat() * f).toDouble(), (srcY.toFloat() * f1).toDouble()).endVertex()
-        tessellator.draw()
+        begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX)
+        bufferBuilder.pos(x, y + height, z).tex((srcX.toFloat() * f).toDouble(), ((srcY + srcHeight).toFloat() * f1).toDouble()).endVertex()
+        bufferBuilder.pos(x + width, y + height, z).tex(((srcX + srcWidth).toFloat() * f).toDouble(), ((srcY + srcHeight).toFloat() * f1).toDouble()).endVertex()
+        bufferBuilder.pos(x + width, y, z).tex(((srcX + srcWidth).toFloat() * f).toDouble(), (srcY.toFloat() * f1).toDouble()).endVertex()
+        bufferBuilder.pos(x, y, z).tex((srcX.toFloat() * f).toDouble(), (srcY.toFloat() * f1).toDouble()).endVertex()
+        draw()
     }
 
     fun addVertex(x: Double, y: Double, z: Double) {
-        Tessellator.getInstance().buffer.pos(x, y, z).endVertex()
+        bufferBuilder.pos(x, y, z).endVertex()
     }
 
     fun addVertex(x: Double, y: Double, z: Double, srcX: Double, srcY: Double) {
-        Tessellator.getInstance().buffer.pos(x, y, z).tex(srcX, srcY).endVertex()
+        bufferBuilder.pos(x, y, z).tex(srcX, srcY).endVertex()
     }
 
     fun addVertex(x: Double, y: Double, z: Double, srcX: Double, srcY: Double, red: Float, green: Float, blue: Float, alpha: Float) {
-        Tessellator.getInstance().buffer.pos(x, y, z).tex(srcX, srcY).color(red, green, blue, alpha).endVertex()
+        bufferBuilder.pos(x, y, z).tex(srcX, srcY).color(red, green, blue, alpha).endVertex()
     }
 
     fun addVertex(x: Double, y: Double, z: Double, red: Float, green: Float, blue: Float, alpha: Float) {
-        Tessellator.getInstance().buffer.pos(x, y, z).color(red, green, blue, alpha).endVertex()
+        bufferBuilder.pos(x, y, z).color(red, green, blue, alpha).endVertex()
     }
 
     fun addVertex(x: Float, y: Float, z: Float, srcX: Double, srcY: Double, red: Float, green: Float, blue: Float, alpha: Float) {
-        Tessellator.getInstance().buffer.normal(x, y, z).tex(srcX, srcY).color(red, green, blue, alpha).endVertex()
+        bufferBuilder.normal(x, y, z).tex(srcX, srcY).color(red, green, blue, alpha).endVertex()
     }
 
     @JvmOverloads
     fun begin(glMode: Int = GL11.GL_QUADS, format: VertexFormat = DefaultVertexFormats.POSITION_TEX_COLOR) {
-        Tessellator.getInstance().buffer.begin(glMode, format)
+        bufferBuilder.begin(glMode, format)
     }
 
     fun draw() {
-        Tessellator.getInstance().draw()
+        tessellator.draw()
     }
 
     fun glRect(x: Int, y: Int, width: Int, height: Int) {
-        val tessellator = Tessellator.getInstance()
-        tessellator.buffer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION)
-        tessellator.buffer.pos(x.toDouble(), (y + height).toDouble(), 0.0)
-        tessellator.buffer.pos((x + width).toDouble(), (y + height).toDouble(), 0.0)
-        tessellator.buffer.pos((x + width).toDouble(), y.toDouble(), 0.0)
-        tessellator.buffer.pos(x.toDouble(), y.toDouble(), 0.0)
-        tessellator.draw()
+        begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION)
+        bufferBuilder.pos(x.toDouble(), (y + height).toDouble(), 0.0)
+        bufferBuilder.pos((x + width).toDouble(), (y + height).toDouble(), 0.0)
+        bufferBuilder.pos((x + width).toDouble(), y.toDouble(), 0.0)
+        bufferBuilder.pos(x.toDouble(), y.toDouble(), 0.0)
+        draw()
     }
 
     /**
@@ -225,14 +228,12 @@ object GLCore {
         GlStateManager.disableAlpha()
         GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO)
         GlStateManager.shadeModel(7425)
-        val tessellator = Tessellator.getInstance()
-        val bufferBuilder = tessellator.buffer
-        bufferBuilder.begin(7, DefaultVertexFormats.POSITION_COLOR)
+        begin(7, DefaultVertexFormats.POSITION_COLOR)
         bufferBuilder.pos(right, top, zLevel).color(f1, f2, f3, f).endVertex()
         bufferBuilder.pos(left, top, zLevel).color(f1, f2, f3, f).endVertex()
         bufferBuilder.pos(left, bottom, zLevel).color(f5, f6, f7, f4).endVertex()
         bufferBuilder.pos(right, bottom, zLevel).color(f5, f6, f7, f4).endVertex()
-        tessellator.draw()
+        draw()
         GlStateManager.shadeModel(7424)
         GlStateManager.disableBlend()
         GlStateManager.enableAlpha()

@@ -34,7 +34,7 @@ import com.saomc.saoui.screens.util.Popup
 import com.saomc.saoui.screens.util.PopupYesNo
 import com.saomc.saoui.util.CraftingUtil
 import com.saomc.saoui.util.IconCore
-import com.teamwizardry.librarianlib.features.kotlin.Minecraft
+import com.teamwizardry.librarianlib.features.kotlin.Client
 import com.teamwizardry.librarianlib.features.kotlin.localize
 import net.minecraft.client.Minecraft
 import net.minecraft.client.settings.GameSettings
@@ -68,7 +68,7 @@ object EventCore {
     @SubscribeEvent
     fun renderTickListener(e: TickEvent.RenderTickEvent) {
         RenderHandler.deathHandlers()
-        Minecraft().player?.getRenderData()?.update(e.renderTickTime)
+        Client.minecraft.player?.getRenderData()?.update(e.renderTickTime)
     }
 
     @SubscribeEvent
@@ -91,7 +91,7 @@ object EventCore {
     @SubscribeEvent
     fun renderWorldListener(event: RenderWorldLastEvent) {
         RenderDispatcher.dispatch()
-        if (Minecraft().player != null && Minecraft().renderManager.renderViewEntity != null) StaticRenderer.render()
+        if (Client.minecraft.player != null && Client.minecraft.renderManager.renderViewEntity != null) StaticRenderer.render()
     }
 
     @SubscribeEvent
@@ -115,6 +115,13 @@ object EventCore {
         if (notification != null) {
             notifications.remove(notification)
             NotificationAlert.new(IconCore.PARTY, "notificationPartyInviteTimeoutTitle".localize(), "")
+        }
+        else {
+            (Client.minecraft.currentScreen as? CoreGUI<*>)?.getPopup?.text?.any { line ->
+                line.contains(e.partyData.leaderInfo.username, true)
+            }?.run {
+                (Client.minecraft.currentScreen as? CoreGUI<*>)?.getPopup?.onGuiClosed()
+            }
         }
     }
 
@@ -151,16 +158,16 @@ object EventCore {
         if (e.player == player){
             val builder = StringBuilder()
             builder.append("${"guiPartyInviteText".localize(p.leaderInfo.username)}\n\n")
-            builder.append("Members: ${p.membersInfo.first().username}\n")
-            p.membersInfo.filter { it != p.membersInfo.first() }.forEach { builder.append("            ${it.username}") }
+            builder.append("Members: ${p.getMembers().first().username}\n")
+            p.getMembers().filter { it != p.getMembers().first() }.forEach { builder.append("            ${it.username}") }
             val partyNotification = PopupYesNo("guiPartyInviteTitle".localize(), builder.lines(), "")
             partyNotification.plusAssign {
                 when (it) {
                     PopupYesNo.Result.YES -> {
-                        Type.ACCEPTINVITE.updateServer(Minecraft().player.playerInfo(), PartyType.INVITE)
+                        Type.ACCEPTINVITE.updateServer(Client.minecraft.player.playerInfo(), PartyType.INVITE)
                     }
                     PopupYesNo.Result.NO -> {
-                        Type.CANCELINVITE.updateServer(Minecraft().player.playerInfo(), PartyType.INVITE)
+                        Type.CANCELINVITE.updateServer(Client.minecraft.player.playerInfo(), PartyType.INVITE)
                     }
                 }
             }
@@ -223,5 +230,5 @@ object EventCore {
     internal val mc = Minecraft.getMinecraft()
 
     // Safe reference to player
-    internal val player = PlayerInfo(Minecraft().session.profile)
+    internal val player = PlayerInfo(Client.minecraft.session.profile)
 }

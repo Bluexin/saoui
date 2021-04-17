@@ -50,7 +50,6 @@ import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
 import org.lwjgl.opengl.GL11
-import java.util.*
 
 
 @SideOnly(Side.CLIENT)
@@ -195,7 +194,7 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
 
         var members: MutableList<PlayerInfo> = mutableListOf()
         if (pt?.isParty == true) {
-            members = pt.membersInfo.filter { !it.equals(mc.player) }.toMutableList()
+            members = pt.getMembers().filter { !it.equals(mc.player) }.toMutableList()
             if (OptionCore.HIDE_OFFLINE_PARTY.isEnabled) members.removeIf { it.player == null }
         } else
             for (i in 0 until ConfigHandler.debugFakePT) members.add(PlayerInfo(mc.player))

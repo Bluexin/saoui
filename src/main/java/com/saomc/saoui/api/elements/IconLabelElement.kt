@@ -25,7 +25,6 @@ import com.saomc.saoui.resources.StringNames
 import com.saomc.saoui.screens.unaryPlus
 import com.saomc.saoui.util.ColorUtil
 import com.teamwizardry.librarianlib.features.helpers.vec
-import com.teamwizardry.librarianlib.features.kotlin.plus
 import com.teamwizardry.librarianlib.features.math.BoundingBox2D
 import com.teamwizardry.librarianlib.features.math.Vec2d
 import kotlin.math.max
