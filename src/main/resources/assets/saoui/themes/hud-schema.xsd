@@ -1,0 +1,374 @@
+<?xml version='1.0'?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="http://www.bluexin.be/com/saomc/saoui/hud-schema">
+
+    <xs:element name="hud">
+        <xs:annotation>
+            <xs:documentation>Root element, used as 'bl:hud'.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="parts">
+                    <xs:annotation>
+                        <xs:documentation>List of parts for the hud. See documentation of HudPart.</xs:documentation>
+                    </xs:annotation>
+                    <xs:complexType>
+                        <xs:sequence maxOccurs="unbounded">
+                            <xs:element name="entry" type="HudPart"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="HudPart">
+        <xs:annotation>
+            <xs:documentation>
+                Represents a part of the HUD, like the health box or the hotbar.
+                The key specifies when they will be rendered, please use the right parts as much as possible (helps for
+                profiling).
+                The part is made up of an ElementGroup (see it's documentation for more info).
+            </xs:documentation>
+        </xs:annotation>
+        <xs:all>
+            <xs:element name="key">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:enumeration value="HEALTH_BOX"/>
+                        <xs:enumeration value="HOTBAR"/>
+                        <xs:enumeration value="EXPERIENCE"/>
+                        <xs:enumeration value="CROSS_HAIR"/>
+                        <xs:enumeration value="ARMOR"/>
+                        <xs:enumeration value="JUMP_BAR"/>
+                        <xs:enumeration value="AM2BARS"/>
+                        <xs:enumeration value="PARTY"/>
+                        <xs:enumeration value="FOOD"/>
+                        <xs:enumeration value="EFFECTS"/>
+                        <xs:enumeration value="ENTITY_HEALTH_HUD"/>
+                        <xs:enumeration value="AIR"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="value" type="ElementGroup"/>
+        </xs:all>
+    </xs:complexType>
+
+    <xs:element name="element" type="Element"/>
+    <xs:element name="glRectangle" substitutionGroup="element" type="GLRectangle"/>
+    <xs:element name="glString" substitutionGroup="element" type="GLString"/>
+    <xs:element name="glHotbarItem" substitutionGroup="element" type="GLHotbarItem"/>
+    <xs:element name="rawElement" substitutionGroup="element" type="RawElement"/>
+    <xs:element name="elementGroup" substitutionGroup="element" type="ElementGroup"/>
+    <xs:element name="repetitionGroup" substitutionGroup="element" type="RepetitionGroup"/>
+
+    <xs:complexType name="Element" abstract="true">
+        <xs:annotation>
+            <xs:documentation>
+                Generic Element that can be rendered on-screen.
+                Contains all common info for more specific elements.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:all>
+            <xs:element name="x" default="0" minOccurs="0" type="CachedExpression">
+                <xs:annotation>
+                    <xs:documentation>X position on screen (should resolve to a double).</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="y" default="0" minOccurs="0" type="CachedExpression">
+                <xs:annotation>
+                    <xs:documentation>Y position on screen (should resolve to a double).</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="z" default="0" minOccurs="0" type="CachedExpression">
+                <xs:annotation>
+                    <xs:documentation>
+                        Z position on screen (should resolve to a double).
+                        This changes which elements are rendered over each other.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="enabled" default="true" minOccurs="0" type="CachedExpression">
+                <xs:annotation>
+                    <xs:documentation>Whether this element should be rendered or not (should resolve to a
+                        boolean,
+                        true/false).
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:all>
+        <xs:attribute name="name" default="anonymous" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:complexType name="GLRectangle">
+        <xs:annotation>
+            <xs:documentation>
+                Rectangle that can be rendered on-screen, with a texture and a color.
+                Also includes all value declarations from Element.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="Element">
+                <xs:all minOccurs="0">
+                    <xs:element name="rgba" default="0xFFFFFFFF" type="CachedExpression">
+                        <xs:annotation>
+                            <xs:documentation>rgba to use when drawing this element.</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="srcX" default="0" type="CachedExpression">
+                        <xs:annotation>
+                            <xs:documentation>X position of the rectangle on the texture (should resolve to a double).
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="srcY" default="0" type="CachedExpression">
+                        <xs:annotation>
+                            <xs:documentation>Y position of the rectangle on the texture (should resolve to a double).
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="w" default="0" type="CachedExpression">
+                        <xs:annotation>
+                            <xs:documentation>Width for the rectangle (should resolve to a double).</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="h" default="0" type="CachedExpression">
+                        <xs:annotation>
+                            <xs:documentation>Height for the rectangle (should resolve to a double).</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="srcW" default="0" type="CachedExpression">
+                        <xs:annotation>
+                            <xs:documentation>
+                                Width of the rectangle on the texture (should resolve to a double, defaults to w).
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="srcH" default="0" type="CachedExpression">
+                        <xs:annotation>
+                            <xs:documentation>
+                                Height of the rectangle on the texture (should resolve to a double, defaults to h).
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="texture" default="" type="xs:anyURI">
+                        <xs:annotation>
+                            <xs:documentation>
+                                Texture location, in minecraft format ('modid:path/to/texture' -> ie.
+                                'saoui:textures/guiEDT.png').
+                                This can NOT include special formatting or computations.
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:all>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="GLString">
+        <xs:annotation>
+            <xs:documentation>
+                String that can be rendered on-screen.
+                This will respect minecraft formatting style (translation calls can be made trough 'format("key")').
+                Also includes all value declarations from GLRectangle (though some of them will have no effect).
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="GLRectangle">
+                <xs:all>
+                    <xs:element name="text" type="CachedExpression">
+                        <xs:annotation>
+                            <xs:documentation>Text to render on-screen (should resolve to a string).</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="shadow" default="true" minOccurs="0" type="CachedExpression">
+                        <xs:annotation>
+                            <xs:documentation>
+                                Whether the text should be rendered with a shadow (should resolve to a boolean).
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:all>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="GLHotbarItem">
+        <xs:annotation>
+            <xs:documentation>
+                Renders an item from the hotbar.
+                The slot can range from 0 (included) to 9 (not included) and will be used to know what item to show.
+                If a hand is specified, the slot will be treated as a offhand item, and rendered if the currently
+                selected offhand for the player is the same as the one specified here (can be changed in minecraft
+                options).
+                In case of a offhand item, the slot has to be set to 0 (code showed minecraft might support having more
+                than one item in the offhand, and maybe mods can change this behaviour. Use at your own risk).
+                Also includes all value declarations from GLRectangle.
+                The color only applies to the background, not to the item itself.
+                Also includes all value declarations from GLRectangle.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="GLRectangle">
+                <xs:all>
+                    <xs:element name="slot" type="CachedExpression">
+                        <xs:annotation>
+                            <xs:documentation>
+                                The slot to use for this hotbar item (should resolve to an int).
+                                In the case of offhand, using 0 is GREATLY recommended.
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="itemXoffset" default="0" minOccurs="0" type="CachedExpression">
+                        <xs:annotation>
+                            <xs:documentation>
+                                X offset to use for the position of the item compared to the background (should resolve
+                                to a double).
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="itemYoffset" default="0" minOccurs="0" type="CachedExpression">
+                        <xs:annotation>
+                            <xs:documentation>
+                                Y offset to use for the position of the item compared to the background (should resolve
+                                to a double).
+                            </xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="hand" minOccurs="0" type="CachedExpression">
+                        <xs:annotation>
+                            <xs:documentation>
+                                Offhand this slot should render.
+                                Only specify this if this slot should handle the offhand.
+                                The restriction is here to show possible values this can resolve to, but you can still
+                                make complex expressions that resolve to these.
+                            </xs:documentation>
+                        </xs:annotation>
+                        <xs:simpleType>
+                            <xs:restriction base="CachedExpression">
+                                <xs:enumeration value="LEFT"/>
+                                <xs:enumeration value="RIGHT"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:element>
+                </xs:all>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="ElementGroup">
+        <xs:annotation>
+            <xs:documentation>
+                A group that contains other elements.
+                Useful to get clear subdivisions within the hud's parts.
+                Moving common position values from children to the group will help performance by reducing calculations.
+                Declaring a texture here allows you to omit these in children rectangles if they're the same, reduces
+                the theme's memory footprint and increases performance.
+                Also includes all value declarations from Element.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="Element">
+                <xs:all>
+                    <xs:element name="texture" default="" minOccurs="0" type="xs:anyURI"/>
+                    <xs:element name="children">
+                        <xs:complexType>
+                            <xs:sequence maxOccurs="unbounded" minOccurs="0">
+                                <xs:element ref="element"/>
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:all>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="CachedExpression">
+        <xs:annotation>
+            <xs:documentation>
+                Any expression that can be cached.
+                These can be mathematical expressions, string concatenations, and much more.
+                Please refer to values specific documentation to know what the expressions should resolve to.
+                If you don't know what caching is about, it's safe to leave default for everything (don't specify any
+                "cache" attributes), but using proper caching can squeeze out a little more performance.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="cache" default="DEFAULT">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:enumeration value="DEFAULT">
+                                <xs:annotation>
+                                    <xs:documentation>Values will be cached per frame rendering.</xs:documentation>
+                                </xs:annotation>
+                            </xs:enumeration>
+                            <xs:enumeration value="STATIC">
+                                <xs:annotation>
+                                    <xs:documentation>
+                                        Values will be cached whenever they're first queried, and never updated.
+                                    </xs:documentation>
+                                </xs:annotation>
+                            </xs:enumeration>
+                            <xs:enumeration value="SIZE_CHANGE">
+                                <xs:annotation>
+                                    <xs:documentation>
+                                        Values will be cached whenever a screen size change is detected.
+                                    </xs:documentation>
+                                </xs:annotation>
+                            </xs:enumeration>
+                            <xs:enumeration value="NONE">
+                                <xs:annotation>
+                                    <xs:documentation>
+                                        Values will not be cached.
+                                        Recommended only inside of RepetitionGroups where you use the 'i' variable,
+                                        otherwise it's unrecommended -- in most cases DEFAULT is better. Use with
+                                        precaution.
+                                    </xs:documentation>
+                                </xs:annotation>
+                            </xs:enumeration>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:complexType name="RepetitionGroup">
+        <xs:annotation>
+            <xs:documentation>
+                WIP
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="ElementGroup">
+                <xs:all>
+                    <xs:element name="amount" type="CachedExpression"/>
+                </xs:all>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="RawElement">
+        <xs:annotation>
+            <xs:documentation>
+                This is designed to allow you to render stuff using code instead
+                of simplified expressions. 
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="Element">
+                <xs:all>
+                    <xs:element name="render" default="" minOccurs="0" type="xs:anyURI"/>
+                        <xs:element name="children">
+                            <xs:complexType>
+                                <xs:sequence maxOccurs="unbounded" minOccurs="0">
+                                    <xs:element ref="element"/>
+                                </xs:sequence>
+                            </xs:complexType>
+                        </xs:element>
+                </xs:all>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+</xs:schema>

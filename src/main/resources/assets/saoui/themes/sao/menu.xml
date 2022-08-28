@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<bl:menu xmlns:bl="http://www.bluexin.be/com/saomc/saoui/menu-schema">
+    <menus>
+        <entry>
+            <key>INGAME_MENU</key>
+            <value name="ingame menu">
+                <x>0.0</x>
+                <y>0.0</y>
+                <toX>0.0</toX>
+                <toY>0.0</toY>
+                <children>
+                    <iconElement name="profile">
+                        <iconTexture>PROFILE</iconTexture>
+                        <children>
+                            <iconLabelElement name="skills">
+                                <iconTexture>SKILLS</iconTexture>
+                                <description>saoui.wip</description>
+                                <children>
+                                    <iconLabelElement name="Test 1">
+                                        <iconTexture>SKILLS</iconTexture>
+                                    </iconLabelElement>
+                                </children>
+                            </iconLabelElement>
+                            <profile></profile>
+                        </children>
+                    </iconElement>
+                    <iconElement name="social">
+                        <iconTexture>SOCIAL</iconTexture>
+                        <children>
+                            <iconLabelElement name="guild">
+                                <iconTexture>GUILD</iconTexture>
+                                <description>saoui.wip</description>
+                                <enable>false</enable>
+                            </iconLabelElement>
+                            <partyMenu></partyMenu>
+                            <friendMenu></friendMenu>
+                        </children>
+                    </iconElement>
+                    <iconElement name="message">
+                        <iconTexture>MESSAGE</iconTexture>
+                        <description>saoui.wip</description>
+                        <enable>false</enable>
+                    </iconElement>
+                    <iconElement name="navigation">
+                        <iconTexture>NAVIGATION</iconTexture>
+                        <description>saoui.wip</description>
+                        <enable>false</enable>
+                    </iconElement>
+                    <iconElement name="settings">
+                        <iconTexture>SETTINGS</iconTexture>
+                        <children>
+                            <iconLabelElement name="options">
+                                <iconTexture>OPTIONS</iconTexture>
+                                <optionsMenu></optionsMenu>
+                            </iconLabelElement>
+                            <iconLabelElement name="menu">
+                                <title>sao.element.menu</title>
+                                <iconTexture>HELP</iconTexture>
+                                <onClick>
+                                    mc.displayGuiScreen(IngameMenuScreen(true))
+                                    return true
+                                </onClick>
+                            </iconLabelElement>
+                            <iconLabelElement name="logout">
+                                <title>isEnabled(LOGOUT)? sao.element.logout: </title>
+                                <iconTexture>LOGOUT</iconTexture>
+                                <onClick>
+                                    isEnabled(LOGOUT)? {
+                                        Menu.loggingout = true
+                                        return true
+                                    } : false
+                                </onClick>
+                            </iconLabelElement>
+                        </children>
+                    </iconElement>
+                </children>
+            </value>
+        </entry>
+    </menus>
+
+</bl:menu>

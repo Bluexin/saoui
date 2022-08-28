@@ -1,0 +1,50 @@
+{
+  "confirm": {
+    "category": "player",
+    "sounds": [
+      {
+        "name": "saoui:confirm"
+      }
+    ]
+  },
+  "dialog_close": {
+    "category": "player",
+    "sounds": [
+      {
+        "name": "saoui:dialog_close"
+      }
+    ]
+  },
+  "menu_popup": {
+    "category": "player",
+    "sounds": [
+      {
+        "name": "saoui:menu_popup"
+      }
+    ]
+  },
+  "message": {
+    "category": "player",
+    "sounds": [
+      {
+        "name": "saoui:message"
+      }
+    ]
+  },
+  "orb_dropdown": {
+    "category": "player",
+    "sounds": [
+      {
+        "name": "saoui:orb_dropdown"
+      }
+    ]
+  },
+  "particles_death": {
+    "category": "ambient",
+    "sounds": [
+      {
+        "name": "saoui:particles_death"
+      }
+    ]
+  }
+}

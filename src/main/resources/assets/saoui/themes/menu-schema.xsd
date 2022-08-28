@@ -1,0 +1,217 @@
+<?xml version='1.0'?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="http://www.bluexin.be/com/saomc/saoui/menu-schema">
+
+    <xs:element name="menu">
+        <xs:annotation>
+            <xs:documentation>Root menu, used as 'bl:menu'.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="menus">
+                    <xs:annotation>
+                        <xs:documentation>List of different menus. See documentation of MenuPart.</xs:documentation>
+                    </xs:annotation>
+                    <xs:complexType>
+                        <xs:sequence maxOccurs="unbounded">
+                            <xs:element name="entry" type="MenuPart"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="MenuPart">
+        <xs:annotation>
+            <xs:documentation>
+                WIP
+                Represents a part of the Menu, this could be a menu icon,
+                a bar, or anything else.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:all>
+            <xs:element name="key">
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:enumeration value="INGAME_MENU"/>
+                        <xs:enumeration value="MAIN_MENU"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="value" type="ElementGroup"/>
+        </xs:all>
+    </xs:complexType>
+
+    <xs:complexType name="ElementGroup">
+        <xs:annotation>
+            <xs:documentation>
+                WIP
+                A group that contains other elements.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="MenuElement">
+                <xs:all>
+                    <xs:element name="texture" default="" minOccurs="0" type="xs:anyURI"/>
+                    <xs:element name="children">
+                        <xs:complexType>
+                            <xs:sequence maxOccurs="unbounded" minOccurs="0">
+                                <xs:element ref="element"/>
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:all>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:element name="element" type="MenuElement"/>
+    <xs:element name="iconElement" substitutionGroup="element" type="IconElement"/>
+    <xs:element name="iconLabelElement" substitutionGroup="element" type="IconLabelElement"/>
+
+    <xs:complexType name="MenuElement" abstract="true">
+        <xs:annotation>
+            <xs:documentation>
+                Generic Element that can be rendered on-screen.
+                Contains all common info for more specific elements.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:all>
+            <xs:element name="x" default="0" minOccurs="0" type="CachedExpression">
+                <xs:annotation>
+                    <xs:documentation>X position on screen (should resolve to a double).</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="y" default="0" minOccurs="0" type="CachedExpression">
+                <xs:annotation>
+                    <xs:documentation>Y position on screen (should resolve to a double).</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="z" default="0" minOccurs="0" type="CachedExpression">
+                <xs:annotation>
+                    <xs:documentation>
+                        Z position on screen (should resolve to a double).
+                        This changes which elements are rendered over each other.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="toX" default="x" minOccurs="0" type="CachedExpression">
+                <xs:annotation>
+                    <xs:documentation>X position on screen to move to (should resolve to a double).</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="toY" default="y" minOccurs="0" type="CachedExpression">
+                <xs:annotation>
+                    <xs:documentation>Y position on screen to move to (should resolve to a double).</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="enabled" default="true" minOccurs="0" type="CachedExpression">
+                <xs:annotation>
+                    <xs:documentation>Whether this element should be rendered or not (should resolve to a
+                        boolean,
+                        true/false).
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:all>
+        <xs:attribute name="name" default="anonymous" type="xs:string"/>
+    </xs:complexType>
+
+    <xs:complexType name="IconElement">
+        <xs:annotation>
+            <xs:documentation>
+                WIP
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="MenuElement">
+                <xs:all>
+                    <xs:element name="iconTexture" default="" minOccurs="0" type="xs:anyURI"/>
+                    <xs:element name="description" default="" type="xs:string"/>
+                    <xs:element name="children">
+                        <xs:complexType>
+                            <xs:sequence maxOccurs="unbounded" minOccurs="0">
+                                <xs:element ref="element"/>
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:all>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="IconLabelElement">
+        <xs:annotation>
+            <xs:documentation>
+                WIP
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="IconElement">
+                <xs:all>
+                    <xs:element name="title" default="" type="xs:string"/>
+                    <xs:element name="texture" default="" minOccurs="0" type="xs:anyURI"/>
+                    <xs:element name="children">
+                        <xs:complexType>
+                            <xs:sequence maxOccurs="unbounded" minOccurs="0">
+                                <xs:element ref="element"/>
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:all>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="CachedExpression">
+        <xs:annotation>
+            <xs:documentation>
+                Any expression that can be cached.
+                These can be mathematical expressions, string concatenations, and much more.
+                Please refer to values specific documentation to know what the expressions should resolve to.
+                If you don't know what caching is about, it's safe to leave default for everything (don't specify any
+                "cache" attributes), but using proper caching can squeeze out a little more performance.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="cache" default="DEFAULT">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:enumeration value="DEFAULT">
+                                <xs:annotation>
+                                    <xs:documentation>Values will be cached per frame rendering.</xs:documentation>
+                                </xs:annotation>
+                            </xs:enumeration>
+                            <xs:enumeration value="STATIC">
+                                <xs:annotation>
+                                    <xs:documentation>
+                                        Values will be cached whenever they're first queried, and never updated.
+                                    </xs:documentation>
+                                </xs:annotation>
+                            </xs:enumeration>
+                            <xs:enumeration value="SIZE_CHANGE">
+                                <xs:annotation>
+                                    <xs:documentation>
+                                        Values will be cached whenever a screen size change is detected.
+                                    </xs:documentation>
+                                </xs:annotation>
+                            </xs:enumeration>
+                            <xs:enumeration value="NONE">
+                                <xs:annotation>
+                                    <xs:documentation>
+                                        Values will not be cached.
+                                        Recommended only inside of RepetitionGroups where you use the 'i' variable,
+                                        otherwise it's unrecommended -- in most cases DEFAULT is better. Use with
+                                        precaution.
+                                    </xs:documentation>
+                                </xs:annotation>
+                            </xs:enumeration>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:attribute>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+</xs:schema>
