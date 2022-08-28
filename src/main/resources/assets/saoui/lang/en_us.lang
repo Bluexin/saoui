@@ -134,6 +134,8 @@ optCatEffects=Effects
 optCatEffects.desc=Configure effects
 optCatMisc=Misc
 optCatMisc.desc=Misc Options
+optCatDebug=Debug
+optCatDebug.desc=Debug Options for devs
 
 # Options - UI
 optionUIOnly=UI Only
@@ -248,6 +250,32 @@ optionCustomFont=Use SAO Font
 optionCustomFont.desc=Use SAO Font
 optionTextShadow=Text Shadow
 optionTextShadow.desc=Enable text shadow on elements
+
+# Options - Debug
+optionRenderSystem=Render System
+optionRenderSystem.desc=Controls the Render Events
+
+# Options - Render System
+optionRenderCrosshairs=Crosshair Event
+optionRenderCrosshairs.desc=Crosshair render event
+optionRenderArmor=Armor Event
+optionRenderArmor.desc=Armor render event
+optionRenderHotbar=Hotbar Event
+optionRenderHotbar.desc=Hotbar render event
+optionRenderAir=Air Event
+optionRenderAir.desc=Air render event
+optionRenderPotionIcons=Potion Icons Event
+optionRenderPotionIcons.desc=Potion Icons render event
+optionRenderHealth=Health Event
+optionRenderHealth.desc=Health render event
+optionRenderFood=Food Event
+optionRenderFood.desc=Food render event
+optionRenderExp=Exp Event
+optionRenderExp.desc=Exp render event
+optionRenderJumpbar=Jumpbar Event
+optionRenderJumpbar.desc=Jumpbar render event
+optionRenderHealthMount=Health Mount Event
+optionRenderHealthMount.desc=Health Mount render event
 
 # Display
 displayLvShort=LV %1$d
