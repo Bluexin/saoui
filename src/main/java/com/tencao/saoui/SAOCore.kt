@@ -27,11 +27,13 @@ import com.tencao.saoui.config.FriendData
 import com.tencao.saoui.events.EventCore
 import com.tencao.saoui.screens.CoreGUI
 import com.tencao.saoui.themes.ThemeLoader
+import com.tencao.saoui.themes.elements.Hud
 import com.tencao.saoui.util.AdvancementUtil
 import com.tencao.saoui.util.DefaultStatsProvider
 import com.tencao.saoui.util.PlayerStats
 import net.minecraft.client.resources.SimpleReloadableResourceManager
 import net.minecraft.entity.EntityLivingBase
+import net.minecraft.util.ResourceLocation
 import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.fml.common.Loader
 import net.minecraftforge.fml.common.Mod
@@ -43,9 +45,11 @@ import net.minecraftforge.fml.common.eventhandler.EventBus
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import java.io.File
+import java.io.IOException
 import java.nio.file.Files
 import java.util.concurrent.ConcurrentHashMap
 import java.util.zip.ZipFile
+import javax.xml.bind.JAXBContext
 
 @Mod(modid = SAOCore.MODID, name = SAOCore.NAME, version = SAOCore.VERSION, clientSideOnly = true, dependencies = SAOCore.DEPS, acceptableSaveVersions = "*", canBeDeactivated = true)
 object SAOCore {
@@ -164,6 +168,20 @@ object SAOCore {
                         list.add(it.parent)
                     }
                 }
+            }
+        }
+
+        val themeList = mutableListOf<String>()
+        val context = JAXBContext.newInstance(Hud::class.java)
+        val um = context.createUnmarshaller()
+        list.forEach { name ->
+            val hudRL = ResourceLocation(MODID, "themes/$name/hud.xml")
+            try {
+                Client.resourceManager.getResource(hudRL).inputStream.use { ThemeLoader.HUD = um.unmarshal(it) as Hud }
+                // If passes without exception, add
+                themeList.add(name)
+            } catch (e: IOException) {
+                e.printStackTrace()
             }
         }
 
