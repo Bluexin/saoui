@@ -28,10 +28,12 @@ import com.tencao.saoui.effects.particles.ModParticles
 import com.tencao.saoui.events.EventCore
 import com.tencao.saoui.screens.CoreGUI
 import com.tencao.saoui.themes.ThemeLoader
+import com.tencao.saoui.themes.elements.Hud
 import com.tencao.saoui.util.DefaultStatsProvider
 import com.tencao.saoui.util.PlayerStats
 import net.minecraft.entity.LivingEntity
 import net.minecraft.resources.SimpleReloadableResourceManager
+import net.minecraft.util.ResourceLocation
 import net.minecraftforge.api.distmarker.Dist
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.DistExecutor
@@ -47,8 +49,10 @@ import thedarkcolour.kotlinforforge.forge.FORGE_BUS
 import thedarkcolour.kotlinforforge.forge.LOADING_CONTEXT
 import thedarkcolour.kotlinforforge.forge.MOD_BUS
 import java.io.File
+import java.io.IOException
 import java.nio.file.Files
 import java.util.zip.ZipFile
+import javax.xml.bind.JAXBContext
 
 @Mod(SAOCore.MODID)
 object SAOCore {
@@ -167,7 +171,21 @@ object SAOCore {
             }
         }
 
-        return list
+        val themeList = mutableListOf<String>()
+        val context = JAXBContext.newInstance(Hud::class.java)
+        val um = context.createUnmarshaller()
+        list.forEach { name ->
+            val hudRL = ResourceLocation(MODID, "themes/$name/hud.xml")
+            try {
+                Client.resourceManager.getResource(hudRL).inputStream.use { ThemeLoader.HUD = um.unmarshal(it) as Hud }
+                // If passes without exception, add
+                themeList.add(name)
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+        }
+
+        return themeList
     }
 
     /*
