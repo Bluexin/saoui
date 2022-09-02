@@ -396,7 +396,7 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
     }
 
     fun initiateEvents(type: ElementType) {
-        if (pre(type)) post(type)
+        if (!pre(type)) post(type)
     }
 
     // c/p from GuiIngameForge
@@ -404,7 +404,7 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
      * Returns true if cancelled.
      */
     private fun pre(type: ElementType): Boolean {
-        return !MinecraftForge.EVENT_BUS.post(RenderGameOverlayEvent.Pre(eventParent!!, type))
+        return MinecraftForge.EVENT_BUS.post(RenderGameOverlayEvent.Pre(eventParent!!, type))
     }
 
     private fun post(type: ElementType) {
