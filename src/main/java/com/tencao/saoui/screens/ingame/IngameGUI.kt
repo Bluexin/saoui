@@ -388,7 +388,7 @@ class IngameGUI(mc: Minecraft) : ForgeIngameGui(mc) {
     }
 
     fun initiateEvents(mStack: MatrixStack, type: ElementType) {
-        if (pre(mStack, type)) post(mStack, type)
+        if (!pre(mStack, type)) post(mStack, type)
     }
 
     // c/p from GuiIngameForge
