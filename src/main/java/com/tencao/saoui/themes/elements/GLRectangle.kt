@@ -41,6 +41,7 @@ open class GLRectangle : Element() {
     protected var h: CDouble? = null
     protected var srcW: CDouble? = null
     protected var srcH: CDouble? = null
+    @Transient
     protected var rl: ResourceLocation? = null
     private val texture: String? = null
 

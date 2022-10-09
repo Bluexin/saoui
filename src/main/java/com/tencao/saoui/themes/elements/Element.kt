@@ -17,10 +17,12 @@
 
 package com.tencao.saoui.themes.elements
 
+import com.google.gson.annotations.JsonAdapter
 import com.tencao.saoui.SAOCore
 import com.tencao.saoui.api.themes.IHudDrawContext
 import com.tencao.saoui.themes.util.CBoolean
 import com.tencao.saoui.themes.util.CDouble
+import com.tencao.saoui.themes.util.json.JsonElementAdapterFactory
 import java.lang.ref.WeakReference
 import javax.annotation.OverridingMethodsMustInvokeSuper
 import javax.xml.bind.annotation.XmlAttribute
@@ -31,12 +33,19 @@ import javax.xml.bind.annotation.XmlSeeAlso
  *
  * @author Bluexin
  */
+@JsonAdapter(JsonElementAdapterFactory::class)
 @XmlSeeAlso(GLRectangle::class, ElementGroup::class, RawElement::class) // Instructs JAXB to also bind other classes when binding this class
 abstract class Element {
 
     companion object {
         const val DEFAULT_NAME = "anonymous"
     }
+
+    /**
+     * Friendly name for this element. Mostly used for debug purposes.
+     */
+    @XmlAttribute
+    var name: String = DEFAULT_NAME
 
     /**
      * X position.
@@ -64,13 +73,7 @@ abstract class Element {
     @Transient
     protected lateinit var parent: WeakReference<ElementParent>
 
-    /**
-     * Friendly name for this element. Mostly used for debug purposes.
-     */
-    @XmlAttribute
-    var name: String = DEFAULT_NAME
-        @Deprecated("Has no effect")
-        private set(value) = Unit // Effectively making it val, but avoiding warnings
+    val hasParent: Boolean get() = parent.get().let { it != null && it !is Hud }
 
     /**
      * Draw this element on the screen.
@@ -95,5 +98,5 @@ abstract class Element {
         } else true
     }
 
-    override fun toString() = "$name ($javaClass)"
+    override fun toString() = "$name (${javaClass.simpleName})"
 }

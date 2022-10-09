@@ -27,11 +27,17 @@ import net.minecraft.entity.EntityLivingBase
  *
  * @author Bluexin
  */
-abstract class CachedExpression<out T>(val expression: CompiledExpressionWrapper<T>) : Function1<IHudDrawContext, T> {
+abstract class CachedExpression<out T>(
+    val expression: CompiledExpressionWrapper<T>,
+    val expressionIntermediate: ExpressionIntermediate
+) : Function1<IHudDrawContext, T> {
     protected abstract val cache: T?
 }
 
-class FrameCachedExpression<T>(expression: CompiledExpressionWrapper<T>) : CachedExpression<T>(expression) {
+class FrameCachedExpression<T>(
+    expression: CompiledExpressionWrapper<T>,
+    expressionIntermediate: ExpressionIntermediate
+) : CachedExpression<T>(expression, expressionIntermediate) {
     override var cache: T? = null
 
     private var lastTime = -1.0F
@@ -47,7 +53,10 @@ class FrameCachedExpression<T>(expression: CompiledExpressionWrapper<T>) : Cache
     }
 }
 
-class StaticCachedExpression<out T>(expression: CompiledExpressionWrapper<T>) : CachedExpression<T>(expression) {
+class StaticCachedExpression<out T>(
+    expression: CompiledExpressionWrapper<T>,
+    expressionIntermediate: ExpressionIntermediate
+) : CachedExpression<T>(expression, expressionIntermediate) {
     override val cache: T by lazy { expression.invoke(StubContext) }
 
     companion object StubContext : IHudDrawContext {
@@ -106,17 +115,21 @@ class StaticCachedExpression<out T>(expression: CompiledExpressionWrapper<T>) : 
     override fun invoke(ctx: IHudDrawContext) = cache
 }
 
-class SizeCachedExpression<T>(expression: CompiledExpressionWrapper<T>) : CachedExpression<T>(expression) {
+class SizeCachedExpression<T>(
+    expression: CompiledExpressionWrapper<T>,
+    expressionIntermediate: ExpressionIntermediate
+) : CachedExpression<T>(expression, expressionIntermediate) {
     override var cache: T? = null
 
     var lastW = 0
     var lastH = 0
 
-    private fun checkUpdateSize(ctx: IHudDrawContext) = if (lastW == ctx.scaledwidth() && lastH == ctx.scaledheight()) false else {
-        lastW = ctx.scaledwidth()
-        lastH = ctx.scaledheight()
-        true
-    }
+    private fun checkUpdateSize(ctx: IHudDrawContext) =
+        if (lastW == ctx.scaledwidth() && lastH == ctx.scaledheight()) false else {
+            lastW = ctx.scaledwidth()
+            lastH = ctx.scaledheight()
+            true
+        }
 
     override fun invoke(ctx: IHudDrawContext): T {
         if (checkUpdateSize(ctx)) cache = expression.invoke(ctx)
@@ -124,7 +137,10 @@ class SizeCachedExpression<T>(expression: CompiledExpressionWrapper<T>) : Cached
     }
 }
 
-class UnCachedExpression<out T>(expression: CompiledExpressionWrapper<T>) : CachedExpression<T>(expression) {
+class UnCachedExpression<out T>(
+    expression: CompiledExpressionWrapper<T>,
+    expressionIntermediate: ExpressionIntermediate
+) : CachedExpression<T>(expression, expressionIntermediate) {
     override val cache: T
         get() = throw UnsupportedOperationException()
 
