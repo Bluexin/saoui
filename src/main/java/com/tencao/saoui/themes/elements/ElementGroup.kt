@@ -17,6 +17,7 @@
 
 package com.tencao.saoui.themes.elements
 
+import com.google.gson.annotations.SerializedName
 import com.tencao.saoui.GLCore
 import com.tencao.saoui.SAOCore
 import com.tencao.saoui.api.themes.IHudDrawContext
@@ -32,22 +33,26 @@ import javax.xml.bind.annotation.*
 @XmlSeeAlso(RepetitionGroup::class)
 open class ElementGroup : Element(), ElementParent {
 
+    @field:SerializedName("children")
     @XmlElementWrapper(name = "children")
     @XmlElementRef(type = Element::class)
     protected lateinit var elements: List<Element>
-    protected var rl: ResourceLocation? = null
-    private val texture: String? = null
 
-    @XmlTransient
+    @Transient
+    protected var rl: ResourceLocation? = null
+
+    private var texture: String? = null
+
+    @Transient
     protected var cachedX = 0.0
 
-    @XmlTransient
+    @Transient
     protected var cachedY = 0.0
 
-    @XmlTransient
+    @Transient
     protected var cachedZ = 0.0
 
-    @XmlTransient
+    @Transient
     protected var latestTicks = -1.0F
 
     /**

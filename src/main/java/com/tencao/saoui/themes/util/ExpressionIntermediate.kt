@@ -27,8 +27,8 @@ import javax.xml.bind.annotation.XmlValue
  */
 class ExpressionIntermediate {
 
-    @XmlAttribute(name = "cache")
-    val cacheType = CacheType.DEFAULT
+    @get:XmlAttribute(name = "cache")
+    var cacheType = CacheType.PER_FRAME
 
     @get:XmlValue
     var expression = "" // Will get replaced by the loading

@@ -22,28 +22,34 @@ package com.tencao.saoui.themes.util
  *
  * @author Bluexin
  */
-enum class CacheType(private val provider: Function1<CompiledExpressionWrapper<*>, CachedExpression<*>>) {
+enum class CacheType(private val provider: Function2<CompiledExpressionWrapper<*>, ExpressionIntermediate, CachedExpression<*>>) {
 
     /**
      * Values will be cached per frame rendering.
      */
-    DEFAULT({ FrameCachedExpression(it) }),
+    PER_FRAME({ expression, intermediate -> FrameCachedExpression(expression, intermediate) }),
+
+    /**
+     * Values will be cached per frame rendering.
+     */
+    @Deprecated("Replaced with explicit PER_FRAME", replaceWith = ReplaceWith("PER_FRAME"))
+    DEFAULT({ expression, intermediate -> FrameCachedExpression(expression, intermediate) }),
 
     /**
      * Values will be cached whenever they're first queried, and never updated.
      */
-    STATIC({ StaticCachedExpression(it) }),
+    STATIC({ expression, intermediate -> StaticCachedExpression(expression, intermediate) }),
 
     /**
      * Values will be cached whenever a screen size change is detected.
      */
-    SIZE_CHANGE({ SizeCachedExpression(it) }),
+    SIZE_CHANGE({ expression, intermediate -> SizeCachedExpression(expression, intermediate) }),
 
     /**
      * Values will not be cached (unrecommended -- in most cases DEFAULT is better. Use with precaution).
      */
-    NONE({ UnCachedExpression(it) });
+    NONE({ expression, intermediate -> UnCachedExpression(expression, intermediate) });
 
     @Suppress("UNCHECKED_CAST")
-    fun <T> cacheExpression(expr: CompiledExpressionWrapper<T>) = provider.invoke(expr) as CachedExpression<T>
+    fun <T> cacheExpression(expr: CompiledExpressionWrapper<T>, intermediate: ExpressionIntermediate) = provider.invoke(expr, intermediate) as CachedExpression<T>
 }

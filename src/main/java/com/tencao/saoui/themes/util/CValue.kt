@@ -17,7 +17,10 @@
 
 package com.tencao.saoui.themes.util
 
+import com.google.gson.annotations.JsonAdapter
 import com.tencao.saoui.api.themes.IHudDrawContext
+import com.tencao.saoui.themes.util.json.*
+import com.tencao.saoui.themes.util.xml.*
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter
 
 /**
@@ -33,28 +36,33 @@ abstract class CValue<out T>(val value: CachedExpression<T>) : (IHudDrawContext)
  * Custom Int type.
  */
 @XmlJavaTypeAdapter(IntExpressionAdapter::class)
+@JsonAdapter(JsonIntExpressionAdapter::class)
 class CInt(value: CachedExpression<Int>) : CValue<Int>(value)
 
 /**
  * Custom Double type.
  */
 @XmlJavaTypeAdapter(DoubleExpressionAdapter::class)
+@JsonAdapter(JsonDoubleExpressionAdapter::class)
 class CDouble(value: CachedExpression<Double>) : CValue<Double>(value)
 
 /**
  * Custom String type.
  */
 @XmlJavaTypeAdapter(StringExpressionAdapter::class)
+@JsonAdapter(JsonStringExpressionAdapter::class)
 class CString(value: CachedExpression<String>) : CValue<String>(value)
 
 /**
  * Custom Boolean type.
  */
 @XmlJavaTypeAdapter(BooleanExpressionAdapter::class)
+@JsonAdapter(JsonBooleanExpressionAdapter::class)
 class CBoolean(value: CachedExpression<Boolean>) : CValue<Boolean>(value)
 
 /**
  * Custom Unit/Void type.
  */
 @XmlJavaTypeAdapter(UnitExpressionAdapter::class)
+@JsonAdapter(JsonUnitExpressionAdapter::class)
 class CUnit(value: CachedExpression<Unit>) : CValue<Unit>(value)
