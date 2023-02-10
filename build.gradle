@@ -1,6 +1,5 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
-
 buildscript {
     repositories {
         maven { url = 'https://maven.minecraftforge.net' }
@@ -97,10 +96,6 @@ minecraft {
             // "REGISTRIES": For firing of registry events.
             // "REGISTRYDUMP": For getting the contents of all registries.
             property 'forge.logging.markers', 'REGISTRIES'
-
-            // Recommended logging level for the console
-            // You can set various levels here.
-            // Please read: https://stackoverflow.com/questions/2031163/when-to-use-the-different-log-levels
             property 'forge.logging.console.level', 'debug'
 
             mods {
@@ -119,10 +114,6 @@ minecraft {
             // "REGISTRIES": For firing of registry events.
             // "REGISTRYDUMP": For getting the contents of all registries.
             property 'forge.logging.markers', 'REGISTRIES'
-
-            // Recommended logging level for the console
-            // You can set various levels here.
-            // Please read: https://stackoverflow.com/questions/2031163/when-to-use-the-different-log-levels
             property 'forge.logging.console.level', 'debug'
 
             mods {
@@ -136,7 +127,7 @@ minecraft {
 }
 
 // This is only here while FG is under active development
-configurations.all  {
+configurations.configureEach {
     resolutionStrategy {
         cacheDynamicVersionsFor 10, 'seconds'
         cacheChangingModulesFor 0, 'seconds'
@@ -156,24 +147,23 @@ configurations {
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
-    jcenter()
     mavenCentral()
     mavenLocal()
-    maven { //MinecraftForge
+    maven {
         name "MinecraftForge Maven"
-        url "http://files.minecraftforge.net/maven/"
+        url "https://files.minecraftforge.net/maven/"
     }
     maven {
         name = "TCons & Mantle"
-        url = "http://dvs1.progwml6.com/files/maven/"
+        url = "https://dvs1.progwml6.com/files/maven/"
     }
     maven {
         name 'Forgelin'
-        url "http://maven.shadowfacts.net/"
+        url "https://maven.shadowfacts.net/"
     }
     maven {
         name 'Bluexin'
-        url "http://maven.bluexin.be/repository/releases/"
+        url "https://maven.bluexin.be/repository/releases/"
     }
     flatDir {
         dirs 'libs'
@@ -181,33 +171,10 @@ repositories {
 }
 
 dependencies {
-    // Specify the version of Minecraft to use, If this is any group other then 'net.minecraft' it is assumed
-    // that the dep is a ForgeGradle 'patcher' dependency. And it's patches will be applied.
-    // The userdev artifact is a special name and will get all sorts of transformations applied to it.
     minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2860'
-    //minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2855'
 
-    // You may put jars on which you depend on in ./libs or you may define them like so..
-    // compile "some.group:artifact:version:classifier"
-    // compile "some.group:artifact:version"
-
-    // Real examples
-    // compile 'com.mod-buildcraft:buildcraft:6.0.8:dev'  // adds buildcraft to the dev env
-    // compile 'com.googlecode.efficient-java-matrix-library:ejml:0.24' // adds ejml to the dev env
-
-    // The 'provided' configuration is for optional dependencies that exist at compile-time but might not at runtime.
-    // provided 'com.mod-buildcraft:buildcraft:6.0.8:dev'
-
-    // These dependencies get remapped to your current MCP mappings
-    // deobf 'com.mod-buildcraft:buildcraft:6.0.8:dev'
-
-    // For more info...
-    // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
-    // http://www.gradle.org/docs/current/userguide/dependency_management.html
-
-    compile "net.shadowfacts:Forgelin:${forgelin_version}"
+    implementation "net.shadowfacts:Forgelin:${forgelin_version}"
     implementation fg.deobf('com.tencao:saomclib:1.12.2+') {changing = true}
-    //compile 'be.bluexin.gnu.jel:gnu-jel:2.1.3'
     shadow 'be.bluexin.gnu.jel:gnu-jel:2.1.3'
     shadow 'com.helger:ph-css:6.5.0'
     shadow 'com.helger.commons:ph-commons:10.1.6'
@@ -243,23 +210,23 @@ jar {
 }
 
 
-tasks.withType(Copy) {
+tasks.withType(Copy).configureEach {
     includeEmptyDirs = false
 }
 
-task sourcesJar(type: Jar) {
+tasks.register('sourcesJar', Jar.class) {
     archiveClassifier.set('sources')
     from sourceSets.main.allSource
     from sourceSets.api.allSource
 }
 
-task deobfJar(type: Jar) {
+tasks.register('deobfJar', Jar.class) {
     archiveClassifier.set('deobf')
     from sourceSets.main.output
     from sourceSets.api.output
 }
 
-task shadeJar(type: ShadowJar) {
+tasks.register('shadeJar', ShadowJar.class) {
     from sourceSets.main.output
     configurations = [project.configurations.shadow]
 
@@ -275,7 +242,7 @@ artifacts {
     archives shadeJar
 }
 
-task reobf {
+tasks.register('reobf') {
     dependsOn 'reobfJar'
 }
 
@@ -318,7 +285,7 @@ compileKotlin {
     }
 }
 
-tasks.withType(JavaCompile) {
+tasks.withType(JavaCompile).configureEach {
     options.incremental = false
 }
 
