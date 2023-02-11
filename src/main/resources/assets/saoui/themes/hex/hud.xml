@@ -343,7 +343,7 @@
         <entry>
             <key>CROSS_HAIR</key>
             <value name="crosshair">
-                <texture>saoui:textures/sao/guiedt.png</texture>
+                <texture>saoui:textures/sao/gui.png</texture>
                 <x cache="SIZE_CHANGE">scaledwidth / 2.0</x>
                 <y cache="SIZE_CHANGE">scaledheight / 2.0</y>
                 <children>

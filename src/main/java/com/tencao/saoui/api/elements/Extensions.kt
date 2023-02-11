@@ -41,6 +41,7 @@ import net.minecraft.advancements.Advancement
 import net.minecraft.client.resources.I18n.format
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.init.Items
+import net.minecraft.util.ResourceLocation
 import net.minecraftforge.fml.common.registry.ForgeRegistries
 import org.lwjgl.input.Keyboard
 import java.lang.ref.WeakReference
@@ -349,7 +350,7 @@ fun INeoParent.optionCategory(option: OptionCore): CategoryButton {
     val cat = CategoryButton(IconLabelElement(IconCore.OPTION, option.displayName, description = option.description.toMutableList()))
     if (option == OptionCore.THEME) {
         ThemeLoader.themeList.forEach {
-            cat += themeButton(it)
+            cat += themeButton(it.value.name, it.key)
         }
     }
     option.subOptions.forEach {
@@ -361,14 +362,14 @@ fun INeoParent.optionCategory(option: OptionCore): CategoryButton {
     return cat
 }
 
-fun INeoParent.themeButton(theme: String): IconLabelElement {
-    val but = object : IconLabelElement(IconCore.OPTION, theme, description = mutableListOf("Change theme to $theme")) {
+fun INeoParent.themeButton(themeName: String, themePath: ResourceLocation): IconLabelElement {
+    val but = object : IconLabelElement(IconCore.OPTION, themeName, description = mutableListOf("Change theme to $themeName")) {
         override var highlighted: Boolean
-            get() = ThemeLoader.currentTheme == label && !OptionCore.VANILLA_UI.isEnabled
+            get() = ThemeLoader.currentTheme == themePath && !OptionCore.VANILLA_UI.isEnabled
             set(_) = (Unit)
     }
     but.onClick { _, _ ->
-        ThemeLoader.load(but.label)
+        ThemeLoader.load(themePath)
         OptionCore.VANILLA_UI.disable()
         Client.minecraft.displayGuiScreen(null)
         Client.minecraft.displayGuiScreen(IngameMenu())
