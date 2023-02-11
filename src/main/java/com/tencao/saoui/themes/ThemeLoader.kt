@@ -26,7 +26,6 @@ import com.helger.css.reader.CSSReader
 import com.tencao.saomclib.Client
 import com.tencao.saoui.GLCore
 import com.tencao.saoui.SAOCore
-import com.tencao.saoui.ThemeMetadata
 import com.tencao.saoui.api.entity.rendering.ColorState
 import com.tencao.saoui.config.ConfigHandler
 import com.tencao.saoui.config.OptionCore
@@ -223,7 +222,7 @@ object ThemeLoader : ISelectiveResourceReloadListener {
 
     override fun onResourceManagerReload(resourceManager: IResourceManager, types: Predicate<IResourceType>) {
         if (types.test(VanillaResourceType.TEXTURES)) {
-            themeList = SAOCore.getFiles()
+            themeList = ThemeDetector.listThemes()
             load()
         }
     }
