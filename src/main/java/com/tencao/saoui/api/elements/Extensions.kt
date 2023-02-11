@@ -32,7 +32,7 @@ import com.tencao.saoui.screens.menus.IngameMenu
 import com.tencao.saoui.screens.unaryPlus
 import com.tencao.saoui.screens.util.PopupAdvancement
 import com.tencao.saoui.screens.util.toIcon
-import com.tencao.saoui.themes.ThemeLoader
+import com.tencao.saoui.themes.ThemeManager
 import com.tencao.saoui.util.AdvancementUtil
 import com.tencao.saoui.util.IconCore
 import com.tencao.saoui.util.getProgress
@@ -349,7 +349,7 @@ fun INeoParent.optionButton(option: OptionCore): IconLabelElement {
 fun INeoParent.optionCategory(option: OptionCore): CategoryButton {
     val cat = CategoryButton(IconLabelElement(IconCore.OPTION, option.displayName, description = option.description.toMutableList()))
     if (option == OptionCore.THEME) {
-        ThemeLoader.themeList.forEach {
+        ThemeManager.themeList.forEach {
             cat += themeButton(it.value.name, it.key)
         }
     }
@@ -362,14 +362,15 @@ fun INeoParent.optionCategory(option: OptionCore): CategoryButton {
     return cat
 }
 
-fun INeoParent.themeButton(themeName: String, themePath: ResourceLocation): IconLabelElement {
-    val but = object : IconLabelElement(IconCore.OPTION, themeName, description = mutableListOf("Change theme to $themeName")) {
+fun INeoParent.themeButton(themeName: String, themeKey: ResourceLocation): IconLabelElement {
+    val but = object :
+        IconLabelElement(IconCore.OPTION, themeName, description = mutableListOf("Change theme to $themeName")) {
         override var highlighted: Boolean
-            get() = ThemeLoader.currentTheme == themePath && !OptionCore.VANILLA_UI.isEnabled
+            get() = ThemeManager.currentTheme.id == themeKey && !OptionCore.VANILLA_UI.isEnabled
             set(_) = (Unit)
     }
     but.onClick { _, _ ->
-        ThemeLoader.load(themePath)
+        ThemeManager.load(themeKey)
         OptionCore.VANILLA_UI.disable()
         Client.minecraft.displayGuiScreen(null)
         Client.minecraft.displayGuiScreen(IngameMenu())

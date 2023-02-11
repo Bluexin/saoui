@@ -26,7 +26,7 @@ import com.tencao.saoui.config.ConfigHandler
 import com.tencao.saoui.config.FriendData
 import com.tencao.saoui.events.EventCore
 import com.tencao.saoui.screens.CoreGUI
-import com.tencao.saoui.themes.ThemeLoader
+import com.tencao.saoui.themes.ThemeManager
 import com.tencao.saoui.util.AdvancementUtil
 import com.tencao.saoui.util.DefaultStatsProvider
 import com.tencao.saoui.util.PlayerStats
@@ -88,7 +88,7 @@ object SAOCore {
             RenderCapability.Storage()
         ) { `object`: Any -> `object` is EntityLivingBase }
 
-        (Client.resourceManager as SimpleReloadableResourceManager).registerReloadListener(ThemeLoader)
+        (Client.resourceManager as SimpleReloadableResourceManager).registerReloadListener(ThemeManager)
     }
 
     @Mod.EventHandler
@@ -116,7 +116,7 @@ object SAOCore {
     @Mod.EventHandler
     fun loadComplete(event: FMLLoadCompleteEvent) {
         AdvancementUtil.generateList()
-        ThemeLoader.load()
+        ThemeManager.load()
         // ElementRegistry.initRegistry()
     }
 

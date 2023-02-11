@@ -27,7 +27,7 @@ import com.tencao.saoui.capabilities.getRenderData
 import com.tencao.saoui.config.ConfigHandler
 import com.tencao.saoui.config.OptionCore
 import com.tencao.saoui.screens.util.HealthStep
-import com.tencao.saoui.themes.ThemeLoader
+import com.tencao.saoui.themes.ThemeManager
 import com.tencao.saoui.themes.elements.HudPartType
 import com.tencao.saoui.themes.util.HudDrawContext
 import net.minecraft.client.Minecraft
@@ -98,7 +98,7 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
         if (OptionCore.VANILLA_UI.isEnabled) {
             super.renderCrosshairs(partialTicks)
         } else {
-            ThemeLoader.HUD.draw(HudPartType.CROSS_HAIR, context)
+            ThemeManager.HUD.draw(HudPartType.CROSS_HAIR, context)
             this.renderAttackIndicator(partialTicks, resolution)
             if (OptionCore.RENDER_CROSSHAIRS.isEnabled) initiateEvents(CROSSHAIRS)
         }
@@ -108,7 +108,7 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
         if (OptionCore.VANILLA_UI.isEnabled) {
             super.renderArmor(width, height)
         } else {
-            ThemeLoader.HUD.draw(HudPartType.ARMOR, context)
+            ThemeManager.HUD.draw(HudPartType.ARMOR, context)
             if (OptionCore.RENDER_ARMOR.isEnabled) initiateEvents(ARMOR)
         }
     }
@@ -120,7 +120,7 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
                 this.spectatorGui.renderTooltip(res, partialTicks)
             } else {
                 mc.mcProfiler.startSection("hotbar")
-                ThemeLoader.HUD.draw(HudPartType.HOTBAR, context)
+                ThemeManager.HUD.draw(HudPartType.HOTBAR, context)
                 mc.mcProfiler.endSection()
             }
             if (OptionCore.RENDER_HOTBAR.isEnabled) initiateEvents(HOTBAR)
@@ -132,7 +132,7 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
             super.renderAir(width, height)
         } else {
             mc.mcProfiler.startSection("air")
-            ThemeLoader.HUD.draw(HudPartType.AIR, context)
+            ThemeManager.HUD.draw(HudPartType.AIR, context)
             mc.mcProfiler.endSection()
             if (OptionCore.RENDER_AIR.isEnabled) initiateEvents(AIR)
         }
@@ -149,7 +149,7 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
     override fun renderPotionEffects(resolution: ScaledResolution) {
         if (OptionCore.VANILLA_UI.isEnabled) super.renderPotionEffects(resolution)
         else {
-            ThemeLoader.HUD.draw(HudPartType.EFFECTS, context)
+            ThemeManager.HUD.draw(HudPartType.EFFECTS, context)
             // mc.profile("potionEffects") {
             //
             // }
@@ -168,7 +168,7 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
         if (OptionCore.VANILLA_UI.isEnabled) {
             super.renderHealth(width, height)
         } else {
-            ThemeLoader.HUD.draw(HudPartType.HEALTH_BOX, context)
+            ThemeManager.HUD.draw(HudPartType.HEALTH_BOX, context)
             if (OptionCore.RENDER_HEALTH.isEnabled) initiateEvents(HEALTH)
         }
         renderParty()
@@ -194,7 +194,7 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
         }
 
         context.setPt(members)
-        ThemeLoader.HUD.draw(HudPartType.PARTY, context)
+        ThemeManager.HUD.draw(HudPartType.PARTY, context)
 
         GlStateManager.disableLighting()
         mc.mcProfiler.endSection()
@@ -217,7 +217,7 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
         val offset = width - 20.0
         GLCore.glCullFace(false)
         GLCore.glBlend(true)
-        ThemeLoader.HUD.draw(HudPartType.ENTITY_HEALTH_HUD, context)
+        ThemeManager.HUD.draw(HudPartType.ENTITY_HEALTH_HUD, context)
         HealthStep
         /*
 
@@ -293,7 +293,7 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
             super.renderFood(width, height)
         } else {
             mc.mcProfiler.startSection("food")
-            ThemeLoader.HUD.draw(HudPartType.FOOD, context)
+            ThemeManager.HUD.draw(HudPartType.FOOD, context)
             mc.mcProfiler.endSection()
             if (OptionCore.RENDER_FOOD.isEnabled) initiateEvents(FOOD)
         }
@@ -306,7 +306,7 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
             if (!OptionCore.ALWAYS_SHOW.isEnabled && !this.mc.playerController.shouldDrawHUD()) return
             mc.mcProfiler.startSection("expLevel")
 
-            ThemeLoader.HUD.draw(HudPartType.EXPERIENCE, context)
+            ThemeManager.HUD.draw(HudPartType.EXPERIENCE, context)
 
             mc.mcProfiler.endSection()
             if (OptionCore.RENDER_EXPERIENCE.isEnabled) initiateEvents(EXPERIENCE)
@@ -322,7 +322,7 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
             renderFood(width, height)
 
             mc.mcProfiler.startSection("jumpBar")
-            ThemeLoader.HUD.draw(HudPartType.JUMP_BAR, context)
+            ThemeManager.HUD.draw(HudPartType.JUMP_BAR, context)
             mc.mcProfiler.endSection()
 
             if (OptionCore.RENDER_JUMPBAR.isEnabled) initiateEvents(JUMPBAR)
@@ -333,7 +333,7 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
         if (OptionCore.VANILLA_UI.isEnabled) {
             super.renderHealthMount(width, height)
         } else {
-            ThemeLoader.HUD.draw(HudPartType.MOUNT_HEALTH, context)
+            ThemeManager.HUD.draw(HudPartType.MOUNT_HEALTH, context)
             if (OptionCore.RENDER_HEALTHMOUNT.isEnabled) initiateEvents(HEALTHMOUNT)
         }
     }
