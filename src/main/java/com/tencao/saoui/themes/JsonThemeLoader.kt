@@ -19,7 +19,6 @@ package com.tencao.saoui.themes
 
 import com.google.gson.GsonBuilder
 import com.tencao.saoui.SAOCore
-import com.tencao.saoui.ThemeMetadata
 import com.tencao.saoui.themes.elements.Hud
 import net.minecraft.client.resources.IResourceManager
 import net.minecraft.launchwrapper.Launch
@@ -108,7 +107,7 @@ object JsonThemeLoader : ISelectiveResourceReloadListener {
 
     override fun onResourceManagerReload(resourceManager: IResourceManager) {
         super.onResourceManagerReload(resourceManager)
-        themeList = SAOCore.getFiles()
+        themeList = ThemeDetector.listThemes()
         load()
     }
 }
