@@ -20,8 +20,9 @@ package com.tencao.saoui
 import com.tencao.saomclib.Client
 import com.tencao.saomclib.utils.math.Vec2d
 import com.tencao.saomclib.utils.math.vec
-import com.tencao.saoui.themes.ThemeLoader
+import com.tencao.saoui.themes.ThemeManager
 import com.tencao.saoui.util.ColorUtil
+import com.tencao.saoui.util.append
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.FontRenderer
 import net.minecraft.client.renderer.BufferBuilder
@@ -89,7 +90,15 @@ object GLCore {
     }
 
     @JvmOverloads
-    fun glString(font: FontRenderer?, string: String, x: Int, y: Int, argb: Int, shadow: Boolean = false, centered: Boolean = false) {
+    fun glString(
+        font: FontRenderer?,
+        string: String,
+        x: Int,
+        y: Int,
+        argb: Int,
+        shadow: Boolean = false,
+        centered: Boolean = false
+    ) {
         font?.drawString(
             string,
             x.toFloat(),
@@ -111,10 +120,17 @@ object GLCore {
 
     fun setFont(mc: Minecraft, custom: Boolean) {
         if (mc.textureManager == null) return
-        val font = ResourceLocation(SAOCore.MODID, "textures/${ThemeLoader.currentTheme}/ascii.png")
+
         val fontLocation: ResourceLocation =
-            if (custom && checkTexture(font)) {
-                font
+            if (custom) {
+                useTextureIfExists(
+                    ThemeManager.currentTheme.texturesRoot.append("ascii.png")
+                ) ?: useTextureIfExists(
+                    ResourceLocation(
+                        ThemeManager.currentTheme.themeRoot.resourceDomain,
+                        "textures/ascii.png"
+                    )
+                ) ?: ResourceLocation(SAOCore.MODID, "textures/ascii.png")
             } else {
                 ResourceLocation("textures/font/ascii.png")
             }
@@ -153,8 +169,17 @@ object GLCore {
         }
     }
 
+    fun useTextureIfExists(location: ResourceLocation): ResourceLocation? =
+        if (checkTexture(location)) location else null
+
     @JvmOverloads
-    fun glTexturedRectV2(pos: Vec3d, size: Vec2d, srcPos: Vec2d = Vec2d.ZERO, srcSize: Vec2d = size, textureSize: Vec2d = vec(256, 256)) {
+    fun glTexturedRectV2(
+        pos: Vec3d,
+        size: Vec2d,
+        srcPos: Vec2d = Vec2d.ZERO,
+        srcSize: Vec2d = size,
+        textureSize: Vec2d = vec(256, 256)
+    ) {
         glTexturedRectV2(
             x = pos.x, y = pos.y, z = pos.z,
             width = size.x, height = size.y,
@@ -165,13 +190,29 @@ object GLCore {
     }
 
     @JvmOverloads
-    fun glTexturedRectV2(x: Double, y: Double, z: Double = 0.0, width: Double, height: Double, srcX: Double = 0.0, srcY: Double = 0.0, srcWidth: Double = width, srcHeight: Double = height, textureW: Int = 256, textureH: Int = 256) {
+    fun glTexturedRectV2(
+        x: Double,
+        y: Double,
+        z: Double = 0.0,
+        width: Double,
+        height: Double,
+        srcX: Double = 0.0,
+        srcY: Double = 0.0,
+        srcWidth: Double = width,
+        srcHeight: Double = height,
+        textureW: Int = 256,
+        textureH: Int = 256
+    ) {
         val f = 1f / textureW
         val f1 = 1f / textureH
         begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX)
-        bufferBuilder.pos(x, y + height, z).tex((srcX.toFloat() * f).toDouble(), ((srcY + srcHeight).toFloat() * f1).toDouble()).endVertex()
-        bufferBuilder.pos(x + width, y + height, z).tex(((srcX + srcWidth).toFloat() * f).toDouble(), ((srcY + srcHeight).toFloat() * f1).toDouble()).endVertex()
-        bufferBuilder.pos(x + width, y, z).tex(((srcX + srcWidth).toFloat() * f).toDouble(), (srcY.toFloat() * f1).toDouble()).endVertex()
+        bufferBuilder.pos(x, y + height, z)
+            .tex((srcX.toFloat() * f).toDouble(), ((srcY + srcHeight).toFloat() * f1).toDouble()).endVertex()
+        bufferBuilder.pos(x + width, y + height, z)
+            .tex(((srcX + srcWidth).toFloat() * f).toDouble(), ((srcY + srcHeight).toFloat() * f1).toDouble())
+            .endVertex()
+        bufferBuilder.pos(x + width, y, z)
+            .tex(((srcX + srcWidth).toFloat() * f).toDouble(), (srcY.toFloat() * f1).toDouble()).endVertex()
         bufferBuilder.pos(x, y, z).tex((srcX.toFloat() * f).toDouble(), (srcY.toFloat() * f1).toDouble()).endVertex()
         draw()
     }
@@ -184,7 +225,17 @@ object GLCore {
         bufferBuilder.pos(x, y, z).tex(srcX, srcY).endVertex()
     }
 
-    fun addVertex(x: Double, y: Double, z: Double, srcX: Double, srcY: Double, red: Float, green: Float, blue: Float, alpha: Float) {
+    fun addVertex(
+        x: Double,
+        y: Double,
+        z: Double,
+        srcX: Double,
+        srcY: Double,
+        red: Float,
+        green: Float,
+        blue: Float,
+        alpha: Float
+    ) {
         bufferBuilder.pos(x, y, z).tex(srcX, srcY).color(red, green, blue, alpha).endVertex()
     }
 
@@ -192,7 +243,17 @@ object GLCore {
         bufferBuilder.pos(x, y, z).color(red, green, blue, alpha).endVertex()
     }
 
-    fun addVertex(x: Float, y: Float, z: Float, srcX: Double, srcY: Double, red: Float, green: Float, blue: Float, alpha: Float) {
+    fun addVertex(
+        x: Float,
+        y: Float,
+        z: Float,
+        srcX: Double,
+        srcY: Double,
+        red: Float,
+        green: Float,
+        blue: Float,
+        alpha: Float
+    ) {
         bufferBuilder.normal(x, y, z).tex(srcX, srcY).color(red, green, blue, alpha).endVertex()
     }
 
@@ -218,7 +279,15 @@ object GLCore {
      * Draws a rectangle with a vertical gradient between the specified colors (ARGB format). Args : x1, y1, x2, y2,
      * topColor, bottomColor
      */
-    fun drawGradientRect(left: Double, top: Double, right: Double, bottom: Double, zLevel: Double, startColor: Int, endColor: Int) {
+    fun drawGradientRect(
+        left: Double,
+        top: Double,
+        right: Double,
+        bottom: Double,
+        zLevel: Double,
+        startColor: Int,
+        endColor: Int
+    ) {
         val f = (startColor shr 24 and 255).toFloat() / 255.0f
         val f1 = (startColor shr 16 and 255).toFloat() / 255.0f
         val f2 = (startColor shr 8 and 255).toFloat() / 255.0f
@@ -230,7 +299,12 @@ object GLCore {
         GlStateManager.disableTexture2D()
         GlStateManager.enableBlend()
         GlStateManager.disableAlpha()
-        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO)
+        GlStateManager.tryBlendFuncSeparate(
+            GlStateManager.SourceFactor.SRC_ALPHA,
+            GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
+            GlStateManager.SourceFactor.ONE,
+            GlStateManager.DestFactor.ZERO
+        )
         GlStateManager.shadeModel(7425)
         begin(7, DefaultVertexFormats.POSITION_COLOR)
         bufferBuilder.pos(right, top, zLevel).color(f1, f2, f3, f).endVertex()

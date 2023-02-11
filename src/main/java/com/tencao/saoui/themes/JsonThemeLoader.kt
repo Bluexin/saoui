@@ -20,94 +20,35 @@ package com.tencao.saoui.themes
 import com.google.gson.GsonBuilder
 import com.tencao.saoui.SAOCore
 import com.tencao.saoui.themes.elements.Hud
-import net.minecraft.client.resources.IResourceManager
-import net.minecraft.launchwrapper.Launch
-import net.minecraft.util.ResourceLocation
-import net.minecraftforge.client.resource.IResourceType
-import net.minecraftforge.client.resource.ISelectiveResourceReloadListener
-import net.minecraftforge.fml.client.FMLFolderResourcePack
-import org.apache.logging.log4j.LogManager
-import java.io.FileReader
+import java.io.File
 import java.io.FileWriter
-import java.io.IOException
-import java.util.function.Predicate
-import javax.xml.bind.JAXBContext
-import javax.xml.bind.JAXBException
+import java.io.InputStream
 
 /**
  * Part of saoui by Bluexin.
  *
  * @author Bluexin
  */
-object JsonThemeLoader : ISelectiveResourceReloadListener {
+class JsonThemeLoader : AbstractThemeLoader(ThemeType.JSON) {
 
-    private val logger by lazy { LogManager.getLogger(javaClass) }
-
-    @JvmStatic
-    fun main(args: Array<String>) {
-        Launch.blackboard = mapOf("fml.deobfuscatedEnvironment" to true)
-        load()
-        exportTheme()
-    }
-
-    // TODO: tests
-    // TODO: theme versions
-    // TODO: loading reporter (amount of issues, details, missing keys, ..?)
-
-    lateinit var HUD: Hud
-    lateinit var themeList: Map<ResourceLocation, ThemeMetadata>
-    lateinit var currentTheme: String
-
-    @Throws(JAXBException::class)
-    fun load() {
-        val location = "themes/sao"
-
-        val start = System.currentTimeMillis()
-        val context = JAXBContext.newInstance(Hud::class.java)
-        val um = context.createUnmarshaller()
-        try {
-            javaClass.classLoader.getResourceAsStream("assets/saoui/themes/sao/hud.xml")
-                .use { HUD = um.unmarshal(it) as Hud }
-//            Client.resourceManager.getResource(hudRL).inputStream.use { HUD = um.unmarshal(it) as Hud }
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-
-        HUD.setup()
-
-//        StringNames.init()
-
-        logger.info("Loaded theme and set it up in " + (System.currentTimeMillis() - start) + "ms.")
-    }
-
-    fun exportTheme() {
-        val gson = GsonBuilder()
-            .disableHtmlEscaping()
-            .setPrettyPrinting()
+    override fun InputStream.loadHud(): Hud = use {
+        GsonBuilder()
             .create()
+            .fromJson(it.reader(), Hud::class.java)
+    }
 
-        FileWriter("theme.json").use {
-            it.write(gson.toJson(HUD))
+    fun exportHud(hud: Hud, toFile: File) {
+        FileWriter(toFile).use {
+            GsonBuilder()
+                .disableHtmlEscaping()
+                .setPrettyPrinting()
+                .create().toJson(hud, it)
             it.flush()
         }
 
         val start = System.currentTimeMillis()
-        val hud = FileReader("theme.json").use {
-            gson.fromJson(it, HUD::class.java)
-        }
-        hud.setup()
-        logger.info("Loaded theme and set it up in " + (System.currentTimeMillis() - start) + "ms.")
-    }
-
-    override fun onResourceManagerReload(resourceManager: IResourceManager, types: Predicate<IResourceType>) {
-        if (resourceManager is FMLFolderResourcePack && resourceManager.fmlContainer.modId == SAOCore.MODID) {
-            // load()
-        }
-    }
-
-    override fun onResourceManagerReload(resourceManager: IResourceManager) {
-        super.onResourceManagerReload(resourceManager)
-        themeList = ThemeDetector.listThemes()
-        load()
+        val newHud = loadHud(toFile)
+        newHud.setup()
+        SAOCore.LOGGER.info("Loaded theme and set it up in " + (System.currentTimeMillis() - start) + "ms.")
     }
 }

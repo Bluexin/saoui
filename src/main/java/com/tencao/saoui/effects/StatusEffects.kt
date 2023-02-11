@@ -18,13 +18,12 @@
 package com.tencao.saoui.effects
 
 import com.tencao.saoui.GLCore
-import com.tencao.saoui.SAOCore
 import com.tencao.saoui.api.screens.IIcon
 import com.tencao.saoui.resources.StringNames
+import com.tencao.saoui.util.append
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.init.MobEffects
-import net.minecraft.util.ResourceLocation
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
 import java.util.*
@@ -61,7 +60,7 @@ enum class StatusEffects : IIcon {
     SLOWNESS;
 
     private val icons
-        get() = ResourceLocation(SAOCore.MODID, "${StringNames.statusIcons}${name.toLowerCase()}.png")
+        get() = StringNames.statusIcons.append("${name.toLowerCase()}.png")
 
     @Suppress("unused")
     override fun glDraw(x: Int, y: Int, z: Float) {

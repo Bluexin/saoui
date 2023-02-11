@@ -95,7 +95,8 @@ object ThemeDetector {
             id to ThemeMetadata(
                 id = id,
                 themeRoot = ResourceLocation(domain, path.parent.toString().removePrefix("assets/$domain/")),
-                name = name
+                name = name,
+                type = ThemeType.XML // TODO: detect JSON themes
             )
         }
 }
