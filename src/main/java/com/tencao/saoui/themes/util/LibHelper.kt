@@ -53,7 +53,7 @@ object LibHelper {
 
     val obfuscated: Boolean by lazy {
         val obf = !(Launch.blackboard["fml.deobfuscatedEnvironment"] as Boolean)
-        SAOCore.LOGGER.warn("Obfuscated: $obf")
+        SAOCore.LOGGER.debug("Obfuscated: $obf")
         obf
     }
 }

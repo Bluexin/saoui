@@ -31,6 +31,7 @@ import com.tencao.saoui.themes.elements.Hud
 import com.tencao.saoui.util.AdvancementUtil
 import com.tencao.saoui.util.DefaultStatsProvider
 import com.tencao.saoui.util.PlayerStats
+import com.tencao.saoui.util.append
 import net.minecraft.client.resources.SimpleReloadableResourceManager
 import net.minecraft.entity.EntityLivingBase
 import net.minecraft.util.ResourceLocation
@@ -47,11 +48,24 @@ import org.apache.logging.log4j.Logger
 import java.io.File
 import java.io.IOException
 import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
 import java.util.concurrent.ConcurrentHashMap
+import java.util.function.BiPredicate
+import java.util.stream.Stream
 import java.util.zip.ZipFile
 import javax.xml.bind.JAXBContext
+import kotlin.streams.toList
 
-@Mod(modid = SAOCore.MODID, name = SAOCore.NAME, version = SAOCore.VERSION, clientSideOnly = true, dependencies = SAOCore.DEPS, acceptableSaveVersions = "*", canBeDeactivated = true)
+@Mod(
+    modid = SAOCore.MODID,
+    name = SAOCore.NAME,
+    version = SAOCore.VERSION,
+    clientSideOnly = true,
+    dependencies = SAOCore.DEPS,
+    acceptableSaveVersions = "*",
+    canBeDeactivated = true
+)
 object SAOCore {
     const val MODID = "saoui"
     const val NAME = "Sword Art Online UI"
@@ -81,7 +95,10 @@ object SAOCore {
         FriendData.preInit()
         modFile = event.sourceFile
 
-        CapabilitiesHandler.registerEntityCapability(RenderCapability::class.java, RenderCapability.Storage()) { `object`: Any -> `object` is EntityLivingBase }
+        CapabilitiesHandler.registerEntityCapability(
+            RenderCapability::class.java,
+            RenderCapability.Storage()
+        ) { `object`: Any -> `object` is EntityLivingBase }
 
         (Client.resourceManager as SimpleReloadableResourceManager).registerReloadListener(ThemeLoader)
     }
@@ -101,7 +118,8 @@ object SAOCore {
             val f = EventBus::class.java.getDeclaredField("listeners")
             f.isAccessible = true
             val listeners = f.get(MinecraftForge.EVENT_BUS) as ConcurrentHashMap<*, *>
-            val handler = listeners.keys.firstOrNull { it.javaClass.canonicalName == "slimeknights.mantle.client.ExtraHeartRenderHandler" }
+            val handler =
+                listeners.keys.firstOrNull { it.javaClass.canonicalName == "slimeknights.mantle.client.ExtraHeartRenderHandler" }
             if (handler == null) LOGGER.warn("Unable to unregister Mantle health renderer!")
             else MinecraftForge.EVENT_BUS.unregister(handler)
         }
@@ -118,73 +136,97 @@ object SAOCore {
         return File(genDir, MODID)
     }
 
-    fun getFiles(): List<String> {
-        val list = mutableListOf<String>()
-        val location = "/assets/saoui/themes"
+    /**
+     * Returns a map of path to display name for themes
+     */
+    fun getFiles(): Map<ResourceLocation, ThemeMetadata> {
+        val candidates = mutableMapOf<ResourceLocation, ThemeMetadata>()
 
-        // IDE
-        try {
-            Files.walk(File(SAOCore::class.java.getResource(location)!!.path).toPath(), 5).iterator().forEachRemaining {
-                var name = it.toString()
-                if (name.endsWith("hud.xml")) {
-                    name = name.substring(0, name.length - 8)
-                    name = name.substringAfterLast("\\")
-                    if (name.isNotEmpty() && name != "themes") {
-                        list.add(name)
-                    }
-                }
-            }
-        }
-        // JAR
-        catch (e: Exception) {
-            val zipFile = ZipFile(modFile)
-            zipFile.entries().asSequence().forEach { entry ->
-                if (entry.name.endsWith("hud.xml")) {
-                    var name = entry.name.substring(0, entry.name.length - 8)
-                    name = name.substringAfterLast("/")
-                    list.add(name)
-                }
-            }
+        // Built-in
+        candidates += modFile.findThemePaths().extractThemesMetadata(MODID)
+
+        // Loaded resource packs
+        Client.minecraft.resourcePackRepository.repositoryEntries.map {
+            it.resourcePackName to Client.minecraft.resourcePackRepository.dirResourcepacks.resolve(it.resourcePackName)
+        }.forEach { (name, location) ->
+            candidates += location.findThemePaths().extractThemesMetadata(name)
         }
 
-        // Added Resources
-        Client.minecraft.resourcePackRepository.dirResourcepacks.listFiles()?.forEach { extraFile ->
-            // Make sure the resource pack is actually loaded first
-            if (Client.minecraft.resourcePackRepository.repositoryEntries.any { it.resourcePackName.contains(extraFile.name.substringAfterLast("\\")) }) {
-                // Process Zips
-                if (extraFile.name.endsWith(".zip")) {
-                    val zipFile = ZipFile(extraFile)
-                    zipFile.entries().asSequence().forEach { entry ->
-                        if (entry.name.endsWith("hud.xml")) {
-                            var name = entry.name.substring(0, entry.name.length - 8)
-                            name = name.substringAfterLast("/")
-                            list.add(name)
-                        }
-                    }
-                }
-                // Process Folders
-                else {
-                    extraFile.listFiles { dir, name -> name.equals("hud.xml") }?.forEach {
-                        list.add(it.parent)
-                    }
-                }
-            }
-        }
-
-        val themeList = mutableListOf<String>()
         val context = JAXBContext.newInstance(Hud::class.java)
         val um = context.createUnmarshaller()
-        list.forEach { name ->
-            val hudRL = ResourceLocation(MODID, "themes/$name/hud.xml")
+        return candidates.filterValues {
             try {
-                Client.resourceManager.getResource(hudRL).inputStream.use { ThemeLoader.HUD = um.unmarshal(it) as Hud }
-                // If passes without exception, add
-                themeList.add(name)
+                Client.resourceManager.getResource(it.themeRoot.append("/hud.xml")).inputStream.use { um.unmarshal(it) as Hud }
+                true
             } catch (e: IOException) {
-                e.printStackTrace()
+                LOGGER.warn("Could not load HUD for $it !", e)
+                false
             }
         }
-
-        return list
     }
+
+    /**
+     * Find `hud.xml` files defined in given [File], which can be a zip/jar or folder
+     */
+    private fun File.findThemePaths(): List<Path> {
+        LOGGER.info("Analyzing $this")
+        return when {
+            // jar
+            this.isFile -> ZipFile(this).use { zip ->
+                zip.entries().asSequence()
+                    .filter { it.name.endsWith("hud.xml") && !it.isDirectory }
+                    .map { Paths.get(it.name) }
+                    .toList()
+            }
+            // folder
+            this.isDirectory -> {
+                val thisAsPath = this.toPath()
+                Files.find(thisAsPath, 5, BiPredicate { path, fileAttributes ->
+                    fileAttributes.isRegularFile && path.endsWith("hud.xml")
+                }).map { thisAsPath.relativize(it) }.use(Stream<Path>::toList)
+            }
+            // unknown
+            else -> {
+                LOGGER.warn("Unknown file type : $this")
+                emptyList()
+            }
+        }
+    }
+
+    /**
+     * Transform a list of paths into their respective metadata, indexed by id
+     * @param fallbackName Name to fall back to for legacy themes
+     */
+    private fun List<Path>.extractThemesMetadata(fallbackName: String): Map<ResourceLocation, ThemeMetadata> =
+        this.associate { path ->
+            val domain = path.subpath(1, 2).toString()
+            val name = path.parent.fileName.toString().let {
+                if (it != "themes") it else {
+                    LOGGER.warn("Theme pack $fallbackName is using the old theme structure !")
+                    fallbackName
+                }
+            }
+            val id = ResourceLocation(domain, name)
+            LOGGER.info("Read $id from $fallbackName at $path")
+            id to ThemeMetadata(
+                id = id,
+                themeRoot = ResourceLocation(domain, path.parent.toString().removePrefix("assets/$domain/")),
+                name = name.removeSuffix(".zip")
+            )
+        }
 }
+
+data class ThemeMetadata(val id: ResourceLocation, val themeRoot: ResourceLocation, val name: String)
+
+/*
+.map { path ->
+    val domain = path.subpath(1, 2).toString()
+    val name = path.parent.fileName.toString().takeUnless { it == "themes" } ?: domain
+    ResourceLocation(MODID, "themes/$name/hud.xml") to name
+    Triple(
+        ResourceLocation(domain, name),
+        ResourceLocation(domain, path.parent.toString()),
+        name
+    )
+}.asSequence().associateBy(Triple<*, *, *>::first)
+ */

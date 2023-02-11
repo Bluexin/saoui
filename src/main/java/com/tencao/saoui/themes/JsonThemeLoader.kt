@@ -19,9 +19,11 @@ package com.tencao.saoui.themes
 
 import com.google.gson.GsonBuilder
 import com.tencao.saoui.SAOCore
+import com.tencao.saoui.ThemeMetadata
 import com.tencao.saoui.themes.elements.Hud
 import net.minecraft.client.resources.IResourceManager
 import net.minecraft.launchwrapper.Launch
+import net.minecraft.util.ResourceLocation
 import net.minecraftforge.client.resource.IResourceType
 import net.minecraftforge.client.resource.ISelectiveResourceReloadListener
 import net.minecraftforge.fml.client.FMLFolderResourcePack
@@ -54,7 +56,7 @@ object JsonThemeLoader : ISelectiveResourceReloadListener {
     // TODO: loading reporter (amount of issues, details, missing keys, ..?)
 
     lateinit var HUD: Hud
-    lateinit var themeList: List<String>
+    lateinit var themeList: Map<ResourceLocation, ThemeMetadata>
     lateinit var currentTheme: String
 
     @Throws(JAXBException::class)

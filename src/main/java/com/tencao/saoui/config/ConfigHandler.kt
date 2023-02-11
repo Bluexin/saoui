@@ -17,7 +17,9 @@
 
 package com.tencao.saoui.config
 
+import com.tencao.saoui.SAOCore
 import com.tencao.saoui.SAOCore.saoConfDir
+import net.minecraft.util.ResourceLocation
 import net.minecraftforge.common.config.Configuration
 import java.io.File
 import java.util.stream.Stream
@@ -28,11 +30,13 @@ import java.util.stream.Stream
  * @author Bluexin
  */
 object ConfigHandler {
+    val DEFAULT_THEME = ResourceLocation(SAOCore.MODID, "sao")
+
     var lastVersion: String = "1.0"
     var IGNORE_UPDATE: Boolean = false
     var DEBUG = false
     var debugFakePT: Int = 0
-    var lastThemeUsed: String = "sao"
+    var lastThemeUsed: ResourceLocation = DEFAULT_THEME
     var config: Configuration = Configuration(File(saoConfDir, "main.cfg"))
         private set
 
@@ -68,7 +72,11 @@ object ConfigHandler {
 
         debugFakePT = config.getInt("debugFakePT", Configuration.CATEGORY_GENERAL, 0, 0, 10, "Amount of fake party members, 0 to disable.")
 
-        lastThemeUsed = config.getString("lastThemeUsed", Configuration.CATEGORY_GENERAL, "sao", "The last used theme loaded. If invalid, defaults to sao's theme")
+        lastThemeUsed = config.getString("lastThemeUsed", Configuration.CATEGORY_GENERAL, lastThemeUsed.toString(), "The last used theme loaded. If invalid, defaults to sao's theme")
+            .let {
+                if (it.contains(':')) ResourceLocation(it)
+                else DEFAULT_THEME // fallback for old configs
+            }
 
         config.save()
     }
@@ -82,8 +90,8 @@ object ConfigHandler {
         config.save()
     }
 
-    fun saveTheme(theme: String) {
-        config.get(Configuration.CATEGORY_GENERAL, "lastThemeUsed", lastThemeUsed).set(theme)
+    fun saveTheme(theme: ResourceLocation) {
+        config.get(Configuration.CATEGORY_GENERAL, "lastThemeUsed", lastThemeUsed.toString()).set(theme.toString())
         lastThemeUsed = theme
         config.save()
     }

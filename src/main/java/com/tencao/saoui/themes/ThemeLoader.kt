@@ -26,6 +26,7 @@ import com.helger.css.reader.CSSReader
 import com.tencao.saomclib.Client
 import com.tencao.saoui.GLCore
 import com.tencao.saoui.SAOCore
+import com.tencao.saoui.ThemeMetadata
 import com.tencao.saoui.api.entity.rendering.ColorState
 import com.tencao.saoui.config.ConfigHandler
 import com.tencao.saoui.config.OptionCore
@@ -33,12 +34,13 @@ import com.tencao.saoui.resources.StringNames
 import com.tencao.saoui.screens.util.HealthStep
 import com.tencao.saoui.themes.elements.Hud
 import com.tencao.saoui.util.ColorUtil
+import com.tencao.saoui.util.append
 import net.minecraft.client.Minecraft
 import net.minecraft.client.resources.IResourceManager
 import net.minecraft.util.ResourceLocation
 import net.minecraftforge.client.resource.IResourceType
 import net.minecraftforge.client.resource.ISelectiveResourceReloadListener
-import net.minecraftforge.fml.client.FMLFolderResourcePack
+import net.minecraftforge.client.resource.VanillaResourceType
 import java.io.IOException
 import java.nio.charset.StandardCharsets
 import java.util.function.Predicate
@@ -57,31 +59,28 @@ object ThemeLoader : ISelectiveResourceReloadListener {
     // TODO: loading reporter (amount of issues, details, missing keys, ..?)
 
     lateinit var HUD: Hud
-    lateinit var themeList: List<String>
-    lateinit var currentTheme: String
+    lateinit var themeList: Map<ResourceLocation, ThemeMetadata>
+    lateinit var currentTheme: ResourceLocation
 
     @Throws(JAXBException::class)
-    fun load(theme: String = ConfigHandler.lastThemeUsed) {
+    fun load(theme: ResourceLocation = ConfigHandler.lastThemeUsed) {
         val oldTheme = ConfigHandler.lastThemeUsed
-        val location = if (theme.isNotBlank() && themeList.contains(theme)) {
-            currentTheme = theme
-            "themes/$theme"
-        } else if (themeList.contains(oldTheme)) {
-            currentTheme = oldTheme
-            "themes/${ConfigHandler.lastThemeUsed}"
-        } else {
-            currentTheme = "sao"
-            "themes/sao"
+        currentTheme = when {
+            theme in themeList -> theme
+            oldTheme in themeList -> oldTheme
+            else -> ConfigHandler.DEFAULT_THEME
         }
 
         ConfigHandler.saveTheme(currentTheme)
 
         if (OptionCore.CUSTOM_FONT.isEnabled) GLCore.setFont(Minecraft.getMinecraft(), OptionCore.CUSTOM_FONT.isEnabled)
 
+        val location = themeList[currentTheme]!!.themeRoot
+
         loadCss(location)
 
         val start = System.currentTimeMillis()
-        val hudRL = ResourceLocation(SAOCore.MODID, "$location/hud.xml")
+        val hudRL = location.append("/hud.xml")
         val context = JAXBContext.newInstance(Hud::class.java)
         val um = context.createUnmarshaller()
         try {
@@ -97,9 +96,9 @@ object ThemeLoader : ISelectiveResourceReloadListener {
         SAOCore.LOGGER.info("Loaded theme and set it up in " + (System.currentTimeMillis() - start) + "ms.")
     }
 
-    fun loadCss(location: String) {
+    private fun loadCss(location: ResourceLocation) {
         val start = System.currentTimeMillis()
-        val cssRl = ResourceLocation(SAOCore.MODID, "$location/style.css")
+        val cssRl = location.append("/style.css")
 
         try {
             val aCSS = CSSReader.readFromStream(
@@ -223,14 +222,9 @@ object ThemeLoader : ISelectiveResourceReloadListener {
     }
 
     override fun onResourceManagerReload(resourceManager: IResourceManager, types: Predicate<IResourceType>) {
-        if (resourceManager is FMLFolderResourcePack && resourceManager.fmlContainer.modId == SAOCore.MODID) {
-            // load()
+        if (types.test(VanillaResourceType.TEXTURES)) {
+            themeList = SAOCore.getFiles()
+            load()
         }
-    }
-
-    override fun onResourceManagerReload(resourceManager: IResourceManager) {
-        super.onResourceManagerReload(resourceManager)
-        themeList = SAOCore.getFiles()
-        load()
     }
 }
