@@ -37,13 +37,13 @@ object StringNames {
     fun init() {
         val textureRoot = ThemeManager.currentTheme.texturesRoot
 
-        gui = GLCore.useTextureIfExists(textureRoot.append("gui.png"))
+        gui = GLCore.takeTextureIfExists(textureRoot.append("gui.png"))
             ?: logMissingAndUse("gui", defaultGui)
-        slot = GLCore.useTextureIfExists(textureRoot.append("slot.png"))
+        slot = GLCore.takeTextureIfExists(textureRoot.append("slot.png"))
             ?: logMissingAndUse("slot", defaultSlot)
-        entities = GLCore.useTextureIfExists(textureRoot.append("entities.png"))
+        entities = GLCore.takeTextureIfExists(textureRoot.append("entities.png"))
             ?: logMissingAndUse("entity health bars", defaultEntities)
-        particleLarge = GLCore.useTextureIfExists(textureRoot.append("particlelarge.png"))
+        particleLarge = GLCore.takeTextureIfExists(textureRoot.append("particlelarge.png"))
             ?: logMissingAndUse("death particles", defaultParticleLarge)
 
         val missingEffects = StatusEffects.values().filter {

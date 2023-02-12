@@ -23,7 +23,7 @@ import java.io.FileInputStream
 import java.io.InputStream
 import java.nio.charset.StandardCharsets
 
-abstract class AbstractThemeLoader(protected val type: ThemeType) {
+abstract class AbstractThemeLoader(protected val type: ThemeFormat) {
 
     fun load(theme: ThemeMetadata) {
         if (OptionCore.CUSTOM_FONT.isEnabled) GLCore.setFont(Minecraft.getMinecraft(), OptionCore.CUSTOM_FONT.isEnabled)
@@ -58,7 +58,7 @@ abstract class AbstractThemeLoader(protected val type: ThemeType) {
     /**
      * Load [Hud] from ResourceLocation reference (using mc ResourceManager)
      */
-    protected open fun loadHud(location: ResourceLocation): Hud =
+    open fun loadHud(location: ResourceLocation): Hud =
         Client.resourceManager.getResource(location).inputStream.loadHud()
 
     /**

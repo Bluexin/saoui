@@ -123,9 +123,9 @@ object GLCore {
 
         val fontLocation: ResourceLocation =
             if (custom) {
-                useTextureIfExists(
+                takeTextureIfExists(
                     ThemeManager.currentTheme.texturesRoot.append("ascii.png")
-                ) ?: useTextureIfExists(
+                ) ?: takeTextureIfExists(
                     ResourceLocation(
                         ThemeManager.currentTheme.themeRoot.resourceDomain,
                         "textures/ascii.png"
@@ -169,7 +169,7 @@ object GLCore {
         }
     }
 
-    fun useTextureIfExists(location: ResourceLocation): ResourceLocation? =
+    fun takeTextureIfExists(location: ResourceLocation): ResourceLocation? =
         if (checkTexture(location)) location else null
 
     @JvmOverloads
