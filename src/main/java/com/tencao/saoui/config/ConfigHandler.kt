@@ -33,12 +33,42 @@ object ConfigHandler {
     val DEFAULT_THEME = ResourceLocation(SAOCore.MODID, "sao")
 
     var lastVersion: String = "1.0"
-    var IGNORE_UPDATE: Boolean = false
-    var DEBUG = false
-    var debugFakePT: Int = 0
-    var lastThemeUsed: ResourceLocation = DEFAULT_THEME
-    var config: Configuration = Configuration(File(saoConfDir, "main.cfg"))
         private set
+    private var IGNORE_UPDATE: Boolean = false
+    var DEBUG = false
+        private set
+    var debugFakePT: Int = 0
+        private set
+    var lastThemeUsed: ResourceLocation = DEFAULT_THEME
+        private set
+    val config: Configuration by lazy { Configuration(File(saoConfDir, "main.cfg")) }
+
+    // Added for JNLua
+    var forceNativeLibPlatform = ""
+        private set
+    var alwaysTryNative = false
+        private set
+    var forceNativeLibPathFirst = ""
+        private set
+    var nativeInTmpDir = false
+        private set
+    var logFullLibLoadErrors = false
+        private set
+    var limitMemory = false
+        private set
+    var disableLocaleChanging = true
+        private set
+    var forceLuaJ = false
+        private set
+    var registerLuaJArchitecture = false
+        private set
+    var enableLua53 = true
+        private set
+    var enableLua54 = true
+        private set
+    var defaultLua53 = true
+        private set
+    // end of JNLua
 
     fun preInit() {
         // saoConfDir = confDir(event.modConfigurationDirectory)

@@ -47,6 +47,7 @@ object ElementRegistry {
                     addItemCategories(this, baseFilter)
                 }
                 category(IconCore.SKILLS, I18n.format("sao.element.skills")) {
+                    setWip()
                     category(IconCore.SKILLS, "Test 1") {
                         category(IconCore.SKILLS, "1.1") {
                             for (i in 1..3) category(IconCore.SKILLS, "1.1.$i")
@@ -91,13 +92,17 @@ object ElementRegistry {
             },
             tlCategory(IconCore.SOCIAL, index++) {
                 category(IconCore.GUILD, I18n.format("sao.element.guild")) {
+                    setWip()
                     delegate.disabled = !SAOCore.isSAOMCLibServerSide
                 }
                 partyMenu()
                 friendMenu()
             },
-            tlCategory(IconCore.MESSAGE, index++),
+            tlCategory(IconCore.MESSAGE, index++) {
+                setWip()
+            },
             tlCategory(IconCore.NAVIGATION, index++) {
+                setWip()
                 category(IconCore.QUEST, I18n.format("sao.element.quest")) {
                     AdvancementUtil.getCategories().forEach {
                         advancementCategory(it)
@@ -149,8 +154,46 @@ object ElementRegistry {
         return CategoryButton(IconElement(icon, vec(0, 25 * index)), null, body)
     }
 
+    private fun CategoryButton.setWip() {
+        disabled = true
+        addDescription(I18n.format("saoui.wip"))
+    }
+
     enum class Type {
         MAINMENU,
         INGAMEMENU;
+    }
+}
+
+object Lua53 {
+    @JvmStatic
+    fun main(args: Array<String>) {
+        test()
+    }
+
+    private fun test() {
+        val state = LuaStateFactory.Lua53.createState()
+        if (state != null) {
+            try {
+                state.load("function add(a, b) return a + b end", "=test")
+                // Evaluate the chunk, thus defining the function
+                state.call(0, 0)
+
+                // Prepare a function call
+                state.getGlobal("add")
+                state.pushInteger(20)
+                state.pushInteger(22)
+
+                // Call
+                state.call(2, 1)
+
+                // Get and print result
+                val result = state.toInteger(1)
+                state.pop(1)
+                println("Found $result from Lua")
+            } finally {
+                state.close()
+            }
+        } else System.err.println("Unable to create state")
     }
 }

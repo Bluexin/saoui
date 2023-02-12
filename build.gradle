@@ -150,23 +150,35 @@ repositories {
     mavenCentral()
     mavenLocal()
     maven {
-        name "MinecraftForge Maven"
-        url "https://files.minecraftforge.net/maven/"
+        name 'MinecraftForge Maven'
+        url 'https://files.minecraftforge.net/maven/'
     }
     maven {
-        name = "TCons & Mantle"
-        url = "https://dvs1.progwml6.com/files/maven/"
+        name = 'TCons & Mantle'
+        url = 'https://dvs1.progwml6.com/files/maven/'
     }
     maven {
         name 'Forgelin'
-        url "https://maven.shadowfacts.net/"
+        url 'https://maven.shadowfacts.net/'
     }
     maven {
         name 'Bluexin'
-        url "https://maven.bluexin.be/repository/releases/"
+        url 'https://maven.bluexin.be/repository/releases/'
     }
     flatDir {
         dirs 'libs'
+    }
+    maven {
+        name 'Sonatype OSSRH (Snapshots)'
+        url 'https://oss.sonatype.org/content/repositories/snapshots/'
+    }
+    ivy {
+        // Pulled from https://github.com/MightyPirates/OpenComputers/blob/1c0dc67182292895495cb0d421ec0f529d243d74/build.gradle
+        name 'asie dependency mirror'
+        artifactPattern "http://asie.pl/javadeps/[module]-[revision](-[classifier]).[ext]"
+        metadataSources {
+            artifact()
+        }
     }
 }
 
@@ -174,11 +186,21 @@ dependencies {
     minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2860'
 
     implementation "net.shadowfacts:Forgelin:${forgelin_version}"
-    implementation fg.deobf('com.tencao:saomclib:1.12.2+') {changing = true}
+    implementation fg.deobf('com.tencao:saomclib:1.12.2+') { changing = true }
     shadow 'be.bluexin.gnu.jel:gnu-jel:2.1.3'
     shadow 'com.helger:ph-css:6.5.0'
     shadow 'com.helger.commons:ph-commons:10.1.6'
     shadow 'org.slf4j:slf4j-api:1.7.36'
+
+    shadow 'net.sandius.rembulan:rembulan-compiler:0.1-SNAPSHOT'
+    shadow 'net.sandius.rembulan:rembulan-stdlib:0.1-SNAPSHOT'
+
+    shadow 'org.classdump.luna:luna-all-shaded:0.4.1'
+
+    shadow group: 'none', name: 'OC-LuaJ', version: '20220907.1', ext: 'jar'
+    shadow group: 'none', name: 'OC-JNLua', version: '20220928.1', ext: 'jar'
+    shadow group: 'none', name: 'OC-JNLua-Natives', version: '20220928.1', ext: 'jar'
+
     //compile 'com.helger:ph-css:6.1.1'
 } // TODO: move to new shadow system so it doesn't break dependency info
 
