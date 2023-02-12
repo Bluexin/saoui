@@ -1,13 +1,10 @@
 package com.tencao.saoui.api.elements.animator
 
-/**
+/*
  * This is a copy from the library LibrarianLib
  * This code is covered under GNU Lesser General Public License v3.0
  */
 
-/**
- * A basic animation from [from] to [to]. Both values default to the current value of this animation's property
- */
 /**
  * A basic animation from [from] to [to]. Both values default to the current value of this animation's property
  */

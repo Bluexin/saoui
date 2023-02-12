@@ -43,7 +43,12 @@ import net.minecraftforge.common.MinecraftForge
 import kotlin.math.max
 import kotlin.math.min
 
-open class Popup<T : Any>(open var title: String, open var text: List<String>, open var footer: String, internal val buttons: Map<IconElement, T>) : CoreGUI<T>(Vec2d.ZERO) {
+open class Popup<T : Any>(
+    open var title: String,
+    open var text: List<String>,
+    open var footer: String,
+    internal val buttons: Map<IconElement, T>
+) : CoreGUI<T>(Vec2d.ZERO) {
 
     private val rl = ResourceLocation(SAOCore.MODID, "textures/menu/parts/alertbg.png")
     internal /*private*/ var expansion = 0f
@@ -120,9 +125,6 @@ open class Popup<T : Any>(open var title: String, open var text: List<String>, o
         // TODO: these could be moved to Liblib's Sprites. Maybe.
 
         GLCore.pushMatrix()
-        if (controllingGUI != null) {
-            GLCore.translate(controllingGUI!!.pos.x, controllingGUI!!.pos.y, 0.0)
-        }
         GLCore.translate(pos.x, pos.y, 0.0)
         if (expansion < 0.2f) {
             GLCore.glScalef(expansion * 4 + 0.2f, expansion * 4 + 0.2f, 1f)
@@ -151,33 +153,96 @@ open class Popup<T : Any>(open var title: String, open var text: List<String>, o
         GLCore.color(ColorUtil.DEFAULT_COLOR.multiplyAlpha(alpha))
         val posX = -w / 2.0
         val posY = -h / 2.0
-        glTexturedRectV2(posX, posY, width = w, height = step1, srcX = 0.0, srcY = 0.0, srcWidth = 256.0, srcHeight = 64.0) // Title bar
-        glTexturedRectV2(posX, posY + step1, width = w, height = shadows, srcX = 0.0, srcY = 64.0, srcWidth = 256.0, srcHeight = 32.0) // Top shadow
-        glTexturedRectV2(posX, posY + step1 + shadows, width = w, height = step3, srcX = 0.0, srcY = 96.0, srcWidth = 256.0, srcHeight = 32.0) // Text lines
-        glTexturedRectV2(posX, posY + step1 + shadows + step3, width = w, height = shadows, srcX = 0.0, srcY = 128.0, srcWidth = 256.0, srcHeight = 32.0) // Bottom shadow
-        glTexturedRectV2(posX, posY + step1 + shadows + step3 + shadows, width = w, height = step5, srcX = 0.0, srcY = 160.0, srcWidth = 256.0, srcHeight = 96.0) // Button bar
+        glTexturedRectV2(
+            posX,
+            posY,
+            width = w,
+            height = step1,
+            srcX = 0.0,
+            srcY = 0.0,
+            srcWidth = 256.0,
+            srcHeight = 64.0
+        ) // Title bar
+        glTexturedRectV2(
+            posX,
+            posY + step1,
+            width = w,
+            height = shadows,
+            srcX = 0.0,
+            srcY = 64.0,
+            srcWidth = 256.0,
+            srcHeight = 32.0
+        ) // Top shadow
+        glTexturedRectV2(
+            posX,
+            posY + step1 + shadows,
+            width = w,
+            height = step3,
+            srcX = 0.0,
+            srcY = 96.0,
+            srcWidth = 256.0,
+            srcHeight = 32.0
+        ) // Text lines
+        glTexturedRectV2(
+            posX,
+            posY + step1 + shadows + step3,
+            width = w,
+            height = shadows,
+            srcX = 0.0,
+            srcY = 128.0,
+            srcWidth = 256.0,
+            srcHeight = 32.0
+        ) // Bottom shadow
+        glTexturedRectV2(
+            posX,
+            posY + step1 + shadows + step3 + shadows,
+            width = w,
+            height = step5,
+            srcX = 0.0,
+            srcY = 160.0,
+            srcWidth = 256.0,
+            srcHeight = 96.0
+        ) // Button bar
 
-        if (alpha > 0.03f) GLCore.glString(title, -GLCore.glStringWidth(title) / 2, (-h / 2.0 + step1 / 2).toInt(), ColorUtil.DEFAULT_BOX_FONT_COLOR.multiplyAlpha(alpha), centered = true)
+        if (alpha > 0.03f) GLCore.glString(
+            title,
+            -GLCore.glStringWidth(title) / 2,
+            (-h / 2.0 + step1 / 2).toInt(),
+            ColorUtil.DEFAULT_BOX_FONT_COLOR.multiplyAlpha(alpha),
+            centered = true
+        )
         (text.indices).forEach {
-            if (alpha > 0.56f) GLCore.glString(text[it], -GLCore.glStringWidth(text[it]) / 2, (-h / 2.0 + step1 + shadows + step3 / (text.size) * (it + 0.5)).toInt(), ColorUtil.DEFAULT_FONT_COLOR.multiplyAlpha((alpha - 0.5f) / 0.5f), centered = true)
+            if (alpha > 0.56f) GLCore.glString(
+                text[it],
+                -GLCore.glStringWidth(text[it]) / 2,
+                (-h / 2.0 + step1 + shadows + step3 / (text.size) * (it + 0.5)).toInt(),
+                ColorUtil.DEFAULT_FONT_COLOR.multiplyAlpha((alpha - 0.5f) / 0.5f),
+                centered = true
+            )
         }
-        if (alpha > 0.03f) GLCore.glString(footer, -GLCore.glStringWidth(footer) / 2, (-h / 2.0 + step1 + shadows + step3 + (step5 / 2)).toInt(), ColorUtil.DEFAULT_BOX_FONT_COLOR.multiplyAlpha(alpha), centered = true)
+        if (alpha > 0.03f) GLCore.glString(
+            footer,
+            -GLCore.glStringWidth(footer) / 2,
+            (-h / 2.0 + step1 + shadows + step3 + (step5 / 2)).toInt(),
+            ColorUtil.DEFAULT_BOX_FONT_COLOR.multiplyAlpha(alpha),
+            centered = true
+        )
 
         // Guides
         /*GLCore.glBindTexture(StringNames.gui)
         GLCore.color(ColorUtil.DEAD_COLOR.multiplyAlpha(0.5f))
         for (i in 1..15) {
-            GLCore.glTexturedRect(-w / 2.0 + i * w / 16, -h / 2.0, 1.0, h, 5.0, 120.0, 2.0, 2.0)
-            GLCore.glTexturedRect(-w / 2.0, -h / 2.0 + i * h / 16.0, w, 1.0, 5.0, 120.0, 2.0, 2.0)
+            glTexturedRectV2(-w / 2.0 + i * w / 16, -h / 2.0, 1.0, h, 5.0, 120.0, 2.0, 2.0)
+            glTexturedRectV2(-w / 2.0, -h / 2.0 + i * h / 16.0, w, 1.0, 5.0, 120.0, 2.0, 2.0)
         }
         GLCore.color(0f, 1f, 0f, 0.5f)
-        GLCore.glTexturedRect(-w / 2.0, h * 0.3125, w, 1.0, 5.0, 120.0, 2.0, 2.0)
+        glTexturedRectV2(-w / 2.0, h * 0.3125, w, 1.0, 5.0, 120.0, 2.0, 2.0)
 
         val childrenXSeparator = w / buttons.size
         val childrenXOffset = -childrenXSeparator / buttons.size
 
-        GLCore.glTexturedRect(childrenXOffset, -h / 2, 1.0, h, 5.0, 120.0, 2.0, 2.0)
-        GLCore.glTexturedRect(childrenXOffset + childrenXSeparator, -h / 2, 1.0, h, 5.0, 120.0, 2.0, 2.0)*/
+        glTexturedRectV2(childrenXOffset, -h / 2, 1.0, h, 5.0, 120.0, 2.0, 2.0)
+        glTexturedRectV2(childrenXOffset + childrenXSeparator, -h / 2, 1.0, h, 5.0, 120.0, 2.0, 2.0)*/
 
         GLCore.popMatrix()
 
@@ -235,13 +300,13 @@ class PopupYesNo(title: String, text: List<String>, footer: String) : Popup<Popu
             .setBgColor(ColorIntent.HOVERED, ColorUtil.CONFIRM_COLOR_LIGHT)
             .setFontColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
             .setFontColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
-            to Result.YES,
+                to Result.YES,
         IconElement(IconCore.CANCEL, description = mutableListOf("Cancel"))
             .setBgColor(ColorIntent.NORMAL, ColorUtil.CANCEL_COLOR)
             .setBgColor(ColorIntent.HOVERED, ColorUtil.CANCEL_COLOR_LIGHT)
             .setFontColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
             .setFontColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
-            to Result.NO
+                to Result.NO
     )
 ) {
 
@@ -267,7 +332,7 @@ class PopupNotice(title: String, text: List<String>, footer: String) : Popup<Pop
             .setBgColor(ColorIntent.HOVERED, ColorUtil.CONFIRM_COLOR_LIGHT)
             .setFontColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
             .setFontColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
-            to Result.YES
+                to Result.YES
     )
 ) {
 
@@ -292,13 +357,13 @@ class PopupItem(title: String, text: List<String>, footer: String) : Popup<Popup
             .setBgColor(ColorIntent.HOVERED, ColorUtil.HOVER_COLOR)
             .setFontColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
             .setFontColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
-            to Result.EQUIP,
+                to Result.EQUIP,
         IconElement(IconCore.CANCEL, description = mutableListOf("Drop"))
             .setBgColor(ColorIntent.NORMAL, ColorUtil.CANCEL_COLOR)
             .setBgColor(ColorIntent.HOVERED, ColorUtil.CANCEL_COLOR_LIGHT)
             .setFontColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
             .setFontColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
-            to Result.DROP
+                to Result.DROP
     )
 ) {
 
@@ -315,7 +380,8 @@ class PopupItem(title: String, text: List<String>, footer: String) : Popup<Popup
     }
 }
 
-class PopupSlotSelection(title: String, text: List<String>, footer: String, slots: Set<Slot>) : Popup<Int>(title, text, footer, getButtons(slots)) {
+class PopupSlotSelection(title: String, text: List<String>, footer: String, slots: Set<Slot>) :
+    Popup<Int>(title, text, footer, getButtons(slots)) {
 
     init {
         result = -1
@@ -338,7 +404,8 @@ class PopupSlotSelection(title: String, text: List<String>, footer: String, slot
  *
  * TODO find better solution or allow user input
  */
-class PopupHotbarSelection(title: String, text: List<String>, footer: String) : Popup<PopupHotbarSelection.Result>(title, text, footer, getHotbarList()) {
+class PopupHotbarSelection(title: String, text: List<String>, footer: String) :
+    Popup<PopupHotbarSelection.Result>(title, text, footer, getHotbarList()) {
 
     constructor(title: String, text: String, footer: String) : this(title, listOf(text), footer)
 
@@ -395,7 +462,8 @@ class PopupPlayerInspect(player: PlayerInfo, elements: List<IconElement>) : Popu
     }
 }
 
-class PopupCraft(val recipe: IRecipe) : Popup<Int>(recipe.recipeOutput.displayName, recipe.recipeOutput.itemDesc(), "", getButtons()) {
+class PopupCraft(val recipe: IRecipe) :
+    Popup<Int>(recipe.recipeOutput.displayName, recipe.recipeOutput.itemDesc(), "", getButtons()) {
     private val countPerCraft = recipe.recipeOutput.count
     override var result: Int = countPerCraft
     override var footer
@@ -488,9 +556,9 @@ class PopupAdvancement(advancement: Advancement) : Popup<PopupAdvancement.Result
     "",
     mapOf(
         IconTextElement("<--", description = mutableListOf("Previous"))
-            to Result.PREVIOUS,
+                to Result.PREVIOUS,
         IconTextElement("-->", description = mutableListOf("Next"))
-            to Result.NEXT
+                to Result.NEXT
     )
 ) {
 
