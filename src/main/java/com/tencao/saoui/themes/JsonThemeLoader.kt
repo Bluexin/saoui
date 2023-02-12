@@ -29,7 +29,7 @@ import java.io.InputStream
  *
  * @author Bluexin
  */
-class JsonThemeLoader : AbstractThemeLoader(ThemeType.JSON) {
+class JsonThemeLoader : AbstractThemeLoader(ThemeFormat.JSON) {
 
     override fun InputStream.loadHud(): Hud = use {
         GsonBuilder()

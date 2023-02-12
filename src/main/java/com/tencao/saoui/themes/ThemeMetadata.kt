@@ -6,12 +6,16 @@ data class ThemeMetadata(
     val id: ResourceLocation,
     val themeRoot: ResourceLocation,
     val name: String,
-    val type: ThemeType
+    val type: ThemeFormat
 ) {
     val texturesRoot = ResourceLocation(themeRoot.resourceDomain, "textures/${id.resourcePath}/")
 }
 
-enum class ThemeType(val hudFileSuffix: String, val loader: () -> AbstractThemeLoader) {
+enum class ThemeFormat(val hudFileSuffix: String, val loader: () -> AbstractThemeLoader) {
     XML("hud.xml", ::XmlThemeLoader),
-    JSON("hud.json", ::JsonThemeLoader)
+    JSON("hud.json", ::JsonThemeLoader);
+
+    companion object {
+        fun fromFile(fileName: String): ThemeFormat? = values().firstOrNull { fileName.endsWith(it.hudFileSuffix) }
+    }
 }

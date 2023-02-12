@@ -50,9 +50,9 @@ object ThemeManager : ISelectiveResourceReloadListener {
 
         ConfigHandler.saveTheme(currentTheme.id)
 
-        if (OptionCore.CUSTOM_FONT.isEnabled) GLCore.setFont(Minecraft.getMinecraft(), OptionCore.CUSTOM_FONT.isEnabled)
-
         currentTheme.type.loader().load(currentTheme)
+
+        if (OptionCore.CUSTOM_FONT.isEnabled) GLCore.setFont(Minecraft.getMinecraft(), true)
     }
 
     override fun onResourceManagerReload(resourceManager: IResourceManager, types: Predicate<IResourceType>) {

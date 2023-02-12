@@ -46,7 +46,7 @@ enum class CacheType(private val provider: Function2<CompiledExpressionWrapper<*
     SIZE_CHANGE({ expression, intermediate -> SizeCachedExpression(expression, intermediate) }),
 
     /**
-     * Values will not be cached (unrecommended -- in most cases DEFAULT is better. Use with precaution).
+     * Values will not be cached (unrecommended -- in most cases PER_FRAME is better. Use with pcaution).
      */
     NONE({ expression, intermediate -> UnCachedExpression(expression, intermediate) });
 
