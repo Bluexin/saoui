@@ -57,7 +57,8 @@ abstract class LuaStateFactory {
             state.openLib(LuaState.Library.MATH)
             state.openLib(LuaState.Library.STRING)
             state.openLib(LuaState.Library.TABLE)
-            state.pop(8)
+            state.openLib(LuaState.Library.JAVA) // TODO : refine module to not give access to everything !
+            state.pop(9)
         }
     }
 
@@ -76,7 +77,8 @@ abstract class LuaStateFactory {
             state.openLib(LuaState.Library.STRING)
             state.openLib(LuaState.Library.TABLE)
             state.openLib(LuaState.Library.UTF8)
-            state.pop(8)
+            state.openLib(LuaState.Library.JAVA) // TODO : refine module to not give access to everything !
+            state.pop(9)
         }
     }
 
@@ -95,7 +97,8 @@ abstract class LuaStateFactory {
             state.openLib(LuaState.Library.STRING)
             state.openLib(LuaState.Library.TABLE)
             state.openLib(LuaState.Library.UTF8)
-            state.pop(8)
+            state.openLib(LuaState.Library.JAVA) // TODO : refine module to not give access to everything !
+            state.pop(9)
         }
     }
 

@@ -23,6 +23,7 @@ import com.tencao.saomclib.utils.math.Vec2d
 import com.tencao.saomclib.utils.math.vec
 import com.tencao.saoui.SAOCore
 import com.tencao.saoui.SoundCore
+import com.tencao.saoui.api.elements.registry.catching
 import com.tencao.saoui.api.screens.IIcon
 import com.tencao.saoui.config.OptionCore
 import com.tencao.saoui.play
@@ -37,6 +38,7 @@ import com.tencao.saoui.util.AdvancementUtil
 import com.tencao.saoui.util.IconCore
 import com.tencao.saoui.util.getProgress
 import com.tencao.saoui.util.getRecipes
+import li.cil.repack.com.naef.jnlua.LuaValueProxy
 import net.minecraft.advancements.Advancement
 import net.minecraft.client.resources.I18n.format
 import net.minecraft.entity.player.EntityPlayer
@@ -53,7 +55,11 @@ import kotlin.math.min
  *
  * @author Bluexin
  */
-class CategoryButton(val delegate: IconElement, parent: INeoParent? = null, private val init: (CategoryButton.() -> Unit)? = null) : IconElement(delegate.icon, delegate.pos) {
+open class CategoryButton(
+    val delegate: IconElement,
+    parent: INeoParent? = null,
+    private val init: (CategoryButton.() -> Unit)? = null
+) : IconElement(delegate.icon, delegate.pos) {
 
     override var pos by delegate::pos.delegate
     override var destination by delegate::destination.delegate
@@ -99,6 +105,22 @@ class CategoryButton(val delegate: IconElement, parent: INeoParent? = null, priv
     }
 
     override fun onClick(body: (Vec2d, MouseButton) -> Boolean) = delegate.onClick(body)
+    fun onClick(bodyProxy: LuaValueProxy) = onClick { _, _ ->
+        val state = bodyProxy.luaState
+        state.catching(false) {
+            bodyProxy.pushValue()
+            val r = if (state.isFunction(-1)) {
+                state.pushJavaObject(this)
+                state.call(1, 1)
+                state.checkBoolean(-1).also {
+                    state.pop(1)
+                }
+            } else false
+//            state.pop(1)
+            r
+        }
+    }
+
     override fun onClickOut(body: (Vec2d, MouseButton) -> Unit) = delegate.onClickOut(body)
     override fun hide() = delegate.hide()
     override fun show() = delegate.show()
@@ -216,10 +238,40 @@ class CategoryButton(val delegate: IconElement, parent: INeoParent? = null, priv
         delegate.description.add(description)
     }
 
-    fun category(icon: IIcon, label: String, description: MutableList<String> = mutableListOf(), body: (CategoryButton.() -> Unit)? = null): CategoryButton {
+    fun category(
+        icon: IIcon,
+        label: String,
+        description: MutableList<String> = mutableListOf(),
+        body: (CategoryButton.() -> Unit)? = null
+    ): CategoryButton {
         val cat = CategoryButton(IconLabelElement(icon, label, description = description), this, body)
         +cat
         return cat
+    }
+
+    @JvmOverloads // For Lua
+    @JvmName("category")
+    fun luaCategory(
+        icon: String,
+        label: String,
+        description: List<String> = listOf(),
+        bodyProxy: LuaValueProxy? = null
+    ): CategoryButton {
+        val body: (CategoryButton.() -> Unit)? = bodyProxy?.let {
+            {
+                val state = it.luaState
+                state.catching(Unit) {
+                    it.pushValue()
+                    if (state.isFunction(-1)) {
+                        state.pushJavaObject(this)
+                        state.call(1, 0)
+                    }
+                    state.pop(1)
+                }
+            }
+        }
+
+        return category(IconCore.valueOf(icon), label, description.toMutableList(), body)
     }
 
     fun partyMenu(): CategoryButton {
@@ -328,7 +380,7 @@ class CategoryButton(val delegate: IconElement, parent: INeoParent? = null, priv
     }
 
     override fun toString(): String {
-        return "NeoCategoryButton(delegate=$delegate)"
+        return "CategoryButton(delegate=$delegate, elements=${elements.size})"
     }
 }
 

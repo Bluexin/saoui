@@ -20,6 +20,7 @@ package com.tencao.saoui
 import com.tencao.saomclib.Client
 import com.tencao.saomclib.SAOMCLib
 import com.tencao.saomclib.capabilities.CapabilitiesHandler
+import com.tencao.saoui.api.elements.registry.ElementRegistry
 import com.tencao.saoui.api.events.EventInitStatsProvider
 import com.tencao.saoui.capabilities.RenderCapability
 import com.tencao.saoui.config.ConfigHandler
@@ -87,8 +88,6 @@ object SAOCore {
             RenderCapability::class.java,
             RenderCapability.Storage()
         ) { `object`: Any -> `object` is EntityLivingBase }
-
-        (Client.resourceManager as SimpleReloadableResourceManager).registerReloadListener(ThemeManager)
     }
 
     @Mod.EventHandler
@@ -97,6 +96,7 @@ object SAOCore {
         MinecraftForge.EVENT_BUS.post(s)
         PlayerStats.init(s.implementation)
         CoreGUI.animator // Let's force things to init early
+        ElementRegistry.initRegistry()
     }
 
     @Mod.EventHandler
@@ -110,6 +110,11 @@ object SAOCore {
                 listeners.keys.firstOrNull { it.javaClass.canonicalName == "slimeknights.mantle.client.ExtraHeartRenderHandler" }
             if (handler == null) LOGGER.warn("Unable to unregister Mantle health renderer!")
             else MinecraftForge.EVENT_BUS.unregister(handler)
+        }
+
+        (Client.resourceManager as SimpleReloadableResourceManager).apply {
+            registerReloadListener(ThemeManager)
+            registerReloadListener(ElementRegistry)
         }
     }
 

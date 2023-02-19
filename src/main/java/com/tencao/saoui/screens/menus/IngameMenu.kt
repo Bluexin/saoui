@@ -52,6 +52,7 @@ class IngameMenu(elements: MutableList<NeoElement> = mutableListOf()) : CoreGUI<
     override fun initGui() {
         elements.clear()
         val defaultList = getDefaultElements()
+        // TODO : now we hooked up ElementRegistry this event is being sent more than before !
         val event = MenuBuildingEvent(defaultList)
         MinecraftForge.EVENT_BUS.post(event)
         event.elements.forEach { it.parent = this }
@@ -84,7 +85,7 @@ class IngameMenu(elements: MutableList<NeoElement> = mutableListOf()) : CoreGUI<
         }
     }
 
-    fun getDefaultElements(): ArrayList<NeoElement> {
+    fun getDefaultElements(): List<NeoElement> {
         return ElementRegistry.registeredElements[ElementRegistry.Type.INGAMEMENU]
             ?: ElementRegistry.getDefaultElements()
     }
