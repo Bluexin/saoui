@@ -177,11 +177,13 @@ open class IconElement(
 
     override fun drawForeground(mouse: Vec2d, partialTicks: Float) {
         if (!canDraw) return
+        GLCore.pushMatrix()
         if (mouse in this) {
             drawHoveringText(mouse)
             GLCore.lighting(false)
         }
         drawChildren(mouse, partialTicks, DrawType.FOREGROUND)
+        GLCore.popMatrix()
     }
 
     fun mouseOverEffect() {

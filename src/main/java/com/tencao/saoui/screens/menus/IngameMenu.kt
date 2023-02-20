@@ -25,11 +25,14 @@ import com.tencao.saoui.SoundCore
 import com.tencao.saoui.api.elements.CategoryButton
 import com.tencao.saoui.api.elements.IconElement
 import com.tencao.saoui.api.elements.NeoElement
+import com.tencao.saoui.api.elements.animator.Easing
+import com.tencao.saoui.api.elements.basicAnimation
 import com.tencao.saoui.api.elements.registry.ElementRegistry
 import com.tencao.saoui.api.events.MenuBuildingEvent
 import com.tencao.saoui.api.screens.IIcon
 import com.tencao.saoui.play
 import com.tencao.saoui.screens.CoreGUI
+import com.tencao.saoui.screens.unaryPlus
 import com.tencao.saoui.screens.util.PopupNotice
 import com.tencao.saoui.util.CraftingUtil
 import com.tencao.saoui.util.UIUtil
@@ -55,7 +58,15 @@ class IngameMenu(elements: MutableList<NeoElement> = mutableListOf()) : CoreGUI<
         // TODO : now we hooked up ElementRegistry this event is being sent more than before !
         val event = MenuBuildingEvent(defaultList)
         MinecraftForge.EVENT_BUS.post(event)
-        event.elements.forEach { it.parent = this }
+        event.elements.forEach {
+            it.parent = this
+            it.show()
+            +basicAnimation(it, "pos") {
+                duration = 20f
+                from = Vec2d.ZERO
+                easing = Easing.easeInOutQuint
+            }
+        }
         elements.addAll(event.elements)
 
         pos = vec(width / 2.0 - 10, (height - elements.size * 20) / 2.0)

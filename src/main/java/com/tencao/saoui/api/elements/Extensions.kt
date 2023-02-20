@@ -23,8 +23,8 @@ import com.tencao.saomclib.utils.math.Vec2d
 import com.tencao.saomclib.utils.math.vec
 import com.tencao.saoui.SAOCore
 import com.tencao.saoui.SoundCore
-import com.tencao.saoui.api.elements.registry.catching
 import com.tencao.saoui.api.screens.IIcon
+import com.tencao.saoui.api.scripting.catching
 import com.tencao.saoui.config.OptionCore
 import com.tencao.saoui.play
 import com.tencao.saoui.screens.CoreGUI
@@ -105,7 +105,10 @@ open class CategoryButton(
     }
 
     override fun onClick(body: (Vec2d, MouseButton) -> Boolean) = delegate.onClick(body)
-    fun onClick(bodyProxy: LuaValueProxy) = onClick { _, _ ->
+
+    @JvmName("onClick")
+    @Suppress("unused") // for lua
+    fun luaOnClick(bodyProxy: LuaValueProxy) = onClick { _, _ ->
         val state = bodyProxy.luaState
         state.catching(false) {
             bodyProxy.pushValue()
@@ -249,7 +252,8 @@ open class CategoryButton(
         return cat
     }
 
-    @JvmOverloads // For Lua
+    @Suppress("unused") // For Lua
+    @JvmOverloads
     @JvmName("category")
     fun luaCategory(
         icon: String,

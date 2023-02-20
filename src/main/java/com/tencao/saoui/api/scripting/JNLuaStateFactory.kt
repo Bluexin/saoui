@@ -1,4 +1,4 @@
-package com.tencao.saoui.api.elements.registry
+package com.tencao.saoui.api.scripting
 
 import com.google.common.base.Strings
 import com.google.common.io.PatternFilenameFilter
@@ -19,7 +19,7 @@ import kotlin.random.Random
 /**
  * Ported from https://github.com/MightyPirates/OpenComputers/blob/2b40e8a5d0a899e5428a88f91455ed9b98af1606/src/main/scala/li/cil/oc/server/machine/luac/LuaStateFactory.scala
  */
-abstract class LuaStateFactory {
+abstract class JNLuaStateFactory {
     companion object {
         val isAvailable: Boolean
             get() {
@@ -43,7 +43,7 @@ abstract class LuaStateFactory {
         val default53: Boolean get() = include53 && ConfigHandler.defaultLua53
     }
 
-    object Lua52 : LuaStateFactory() {
+    object Lua52 : JNLuaStateFactory() {
         override val version: String get() = "52"
 
         override fun create(maxMemory: Int?): LuaState = if (maxMemory != null) LuaState(maxMemory) else LuaState()
@@ -62,7 +62,7 @@ abstract class LuaStateFactory {
         }
     }
 
-    object Lua53 : LuaStateFactory() {
+    object Lua53 : JNLuaStateFactory() {
         override val version: String get() = "53"
 
         override fun create(maxMemory: Int?): LuaState =
@@ -82,7 +82,7 @@ abstract class LuaStateFactory {
         }
     }
 
-    object Lua54 : LuaStateFactory() {
+    object Lua54 : JNLuaStateFactory() {
         override val version: String get() = "54"
 
         override fun create(maxMemory: Int?): LuaState =
