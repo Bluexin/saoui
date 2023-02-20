@@ -115,7 +115,9 @@ abstract class CoreGUI<T : Any>(final override var pos: Vec2d, override var dest
     }
 
     override fun mouseClicked(pos: Vec2d, mouseButton: MouseButton): Boolean {
-        return subGui?.mouseClicked(pos, mouseButton) ?: elements.any { it.mouseClicked(pos - this.pos, mouseButton) }
+        return subGui?.mouseClicked(pos, mouseButton) ?: elements.fold(false) { acc, it ->
+            it.mouseClicked(pos - this.pos, mouseButton) || acc
+        }
     }
 
     override fun mouseClickMove(mouseX: Int, mouseY: Int, clickedMouseButton: Int, timeSinceLastClick: Long) {
