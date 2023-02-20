@@ -9,7 +9,7 @@ import com.tencao.saoui.api.events.MenuBuildingEvent
 import com.tencao.saoui.api.items.IItemFilter
 import com.tencao.saoui.api.items.ItemFilterRegister
 import com.tencao.saoui.api.screens.IIcon
-import com.tencao.saoui.api.scripting.Lua53
+import com.tencao.saoui.api.scripting.JNLua
 import com.tencao.saoui.config.OptionCore
 import com.tencao.saoui.events.EventCore
 import com.tencao.saoui.screens.menus.IngameMenu
@@ -44,7 +44,7 @@ object ElementRegistry : ISelectiveResourceReloadListener {
 
     fun initRegistry() {
         registeredElements.clear()
-        val event = MenuBuildingEvent(Lua53.test())
+        val event = MenuBuildingEvent(JNLua.loadIngameMenu())
         MinecraftForge.EVENT_BUS.post(event)
         registeredElements[Type.INGAMEMENU] = event.elements
     }

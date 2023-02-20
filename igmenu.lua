@@ -32,7 +32,7 @@ tlCats = {
         settings:category("OPTION", i18n.format("sao.element.options"), {}, function(options)
             options:category("OPTION", i18n.format("guiOptions"), {}, function(vanillaOptions)
                 vanillaOptions:onClick(function()
-                    openGui(GuiOptions:new(vanillaOptions.controllingGUI, mc.gameSettings))
+                    OpenGui(GuiOptions:new(vanillaOptions.controllingGUI, mc.gameSettings))
                     return true
                 end)
             end)
@@ -42,7 +42,7 @@ tlCats = {
         end)
         settings:category("HELP", i18n.format("sao.element.menu"), {}, function(menuButton)
             menuButton:onClick(function()
-                openGui(GuiIngameMenu:new())
+                OpenGui(GuiIngameMenu:new())
                 return true
             end)
         end)
