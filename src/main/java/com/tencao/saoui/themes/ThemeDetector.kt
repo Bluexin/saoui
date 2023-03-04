@@ -96,9 +96,10 @@ object ThemeDetector {
             }
             val id = ResourceLocation(themeDomain, name)
             SAOCore.LOGGER.debug("Found candidate theme {} from {} at {}", id, themeDomain, path)
+            val domainPath = path.parent.toString().replace(File.separator, "/").removePrefix("assets/$domain/")
             id to ThemeMetadata(
                 id = id,
-                themeRoot = ResourceLocation(domain, path.parent.toString().removePrefix("assets/$domain/")),
+                themeRoot = ResourceLocation(domain, domainPath),
                 name = name,
                 type = format
             )

@@ -53,7 +53,8 @@ import java.util.concurrent.ConcurrentHashMap
     clientSideOnly = true,
     dependencies = SAOCore.DEPS,
     acceptableSaveVersions = "*",
-    canBeDeactivated = true
+    canBeDeactivated = true,
+    modLanguageAdapter = "io.github.chaosunity.forgelin.KotlinAdapter"
 )
 object SAOCore {
     const val MODID = "saoui"
