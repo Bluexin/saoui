@@ -328,7 +328,6 @@ open class IconElement(
 
     override fun mouseClicked(pos: Vec2d, mouseButton: MouseButton): Boolean {
         if (this.parent is CategoryButton && this.highlighted && this.elementsSequence.none { it is CategoryButton && it.highlighted }) {
-            @Suppress("NON_EXHAUSTIVE_WHEN")
             when (mouseButton) {
                 MouseButton.SCROLL_UP -> {
                     --scroll
@@ -337,6 +336,10 @@ open class IconElement(
 
                 MouseButton.SCROLL_DOWN -> {
                     ++scroll
+                    return true
+                }
+
+                else -> {
                     return true
                 }
             }

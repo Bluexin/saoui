@@ -17,14 +17,15 @@ buildscript {
         }
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '4.1.+', changing: true
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.+"
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.20"
     }
 }
 
 plugins {
     id 'java'
     id 'idea'
+    id "co.uzzu.dotenv.gradle" version "2.0.0"
     id 'com.github.johnrengelman.shadow' version '6.1.0'
 }
 
@@ -148,18 +149,17 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
     mavenCentral()
-    mavenLocal()
     maven {
         name "MinecraftForge Maven"
         url "https://files.minecraftforge.net/maven/"
     }
     maven {
-        name = "TCons & Mantle"
-        url = "https://dvs1.progwml6.com/files/maven/"
+        name 'Tencao Maven'
+        url 'https://maven.tencao.com/repository/releases/'
     }
     maven {
-        name 'Forgelin'
-        url "https://maven.shadowfacts.net/"
+        name = "TCons & Mantle"
+        url = "https://dvs1.progwml6.com/files/maven/"
     }
     maven {
         name 'Bluexin'
@@ -173,8 +173,9 @@ repositories {
 dependencies {
     minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2860'
 
-    implementation "net.shadowfacts:Forgelin:${forgelin_version}"
-    implementation fg.deobf('com.tencao:saomclib:1.12.2+') {changing = true}
+    // implementation "net.shadowfacts:Forgelin:${forgelin_version}"
+    implementation 'io.github.chaosunity:forgelin:1.7.20.0'
+    implementation('com.tencao:saomclib:1.12.2-1.4.11') { changing = true }
     shadow 'be.bluexin.gnu.jel:gnu-jel:2.1.3'
     shadow 'com.helger:ph-css:6.5.0'
     shadow 'com.helger.commons:ph-commons:10.1.6'
@@ -189,6 +190,8 @@ javadoc {
 }
 
 jar {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+
     for (dep in configurations.shadow) {
         from(project.zipTree(dep)) {
             exclude 'META-INF/MANIFEST.MF'
@@ -270,7 +273,7 @@ publishing {
             url = remote? remoteURL: localURL
             if (remote) {
                 credentials(PasswordCredentials) {
-                    username = 'CI'
+                    username = System.getenv('REPO_USR')
                     password = System.getenv('REPO_PWD')
                 }
             }
