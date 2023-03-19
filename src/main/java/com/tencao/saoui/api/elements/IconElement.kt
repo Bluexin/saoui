@@ -339,9 +339,7 @@ open class IconElement(
                     return true
                 }
 
-                else -> {
-                    return true
-                }
+                else -> Unit
             }
         }
         return if (mouseButton == MouseButton.LEFT && pos in this) onClickBody(pos, mouseButton)
