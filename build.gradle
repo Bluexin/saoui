@@ -158,8 +158,8 @@ repositories {
         url 'https://maven.tencao.com/repository/releases/'
     }
     maven {
-        name = 'TCons & Mantle'
-        url = 'https://dvs1.progwml6.com/files/maven/'
+        name 'Tencao Maven'
+        url 'https://maven.tencao.com/repository/releases/'
     }
     maven {
         name 'Bluexin'
