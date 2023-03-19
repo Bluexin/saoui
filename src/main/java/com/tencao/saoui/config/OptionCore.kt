@@ -139,7 +139,7 @@ enum class OptionCore(
     private val setting = if (isCategory) null else BooleanSetting(
         Settings.NS_BUILTIN, ResourceLocation(category?.name ?: Configuration.CATEGORY_GENERAL, name),
         defaultValue, description.singleOrNull()
-    ).also(Settings::registerSetting)
+    ).register()
 
     private var value: Boolean = defaultValue
         get() = setting?.let(Settings::get) ?: field

@@ -18,12 +18,9 @@
 package com.tencao.saoui.config
 
 import com.tencao.saoui.SAOCore
-import com.tencao.saoui.SAOCore.saoConfDir
 import com.tencao.saoui.config.Settings.NS_BUILTIN
 import net.minecraft.util.ResourceLocation
-import net.minecraftforge.common.config.Configuration
 import net.minecraftforge.common.config.Configuration.CATEGORY_GENERAL
-import java.io.File
 
 /**
  * Part of SAOUI
@@ -35,24 +32,14 @@ object ConfigHandler {
 
     private fun general(key: String) = ResourceLocation(CATEGORY_GENERAL, key)
 
-    private val DEBUG_S = BooleanSetting(NS_BUILTIN, general("debug"), false).also(Settings::registerSetting)
-    private val LAST_UPDATE =
-        StringSetting(NS_BUILTIN, general("lastUpdate"), "nothing").also(Settings::registerSetting)
-    private val IGNORE_UPDATE_S =
-        BooleanSetting(NS_BUILTIN, general("ignoreUpdate"), true).also(Settings::registerSetting)
-    private val DEBUG_FAKE_PARTY = IntSetting(
+    var lastVersion by StringSetting(NS_BUILTIN, general("lastUpdate"), "nothing").register()
+    var ignoreUpdate by BooleanSetting(NS_BUILTIN, general("ignoreUpdate"), true).register()
+    var enableDebug by BooleanSetting(NS_BUILTIN, general("debug"), false).register()
+    var debugFakePT by IntSetting(
         NS_BUILTIN, general("debugFakePT"), 0, "Amount of fake party members, 0 to disable."
-    ) { it in 0..10 }.also(Settings::registerSetting)
-    private val LAST_THEME_USED = ResourceLocationSetting(
+    ) { it in 0..10 }.register()
+    var lastThemeUsed by ResourceLocationSetting(
         NS_BUILTIN, general("lastThemeUsed"), DEFAULT_THEME,
         "The last used theme loaded. If invalid, defaults to sao's theme"
-    ).also(Settings::registerSetting)
-
-    var lastVersion by LAST_UPDATE
-    var ignoreUpdate by IGNORE_UPDATE_S
-    var enableDebug by DEBUG_S
-    var debugFakePT by DEBUG_FAKE_PARTY
-    var lastThemeUsed by LAST_THEME_USED
-    var config: Configuration = Configuration(File(saoConfDir, "main.cfg"))
-        private set
+    ).register()
 }

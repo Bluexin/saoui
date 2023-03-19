@@ -26,34 +26,34 @@ object Settings {
 
     operator fun get(namespace: ResourceLocation, key: ResourceLocation): Any? {
         val (config, setting) = getConfigAndSetting(namespace, key, "get") ?: return null
-        val (_, _, default, comment, read, write, validate) = setting
+        val (_, _, default, comment, read, write, validate, type) = setting
 
-        val property = config.get(key.resourceDomain, key.resourcePath, write(default), comment)
+        val property = config.get(key.resourceDomain, key.resourcePath, write(default), comment, type)
         return read(property.string)?.takeIf(validate) ?: default
     }
 
     operator fun <T : Any> get(setting: Setting<T>): T {
-        val (_, key, default, comment, read, write, validate) = setting
+        val (_, key, default, comment, read, write, validate, type) = setting
         val config = getConfig(setting.namespace, "get") ?: return default
 
-        val property = config.get(key.resourceDomain, key.resourcePath, write(default), comment)
+        val property = config.get(key.resourceDomain, key.resourcePath, write(default), comment, type)
         return read(property.string)?.takeIf(validate) ?: default
     }
 
     operator fun set(namespace: ResourceLocation, key: ResourceLocation, value: String) {
         val (config, setting) = getConfigAndSetting(namespace, key, "set") ?: return
-        val (_, _, default, comment, read, write, validate) = setting
+        val (_, _, default, comment, read, write, validate, type) = setting
 
-        val property = config.get(key.resourceDomain, key.resourcePath, write(default), comment)
+        val property = config.get(key.resourceDomain, key.resourcePath, write(default), comment, type)
         read(value)?.takeIf(validate)?.let { property.set(value) }
         notifyUpdate(namespace)
     }
 
     operator fun <T : Any> set(setting: Setting<T>, value: T) {
-        val (namespace, key, default, comment, _, write, validate) = setting
+        val (namespace, key, default, comment, _, write, validate, type) = setting
         val config = getConfig(namespace, "set") ?: return
 
-        val property = config.get(key.resourceDomain, key.resourcePath, write(default), comment)
+        val property = config.get(key.resourceDomain, key.resourcePath, write(default), comment, type)
         value.takeIf(validate)?.let { property.set(write(value)) }
         notifyUpdate(namespace)
     }
@@ -67,7 +67,7 @@ object Settings {
         return read(value)?.takeIf(validate) != null
     }
 
-    fun registerSetting(setting: Setting<*>) {
+    fun register(setting: Setting<*>) {
         registerNamespace(setting.namespace)
         logger.info("Registering Setting ${setting.namespace}/${setting.key}")
         @Suppress("UNCHECKED_CAST")
@@ -104,6 +104,7 @@ object Settings {
         CoroutineScope(Dispatchers.IO).launch {
             logger.info("[${currentCoroutineContext()}] Starting listener")
             flow<ResourceLocation> {
+                logger.info("[${currentCoroutineContext()}] Starting updates filter")
                 // emit a value when the new one is different from the previous one or a timeout has been reached
                 var lastValue: ResourceLocation? = null
                 while (true) select {

@@ -1,6 +1,7 @@
 package com.tencao.saoui.config
 
 import net.minecraft.util.ResourceLocation
+import net.minecraftforge.common.config.Property
 import kotlin.reflect.KProperty
 
 abstract class Setting<T : Any>(
@@ -19,10 +20,15 @@ abstract class Setting<T : Any>(
     operator fun component5() = read
     operator fun component6() = write
     operator fun component7() = validate
+    operator fun component8() = type
 
     operator fun getValue(caller: Any, property: KProperty<*>): T = Settings[this]
 
     operator fun setValue(caller: Any, property: KProperty<*>, value: T) = Settings.set(this, value)
+
+    open val type get() = Property.Type.STRING
+
+    fun register() = this.also(Settings::register)
 }
 
 open class StringSetting(
@@ -47,7 +53,9 @@ class BooleanSetting(
     defaultValue, comment,
     String::toBooleanStrictOrNull,
     Boolean::toString, { true }
-)
+) {
+    override val type get() = Property.Type.BOOLEAN
+}
 
 class IntSetting(
     namespace: ResourceLocation,
@@ -60,7 +68,24 @@ class IntSetting(
     defaultValue, comment,
     String::toIntOrNull,
     Int::toString, validate
-)
+) {
+    override val type get() = Property.Type.INTEGER
+}
+
+class DoubleSetting(
+    namespace: ResourceLocation,
+    key: ResourceLocation,
+    defaultValue: Double,
+    comment: String? = null,
+    validate: (Double) -> Boolean = { true }
+) : Setting<Double>(
+    namespace, key,
+    defaultValue, comment,
+    String::toDoubleOrNull,
+    Double::toString, validate
+) {
+    override val type get() = Property.Type.DOUBLE
+}
 
 class ChoiceSetting(
     namespace: ResourceLocation,
