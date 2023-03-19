@@ -1,14 +1,11 @@
 package com.tencao.saoui.config
 
 import com.tencao.saoui.SAOCore
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.onFailure
-import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.selects.select
 import net.minecraft.util.ResourceLocation
 import net.minecraftforge.common.config.Configuration
@@ -24,7 +21,7 @@ object Settings {
     private val registry: MutableMap<Pair<ResourceLocation, ResourceLocation>, Setting<Any>> = mutableMapOf()
 
     private val updates: Channel<ResourceLocation> = Channel(capacity = Channel.BUFFERED) {
-        logger.warn("Settings : Undelivered $it")
+        logger.warn("Undelivered $it")
     }
 
     operator fun get(namespace: ResourceLocation, key: ResourceLocation): Any? {
@@ -81,7 +78,6 @@ object Settings {
     }
 
     private fun notifyUpdate(namespace: ResourceLocation) {
-        logger.info("Notifying Settings update for $namespace")
         updates.trySend(namespace).onFailure {
             logger.warn("Failed to send config update for $namespace !")
         }
@@ -100,6 +96,10 @@ object Settings {
         }
     }
 
+    /**
+     * This sets up the listener for [updates], which will save the config file when an update is received for
+     * a different config file (namespace) **or** a timeout has been reached
+     */
     fun initialize() {
         CoroutineScope(Dispatchers.IO).launch {
             logger.info("[${currentCoroutineContext()}] Starting listener")
@@ -107,34 +107,27 @@ object Settings {
                 // emit a value when the new one is different from the previous one or a timeout has been reached
                 var lastValue: ResourceLocation? = null
                 while (true) select {
-                    updates.onReceive { newValue ->
-//                        logger.info("[${currentCoroutineContext()}] Received $newValue")
+                    updates.onReceive { newValue -> // New value received
                         when {
                             lastValue == null -> lastValue = newValue
                             lastValue != newValue -> {
-                                lastValue?.let {
-                                    logger.info("[${currentCoroutineContext()}] New update, saving Settings for $it")
-                                    emit(it)
-                                }
+                                lastValue?.let { emit(it) }
                                 lastValue = newValue
                             }
                         }
                     }
-                    onTimeout(5_000) {
+                    @OptIn(ExperimentalCoroutinesApi::class) // for onTimeout
+                    onTimeout(5_000) { // Timeout reached
                         if (lastValue != null) {
-                            lastValue?.let {
-                                logger.info("[${currentCoroutineContext()}] Timeout reached, saving Settings for $it")
-                                emit(it)
-                            }
+                            lastValue?.let { emit(it) }
                             lastValue = null
-                        } else logger.info("[${currentCoroutineContext()}] Timeout reached with no value to emit")
+                        }
                     }
                 }
             }.flowOn(Dispatchers.Default).collect {
-                logger.info("[${currentCoroutineContext()}] Saving Settings for $it")
                 configurations[it]?.save()
             }
-            logger.info("[${currentCoroutineContext()}] Stopping listener")
+            logger.warn("[${currentCoroutineContext()}] Stopping listener (this should never happen !)")
         }
     }
 
