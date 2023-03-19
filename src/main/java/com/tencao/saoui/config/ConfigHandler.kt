@@ -19,10 +19,11 @@ package com.tencao.saoui.config
 
 import com.tencao.saoui.SAOCore
 import com.tencao.saoui.SAOCore.saoConfDir
+import com.tencao.saoui.config.Settings.NS_BUILTIN
 import net.minecraft.util.ResourceLocation
 import net.minecraftforge.common.config.Configuration
+import net.minecraftforge.common.config.Configuration.CATEGORY_GENERAL
 import java.io.File
-import java.util.stream.Stream
 
 /**
  * Part of SAOUI
@@ -32,81 +33,26 @@ import java.util.stream.Stream
 object ConfigHandler {
     val DEFAULT_THEME = ResourceLocation(SAOCore.MODID, "sao")
 
-    var lastVersion: String = "1.0"
-    var IGNORE_UPDATE: Boolean = false
-    var DEBUG = false
-    var debugFakePT: Int = 0
-    var lastThemeUsed: ResourceLocation = DEFAULT_THEME
+    private fun general(key: String) = ResourceLocation(CATEGORY_GENERAL, key)
+
+    private val DEBUG_S = BooleanSetting(NS_BUILTIN, general("debug"), false).also(Settings::registerSetting)
+    private val LAST_UPDATE =
+        StringSetting(NS_BUILTIN, general("lastUpdate"), "nothing").also(Settings::registerSetting)
+    private val IGNORE_UPDATE_S =
+        BooleanSetting(NS_BUILTIN, general("ignoreUpdate"), true).also(Settings::registerSetting)
+    private val DEBUG_FAKE_PARTY = IntSetting(
+        NS_BUILTIN, general("debugFakePT"), 0, "Amount of fake party members, 0 to disable."
+    ) { it in 0..10 }.also(Settings::registerSetting)
+    private val LAST_THEME_USED = ResourceLocationSetting(
+        NS_BUILTIN, general("lastThemeUsed"), DEFAULT_THEME,
+        "The last used theme loaded. If invalid, defaults to sao's theme"
+    ).also(Settings::registerSetting)
+
+    var lastVersion by LAST_UPDATE
+    var ignoreUpdate by IGNORE_UPDATE_S
+    var enableDebug by DEBUG_S
+    var debugFakePT by DEBUG_FAKE_PARTY
+    var lastThemeUsed by LAST_THEME_USED
     var config: Configuration = Configuration(File(saoConfDir, "main.cfg"))
         private set
-
-    fun preInit() {
-        // saoConfDir = confDir(event.modConfigurationDirectory)
-        // config = Configuration(File(saoConfDir, "main.cfg"))
-        config.load()
-
-        DEBUG = config.get(Configuration.CATEGORY_GENERAL, "debug", DEBUG).boolean
-
-        lastVersion = config.get(Configuration.CATEGORY_GENERAL, "lastUpdate", "nothing").string
-        IGNORE_UPDATE = config.get(Configuration.CATEGORY_GENERAL, "ignoreUpdate", false).boolean
-
-        OptionCore.values().filter { it.isCategory }
-            .forEach { c ->
-                Stream.of(*OptionCore.values()).filter { o -> o.category === c }
-                    .forEach { o ->
-                        if (config.get(c.name.toLowerCase(), o.name.toLowerCase(), o.isEnabled).boolean) {
-                            o.enable()
-                        } else {
-                            o.disable()
-                        }
-                    }
-            }
-
-        OptionCore.values().filter { o -> !o.isCategory && o.category == null }.forEach { o ->
-            if (config.get(Configuration.CATEGORY_GENERAL, o.name.toLowerCase(), o.isEnabled).boolean) {
-                o.enable()
-            } else {
-                o.disable()
-            }
-        }
-
-        debugFakePT = config.getInt("debugFakePT", Configuration.CATEGORY_GENERAL, 0, 0, 10, "Amount of fake party members, 0 to disable.")
-
-        lastThemeUsed = config.getString("lastThemeUsed", Configuration.CATEGORY_GENERAL, lastThemeUsed.toString(), "The last used theme loaded. If invalid, defaults to sao's theme")
-            .let {
-                if (it.contains(':')) ResourceLocation(it)
-                else DEFAULT_THEME // fallback for old configs
-            }
-
-        config.save()
-    }
-
-    fun setOption(option: OptionCore) {
-        config.get(option.category?.name?.toLowerCase() ?: Configuration.CATEGORY_GENERAL, option.name.toLowerCase(), option.isEnabled).set(option.isEnabled)
-        saveAllOptions()
-    }
-
-    fun saveAllOptions() {
-        config.save()
-    }
-
-    fun saveTheme(theme: ResourceLocation) {
-        config.get(Configuration.CATEGORY_GENERAL, "lastThemeUsed", lastThemeUsed.toString()).set(theme.toString())
-        lastThemeUsed = theme
-        config.save()
-    }
-
-    fun saveVersion(version: String) {
-        config.get(Configuration.CATEGORY_GENERAL, "last.update", lastVersion).set(version)
-        config.save()
-    }
-
-    fun setIgnoreVersion(value: Boolean) {
-        config.get(Configuration.CATEGORY_GENERAL, "ignore.update", ignoreVersion()).set(value)
-        config.save()
-    }
-
-    fun ignoreVersion(): Boolean {
-        return IGNORE_UPDATE
-    }
 }

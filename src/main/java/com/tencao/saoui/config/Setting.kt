@@ -1,6 +1,7 @@
 package com.tencao.saoui.config
 
 import net.minecraft.util.ResourceLocation
+import kotlin.reflect.KProperty
 
 abstract class Setting<T : Any>(
     val namespace: ResourceLocation,
@@ -18,13 +19,17 @@ abstract class Setting<T : Any>(
     operator fun component5() = read
     operator fun component6() = write
     operator fun component7() = validate
+
+    operator fun getValue(caller: Any, property: KProperty<*>): T = Settings[this]
+
+    operator fun setValue(caller: Any, property: KProperty<*>, value: T) = Settings.set(this, value)
 }
 
-class StringSetting(
+open class StringSetting(
     namespace: ResourceLocation,
     key: ResourceLocation,
     defaultValue: String,
-    comment: String?,
+    comment: String? = null,
     validate: (String) -> Boolean = { true }
 ) : Setting<String>(
     namespace, key,
@@ -36,35 +41,47 @@ class BooleanSetting(
     namespace: ResourceLocation,
     key: ResourceLocation,
     defaultValue: Boolean,
-    comment: String?
+    comment: String? = null
 ) : Setting<Boolean>(
     namespace, key,
     defaultValue, comment,
-    { it.toBooleanStrictOrNull() },
-    { it.toString() }, { true }
+    String::toBooleanStrictOrNull,
+    Boolean::toString, { true }
 )
 
 class IntSetting(
     namespace: ResourceLocation,
     key: ResourceLocation,
     defaultValue: Int,
-    comment: String?,
+    comment: String? = null,
     validate: (Int) -> Boolean = { true }
 ) : Setting<Int>(
     namespace, key,
     defaultValue, comment,
-    { it.toIntOrNull() },
-    { it.toString() }, validate
+    String::toIntOrNull,
+    Int::toString, validate
 )
 
 class ChoiceSetting(
     namespace: ResourceLocation,
     key: ResourceLocation,
     defaultValue: String,
-    comment: String?,
+    comment: String? = null,
     values: Set<String>
-) : Setting<String>(
+) : StringSetting(
     namespace, key,
     defaultValue, comment,
-    { it }, { it }, { it in values }
+    values::contains
+)
+
+class ResourceLocationSetting(
+    namespace: ResourceLocation,
+    key: ResourceLocation,
+    defaultValue: ResourceLocation,
+    comment: String? = null,
+) : Setting<ResourceLocation>(
+    namespace, key,
+    defaultValue, comment,
+    { if (it.contains(':')) ResourceLocation(it) else null },
+    ResourceLocation::toString, { true }
 )

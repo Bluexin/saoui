@@ -22,7 +22,9 @@ import com.tencao.saoui.api.events.OptionTriggerEvent
 import com.tencao.saoui.api.info.IOption
 import net.minecraft.client.Minecraft
 import net.minecraft.client.resources.I18n
+import net.minecraft.util.ResourceLocation
 import net.minecraftforge.common.MinecraftForge
+import net.minecraftforge.common.config.Configuration
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
 
@@ -37,127 +39,128 @@ enum class OptionCore(
     val unformattedName: String,
     val displayName: String = I18n.format(unformattedName),
     val description: List<String> = listOf(I18n.format("$unformattedName.desc")),
-    private var value: Boolean,
+    private val defaultValue: Boolean,
+    private val category: OptionCore?,
     /**
      * @return Returns true if this is a Category or not
      */
-    val isCategory: Boolean,
-    private val category: OptionCore?,
-    private val restricted: Boolean
+    val isCategory: Boolean = category == null,
+    private val restricted: Boolean = false
 ) : IOption {
 
     // Main Categories
-    UI("optCatUI", value = false, isCategory = true, category = null, restricted = false),
-    THEME("optTheme", value = false, isCategory = true, category = null, restricted = false),
-    ENTITIES("optEntities", value = false, isCategory = true, category = null, restricted = false),
-    HEALTH_OPTIONS("optCatHealth", value = false, isCategory = true, category = null, restricted = false),
-    HOTBAR_OPTIONS("optCatHotBar", value = false, isCategory = true, category = null, restricted = false),
-    EFFECTS("optCatEffects", value = false, isCategory = true, category = null, restricted = false),
-    MISC("optCatMisc", value = false, isCategory = true, category = null, restricted = false),
-    DEBUG("optCatDebug", value = false, isCategory = true, category = null, restricted = false),
+    UI("optCatUI", defaultValue = false, category = null),
+    THEME("optTheme", defaultValue = false, category = null),
+    ENTITIES("optEntities", defaultValue = false, category = null),
+    HEALTH_OPTIONS("optCatHealth", defaultValue = false, category = null),
+    HOTBAR_OPTIONS("optCatHotBar", defaultValue = false, category = null),
+    EFFECTS("optCatEffects", defaultValue = false, category = null),
+    MISC("optCatMisc", defaultValue = false, category = null),
+    DEBUG("optCatDebug", defaultValue = false, category = null),
 
     // General UI Settings
-    UI_ONLY("optionUIOnly", value = false, isCategory = false, category = UI, restricted = false),
-    DEFAULT_INVENTORY("optionDefaultInv", value = true, isCategory = false, category = UI, restricted = false),
-    DEFAULT_DEATH_SCREEN("optionDefaultDeath", value = false, isCategory = false, category = UI, restricted = false),
-    DEFAULT_DEBUG("optionDefaultDebug", value = false, isCategory = false, category = UI, restricted = false),
-    ALWAYS_SHOW("optionAlwaysShow", value = true, isCategory = false, category = UI, restricted = false),
-    LOGOUT("optionLogout", value = true, isCategory = false, category = UI, restricted = false),
-    GUI_PAUSE("optionGuiPause", value = false, isCategory = false, category = UI, restricted = false),
-    UI_MOVEMENT("optionUIMovement", value = true, isCategory = false, category = UI, restricted = false),
+    UI_ONLY("optionUIOnly", defaultValue = false, category = UI),
+    DEFAULT_INVENTORY("optionDefaultInv", defaultValue = true, category = UI),
+    DEFAULT_DEATH_SCREEN("optionDefaultDeath", defaultValue = false, category = UI),
+    DEFAULT_DEBUG("optionDefaultDebug", defaultValue = false, category = UI),
+    ALWAYS_SHOW("optionAlwaysShow", defaultValue = true, category = UI),
+    LOGOUT("optionLogout", defaultValue = true, category = UI),
+    GUI_PAUSE("optionGuiPause", defaultValue = false, category = UI),
+    UI_MOVEMENT("optionUIMovement", defaultValue = true, category = UI),
 
     // Themes
-    // @Deprecated("Themes are a thing now")
-    VANILLA_UI("optionDefaultUI", value = false, isCategory = false, category = THEME, restricted = false),
+    VANILLA_UI("optionDefaultUI", defaultValue = false, category = THEME),
 
-    // @Deprecated("Themes are a thing now")
-    // SAO_UI("optionSAOUI", value = true, isCategory = false, category = THEME, restricted = true),
     // Entity Options
-    ENTITY_HEALTH_BARS("optionEntityHealthBars", value = false, isCategory = true, category = ENTITIES, restricted = false),
-    ENTITY_CRYSTALS("optionEntityCrystals", value = false, isCategory = true, category = ENTITIES, restricted = false),
+    ENTITY_HEALTH_BARS("optionEntityHealthBars", defaultValue = false, isCategory = true, category = ENTITIES),
+    ENTITY_CRYSTALS("optionEntityCrystals", defaultValue = false, isCategory = true, category = ENTITIES),
 
     // Health Options
-    SMOOTH_HEALTH("optionSmoothHealth", value = true, isCategory = false, category = HEALTH_OPTIONS, restricted = false),
-    REMOVE_HPXP("optionLightHud", value = false, isCategory = false, category = HEALTH_OPTIONS, restricted = false),
-    ALT_ABSORB_POS("optionAltAbsorbPos", value = false, isCategory = false, category = HEALTH_OPTIONS, restricted = false),
-    ENEMY_ONSCREEN_HEALTH("optionEnemyOnscreenHealth", value = true, isCategory = false, category = HEALTH_OPTIONS, restricted = false),
-    HIDE_OFFLINE_PARTY("optionHideOfflineParty", value = false, isCategory = false, category = HEALTH_OPTIONS, restricted = false),
+    SMOOTH_HEALTH("optionSmoothHealth", defaultValue = true, category = HEALTH_OPTIONS),
+    REMOVE_HPXP("optionLightHud", defaultValue = false, category = HEALTH_OPTIONS),
+    ALT_ABSORB_POS("optionAltAbsorbPos", defaultValue = false, category = HEALTH_OPTIONS),
+    ENEMY_ONSCREEN_HEALTH("optionEnemyOnscreenHealth", defaultValue = true, category = HEALTH_OPTIONS),
+    HIDE_OFFLINE_PARTY("optionHideOfflineParty", defaultValue = false, category = HEALTH_OPTIONS),
 
     // Health Bars
-    INNOCENT_HEALTH("optionInnocentHealthBars", value = true, isCategory = false, category = ENTITY_HEALTH_BARS, restricted = false),
-    VIOLENT_HEALTH("optionViolentHealthBars", value = true, isCategory = false, category = ENTITY_HEALTH_BARS, restricted = false),
-    KILLER_HEALTH("optionKillerHealthBars", value = true, isCategory = false, category = ENTITY_HEALTH_BARS, restricted = false),
-    BOSS_HEALTH("optionBossHealthBars", value = true, isCategory = false, category = ENTITY_HEALTH_BARS, restricted = false),
-    CREATIVE_HEALTH("optionCreativeHealthBars", value = true, isCategory = false, category = ENTITY_HEALTH_BARS, restricted = false),
-    OP_HEALTH("optionOPHealthBars", value = true, isCategory = false, category = ENTITY_HEALTH_BARS, restricted = false),
-    INVALID_HEALTH("optionInvalidHealthBars", value = true, isCategory = false, category = ENTITY_HEALTH_BARS, restricted = false),
-    DEV_HEALTH("optionDevHealthBars", value = true, isCategory = false, category = ENTITY_HEALTH_BARS, restricted = false),
+    INNOCENT_HEALTH("optionInnocentHealthBars", defaultValue = true, category = ENTITY_HEALTH_BARS),
+    VIOLENT_HEALTH("optionViolentHealthBars", defaultValue = true, category = ENTITY_HEALTH_BARS),
+    KILLER_HEALTH("optionKillerHealthBars", defaultValue = true, category = ENTITY_HEALTH_BARS),
+    BOSS_HEALTH("optionBossHealthBars", defaultValue = true, category = ENTITY_HEALTH_BARS),
+    CREATIVE_HEALTH("optionCreativeHealthBars", defaultValue = true, category = ENTITY_HEALTH_BARS),
+    OP_HEALTH("optionOPHealthBars", defaultValue = true, category = ENTITY_HEALTH_BARS),
+    INVALID_HEALTH("optionInvalidHealthBars", defaultValue = true, category = ENTITY_HEALTH_BARS),
+    DEV_HEALTH("optionDevHealthBars", defaultValue = true, category = ENTITY_HEALTH_BARS),
 
     // CRYSTALS
-    INNOCENT_CRYSTAL("optionInnocentCrystal", value = true, isCategory = false, category = ENTITY_CRYSTALS, restricted = false),
-    VIOLENT_CRYSTAL("optionViolentCrystal", value = true, isCategory = false, category = ENTITY_CRYSTALS, restricted = false),
-    KILLER_CRYSTAL("optionKillerCrystal", value = true, isCategory = false, category = ENTITY_CRYSTALS, restricted = false),
-    BOSS_CRYSTAL("optionBossCrystal", value = true, isCategory = false, category = ENTITY_CRYSTALS, restricted = false),
-    CREATIVE_CRYSTAL("optionCreativeCrystal", value = true, isCategory = false, category = ENTITY_CRYSTALS, restricted = false),
-    OP_CRYSTAL("optionOPCrystal", value = true, isCategory = false, category = ENTITY_CRYSTALS, restricted = false),
-    INVALID_CRYSTAL("optionInvalidCrystal", value = true, isCategory = false, category = ENTITY_CRYSTALS, restricted = false),
-    DEV_CRYSTAL("optionDevCrystal", value = true, isCategory = false, category = ENTITY_CRYSTALS, restricted = false),
+    INNOCENT_CRYSTAL("optionInnocentCrystal", defaultValue = true, category = ENTITY_CRYSTALS),
+    VIOLENT_CRYSTAL("optionViolentCrystal", defaultValue = true, category = ENTITY_CRYSTALS),
+    KILLER_CRYSTAL("optionKillerCrystal", defaultValue = true, category = ENTITY_CRYSTALS),
+    BOSS_CRYSTAL("optionBossCrystal", defaultValue = true, category = ENTITY_CRYSTALS),
+    CREATIVE_CRYSTAL("optionCreativeCrystal", defaultValue = true, category = ENTITY_CRYSTALS),
+    OP_CRYSTAL("optionOPCrystal", defaultValue = true, category = ENTITY_CRYSTALS),
+    INVALID_CRYSTAL("optionInvalidCrystal", defaultValue = true, category = ENTITY_CRYSTALS),
+    DEV_CRYSTAL("optionDevCrystal", defaultValue = true, category = ENTITY_CRYSTALS),
 
     // Hotbar
-    DEFAULT_HOTBAR("optionDefaultHotbar", value = false, isCategory = false, category = HOTBAR_OPTIONS, restricted = true),
-    HOR_HOTBAR("optionHorHotbar", value = false, isCategory = false, category = HOTBAR_OPTIONS, restricted = true),
-    VER_HOTBAR("optionVerHotbar", value = true, isCategory = false, category = HOTBAR_OPTIONS, restricted = true),
+    DEFAULT_HOTBAR("optionDefaultHotbar", defaultValue = false, category = HOTBAR_OPTIONS, restricted = true),
+    HOR_HOTBAR("optionHorHotbar", defaultValue = false, category = HOTBAR_OPTIONS, restricted = true),
+    VER_HOTBAR("optionVerHotbar", defaultValue = true, category = HOTBAR_OPTIONS, restricted = true),
 
     // Effects
-    SPINNING_CRYSTALS("optionSpinning", value = true, isCategory = false, category = EFFECTS, restricted = false),
-    PARTICLES("optionParticles", value = true, isCategory = false, category = EFFECTS, restricted = false),
-    SOUND_EFFECTS("optionSounds", value = true, isCategory = false, category = EFFECTS, restricted = false),
-    MOUSE_OVER_EFFECT("optionMouseOver", value = true, isCategory = false, category = EFFECTS, restricted = false),
+    SPINNING_CRYSTALS("optionSpinning", defaultValue = true, category = EFFECTS),
+    PARTICLES("optionParticles", defaultValue = true, category = EFFECTS),
+    SOUND_EFFECTS("optionSounds", defaultValue = true, category = EFFECTS),
+    MOUSE_OVER_EFFECT("optionMouseOver", defaultValue = true, category = EFFECTS),
 
     // Misc
-    AGGRO_SYSTEM("optionAggro", value = true, isCategory = false, category = MISC, restricted = false),
-    MOUNT_STAT_VIEW("optionMountStatView", value = true, isCategory = false, category = MISC, restricted = false),
-    CUSTOM_FONT("optionCustomFont", value = false, isCategory = false, category = MISC, restricted = false),
-    TEXT_SHADOW("optionTextShadow", value = true, isCategory = false, category = MISC, restricted = false),
+    AGGRO_SYSTEM("optionAggro", defaultValue = true, category = MISC),
+    MOUNT_STAT_VIEW("optionMountStatView", defaultValue = true, category = MISC),
+    CUSTOM_FONT("optionCustomFont", defaultValue = false, category = MISC),
+    TEXT_SHADOW("optionTextShadow", defaultValue = true, category = MISC),
 
     // Debug
-    RENDER_SYSTEM("optionRenderSystem", value = false, isCategory = true, category = DEBUG, restricted = false),
+    RENDER_SYSTEM("optionRenderSystem", defaultValue = false, isCategory = true, category = DEBUG),
 
     // Render System
-    RENDER_CROSSHAIRS("optionRenderCrosshairs", value = true, isCategory = false, category = RENDER_SYSTEM, restricted = false),
-    RENDER_ARMOR("optionRenderArmor", value = true, isCategory = false, category = RENDER_SYSTEM, restricted = false),
-    RENDER_HOTBAR("optionRenderHotbar", value = true, isCategory = false, category = RENDER_SYSTEM, restricted = false),
-    RENDER_AIR("optionRenderAir", value = true, isCategory = false, category = RENDER_SYSTEM, restricted = false),
-    RENDER_POTION_ICONS("optionRenderPotionIcons", value = true, isCategory = false, category = RENDER_SYSTEM, restricted = false),
-    RENDER_HEALTH("optionRenderHealth", value = true, isCategory = false, category = RENDER_SYSTEM, restricted = false),
-    RENDER_FOOD("optionRenderFood", value = true, isCategory = false, category = RENDER_SYSTEM, restricted = false),
-    RENDER_EXPERIENCE("optionRenderExp", value = true, isCategory = false, category = RENDER_SYSTEM, restricted = false),
-    RENDER_JUMPBAR("optionRenderJumpbar", value = true, isCategory = false, category = RENDER_SYSTEM, restricted = false),
-    RENDER_HEALTHMOUNT("optionRenderHealthMount", value = true, isCategory = false, category = RENDER_SYSTEM, restricted = false);
-    // TODO: make a way for themes to register custom options?
+    RENDER_CROSSHAIRS("optionRenderCrosshairs", defaultValue = true, category = RENDER_SYSTEM),
+    RENDER_ARMOR("optionRenderArmor", defaultValue = true, category = RENDER_SYSTEM),
+    RENDER_HOTBAR("optionRenderHotbar", defaultValue = true, category = RENDER_SYSTEM),
+    RENDER_AIR("optionRenderAir", defaultValue = true, category = RENDER_SYSTEM),
+    RENDER_POTION_ICONS("optionRenderPotionIcons", defaultValue = true, category = RENDER_SYSTEM),
+    RENDER_HEALTH("optionRenderHealth", defaultValue = true, category = RENDER_SYSTEM),
+    RENDER_FOOD("optionRenderFood", defaultValue = true, category = RENDER_SYSTEM),
+    RENDER_EXPERIENCE("optionRenderExp", defaultValue = true, category = RENDER_SYSTEM),
+    RENDER_JUMPBAR("optionRenderJumpbar", defaultValue = true, category = RENDER_SYSTEM),
+    RENDER_HEALTHMOUNT("optionRenderHealthMount", defaultValue = true, category = RENDER_SYSTEM);
 
     override fun toString() = name
+
+    private val setting = if (isCategory) null else BooleanSetting(
+        Settings.NS_BUILTIN, ResourceLocation(category?.name ?: Configuration.CATEGORY_GENERAL, name),
+        defaultValue, description.singleOrNull()
+    ).also(Settings::registerSetting)
+
+    private var value: Boolean = defaultValue
+        get() = setting?.let(Settings::get) ?: field
+        set(value) = setting?.let { Settings[it] = value } ?: run { field = value }
 
     /**
      * This will flip the enabled state of the option and return the new value.
      * For category restrictions, this will always enable the option.
-
-     * @return Returns the newly set value
      */
-    fun flip(): Boolean {
+    fun flip() {
         if (this.isRestricted) {
             values().filter { it.category == this.category }.forEach {
                 it.value = false
-                ConfigHandler.setOption(it) // TODO: transaction
             }
             this.value = true
         } else {
-            this.value = !this.isEnabled
-            if (this == CUSTOM_FONT) GLCore.setFont(Minecraft.getMinecraft(), this.value)
+            val newValue = !this.value
+            this.value = newValue
+            if (this == CUSTOM_FONT) GLCore.setFont(Minecraft.getMinecraft(), newValue)
         }
-        ConfigHandler.setOption(this)
         MinecraftForge.EVENT_BUS.post(OptionTriggerEvent(this))
-        return this.value
     }
 
     /**

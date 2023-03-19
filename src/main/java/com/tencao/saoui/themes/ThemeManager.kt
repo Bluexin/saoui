@@ -48,7 +48,7 @@ object ThemeManager : ISelectiveResourceReloadListener {
         val oldTheme = ConfigHandler.lastThemeUsed
         currentTheme = themeList[theme] ?: themeList[oldTheme] ?: themeList[ConfigHandler.DEFAULT_THEME]!!
 
-        ConfigHandler.saveTheme(currentTheme.id)
+        ConfigHandler.lastThemeUsed = currentTheme.id
 
         currentTheme.type.loader().load(currentTheme)
 
