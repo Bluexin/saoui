@@ -38,8 +38,8 @@ object ConfigHandler {
     var debugFakePT by IntSetting(
         NS_BUILTIN, general("debugFakePT"), 0, "Amount of fake party members, 0 to disable."
     ) { it in 0..10 }.register()
-    var lastThemeUsed by ResourceLocationSetting(
-        NS_BUILTIN, general("lastThemeUsed"), DEFAULT_THEME,
-        "The last used theme loaded. If invalid, defaults to sao's theme"
+    var currentTheme by ResourceLocationSetting(
+        NS_BUILTIN, general("currentTheme"), DEFAULT_THEME,
+        "The currently selected theme. If invalid or unavailable, this will default to the builtin sao theme"
     ).register()
 }

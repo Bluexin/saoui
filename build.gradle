@@ -102,6 +102,7 @@ minecraft {
             mods {
                 saoui {
                     source sourceSets.main
+                    resources sourceSets.main
                 }
             }
         }
@@ -284,26 +285,4 @@ compileKotlin {
         javaParameters = true
         jvmTarget = 1.8
     }
-}
-
-tasks.withType(JavaCompile).configureEach {
-    options.incremental = false
-}
-
-def replaceResources = tasks.register("replaceResources", Copy) {
-    it.outputs.upToDateWhen { false }
-    //Copy it into the build dir
-    it.from(sourceSets.main.resources) {
-    }
-    it.into "$buildDir/resources/main/"
-}
-
-processResources {
-    duplicatesStrategy(DuplicatesStrategy.FAIL)
-    exclude('META-INF/mods.toml')
-    configure { finalizedBy(replaceResources) }
-}
-
-classes.configure {
-    dependsOn(replaceResources)
 }

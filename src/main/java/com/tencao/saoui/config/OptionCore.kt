@@ -27,6 +27,8 @@ import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.common.config.Configuration
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
+import gnu.jel.reflect.Boolean as GBoolean
+import gnu.jel.reflect.Double as GDouble
 
 @SideOnly(Side.CLIENT)
 enum class OptionCore(
@@ -242,6 +244,19 @@ enum class OptionCore(
         fun isEnabled(o: OptionCore): Boolean {
             return o.isEnabled
         }
+
+        /**
+         * Easy getters to use with JEL.
+         *
+         * @param key the key of the setting to get
+         * @return the current setting value
+         */
+        @JvmStatic
+        fun setting(key: String): Any? = Settings[ConfigHandler.currentTheme, ResourceLocation(key)]
+        @JvmStatic
+        fun booleanSetting(key: String): Boolean = setting(key) as Boolean
+        @JvmStatic
+        fun doubleSetting(key: String): Double = setting(key) as Double
 
         val tlOptions
             get() = values().filter { it.category == null }

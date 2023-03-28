@@ -44,11 +44,11 @@ object ThemeManager : ISelectiveResourceReloadListener {
     lateinit var themeList: Map<ResourceLocation, ThemeMetadata>
     lateinit var currentTheme: ThemeMetadata
 
-    fun load(theme: ResourceLocation = ConfigHandler.lastThemeUsed) {
-        val oldTheme = ConfigHandler.lastThemeUsed
+    fun load(theme: ResourceLocation = ConfigHandler.currentTheme) {
+        val oldTheme = ConfigHandler.currentTheme
         currentTheme = themeList[theme] ?: themeList[oldTheme] ?: themeList[ConfigHandler.DEFAULT_THEME]!!
 
-        ConfigHandler.lastThemeUsed = currentTheme.id
+        ConfigHandler.currentTheme = currentTheme.id
 
         currentTheme.type.loader().load(currentTheme)
 

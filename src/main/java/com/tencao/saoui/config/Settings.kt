@@ -36,7 +36,11 @@ object Settings {
         val (_, key, default, comment, read, write, validate, type) = setting
         val config = getConfig(setting.namespace, "get") ?: return default
 
-        val property = config.get(key.resourceDomain, key.resourcePath, write(default), comment, type)
+        val property = try {
+            config.get(key.resourceDomain, key.resourcePath, write(default), comment, type)
+        } catch (e: Exception) {
+            throw e
+        }
         return read(property.string)?.takeIf(validate) ?: default
     }
 
@@ -88,8 +92,9 @@ object Settings {
             logger.info("Registering namespace $namespace")
             val isBuiltIn = namespace == NS_BUILTIN
             val dir = if (isBuiltIn) SAOCore.saoConfDir else File(SAOCore.saoConfDir, namespace.resourceDomain)
+            dir.mkdirs()
             configurations[namespace] = Configuration(
-                File(dir, if (isBuiltIn) "main.cfg" else namespace.resourcePath)
+                File(dir, if (isBuiltIn) "main.cfg" else "${namespace.resourcePath}.cfg")
             ).also {
                 logger.info("Loaded namespace $namespace from ${it.configFile}")
             }

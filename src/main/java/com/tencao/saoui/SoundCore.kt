@@ -25,6 +25,7 @@ import net.minecraft.util.SoundCategory
 import net.minecraft.util.SoundEvent
 import net.minecraftforge.event.RegistryEvent
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
+import java.util.*
 
 enum class SoundCore {
 
@@ -35,12 +36,12 @@ enum class SoundCore {
     ORB_DROPDOWN,
     PARTICLES_DEATH;
 
-    val sound = SoundEvent(ResourceLocation(SAOCore.MODID, name.toLowerCase()))
+    val sound = SoundEvent(ResourceLocation(SAOCore.MODID, name.lowercase(Locale.getDefault())))
 
     companion object {
         @SubscribeEvent
         fun registerSoundEvent(event: RegistryEvent.Register<SoundEvent>) {
-            values().forEach { event.registry.register(it.sound.setRegistryName(it.name.toLowerCase())) }
+            values().forEach { event.registry.register(it.sound.setRegistryName(it.name.lowercase(Locale.getDefault()))) }
         }
     }
 }

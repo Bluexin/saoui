@@ -25,6 +25,7 @@ import com.tencao.saoui.util.append
 import net.minecraft.util.ResourceLocation
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
+import java.util.*
 
 @SideOnly(Side.CLIENT)
 object StringNames {
@@ -47,7 +48,7 @@ object StringNames {
             ?: logMissingAndUse("death particles", defaultParticleLarge)
 
         val missingEffects = StatusEffects.values().filter {
-            !GLCore.checkTexture(textureRoot.append("status_icons/${it.name.toLowerCase()}.png"))
+            !GLCore.checkTexture(textureRoot.append("status_icons/${it.name.lowercase(Locale.getDefault())}.png"))
         }
         statusIcons = if (missingEffects.isEmpty()) {
             textureRoot.append("status_icons/")
