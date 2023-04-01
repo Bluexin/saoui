@@ -376,3 +376,19 @@ sao.element.recipes.locked=Locked Recipes
 saoui.invited=You have been invited to %s's party. Open the menu to accept!
 saoui.wip=WIP - Not finished
 saoui.server=Feature only supported on dedicated servers with saomclib
+
+# Themes
+theme.saoui.alo.name=ALO
+theme.saoui.alo.description=Theme inspired by ALfheim Online
+theme.saoui.ggo.name=GGO
+theme.saoui.ggo.description=Theme inspired by GunGale Online by Blaez
+theme.saoui.hex.name=Hex
+theme.saoui.hex.description=Dark theme using hexagonal geometry by Genetyx8
+theme.saoui.hex2.name=[WIP] Hex2
+theme.saoui.hex2.description=[WIP] Experimental variant of the Hex theme using WIP features
+theme.saoui.os.name=OS
+theme.saoui.os.description=Theme inspired by Ordinal Scale by Blaez
+theme.saoui.sao.name=SAO
+theme.saoui.sao.description=Theme inspired by SAO
+theme.saoui.sao_json.name=[WIP] SAO
+theme.saoui.sao_json.description=[WIP] Experimental variant of the SAO theme using JSON hud

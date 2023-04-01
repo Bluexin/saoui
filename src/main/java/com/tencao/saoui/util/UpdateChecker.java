@@ -81,7 +81,7 @@ public class UpdateChecker extends Thread {
 
             //Checks to see if this update has already been found before, and if so, check to see if the user opted to ignore this update
             if (ConfigHandler.INSTANCE.getLastVersion().equals(latestVersion)) {
-                if (ConfigHandler.INSTANCE.ignoreVersion()) {
+                if (ConfigHandler.INSTANCE.getIgnoreUpdate()) {
                     hasChecked = true;
                     return;
                 }
@@ -89,9 +89,9 @@ public class UpdateChecker extends Thread {
 
             //Reset ignore update if the recent update is not the same as the last update
             if (!ConfigHandler.INSTANCE.getLastVersion().equals(latestVersion)) {
-                ConfigHandler.INSTANCE.saveVersion(latestVersion);
-                if (ConfigHandler.INSTANCE.ignoreVersion()) {
-                    ConfigHandler.INSTANCE.setIgnoreVersion(false);
+                ConfigHandler.INSTANCE.setLastVersion(latestVersion);
+                if (ConfigHandler.INSTANCE.getIgnoreUpdate()) {
+                    ConfigHandler.INSTANCE.setIgnoreUpdate(false);
                 }
             }
 

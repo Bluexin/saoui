@@ -25,6 +25,8 @@ import com.tencao.saoui.api.events.EventInitStatsProvider
 import com.tencao.saoui.capabilities.RenderCapability
 import com.tencao.saoui.config.ConfigHandler
 import com.tencao.saoui.config.FriendData
+import com.tencao.saoui.config.OptionCore
+import com.tencao.saoui.config.Settings
 import com.tencao.saoui.events.EventCore
 import com.tencao.saoui.screens.CoreGUI
 import com.tencao.saoui.themes.ThemeManager
@@ -81,7 +83,9 @@ object SAOCore {
     fun preInit(event: FMLPreInitializationEvent) {
         MinecraftForge.EVENT_BUS.register(EventCore)
         MinecraftForge.EVENT_BUS.register(SoundCore)
-        ConfigHandler.preInit()
+        Settings.initialize()
+        ConfigHandler
+        OptionCore
         FriendData.preInit()
         modFile = event.sourceFile
 
