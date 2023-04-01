@@ -155,4 +155,9 @@ object Settings {
 
         return config to setting
     }
+
+    fun unregister(oldTheme: ResourceLocation) {
+        logger.info("Unregistering $oldTheme")
+        configurations -= oldTheme
+    }
 }

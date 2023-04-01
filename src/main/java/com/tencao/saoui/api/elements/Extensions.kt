@@ -38,6 +38,7 @@ import com.tencao.saoui.util.IconCore
 import com.tencao.saoui.util.getProgress
 import com.tencao.saoui.util.getRecipes
 import net.minecraft.advancements.Advancement
+import net.minecraft.client.resources.I18n
 import net.minecraft.client.resources.I18n.format
 import net.minecraft.entity.player.EntityPlayer
 import net.minecraft.init.Items
@@ -362,9 +363,19 @@ fun INeoParent.optionCategory(option: OptionCore): CategoryButton {
     return cat
 }
 
+private fun translateIfExists(key: String, default: String) =
+    if (I18n.hasKey(key) || true) format(key) else default
+
 fun INeoParent.themeButton(themeName: String, themeKey: ResourceLocation): IconLabelElement {
+    val realName = translateIfExists("theme.$themeKey.name", themeName)
     val but = object :
-        IconLabelElement(IconCore.OPTION, themeName, description = mutableListOf("Change theme to $themeName")) {
+        IconLabelElement(
+            IconCore.OPTION, realName,
+            description = mutableListOf(
+                "Change theme to $realName",
+                translateIfExists("theme.$themeKey.description", "No description for $realName ($themeKey)")
+            )
+        ) {
         override var highlighted: Boolean
             get() = ThemeManager.currentTheme.id == themeKey && !OptionCore.VANILLA_UI.isEnabled
             set(_) = (Unit)

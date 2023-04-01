@@ -34,9 +34,9 @@ abstract class AbstractThemeLoader(protected val type: ThemeFormat) {
         val start = System.currentTimeMillis()
 
         runCatching {
+            SettingsLoader.loadSettings(theme)?.forEach(Setting<*>::register)
             loadHud(theme.themeRoot.append("/${type.hudFileSuffix}"))
         }.onSuccess {
-            SettingsLoader.loadSettings(theme)?.forEach(Setting<*>::register)
             it.setup()
             ThemeManager.HUD = it // FIXME : code smell
         }.onFailure {

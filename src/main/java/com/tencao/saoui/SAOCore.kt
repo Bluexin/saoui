@@ -83,7 +83,7 @@ object SAOCore {
         MinecraftForge.EVENT_BUS.register(EventCore)
         MinecraftForge.EVENT_BUS.register(SoundCore)
         Settings.initialize()
-        ConfigHandler//.preInit()
+        ConfigHandler
         OptionCore
         FriendData.preInit()
         modFile = event.sourceFile
