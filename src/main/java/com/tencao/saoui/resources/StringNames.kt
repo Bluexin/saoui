@@ -21,6 +21,7 @@ import com.tencao.saoui.GLCore
 import com.tencao.saoui.SAOCore
 import com.tencao.saoui.effects.StatusEffects
 import com.tencao.saoui.themes.ThemeManager
+import com.tencao.saoui.util.IconCore
 import com.tencao.saoui.util.append
 import net.minecraft.util.ResourceLocation
 import net.minecraftforge.fml.relauncher.Side
@@ -56,6 +57,19 @@ object StringNames {
             "status icons ${missingEffects.map(StatusEffects::name)}",
             defaultStatusIcons
         )
+
+        val missingMenuIcons = buildList {
+            IconCore.values().forEach {
+                it.rl = GLCore.takeTextureIfExists(textureRoot.append(it.path)) ?: run {
+                    add(it.name)
+                    defaultMenuIcons.append(it.path)
+                }
+            }
+        }
+        if (missingMenuIcons.isNotEmpty()) logMissingAndUse(
+            "menu icons $missingMenuIcons",
+            defaultStatusIcons
+        )
     }
 
     lateinit var gui: ResourceLocation
@@ -69,4 +83,5 @@ object StringNames {
     private val defaultEntities = ResourceLocation(SAOCore.MODID, "textures/sao/entities.png")
     private val defaultParticleLarge = ResourceLocation(SAOCore.MODID, "textures/sao/particlelarge.png")
     private val defaultStatusIcons = ResourceLocation(SAOCore.MODID, "textures/sao/status_icons/")
+    private val defaultMenuIcons = ResourceLocation(SAOCore.MODID, "textures/sao/")
 }

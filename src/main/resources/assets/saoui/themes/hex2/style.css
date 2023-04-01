@@ -8,19 +8,20 @@ If Alpha is omitted, it will default to FF (opaque).
 
 /* Defaults used for most stuff */
 * {
-    background-color: #FFFFFFFF;
-    color: #424242FF;
+    background-color: #424242FF;
+    color: #FFFFFFFF;
 }
 
 /* Defaults used for most stuff when hovered */
 :hover {
-    background-color: #FFBA66FF;
+    background-color: #4e5460;
     color: #FFFFFFFF;
 }
 
 /* Defaults used for most stuff when disabled (not actually used yet). Acts as a mask (so multiplied with base color) */
 :disabled {
-    background-color: #FFFFFF42;
+    background-color: #83b0aedd;
+    color: #424242
 }
 
 /* Confirm button */

@@ -75,6 +75,7 @@ enum class IconCore : IIcon {
         return rl
     }
 
-    private val rl by lazy { ResourceLocation(SAOCore.MODID,
-        "textures/menu/icons/${name.lowercase(Locale.getDefault())}.png") }
+    lateinit var rl : ResourceLocation
+
+    val path = "menu/icons/${name.lowercase(Locale.getDefault())}.png"
 }

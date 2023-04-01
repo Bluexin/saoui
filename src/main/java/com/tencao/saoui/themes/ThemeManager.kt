@@ -46,27 +46,26 @@ object ThemeManager : ISelectiveResourceReloadListener {
         private set
     lateinit var currentTheme: ThemeMetadata
         private set
-    private var firstRun = true
+    private var isReloading = false
 
     fun load(theme: ResourceLocation = ConfigHandler.currentTheme) {
         val oldTheme = ConfigHandler.currentTheme
         currentTheme = themeList[theme] ?: themeList[oldTheme] ?: themeList[ConfigHandler.DEFAULT_THEME]!!
 
-        if (firstRun || oldTheme != currentTheme.id) {
-            firstRun = false
-            Settings.unregister(oldTheme)
-            ConfigHandler.currentTheme = currentTheme.id
+        Settings.unregister(oldTheme)
+        ConfigHandler.currentTheme = currentTheme.id
 
-            currentTheme.type.loader().load(currentTheme)
+        currentTheme.type.loader().load(currentTheme)
 
-            GLCore.setFont(Minecraft.getMinecraft(), OptionCore.CUSTOM_FONT.isEnabled)
-        }
+        if (!isReloading) GLCore.setFont(Minecraft.getMinecraft(), OptionCore.CUSTOM_FONT.isEnabled)
     }
 
     override fun onResourceManagerReload(resourceManager: IResourceManager, types: Predicate<IResourceType>) {
         if (types.test(VanillaResourceType.TEXTURES)) {
             themeList = ThemeDetector.listThemes()
+            isReloading = true
             load()
+            isReloading = false
         }
     }
 }
