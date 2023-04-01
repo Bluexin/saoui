@@ -11,6 +11,7 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.function.BiPredicate
 import java.util.zip.ZipFile
+import kotlin.io.path.name
 import kotlin.streams.asSequence
 
 object ThemeDetector {
@@ -64,8 +65,11 @@ object ThemeDetector {
             }
             // folder
             this.isDirectory -> {
-                val thisAsPath = this.toPath()
-                Files.find(thisAsPath, 5, BiPredicate { _, fileAttributes ->
+                val thisAsPath = this.toPath().let {
+                    if (it.name != "main") it
+                    else it.parent.parent.parent.resolve("resources").resolve("main") // in-dev
+                }
+                Files.find(thisAsPath, 5, { _, fileAttributes ->
                     fileAttributes.isRegularFile
                 }).map { thisAsPath.relativize(it) }.use { s ->
                     s.asSequence()

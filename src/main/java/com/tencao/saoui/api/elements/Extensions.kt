@@ -364,16 +364,18 @@ fun INeoParent.optionCategory(option: OptionCore): CategoryButton {
 }
 
 private fun translateIfExists(key: String, default: String) =
-    if (I18n.hasKey(key) || true) format(key) else default
+    if (I18n.hasKey(key)) format(key) else default
+
+private val ResourceLocation.tl get() = toString().replace(':', '.')
 
 fun INeoParent.themeButton(themeName: String, themeKey: ResourceLocation): IconLabelElement {
-    val realName = translateIfExists("theme.$themeKey.name", themeName)
+    val realName = translateIfExists("theme.${themeKey.tl}.name", themeName)
     val but = object :
         IconLabelElement(
             IconCore.OPTION, realName,
             description = mutableListOf(
                 "Change theme to $realName",
-                translateIfExists("theme.$themeKey.description", "No description for $realName ($themeKey)")
+                translateIfExists("theme.${themeKey.tl}.description", "No description for $realName ($themeKey)")
             )
         ) {
         override var highlighted: Boolean
