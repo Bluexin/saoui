@@ -82,16 +82,18 @@ class DefaultStatsProvider : IPlayerStatsProvider {
             var itemDamage = 0.0f
 
             if (player.heldItemMainhand.isNotEmpty) {
-                val itemAttackMain = player.heldItemMainhand.getAttributeModifiers(EntityEquipmentSlot.MAINHAND).get(SharedMonsterAttributes.ATTACK_DAMAGE.name)
+                val itemAttackMain = player.heldItemMainhand.getAttributeModifiers(EntityEquipmentSlot.MAINHAND)
+                    .get(SharedMonsterAttributes.ATTACK_DAMAGE.name)
 
                 itemDamage += itemAttackMain.filterIsInstance<AttributeModifier>().map { value -> value }
-                    .filter { mod -> mod.name == "Weapon modifier" }.sumByDouble { it.amount }.toFloat()
+                    .filter { mod -> mod.name == "Weapon modifier" }.sumOf { it.amount }.toFloat()
             }
             if (player.heldItemOffhand.isNotEmpty) {
-                val itemAttackOff = player.heldItemOffhand.getAttributeModifiers(EntityEquipmentSlot.OFFHAND).get(SharedMonsterAttributes.ATTACK_DAMAGE.name)
+                val itemAttackOff = player.heldItemOffhand.getAttributeModifiers(EntityEquipmentSlot.OFFHAND)
+                    .get(SharedMonsterAttributes.ATTACK_DAMAGE.name)
 
                 itemDamage += itemAttackOff.filterIsInstance<AttributeModifier>().map { value -> value }
-                    .filter { mod -> mod.name == "Weapon modifier" }.sumByDouble { it.amount }.toFloat()
+                    .filter { mod -> mod.name == "Weapon modifier" }.sumOf { it.amount }.toFloat()
             }
 
             val strength = attr((attackDamage + itemDamage).toDouble())

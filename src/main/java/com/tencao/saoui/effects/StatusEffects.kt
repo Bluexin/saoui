@@ -60,7 +60,7 @@ enum class StatusEffects : IIcon {
     SLOWNESS;
 
     private val icons
-        get() = StringNames.statusIcons.append("${name.toLowerCase()}.png")
+        get() = StringNames.statusIcons.append("${name.lowercase(Locale.getDefault())}.png")
 
     @Suppress("unused")
     override fun glDraw(x: Int, y: Int, z: Float) {

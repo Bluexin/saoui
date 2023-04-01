@@ -22,6 +22,7 @@ import com.tencao.saoui.GLCore.glTexturedRectV2
 import com.tencao.saoui.SAOCore
 import com.tencao.saoui.api.screens.IIcon
 import net.minecraft.util.ResourceLocation
+import java.util.*
 
 enum class IconCore : IIcon {
 
@@ -74,5 +75,6 @@ enum class IconCore : IIcon {
         return rl
     }
 
-    private val rl by lazy { ResourceLocation(SAOCore.MODID, "textures/menu/icons/${name.toLowerCase()}.png") }
+    private val rl by lazy { ResourceLocation(SAOCore.MODID,
+        "textures/menu/icons/${name.lowercase(Locale.getDefault())}.png") }
 }
