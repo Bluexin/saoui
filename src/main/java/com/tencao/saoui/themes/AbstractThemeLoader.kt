@@ -14,9 +14,10 @@ import com.tencao.saoui.config.OptionCore
 import com.tencao.saoui.config.Setting
 import com.tencao.saoui.resources.StringNames
 import com.tencao.saoui.screens.util.HealthStep
+import com.tencao.saoui.themes.elements.ElementGroup
+import com.tencao.saoui.themes.elements.Fragment
 import com.tencao.saoui.themes.elements.Hud
 import com.tencao.saoui.themes.settings.SettingsLoader
-import com.tencao.saoui.themes.util.json.JsonSettingAdapterFactory
 import com.tencao.saoui.util.ColorUtil
 import com.tencao.saoui.util.append
 import net.minecraft.client.Minecraft
@@ -35,10 +36,13 @@ abstract class AbstractThemeLoader(protected val type: ThemeFormat) {
 
         runCatching {
             SettingsLoader.loadSettings(theme)?.forEach(Setting<*>::register)
-            loadHud(theme.themeRoot.append("/${type.hudFileSuffix}"))
-        }.onSuccess {
-            it.setup()
-            ThemeManager.HUD = it // FIXME : code smell
+            val hud = loadHud(theme.themeRoot.append("/${type.hudFileSuffix}"))
+            val fragments = theme.fragments.mapValues { (_, path) -> this.loadFragment(path) }
+
+            hud to fragments
+        }.onSuccess { (hud, fragments) ->
+            hud.setup(fragments)
+            ThemeManager.HUD = hud // FIXME : code smell
         }.onFailure {
             SAOCore.LOGGER.warn("Failed to load $theme", it)
             return
@@ -57,13 +61,33 @@ abstract class AbstractThemeLoader(protected val type: ThemeFormat) {
     /**
      * Load [Hud] from File reference
      */
-    open fun loadHud(location: File): Hud = FileInputStream(location).loadHud()
+    fun loadHud(location: File): Hud = FileInputStream(location).loadHud()
 
     /**
      * Load [Hud] from ResourceLocation reference (using mc ResourceManager)
      */
-    open fun loadHud(location: ResourceLocation): Hud =
+    fun loadHud(location: ResourceLocation): Hud =
         Client.resourceManager.getResource(location).inputStream.loadHud()
+
+    /**
+     * Load [ElementGroup] from File reference
+     */
+    fun loadFragment(location: File): Fragment =
+        when (val loader = ThemeFormat.fromFileExtension(location.extension)?.loader?.invoke()) {
+            this -> FileInputStream(location).loadFragment()
+            null -> error("Unknown fragment format for $location")
+            else -> loader.loadFragment(location)
+        }
+
+    /**
+     * Load [ElementGroup] from ResourceLocation reference (using mc ResourceManager)
+     */
+    fun loadFragment(location: ResourceLocation): Fragment =
+        when (val loader = ThemeFormat.fromFileExtension(location.resourcePath)?.loader?.invoke()) {
+            this -> Client.resourceManager.getResource(location).inputStream.loadFragment()
+            null -> error("Unknown fragment format for $location")
+            else -> loader.loadFragment(location)
+        }
 
     /**
      * Load [Hud] from [InputStream].
@@ -71,7 +95,13 @@ abstract class AbstractThemeLoader(protected val type: ThemeFormat) {
      */
     protected abstract fun InputStream.loadHud(): Hud
 
-    protected open fun loadCss(location: ResourceLocation) {
+    /**
+     * Load [ElementGroup] from [InputStream].
+     * Implementations should throw on errors.
+     */
+    protected abstract fun InputStream.loadFragment(): Fragment
+
+    private fun loadCss(location: ResourceLocation) {
         val start = System.currentTimeMillis()
 
         try {

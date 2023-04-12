@@ -18,6 +18,7 @@
 package com.tencao.saoui.themes.elements
 
 import com.tencao.saoui.api.themes.IHudDrawContext
+import net.minecraft.util.ResourceLocation
 import javax.xml.bind.annotation.XmlRootElement
 
 /**
@@ -39,7 +40,7 @@ open class Hud protected constructor(override val name: String = "MenuDefs") : E
 
     operator fun get(key: HudPartType) = parts[key]
 
-    fun setup() = this.parts.values.forEach { it.setup(this) }
+    fun setup(fragments: Map<ResourceLocation, Fragment>) = this.parts.values.forEach { it.setup(this, fragments) }
 
     fun draw(key: HudPartType, ctx: IHudDrawContext) {
         this[key]?.draw(ctx)

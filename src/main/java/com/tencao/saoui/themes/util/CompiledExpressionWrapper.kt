@@ -26,7 +26,7 @@ import gnu.jel.CompiledExpression
  *
  * @author Bluexin
  */
-abstract class CompiledExpressionWrapper<out T>(val compiledExpression: CompiledExpression) : Function1<IHudDrawContext, T> {
+sealed class CompiledExpressionWrapper<out T>(val compiledExpression: CompiledExpression) : Function1<IHudDrawContext, T> {
     protected fun warn(e: Throwable) {
         SAOCore.LOGGER.warn("An error occurred while executing an Expression.\n${e.message}\n${e.cause}")
         SAOCore.LOGGER.warn(e)
@@ -60,7 +60,6 @@ class StringExpressionWrapper(compiledExpression: CompiledExpression) : Compiled
     }
 }
 
-// @XmlJavaTypeAdapter(ExpressionAdapter.BooleanExpressionAdapter::class)
 class BooleanExpressionWrapper(compiledExpression: CompiledExpression) : CompiledExpressionWrapper<Boolean>(compiledExpression) {
     override fun invoke(ctx: IHudDrawContext): Boolean = try {
         compiledExpression.evaluate_boolean(arrayOf(ctx))

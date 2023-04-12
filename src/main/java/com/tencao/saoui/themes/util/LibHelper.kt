@@ -21,6 +21,7 @@ import com.tencao.saoui.SAOCore
 import com.tencao.saoui.api.info.IOption
 import com.tencao.saoui.api.themes.IHudDrawContext
 import com.tencao.saoui.config.OptionCore
+import com.tencao.saoui.config.Settings
 import com.tencao.saoui.effects.StatusEffects
 import com.tencao.saoui.screens.util.HealthStep
 import com.tencao.saoui.themes.elements.ElementParent
@@ -37,8 +38,8 @@ import net.minecraft.launchwrapper.Launch
  */
 object LibHelper {
     val LIB: Library by lazy {
-        val staticLib = arrayOf(Math::class.java, HealthStep::class.java, StatusEffects::class.java, OptionCore::class.java, I18n::class.java, ColorUtil::class.java)
-        val dynLib = arrayOf(IHudDrawContext::class.java, ElementParent::class.java)
+        val staticLib = arrayOf(Math::class.java, HealthStep::class.java, StatusEffects::class.java, OptionCore::class.java, Settings.JelWrappers::class.java, I18n::class.java, ColorUtil::class.java)
+        val dynLib = arrayOf(IHudDrawContext::class.java)
         val dotClasses = arrayOf(String::class.java, IOption::class.java, List::class.java, StatusEffects::class.java, HealthStep::class.java, ColorUtil::class.java)
         Library(staticLib, dynLib, dotClasses, null, null)
     }

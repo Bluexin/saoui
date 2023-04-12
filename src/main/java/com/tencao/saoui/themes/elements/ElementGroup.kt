@@ -87,11 +87,11 @@ open class ElementGroup : Element(), ElementParent {
         this.elements.forEach { it.draw(ctx) }
     }
 
-    override fun setup(parent: ElementParent): Boolean {
-        if (this.texture != null) this.rl = ResourceLocation(this.texture)
-        val res = super.setup(parent)
+    override fun setup(parent: ElementParent, fragments: Map<ResourceLocation, Fragment>): Boolean {
+        this.rl = this.texture?.let(::ResourceLocation)
+        val res = super.setup(parent, fragments)
         var anonymous = 0
-        this.elements.forEach { if (it.name == DEFAULT_NAME) ++anonymous; it.setup(this) }
+        this.elements.forEach { if (it.name == DEFAULT_NAME) ++anonymous; it.setup(this, fragments) }
         if (anonymous > 0) SAOCore.LOGGER.info("Set up $anonymous anonymous elements in $name.")
         return res
     }

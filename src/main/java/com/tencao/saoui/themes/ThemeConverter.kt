@@ -1,6 +1,5 @@
 package com.tencao.saoui.themes
 
-import com.tencao.saoui.themes.elements.Hud
 import net.minecraft.launchwrapper.Launch
 import org.apache.logging.log4j.LogManager
 import java.io.File
@@ -23,15 +22,15 @@ object ThemeConverter {
         val toWrite = File(args[1])
         val hud = try {
             logger.info("Loading $toRead")
-            XmlThemeLoader().loadHud(toRead)
-                .also(Hud::setup)
+            XmlThemeLoader.loadHud(toRead)
+                .also { it.setup(emptyMap()) }
         } catch (e: Exception) {
             logger.error("Something went wrong reading $toRead", e)
             return
         }
         try {
             logger.info("Exporting to $toWrite")
-            JsonThemeLoader().exportHud(hud, toWrite)
+            JsonThemeLoader.exportHud(hud, toWrite)
         } catch (e: Exception) {
             logger.error("Something went wrong writing $toWrite", e)
             return

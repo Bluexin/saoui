@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter
  *
  * @author Bluexin
  */
-abstract class CValue<out T>(val value: CachedExpression<T>) : (IHudDrawContext) -> T {
+sealed class CValue<out T>(val value: CachedExpression<T>) : (IHudDrawContext) -> T {
     override fun invoke(ctx: IHudDrawContext) = value(ctx)
 }
 

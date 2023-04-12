@@ -46,10 +46,10 @@ enum class CacheType(private val provider: Function2<CompiledExpressionWrapper<*
     SIZE_CHANGE({ expression, intermediate -> SizeCachedExpression(expression, intermediate) }),
 
     /**
-     * Values will not be cached (unrecommended -- in most cases PER_FRAME is better. Use with pcaution).
+     * Values will not be cached (unrecommended -- in most cases PER_FRAME is better. Use with caution).
      */
     NONE({ expression, intermediate -> UnCachedExpression(expression, intermediate) });
 
     @Suppress("UNCHECKED_CAST")
-    fun <T> cacheExpression(expr: CompiledExpressionWrapper<T>, intermediate: ExpressionIntermediate) = provider.invoke(expr, intermediate) as CachedExpression<T>
+    fun <T> cacheExpression(expr: CompiledExpressionWrapper<T>, intermediate: ExpressionIntermediate) = provider(expr, intermediate) as CachedExpression<T>
 }

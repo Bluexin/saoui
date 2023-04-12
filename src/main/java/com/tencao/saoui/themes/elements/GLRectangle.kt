@@ -66,8 +66,8 @@ open class GLRectangle : Element() {
         )
     }
 
-    override fun setup(parent: ElementParent): Boolean {
+    override fun setup(parent: ElementParent, fragments: Map<ResourceLocation, Fragment>): Boolean {
         if (this.texture != null) this.rl = ResourceLocation(this.texture)
-        return super.setup(parent)
+        return super.setup(parent, fragments)
     }
 }

@@ -27,7 +27,7 @@ import net.minecraft.entity.EntityLivingBase
  *
  * @author Bluexin
  */
-abstract class CachedExpression<out T>(
+sealed class CachedExpression<out T>(
     val expression: CompiledExpressionWrapper<T>,
     val expressionIntermediate: ExpressionIntermediate
 ) : Function1<IHudDrawContext, T> {
@@ -121,8 +121,8 @@ class SizeCachedExpression<T>(
 ) : CachedExpression<T>(expression, expressionIntermediate) {
     override var cache: T? = null
 
-    var lastW = 0
-    var lastH = 0
+    private var lastW = 0
+    private var lastH = 0
 
     private fun checkUpdateSize(ctx: IHudDrawContext) =
         if (lastW == ctx.scaledwidth() && lastH == ctx.scaledheight()) false else {

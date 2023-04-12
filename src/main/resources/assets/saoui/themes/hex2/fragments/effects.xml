@@ -1,0 +1,15 @@
+<bl:fragment xmlns:bl="http://www.bluexin.be/com/saomc/saoui/fragment-schema"
+             name="effects fragment">
+    <children>
+        <repetitionGroup name="effectGroup">
+            <x>usernamewidth + 179</x>
+            <y cache="STATIC">2</y>
+            <amount cache="NONE">statusEffects.size</amount>
+            <children>
+                <rawElement name="effect">
+                    <expression cache="NONE">statusEffect(i).glDraw(i * 14, i%2==0 ? 8:0, getZ)</expression>
+                </rawElement>
+            </children>
+        </repetitionGroup>
+    </children>
+</bl:fragment>

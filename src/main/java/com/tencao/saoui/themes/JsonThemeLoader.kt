@@ -19,6 +19,7 @@ package com.tencao.saoui.themes
 
 import com.google.gson.GsonBuilder
 import com.tencao.saoui.SAOCore
+import com.tencao.saoui.themes.elements.Fragment
 import com.tencao.saoui.themes.elements.Hud
 import java.io.File
 import java.io.FileWriter
@@ -29,12 +30,16 @@ import java.io.InputStream
  *
  * @author Bluexin
  */
-class JsonThemeLoader : AbstractThemeLoader(ThemeFormat.JSON) {
+object JsonThemeLoader : AbstractThemeLoader(ThemeFormat.JSON) {
+
+    private val gson by lazy { GsonBuilder().create() }
 
     override fun InputStream.loadHud(): Hud = use {
-        GsonBuilder()
-            .create()
-            .fromJson(it.reader(), Hud::class.java)
+        gson.fromJson(it.reader(), Hud::class.java)
+    }
+
+    override fun InputStream.loadFragment(): Fragment = use {
+        gson.fromJson(it.reader(), Fragment::class.java)
     }
 
     fun exportHud(hud: Hud, toFile: File) {
@@ -48,7 +53,7 @@ class JsonThemeLoader : AbstractThemeLoader(ThemeFormat.JSON) {
 
         val start = System.currentTimeMillis()
         val newHud = loadHud(toFile)
-        newHud.setup()
+        newHud.setup(emptyMap())
         SAOCore.LOGGER.info("Loaded theme and set it up in " + (System.currentTimeMillis() - start) + "ms.")
     }
 }

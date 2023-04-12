@@ -23,18 +23,19 @@ import com.tencao.saoui.api.themes.IHudDrawContext
 import com.tencao.saoui.themes.util.CBoolean
 import com.tencao.saoui.themes.util.CDouble
 import com.tencao.saoui.themes.util.json.JsonElementAdapterFactory
+import net.minecraft.util.ResourceLocation
 import java.lang.ref.WeakReference
 import javax.annotation.OverridingMethodsMustInvokeSuper
 import javax.xml.bind.annotation.XmlAttribute
 import javax.xml.bind.annotation.XmlSeeAlso
 
 /**
- * Used to map an xml element with x, y, z coordinates and an "enabled" toggle.
+ * Used to map a xml element with x, y, z coordinates and an "enabled" toggle.
  *
  * @author Bluexin
  */
 @JsonAdapter(JsonElementAdapterFactory::class)
-@XmlSeeAlso(GLRectangle::class, ElementGroup::class, RawElement::class) // Instructs JAXB to also bind other classes when binding this class
+@XmlSeeAlso(GLRectangle::class, ElementGroup::class, RawElement::class, FragmentReference::class) // Instructs JAXB to also bind other classes when binding this class
 abstract class Element {
 
     companion object {
@@ -91,7 +92,7 @@ abstract class Element {
      * @return whether this is an anonymous element
      */
     @OverridingMethodsMustInvokeSuper
-    open fun setup(parent: ElementParent): Boolean {
+    open fun setup(parent: ElementParent, fragments: Map<ResourceLocation, Fragment>): Boolean {
         this.parent = WeakReference(parent)
         return if (name != DEFAULT_NAME) {
             SAOCore.LOGGER.info("Set up $this in ${parent.name}"); false
