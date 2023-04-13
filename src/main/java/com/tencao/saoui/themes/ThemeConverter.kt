@@ -25,14 +25,18 @@ object ThemeConverter {
             XmlThemeLoader.loadHud(toRead)
                 .also { it.setup(emptyMap()) }
         } catch (e: Exception) {
-            logger.error("Something went wrong reading $toRead", e)
+            val message = "Something went wrong reading $toRead"
+            logger.error(message, e)
+            AbstractThemeLoader.Reporter += message
             return
         }
         try {
             logger.info("Exporting to $toWrite")
             JsonThemeLoader.exportHud(hud, toWrite)
         } catch (e: Exception) {
-            logger.error("Something went wrong writing $toWrite", e)
+            val message = "Something went wrong writing $toWrite"
+            logger.error(message, e)
+            AbstractThemeLoader.Reporter += message
             return
         }
         logger.info("Converted $toRead to $toWrite")

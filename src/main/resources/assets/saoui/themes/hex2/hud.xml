@@ -37,7 +37,7 @@
                 <x cache="SIZE_CHANGE">scaledwidth / 2 - 91</x>
                 <y cache="SIZE_CHANGE">scaledheight - 29</y>
                 <children>
-                    <fragmentReference id="jump_bar"/>
+                    <fragmentReference id="hex2:jump_bar"/>
                 </children>
             </value>
         </entry>
@@ -47,7 +47,7 @@
                 <x cache="SIZE_CHANGE">scaledwidth / 2.0</x>
                 <y cache="SIZE_CHANGE">scaledheight / 2.0</y>
                 <children>
-                    <fragmentReference id="crosshair"/>
+                    <fragmentReference id="hex2:crosshair"/>
                 </children>
             </value>
         </entry>

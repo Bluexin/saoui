@@ -16,6 +16,8 @@ data class ThemeMetadata(
      * Root for the theme's textures
      */
     val texturesRoot = ResourceLocation(themeRoot.resourceDomain, "textures/${id.resourcePath}/")
+    val nameTranslationKey = "theme.${id.toString().replace(':', '.')}.name"
+    val descTranslationKey = "theme.${id.toString().replace(':', '.')}.description"
 }
 
 enum class ThemeFormat(val hudFileSuffix: String, val loader: () -> AbstractThemeLoader) {

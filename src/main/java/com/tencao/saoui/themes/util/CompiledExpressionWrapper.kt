@@ -19,6 +19,7 @@ package com.tencao.saoui.themes.util
 
 import com.tencao.saoui.SAOCore
 import com.tencao.saoui.api.themes.IHudDrawContext
+import com.tencao.saoui.themes.AbstractThemeLoader
 import gnu.jel.CompiledExpression
 
 /**
@@ -28,8 +29,9 @@ import gnu.jel.CompiledExpression
  */
 sealed class CompiledExpressionWrapper<out T>(val compiledExpression: CompiledExpression) : Function1<IHudDrawContext, T> {
     protected fun warn(e: Throwable) {
-        SAOCore.LOGGER.warn("An error occurred while executing an Expression.\n${e.message}\n${e.cause}")
-        SAOCore.LOGGER.warn(e)
+        val message = "An error occurred while executing an Expression"
+        SAOCore.LOGGER.warn(message, e)
+        AbstractThemeLoader.Reporter += e.message ?: message
     }
 }
 

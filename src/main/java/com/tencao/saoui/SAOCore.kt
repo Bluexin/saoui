@@ -23,6 +23,7 @@ import com.tencao.saomclib.capabilities.CapabilitiesHandler
 import com.tencao.saoui.api.elements.registry.ElementRegistry
 import com.tencao.saoui.api.events.EventInitStatsProvider
 import com.tencao.saoui.capabilities.RenderCapability
+import com.tencao.saoui.commands.SaouiCommand
 import com.tencao.saoui.config.ConfigHandler
 import com.tencao.saoui.config.FriendData
 import com.tencao.saoui.config.OptionCore
@@ -35,6 +36,7 @@ import com.tencao.saoui.util.DefaultStatsProvider
 import com.tencao.saoui.util.PlayerStats
 import net.minecraft.client.resources.SimpleReloadableResourceManager
 import net.minecraft.entity.EntityLivingBase
+import net.minecraftforge.client.ClientCommandHandler
 import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.fml.common.Loader
 import net.minecraftforge.fml.common.Mod
@@ -121,6 +123,8 @@ object SAOCore {
             registerReloadListener(ThemeManager)
             registerReloadListener(ElementRegistry)
         }
+
+        ClientCommandHandler.instance.registerCommand(SaouiCommand)
     }
 
     @Mod.EventHandler

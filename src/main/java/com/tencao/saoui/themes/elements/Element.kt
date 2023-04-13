@@ -99,5 +99,28 @@ abstract class Element {
         } else true
     }
 
+    fun hierarchyName(sb: StringBuilder = StringBuilder()): StringBuilder {
+        parent.get()?.let {
+            if (it is Element) {
+                it.hierarchyName(sb)
+                sb.append(" > ")
+            }
+        }
+        if (name == DEFAULT_NAME) {
+            sb.append("anonymous ")
+                .append(this::class.simpleName)
+        } else sb.append(name)
+        return sb
+    }
+
+    fun nameOrParent(): String {
+        if (name == DEFAULT_NAME) {
+            parent.get()?.let {
+                return it.name
+            }
+        }
+        return name
+    }
+
     override fun toString() = "$name (${javaClass.simpleName})"
 }

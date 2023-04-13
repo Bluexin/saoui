@@ -26,11 +26,22 @@ import java.io.File
 import java.io.FileInputStream
 import java.io.InputStream
 import java.nio.charset.StandardCharsets
+import java.util.Deque
+import java.util.LinkedList
 
 abstract class AbstractThemeLoader(protected val type: ThemeFormat) {
 
+    object Reporter {
+        val errors: Deque<String> = LinkedList()
+
+        operator fun plusAssign(what: String) {
+            errors += what
+        }
+    }
+
     fun load(theme: ThemeMetadata) {
         if (OptionCore.CUSTOM_FONT.isEnabled) GLCore.setFont(Minecraft.getMinecraft(), OptionCore.CUSTOM_FONT.isEnabled)
+        Reporter.errors.clear()
 
         val start = System.currentTimeMillis()
 
@@ -45,6 +56,7 @@ abstract class AbstractThemeLoader(protected val type: ThemeFormat) {
             ThemeManager.HUD = hud // FIXME : code smell
         }.onFailure {
             SAOCore.LOGGER.warn("Failed to load $theme", it)
+            Reporter += it.message ?: "unknown error"
             return
         }
 
@@ -115,7 +127,9 @@ abstract class AbstractThemeLoader(protected val type: ThemeFormat) {
             )
             if (aCSS == null) {
                 // Most probably a syntax error
-                SAOCore.LOGGER.warn("Failed to read CSS - please see previous logging entries!")
+                val message = "Failed to read CSS - please see previous logging entries!"
+                SAOCore.LOGGER.warn(message)
+                Reporter += message
             } else {
                 CSSVisitor.visitCSS(
                     aCSS,
@@ -252,7 +266,9 @@ abstract class AbstractThemeLoader(protected val type: ThemeFormat) {
                 )
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+            val message = "Couldn't load CSS"
+            SAOCore.LOGGER.warn(message, e)
+            Reporter += e.message ?: message
         }
 
         SAOCore.LOGGER.info("Loaded CSS in " + (System.currentTimeMillis() - start) + "ms.")

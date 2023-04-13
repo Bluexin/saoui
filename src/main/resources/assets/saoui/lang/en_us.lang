@@ -392,3 +392,11 @@ theme.saoui.sao.name=SAO
 theme.saoui.sao.description=Built-in theme inspired by SAO (the original theme of the mod)
 theme.saoui.sao_json.name=[WIP] SAO
 theme.saoui.sao_json.description=[WIP] Built-in experimental variant of the SAO theme using JSON hud
+
+# Screens
+saoui.menu.errors=[SAOUI] %1$s errors loading theme %2$s
+saoui.menu.clicktoexpand=(click this or run /saoui general.print_errors to print errors to chat)
+
+# Commands
+commands.saoui.usage=/saoui <subCommand>
+commands.general.print_errors.usage=/saoui general.print_errors

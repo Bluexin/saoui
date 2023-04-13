@@ -25,6 +25,7 @@ import com.tencao.saoui.renders.StaticRenderer
 import com.tencao.saoui.screens.CoreGUI
 import com.tencao.saoui.screens.ingame.DeathGui
 import com.tencao.saoui.screens.menus.IngameMenu
+import com.tencao.saoui.screens.menus.MainMenuGui
 import net.minecraft.client.gui.GuiGameOver
 import net.minecraft.client.gui.GuiIngameMenu
 import net.minecraft.client.gui.GuiMainMenu
@@ -89,8 +90,7 @@ internal object RenderHandler {
 
     fun mainMenuGUI(e: GuiOpenEvent) {
         if (menuGUI) {
-            if (e.gui is GuiMainMenu) {}
+            if (e.gui is GuiMainMenu && e.gui !is MainMenuGui) e.gui = MainMenuGui()
         }
-        // e.setGui(new MainMenuGUI());
     }
 }

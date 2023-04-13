@@ -17,14 +17,23 @@
 
 package com.tencao.saoui.themes
 
+import com.tencao.saomclib.Client
 import com.tencao.saoui.GLCore
+import com.tencao.saoui.commands.GeneralCommands
 import com.tencao.saoui.config.ConfigHandler
 import com.tencao.saoui.config.OptionCore
 import com.tencao.saoui.config.Settings
 import com.tencao.saoui.themes.elements.Hud
 import net.minecraft.client.Minecraft
+import net.minecraft.client.resources.I18n
 import net.minecraft.client.resources.IResourceManager
 import net.minecraft.util.ResourceLocation
+import net.minecraft.util.text.Style
+import net.minecraft.util.text.TextComponentString
+import net.minecraft.util.text.TextComponentTranslation
+import net.minecraft.util.text.TextFormatting
+import net.minecraft.util.text.event.ClickEvent
+import net.minecraft.util.text.event.HoverEvent
 import net.minecraftforge.client.resource.IResourceType
 import net.minecraftforge.client.resource.ISelectiveResourceReloadListener
 import net.minecraftforge.client.resource.VanillaResourceType
@@ -56,6 +65,7 @@ object ThemeManager : ISelectiveResourceReloadListener {
         ConfigHandler.currentTheme = currentTheme.id
 
         currentTheme.type.loader().load(currentTheme)
+        reportLoading()
 
         if (!isReloading) GLCore.setFont(Minecraft.getMinecraft(), OptionCore.CUSTOM_FONT.isEnabled)
     }
@@ -66,6 +76,38 @@ object ThemeManager : ISelectiveResourceReloadListener {
             isReloading = true
             load()
             isReloading = false
+        }
+    }
+
+    private fun reportLoading() {
+        Client.minecraft.ingameGUI?.chatGUI?.let {
+            val style = Style().apply {
+                clickEvent = ClickEvent(ClickEvent.Action.RUN_COMMAND, "/saoui ${GeneralCommands.PRINT_ERRORS.getID()}")
+            }
+            TextComponentTranslation(
+                "saoui.menu.errors",
+                AbstractThemeLoader.Reporter.errors.size,
+                TextComponentString(
+                    if (I18n.hasKey(currentTheme.nameTranslationKey)) I18n.format(currentTheme.nameTranslationKey)
+                    else currentTheme.name
+                ).apply {
+                    this.style = Style().setHoverEvent(
+                        HoverEvent(
+                            HoverEvent.Action.SHOW_TEXT,
+                            TextComponentString(currentTheme.id.toString())
+                        )
+                    )
+                }
+            ).apply {
+                this.style = style
+                it.printChatMessage(this)
+            }
+            if (AbstractThemeLoader.Reporter.errors.isNotEmpty()) TextComponentTranslation("saoui.menu.clicktoexpand").apply {
+                this.style = style.createShallowCopy()
+                    .setColor(TextFormatting.GRAY)
+                    .setItalic(true)
+                it.printChatMessage(this)
+            }
         }
     }
 }

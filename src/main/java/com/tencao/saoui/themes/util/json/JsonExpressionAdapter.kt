@@ -21,6 +21,7 @@ import com.google.gson.TypeAdapter
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonToken
 import com.google.gson.stream.JsonWriter
+import com.tencao.saoui.themes.AbstractThemeLoader
 import com.tencao.saoui.themes.util.*
 import gnu.jel.CompiledExpression
 import org.apache.logging.log4j.LogManager
@@ -67,7 +68,9 @@ abstract class JsonExpressionAdapter<T> : TypeAdapter<CValue<T>>(), ExpressionAd
                     this.cacheType = cacheType!!
                     this.expression = expression!!
                 }) else {
-                    logger.warn("Unable to deserialize ${reader.path} : missing cache or expression")
+                    val message = "Unable to deserialize ${reader.path} : missing cache or expression"
+                    logger.warn(message)
+                    AbstractThemeLoader.Reporter += message
                     null
                 }
             }

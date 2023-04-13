@@ -1,5 +1,6 @@
 package com.tencao.saoui.themes.util
 
+import com.tencao.saoui.themes.AbstractThemeLoader
 import gnu.jel.CompilationException
 import gnu.jel.CompiledExpression
 import gnu.jel.Evaluator
@@ -16,18 +17,22 @@ interface ExpressionAdapter<T> {
         val sb = StringBuilder("An error occurred during theme loading. See more info below.\n")
             .append("–––COMPILATION ERROR :\n")
             .append(ce.message).append('\n')
-            .append("                       ")
+            .append("  ")
             .append(v.expression).append('\n')
         val column = ce.column // Column, where error was found
-        for (i in 0 until column + 23 - 1) sb.append(' ')
+        for (i in 0 until column + 1) sb.append(' ')
         sb.append('^')
-        val w = StringWriter()
+        /*val w = StringWriter()
         ce.printStackTrace(PrintWriter(w))
-        sb.append('\n').append(w)
-        logger.error(sb.toString())
+        sb.append('\n').append(w)*/
+        val message = sb.toString()
+        logger.error(message)
+        AbstractThemeLoader.Reporter += message.substringAfterLast("–––COMPILATION ERROR :\n")
         null
     } catch (e: Exception) {
-        logger.error("An error occurred while compiling '${v.expression}'.", e)
+        val message = "An error occurred while compiling '${v.expression}'"
+        logger.error(message, e)
+        AbstractThemeLoader.Reporter += (e.message ?: "unknown error") + " in ${v.expression}"
         null
     }
 

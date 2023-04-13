@@ -2,6 +2,7 @@ package com.tencao.saoui.themes.elements
 
 import com.tencao.saoui.SAOCore
 import com.tencao.saoui.api.themes.IHudDrawContext
+import com.tencao.saoui.themes.AbstractThemeLoader
 import net.minecraft.util.ResourceLocation
 import javax.xml.bind.annotation.XmlAttribute
 import javax.xml.bind.annotation.XmlRootElement
@@ -15,14 +16,23 @@ class FragmentReference : Element() {
     private var fragment: ElementGroup? = null
 
     override fun setup(parent: ElementParent, fragments: Map<ResourceLocation, Fragment>): Boolean {
-        if (!::id.isInitialized) SAOCore.LOGGER.warn("Missing id in fragment reference $name !")
+        val anonymous = super.setup(parent, fragments)
+        if (!::id.isInitialized) {
+            val message = "Missing id in fragment reference "
+            SAOCore.LOGGER.warn(message + hierarchyName())
+            AbstractThemeLoader.Reporter += message + nameOrParent()
+        }
         else {
             fragment = fragments[ResourceLocation(id)]
                 ?.also { it.setup(parent, fragments) }
-            if (fragment == null) SAOCore.LOGGER.warn("Missing fragment with id $id referenced in $name !")
+            if (fragment == null) {
+                val message = "Missing fragment with id $id referenced in "
+                SAOCore.LOGGER.warn(message + hierarchyName())
+                AbstractThemeLoader.Reporter += message + nameOrParent()
+            }
         }
 
-        return super.setup(parent, fragments)
+        return anonymous
     }
 
     override fun draw(ctx: IHudDrawContext) {

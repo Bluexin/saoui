@@ -37,8 +37,9 @@ class RawElement : Element() {
     private lateinit var expression: CUnit
 
     override fun setup(parent: ElementParent, fragments: Map<ResourceLocation, Fragment>): Boolean {
+        val anonymous = super.setup(parent, fragments)
         if (this.texture != null) this.rl = ResourceLocation(this.texture)
-        return super.setup(parent, fragments)
+        return anonymous
     }
 
     override fun draw(ctx: IHudDrawContext) {
