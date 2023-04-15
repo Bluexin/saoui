@@ -18,8 +18,10 @@
 package com.tencao.saoui.themes
 
 import com.google.gson.GsonBuilder
-import com.tencao.saoui.SAOCore
+import com.tencao.saoui.themes.elements.ElementParent
+import com.tencao.saoui.themes.elements.Fragment
 import com.tencao.saoui.themes.elements.Hud
+import com.tencao.saoui.themes.util.json.AfterUnmarshalAdapterFactory
 import java.io.File
 import java.io.FileWriter
 import java.io.InputStream
@@ -29,26 +31,29 @@ import java.io.InputStream
  *
  * @author Bluexin
  */
-class JsonThemeLoader : AbstractThemeLoader(ThemeFormat.JSON) {
+object JsonThemeLoader : AbstractThemeLoader(ThemeFormat.JSON) {
 
-    override fun InputStream.loadHud(): Hud = use {
+    private val gson by lazy {
         GsonBuilder()
+            .registerTypeAdapterFactory(AfterUnmarshalAdapterFactory())
             .create()
-            .fromJson(it.reader(), Hud::class.java)
     }
 
-    fun exportHud(hud: Hud, toFile: File) {
+    override fun InputStream.loadHud(): Hud = use {
+        gson.fromJson(it.reader(), Hud::class.java)
+    }
+
+    override fun InputStream.loadFragment(): Fragment = use {
+        gson.fromJson(it.reader(), Fragment::class.java)
+    }
+
+    fun export(what: ElementParent, toFile: File) {
         FileWriter(toFile).use {
             GsonBuilder()
                 .disableHtmlEscaping()
                 .setPrettyPrinting()
-                .create().toJson(hud, it)
+                .create().toJson(what, it)
             it.flush()
         }
-
-        val start = System.currentTimeMillis()
-        val newHud = loadHud(toFile)
-        newHud.setup()
-        SAOCore.LOGGER.info("Loaded theme and set it up in " + (System.currentTimeMillis() - start) + "ms.")
     }
 }

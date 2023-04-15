@@ -12,4 +12,4 @@ import net.minecraftforge.fml.common.eventhandler.Event
  * be added to prevent missing element issues.
  *
  */
-class MenuBuildingEvent(val elements: ArrayList<NeoElement>) : Event()
+class MenuBuildingEvent(val elements: List<NeoElement>) : Event()

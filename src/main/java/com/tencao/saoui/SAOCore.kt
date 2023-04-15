@@ -20,8 +20,10 @@ package com.tencao.saoui
 import com.tencao.saomclib.Client
 import com.tencao.saomclib.SAOMCLib
 import com.tencao.saomclib.capabilities.CapabilitiesHandler
+import com.tencao.saoui.api.elements.registry.ElementRegistry
 import com.tencao.saoui.api.events.EventInitStatsProvider
 import com.tencao.saoui.capabilities.RenderCapability
+import com.tencao.saoui.commands.SaouiCommand
 import com.tencao.saoui.config.ConfigHandler
 import com.tencao.saoui.config.FriendData
 import com.tencao.saoui.config.OptionCore
@@ -34,6 +36,7 @@ import com.tencao.saoui.util.DefaultStatsProvider
 import com.tencao.saoui.util.PlayerStats
 import net.minecraft.client.resources.SimpleReloadableResourceManager
 import net.minecraft.entity.EntityLivingBase
+import net.minecraftforge.client.ClientCommandHandler
 import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.fml.common.Loader
 import net.minecraftforge.fml.common.Mod
@@ -92,8 +95,6 @@ object SAOCore {
             RenderCapability::class.java,
             RenderCapability.Storage()
         ) { `object`: Any -> `object` is EntityLivingBase }
-
-        (Client.resourceManager as SimpleReloadableResourceManager).registerReloadListener(ThemeManager)
     }
 
     @Mod.EventHandler
@@ -102,6 +103,7 @@ object SAOCore {
         MinecraftForge.EVENT_BUS.post(s)
         PlayerStats.init(s.implementation)
         CoreGUI.animator // Let's force things to init early
+        ElementRegistry.initRegistry()
     }
 
     @Mod.EventHandler
@@ -116,6 +118,13 @@ object SAOCore {
             if (handler == null) LOGGER.warn("Unable to unregister Mantle health renderer!")
             else MinecraftForge.EVENT_BUS.unregister(handler)
         }
+
+        (Client.resourceManager as SimpleReloadableResourceManager).apply {
+            registerReloadListener(ThemeManager)
+            registerReloadListener(ElementRegistry)
+        }
+
+        ClientCommandHandler.instance.registerCommand(SaouiCommand)
     }
 
     @Mod.EventHandler

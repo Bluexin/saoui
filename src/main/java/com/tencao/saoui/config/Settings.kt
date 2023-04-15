@@ -160,4 +160,25 @@ object Settings {
         logger.info("Unregistering $oldTheme")
         configurations -= oldTheme
     }
+
+    object JelWrappers {
+        /**
+         * Easy getters to use with JEL.
+         *
+         * @param key the key of the setting to get
+         * @return the current setting value
+         */
+        @JvmStatic
+        fun setting(key: String): Any? = Settings[ConfigHandler.currentTheme, ResourceLocation(key)]
+        @JvmStatic
+        fun stringSetting(key: String): String = setting(key) as String
+        @JvmStatic
+        fun booleanSetting(key: String): Boolean = setting(key) as Boolean
+        @JvmStatic
+        fun intSetting(key: String): Int = setting(key) as Int
+        @JvmStatic
+        fun doubleSetting(key: String): Double = setting(key) as Double
+        @JvmStatic
+        fun resourceLocationSetting(key: String): ResourceLocation = setting(key) as ResourceLocation
+    }
 }

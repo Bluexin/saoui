@@ -24,6 +24,7 @@ import com.tencao.saomclib.utils.math.vec
 import com.tencao.saoui.SAOCore
 import com.tencao.saoui.SoundCore
 import com.tencao.saoui.api.screens.IIcon
+import com.tencao.saoui.api.scripting.catching
 import com.tencao.saoui.config.OptionCore
 import com.tencao.saoui.play
 import com.tencao.saoui.screens.CoreGUI
@@ -33,10 +34,12 @@ import com.tencao.saoui.screens.unaryPlus
 import com.tencao.saoui.screens.util.PopupAdvancement
 import com.tencao.saoui.screens.util.toIcon
 import com.tencao.saoui.themes.ThemeManager
+import com.tencao.saoui.themes.ThemeMetadata
 import com.tencao.saoui.util.AdvancementUtil
 import com.tencao.saoui.util.IconCore
 import com.tencao.saoui.util.getProgress
 import com.tencao.saoui.util.getRecipes
+import li.cil.repack.com.naef.jnlua.LuaValueProxy
 import net.minecraft.advancements.Advancement
 import net.minecraft.client.resources.I18n
 import net.minecraft.client.resources.I18n.format
@@ -54,7 +57,11 @@ import kotlin.math.min
  *
  * @author Bluexin
  */
-class CategoryButton(val delegate: IconElement, parent: INeoParent? = null, private val init: (CategoryButton.() -> Unit)? = null) : IconElement(delegate.icon, delegate.pos) {
+open class CategoryButton(
+    val delegate: IconElement,
+    parent: INeoParent? = null,
+    private val init: (CategoryButton.() -> Unit)? = null
+) : IconElement(delegate.icon, delegate.pos) {
 
     override var pos by delegate::pos.delegate
     override var destination by delegate::destination.delegate
@@ -100,6 +107,25 @@ class CategoryButton(val delegate: IconElement, parent: INeoParent? = null, priv
     }
 
     override fun onClick(body: (Vec2d, MouseButton) -> Boolean) = delegate.onClick(body)
+
+    @JvmName("onClick")
+    @Suppress("unused") // for lua
+    fun luaOnClick(bodyProxy: LuaValueProxy) = onClick { _, _ ->
+        val state = bodyProxy.luaState
+        state.catching(false) {
+            bodyProxy.pushValue()
+            val r = if (state.isFunction(-1)) {
+                state.pushJavaObject(this)
+                state.call(1, 1)
+                state.checkBoolean(-1).also {
+                    state.pop(1)
+                }
+            } else false
+//            state.pop(1)
+            r
+        }
+    }
+
     override fun onClickOut(body: (Vec2d, MouseButton) -> Unit) = delegate.onClickOut(body)
     override fun hide() = delegate.hide()
     override fun show() = delegate.show()
@@ -217,10 +243,41 @@ class CategoryButton(val delegate: IconElement, parent: INeoParent? = null, priv
         delegate.description.add(description)
     }
 
-    fun category(icon: IIcon, label: String, description: MutableList<String> = mutableListOf(), body: (CategoryButton.() -> Unit)? = null): CategoryButton {
+    fun category(
+        icon: IIcon,
+        label: String,
+        description: MutableList<String> = mutableListOf(),
+        body: (CategoryButton.() -> Unit)? = null
+    ): CategoryButton {
         val cat = CategoryButton(IconLabelElement(icon, label, description = description), this, body)
         +cat
         return cat
+    }
+
+    @Suppress("unused") // For Lua
+    @JvmOverloads
+    @JvmName("category")
+    fun luaCategory(
+        icon: String,
+        label: String,
+        description: List<String> = listOf(),
+        bodyProxy: LuaValueProxy? = null
+    ): CategoryButton {
+        val body: (CategoryButton.() -> Unit)? = bodyProxy?.let {
+            {
+                val state = it.luaState
+                state.catching(Unit) {
+                    it.pushValue()
+                    if (state.isFunction(-1)) {
+                        state.pushJavaObject(this)
+                        state.call(1, 0)
+                    }
+                    state.pop(1)
+                }
+            }
+        }
+
+        return category(IconCore.valueOf(icon), label, description.toMutableList(), body)
     }
 
     fun partyMenu(): CategoryButton {
@@ -329,7 +386,7 @@ class CategoryButton(val delegate: IconElement, parent: INeoParent? = null, priv
     }
 
     override fun toString(): String {
-        return "NeoCategoryButton(delegate=$delegate)"
+        return "CategoryButton(delegate=$delegate, elements=${elements.size})"
     }
 }
 
@@ -350,8 +407,8 @@ fun INeoParent.optionButton(option: OptionCore): IconLabelElement {
 fun INeoParent.optionCategory(option: OptionCore): CategoryButton {
     val cat = CategoryButton(IconLabelElement(IconCore.OPTION, option.displayName, description = option.description.toMutableList()))
     if (option == OptionCore.THEME) {
-        ThemeManager.themeList.forEach {
-            cat += themeButton(it.value.name, it.key)
+        ThemeManager.themeList.forEach { (_, theme) ->
+            cat += themeButton(theme)
         }
     }
     option.subOptions.forEach {
@@ -368,22 +425,22 @@ private fun translateIfExists(key: String, default: String) =
 
 private val ResourceLocation.tl get() = toString().replace(':', '.')
 
-fun INeoParent.themeButton(themeName: String, themeKey: ResourceLocation): IconLabelElement {
-    val realName = translateIfExists("theme.${themeKey.tl}.name", themeName)
+fun INeoParent.themeButton(theme: ThemeMetadata): IconLabelElement {
+    val realName = translateIfExists(theme.nameTranslationKey, theme.name)
     val but = object :
         IconLabelElement(
             IconCore.OPTION, realName,
             description = mutableListOf(
                 "Change theme to $realName",
-                translateIfExists("theme.${themeKey.tl}.description", "No description for $realName ($themeKey)")
+                translateIfExists(theme.descTranslationKey, "No description for $realName (${theme.id})")
             )
         ) {
         override var highlighted: Boolean
-            get() = ThemeManager.currentTheme.id == themeKey && !OptionCore.VANILLA_UI.isEnabled
+            get() = ThemeManager.currentTheme === theme && !OptionCore.VANILLA_UI.isEnabled
             set(_) = (Unit)
     }
     but.onClick { _, _ ->
-        ThemeManager.load(themeKey)
+        ThemeManager.load(theme.id)
         OptionCore.VANILLA_UI.disable()
         Client.minecraft.displayGuiScreen(null)
         Client.minecraft.displayGuiScreen(IngameMenu())

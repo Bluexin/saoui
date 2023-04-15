@@ -109,12 +109,14 @@ open class IconLabelElement(icon: IIcon, open var label: String = "", pos: Vec2d
      */
     override fun drawForeground(mouse: Vec2d, partialTicks: Float) {
         if (!canDraw) return
+        GLCore.pushMatrix()
         if (mouse in this) {
             drawHoveringText(mouse)
             GLCore.lighting(false)
             GLCore.depth(false)
         }
         drawChildren(mouse, partialTicks, DrawType.FOREGROUND)
+        GLCore.popMatrix()
     }
 
     override fun toString(): String {

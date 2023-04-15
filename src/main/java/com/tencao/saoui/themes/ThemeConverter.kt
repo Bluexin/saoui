@@ -1,9 +1,15 @@
 package com.tencao.saoui.themes
 
-import com.tencao.saoui.themes.elements.Hud
+import com.google.gson.GsonBuilder
 import net.minecraft.launchwrapper.Launch
+import net.minecraft.util.ResourceLocation
 import org.apache.logging.log4j.LogManager
 import java.io.File
+import kotlin.io.path.isDirectory
+import kotlin.io.path.listDirectoryEntries
+import kotlin.io.path.name
+import kotlin.io.path.nameWithoutExtension
+import kotlin.system.measureTimeMillis
 
 object ThemeConverter {
 
@@ -21,21 +27,77 @@ object ThemeConverter {
         }
         val toRead = File(args[0])
         val toWrite = File(args[1])
-        val hud = try {
+        val (hud, fragments) = try {
             logger.info("Loading $toRead")
-            XmlThemeLoader().loadHud(toRead)
-                .also(Hud::setup)
+            clearAndLogErrors {
+                val hud = XmlThemeLoader.loadHud(toRead)
+                val fragmentRoot = toRead.toPath().resolveSibling("fragments")
+                val ns = fragmentRoot.parent.name
+                val fragments = buildMap {
+                    if (fragmentRoot.isDirectory()) {
+                        fragmentRoot.listDirectoryEntries().forEach {
+                            put(ResourceLocation(ns, it.nameWithoutExtension)) { XmlThemeLoader.loadFragment(it.toFile()) }
+                        }
+                    }
+                }
+                hud.setup(fragments)
+
+                hud to fragments
+            }
         } catch (e: Exception) {
-            logger.error("Something went wrong reading $toRead", e)
+            val message = "Something went wrong reading $toRead"
+            logger.error(message, e)
             return
         }
         try {
             logger.info("Exporting to $toWrite")
-            JsonThemeLoader().exportHud(hud, toWrite)
+            clearAndLogErrors {
+                toWrite.parentFile.mkdirs()
+                JsonThemeLoader.export(hud, toWrite)
+                if (fragments.isNotEmpty()) {
+                    val fragmentExportRoot = toWrite.toPath().resolveSibling("fragments")
+                    fragmentExportRoot.toFile().mkdirs()
+                    fragments.forEach { (key, fragment) ->
+                        JsonThemeLoader.export(fragment(), fragmentExportRoot.resolve("${key.resourcePath}.json").toFile())
+                    }
+                }
+            }
         } catch (e: Exception) {
-            logger.error("Something went wrong writing $toWrite", e)
+            val message = "Something went wrong writing $toWrite"
+            logger.error(message, e)
             return
         }
-        logger.info("Converted $toRead to $toWrite")
+        logger.info("Converted $toRead to $toWrite. Checking loading")
+
+        val time = measureTimeMillis {
+            clearAndLogErrors {
+                val read = JsonThemeLoader.loadHud(toWrite)
+                val fragmentRoot = toWrite.toPath().resolveSibling("fragments")
+                val ns = fragments.keys.first().resourceDomain
+                val readFragments = buildMap {
+                    if (fragmentRoot.isDirectory()) {
+                        fragmentRoot.listDirectoryEntries().forEach {
+                            put(ResourceLocation(ns, it.nameWithoutExtension)) { JsonThemeLoader.loadFragment(it.toFile()) }
+                        }
+                    }
+                }
+
+                read.setup(readFragments)
+            }
+        }
+        logger.info("Read in $time ms.")
+    }
+
+    private inline fun <T> clearAndLogErrors(body: () -> T): T {
+        AbstractThemeLoader.Reporter.errors.clear()
+
+        val r = body()
+
+        if (AbstractThemeLoader.Reporter.errors.isNotEmpty()) {
+            logger.warn("${AbstractThemeLoader.Reporter.errors.size} errors detected :")
+            AbstractThemeLoader.Reporter.errors.forEach(logger::warn)
+        }
+
+        return r
     }
 }

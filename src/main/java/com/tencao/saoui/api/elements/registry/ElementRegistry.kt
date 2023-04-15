@@ -4,14 +4,12 @@ import com.tencao.saomclib.Client
 import com.tencao.saomclib.message
 import com.tencao.saomclib.utils.math.vec
 import com.tencao.saoui.SAOCore
-import com.tencao.saoui.api.elements.CategoryButton
-import com.tencao.saoui.api.elements.IconElement
-import com.tencao.saoui.api.elements.NeoElement
-import com.tencao.saoui.api.elements.optionCategory
+import com.tencao.saoui.api.elements.*
 import com.tencao.saoui.api.events.MenuBuildingEvent
 import com.tencao.saoui.api.items.IItemFilter
 import com.tencao.saoui.api.items.ItemFilterRegister
 import com.tencao.saoui.api.screens.IIcon
+import com.tencao.saoui.api.scripting.JNLua
 import com.tencao.saoui.config.OptionCore
 import com.tencao.saoui.events.EventCore
 import com.tencao.saoui.screens.menus.IngameMenu
@@ -22,31 +20,44 @@ import com.tencao.saoui.util.IconCore
 import net.minecraft.client.gui.GuiIngameMenu
 import net.minecraft.client.gui.GuiOptions
 import net.minecraft.client.resources.I18n
+import net.minecraft.client.resources.IResourceManager
+import net.minecraftforge.client.resource.IResourceType
+import net.minecraftforge.client.resource.ISelectiveResourceReloadListener
+import net.minecraftforge.client.resource.VanillaResourceType
 import net.minecraftforge.common.MinecraftForge
+import java.util.function.Predicate
 
-object ElementRegistry {
+object ElementRegistry : ISelectiveResourceReloadListener {
 
     /**
      * This is a fixed list of elements for the menu
      * that will be pulled everytime the menu is opened
      */
-    val registeredElements = hashMapOf<Type, ArrayList<NeoElement>>()
+    val registeredElements = hashMapOf<Type, List<NeoElement>>()
+
+    override fun onResourceManagerReload(
+        resourceManager: IResourceManager,
+        resourcePredicate: Predicate<IResourceType>
+    ) {
+        if (resourcePredicate.test(VanillaResourceType.TEXTURES)) initRegistry()
+    }
 
     fun initRegistry() {
         registeredElements.clear()
-        val event = MenuBuildingEvent(getDefaultElements())
+        val event = MenuBuildingEvent(JNLua.loadIngameMenu())
         MinecraftForge.EVENT_BUS.post(event)
         registeredElements[Type.INGAMEMENU] = event.elements
     }
 
-    fun getDefaultElements(): ArrayList<NeoElement> {
+    fun getDefaultElements(): MutableList<NeoElement> {
         var index = 0
         return arrayListOf(
             tlCategory(IconCore.PROFILE, index++) {
                 ItemFilterRegister.tlFilters.forEach { baseFilter ->
-                    addItemCategories(this, baseFilter)
+                    addItemCategories(baseFilter)
                 }
                 category(IconCore.SKILLS, I18n.format("sao.element.skills")) {
+                    setWip()
                     category(IconCore.SKILLS, "Test 1") {
                         category(IconCore.SKILLS, "1.1") {
                             for (i in 1..3) category(IconCore.SKILLS, "1.1.$i")
@@ -91,13 +102,17 @@ object ElementRegistry {
             },
             tlCategory(IconCore.SOCIAL, index++) {
                 category(IconCore.GUILD, I18n.format("sao.element.guild")) {
+                    setWip()
                     delegate.disabled = !SAOCore.isSAOMCLibServerSide
                 }
                 partyMenu()
                 friendMenu()
             },
-            tlCategory(IconCore.MESSAGE, index++),
+            tlCategory(IconCore.MESSAGE, index++) {
+                setWip()
+            },
             tlCategory(IconCore.NAVIGATION, index++) {
+                setWip()
                 category(IconCore.QUEST, I18n.format("sao.element.quest")) {
                     AdvancementUtil.getCategories().forEach {
                         advancementCategory(it)
@@ -135,13 +150,24 @@ object ElementRegistry {
         )
     }
 
-    fun addItemCategories(button: CategoryButton, filter: IItemFilter) {
-        button.category(filter.icon, filter.displayName) {
-            if (filter.isCategory) {
-                if (filter.subFilters.isNotEmpty()) {
-                    filter.subFilters.forEach { subFilter -> addItemCategories(this, subFilter) }
+    fun CategoryButton.addItemCategories(filter: IItemFilter) {
+        if (filter.isCategory) {
+            category(filter.icon, filter.displayName) {
+                filter.subFilters.forEach { subFilter -> addItemCategories(subFilter) }
+            }
+        } else {
+            +object : CategoryButton(IconLabelElement(filter.icon, filter.displayName), this, null) {
+                override fun show() {
+                    super.show()
+                    this.elements.clear()
+                    itemList(Client.minecraft.player.inventoryContainer, filter)
                 }
-            } else itemList(Client.minecraft.player.inventoryContainer, filter)
+
+                override fun hide() {
+                    super.hide()
+                    elements.clear()
+                }
+            }
         }
     }
 
@@ -149,8 +175,14 @@ object ElementRegistry {
         return CategoryButton(IconElement(icon, vec(0, 25 * index)), null, body)
     }
 
+    fun CategoryButton.setWip() {
+        disabled = true
+        addDescription(I18n.format("saoui.wip"))
+    }
+
     enum class Type {
         MAINMENU,
         INGAMEMENU;
     }
 }
+

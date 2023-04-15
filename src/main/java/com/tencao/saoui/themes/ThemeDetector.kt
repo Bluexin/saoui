@@ -9,9 +9,9 @@ import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
-import java.util.function.BiPredicate
 import java.util.zip.ZipFile
 import kotlin.io.path.name
+import kotlin.io.path.nameWithoutExtension
 import kotlin.streams.asSequence
 
 object ThemeDetector {
@@ -36,7 +36,7 @@ object ThemeDetector {
             try {
                 it.type.loader()
                     .loadHud(it.themeRoot.append("/${it.type.hudFileSuffix}"))
-                    .setup()
+                    .setup(emptyMap())
                 true
             } catch (e: IOException) {
                 SAOCore.LOGGER.warn("Could not load HUD for $it !", e)
@@ -51,17 +51,15 @@ object ThemeDetector {
      * This returns a List and not a lazy Sequence to be able to close opened resources (see usages of [use]) within
      * the scope of this method.
      */
-    private fun File.findThemePaths(): List<Pair<Path, ThemeFormat>> {
+    private fun File.findThemePaths(): Map<Path, List<Path>> {
         SAOCore.LOGGER.debug("Analyzing {}", this)
         return when {
             // jar
             this.isFile -> ZipFile(this).use { zip ->
                 zip.entries().asSequence()
-                    .filter { !it.isDirectory }
-                    .mapNotNull { zipEntry ->
-                        ThemeFormat.fromFile(zipEntry.name)?.let { Paths.get(zipEntry.name) to it }
-                    }
-                    .toList()
+                    .filter { !it.isDirectory && (it.name.endsWith(".xml") || it.name.endsWith(".json")) }
+                    .map { Paths.get(it.name) }
+                    .groupBy(Path::getParent)
             }
             // folder
             this.isDirectory -> {
@@ -69,18 +67,18 @@ object ThemeDetector {
                     if (it.name != "main") it
                     else it.parent.parent.parent.resolve("resources").resolve("main") // in-dev
                 }
-                Files.find(thisAsPath, 5, { _, fileAttributes ->
+                Files.find(thisAsPath, 6, { _, fileAttributes ->
                     fileAttributes.isRegularFile
                 }).map { thisAsPath.relativize(it) }.use { s ->
                     s.asSequence()
-                        .mapNotNull { path -> ThemeFormat.fromFile(path.toString())?.let { path to it } }
-                        .toList()
+                        .filter { it.name.endsWith(".xml") || it.name.endsWith(".json") }
+                        .groupBy(Path::getParent)
                 }
             }
             // unknown
             else -> {
                 SAOCore.LOGGER.warn("Unknown file type : {}", this)
-                emptyList()
+                emptyMap()
             }
         }
     }
@@ -89,8 +87,14 @@ object ThemeDetector {
      * Transform a list of paths into their respective metadata, indexed by id
      * @param themeDomain Domain name for the theme
      */
-    private fun List<Pair<Path, ThemeFormat>>.extractThemesMetadata(themeDomain: String): Map<ResourceLocation, ThemeMetadata> =
-        this.associate { (path, format) ->
+    private fun Map<Path, List<Path>>.extractThemesMetadata(themeDomain: String): Map<ResourceLocation, ThemeMetadata> =
+        this.mapNotNull { (parent, paths) ->
+            paths.mapNotNull { path ->
+                ThemeFormat.fromFile(path.toString())?.let {
+                    Triple(path, it, this[parent.resolve("fragments")].orEmpty())
+                }
+            }.singleOrNull()
+        }.associate { (path, format, fragments) ->
             val domain = path.subpath(1, 2).toString()
             val name = path.parent.fileName.toString().let {
                 if (it != "themes") it else {
@@ -101,11 +105,15 @@ object ThemeDetector {
             val id = ResourceLocation(themeDomain, name)
             SAOCore.LOGGER.debug("Found candidate theme {} from {} at {}", id, themeDomain, path)
             val domainPath = path.parent.toString().replace(File.separator, "/").removePrefix("assets/$domain/")
+            val themeRoot = ResourceLocation(domain, domainPath)
             id to ThemeMetadata(
                 id = id,
-                themeRoot = ResourceLocation(domain, domainPath),
+                themeRoot = themeRoot,
                 name = name,
-                type = format
+                type = format,
+                fragments = fragments.associate {
+                    ResourceLocation(name, it.nameWithoutExtension) to themeRoot.append("/fragments/${it.fileName}")
+                }
             )
         }
 }

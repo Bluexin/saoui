@@ -39,8 +39,6 @@ enum class OptionCore(
      * @see OptionCore.toString
      */
     val unformattedName: String,
-    val displayName: String = I18n.format(unformattedName),
-    val description: List<String> = listOf(I18n.format("$unformattedName.desc")),
     private val defaultValue: Boolean,
     private val category: OptionCore?,
     /**
@@ -137,6 +135,9 @@ enum class OptionCore(
     RENDER_HEALTHMOUNT("optionRenderHealthMount", defaultValue = true, category = RENDER_SYSTEM);
 
     override fun toString() = name
+
+    val displayName: String by lazy { I18n.format(unformattedName) }
+    val description: List<String> by lazy { listOf(I18n.format("$unformattedName.desc")) }
 
     private val setting = if (isCategory) null else BooleanSetting(
         Settings.NS_BUILTIN, ResourceLocation(category?.name ?: Configuration.CATEGORY_GENERAL, name),
@@ -244,19 +245,6 @@ enum class OptionCore(
         fun isEnabled(o: OptionCore): Boolean {
             return o.isEnabled
         }
-
-        /**
-         * Easy getters to use with JEL.
-         *
-         * @param key the key of the setting to get
-         * @return the current setting value
-         */
-        @JvmStatic
-        fun setting(key: String): Any? = Settings[ConfigHandler.currentTheme, ResourceLocation(key)]
-        @JvmStatic
-        fun booleanSetting(key: String): Boolean = setting(key) as Boolean
-        @JvmStatic
-        fun doubleSetting(key: String): Double = setting(key) as Double
 
         val tlOptions
             get() = values().filter { it.category == null }

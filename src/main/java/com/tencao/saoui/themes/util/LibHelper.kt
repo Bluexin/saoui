@@ -21,11 +21,13 @@ import com.tencao.saoui.SAOCore
 import com.tencao.saoui.api.info.IOption
 import com.tencao.saoui.api.themes.IHudDrawContext
 import com.tencao.saoui.config.OptionCore
+import com.tencao.saoui.config.Settings
 import com.tencao.saoui.effects.StatusEffects
 import com.tencao.saoui.screens.util.HealthStep
-import com.tencao.saoui.themes.elements.ElementParent
+import com.tencao.saoui.themes.util.typeadapters.*
 import com.tencao.saoui.util.ColorUtil
 import gnu.jel.CompilationException
+import gnu.jel.DVMap
 import gnu.jel.Library
 import net.minecraft.client.resources.I18n
 import net.minecraft.launchwrapper.Launch
@@ -36,11 +38,13 @@ import net.minecraft.launchwrapper.Launch
  * @author Bluexin
  */
 object LibHelper {
+    private val contextResolver = ContextAwareDVMap()
+
     val LIB: Library by lazy {
-        val staticLib = arrayOf(Math::class.java, HealthStep::class.java, StatusEffects::class.java, OptionCore::class.java, I18n::class.java, ColorUtil::class.java)
-        val dynLib = arrayOf(IHudDrawContext::class.java, ElementParent::class.java)
+        val staticLib = arrayOf(Math::class.java, HealthStep::class.java, StatusEffects::class.java, OptionCore::class.java, Settings.JelWrappers::class.java, I18n::class.java, ColorUtil::class.java)
+        val dynLib = arrayOf(IHudDrawContext::class.java)
         val dotClasses = arrayOf(String::class.java, IOption::class.java, List::class.java, StatusEffects::class.java, HealthStep::class.java, ColorUtil::class.java)
-        Library(staticLib, dynLib, dotClasses, null, null)
+        Library(staticLib, dynLib, dotClasses, contextResolver, null)
     }
 
     init {
@@ -56,4 +60,17 @@ object LibHelper {
         SAOCore.LOGGER.debug("Obfuscated: $obf")
         obf
     }
+
+    fun pushContext(context: Map<String, JelType>) {
+        contextResolver.context = context
+    }
+
+    fun popContext() {
+        contextResolver.context = emptyMap()
+    }
+}
+
+private class ContextAwareDVMap : DVMap() {
+    var context: Map<String, JelType> = emptyMap()
+    override fun getTypeName(name: String): String? = context[name]?.typeName
 }

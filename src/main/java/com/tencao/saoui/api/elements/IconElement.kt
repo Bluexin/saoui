@@ -23,13 +23,11 @@ import com.tencao.saomclib.utils.math.Vec2d
 import com.tencao.saomclib.utils.math.clamp
 import com.tencao.saomclib.utils.math.vec
 import com.tencao.saoui.GLCore
-import com.tencao.saoui.api.elements.animator.Easing
 import com.tencao.saoui.api.elements.registry.DrawType
 import com.tencao.saoui.api.screens.IIcon
 import com.tencao.saoui.config.OptionCore
 import com.tencao.saoui.resources.StringNames
 import com.tencao.saoui.screens.MouseButton
-import com.tencao.saoui.screens.unaryPlus
 import com.tencao.saoui.screens.util.ItemIcon
 import com.tencao.saoui.util.ColorIntent
 import com.tencao.saoui.util.ColorUtil
@@ -105,11 +103,11 @@ open class IconElement(
         }
     override var scale = Vec2d.ONE
     override fun init() {
-        +basicAnimation(this, "pos") {
+        /*+basicAnimation(this, "pos") {
             duration = 20f
             from = Vec2d.ZERO
             easing = Easing.easeInOutQuint
-        }
+        }*/
     }
 
     protected fun childrenOrderedForRendering(): Sequence<NeoElement> {
@@ -165,11 +163,8 @@ open class IconElement(
         GLCore.color(ColorUtil.multiplyAlpha(getTextColor(mouse), transparency))
         if (icon.rl != null) {
             GLCore.glBindTexture(icon.rl!!)
-            icon.glDraw(pos + vec(1, 1), 5f)
         }
-        if (icon is ItemIcon) {
-            icon.glDraw(pos + vec(1, 1), 5f)
-        }
+        icon.glDraw(pos + vec(1, 1), 5f)
 
         GLCore.glBlend(false)
         GLCore.color(1f, 1f, 1f, 1f)

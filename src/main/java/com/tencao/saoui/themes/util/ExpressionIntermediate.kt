@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlValue
  *
  * @author Bluexin
  */
-class ExpressionIntermediate {
+open class ExpressionIntermediate {
 
     @get:XmlAttribute(name = "cache")
     var cacheType = CacheType.PER_FRAME

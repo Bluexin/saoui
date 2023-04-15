@@ -27,14 +27,14 @@ import net.minecraft.entity.EntityLivingBase
  *
  * @author Bluexin
  */
-abstract class CachedExpression<out T>(
+sealed class CachedExpression<out T: Any>(
     val expression: CompiledExpressionWrapper<T>,
     val expressionIntermediate: ExpressionIntermediate
 ) : Function1<IHudDrawContext, T> {
     protected abstract val cache: T?
 }
 
-class FrameCachedExpression<T>(
+class FrameCachedExpression<T: Any>(
     expression: CompiledExpressionWrapper<T>,
     expressionIntermediate: ExpressionIntermediate
 ) : CachedExpression<T>(expression, expressionIntermediate) {
@@ -53,7 +53,7 @@ class FrameCachedExpression<T>(
     }
 }
 
-class StaticCachedExpression<out T>(
+class StaticCachedExpression<out T: Any>(
     expression: CompiledExpressionWrapper<T>,
     expressionIntermediate: ExpressionIntermediate
 ) : CachedExpression<T>(expression, expressionIntermediate) {
@@ -110,19 +110,24 @@ class StaticCachedExpression<out T>(
         override fun targetMaxHp() = 0f
         override fun targetHpPct() = 0f
         override fun targetHealthStep() = HealthStep.INVALID
+        override fun getStringProperty(name: String) = ""
+        override fun getDoubleProperty(name: String) = 0.0
+        override fun getIntProperty(name: String) = 0
+        override fun getBooleanProperty(name: String) = false
+        override fun getUnitProperty(name: String) = Unit
     }
 
     override fun invoke(ctx: IHudDrawContext) = cache
 }
 
-class SizeCachedExpression<T>(
+class SizeCachedExpression<T: Any>(
     expression: CompiledExpressionWrapper<T>,
     expressionIntermediate: ExpressionIntermediate
 ) : CachedExpression<T>(expression, expressionIntermediate) {
     override var cache: T? = null
 
-    var lastW = 0
-    var lastH = 0
+    private var lastW = 0
+    private var lastH = 0
 
     private fun checkUpdateSize(ctx: IHudDrawContext) =
         if (lastW == ctx.scaledwidth() && lastH == ctx.scaledheight()) false else {
@@ -137,7 +142,7 @@ class SizeCachedExpression<T>(
     }
 }
 
-class UnCachedExpression<out T>(
+class UnCachedExpression<out T: Any>(
     expression: CompiledExpressionWrapper<T>,
     expressionIntermediate: ExpressionIntermediate
 ) : CachedExpression<T>(expression, expressionIntermediate) {

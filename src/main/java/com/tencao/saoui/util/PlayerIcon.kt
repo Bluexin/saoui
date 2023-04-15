@@ -3,11 +3,12 @@ package com.tencao.saoui.util
 import com.mojang.authlib.minecraft.MinecraftProfileTexture
 import com.tencao.saomclib.Client
 import com.tencao.saomclib.party.PlayerInfo
+import com.tencao.saoui.api.screens.IIcon
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.resources.DefaultPlayerSkin
 import net.minecraft.util.ResourceLocation
 
-class PlayerIcon(val player: PlayerInfo) : com.tencao.saoui.api.screens.IIcon {
+class PlayerIcon(val player: PlayerInfo) : IIcon {
 
     private val texture = getSkin()
 

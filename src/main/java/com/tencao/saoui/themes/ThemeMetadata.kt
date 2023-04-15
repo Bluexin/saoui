@@ -9,19 +9,25 @@ data class ThemeMetadata(
      */
     val themeRoot: ResourceLocation,
     val name: String,
-    val type: ThemeFormat
+    val type: ThemeFormat,
+    val fragments: Map<ResourceLocation, ResourceLocation>
 ) {
     /**
      * Root for the theme's textures
      */
     val texturesRoot = ResourceLocation(themeRoot.resourceDomain, "textures/${id.resourcePath}/")
+    val nameTranslationKey = "theme.${id.toString().replace(':', '.')}.name"
+    val descTranslationKey = "theme.${id.toString().replace(':', '.')}.description"
 }
 
 enum class ThemeFormat(val hudFileSuffix: String, val loader: () -> AbstractThemeLoader) {
-    XML("hud.xml", ::XmlThemeLoader),
-    JSON("hud.json", ::JsonThemeLoader);
+    XML("hud.xml", { XmlThemeLoader }),
+    JSON("hud.json", { JsonThemeLoader });
 
     companion object {
-        fun fromFile(fileName: String): ThemeFormat? = values().firstOrNull { fileName.endsWith(it.hudFileSuffix) }
+        private val fromFileExtension = values().associateBy { it.hudFileSuffix.substringAfterLast('.') }
+
+        fun fromFile(fileName: String): ThemeFormat? = fromFileExtension.values.firstOrNull { fileName.endsWith(it.hudFileSuffix) }
+        fun fromFileExtension(fileName: String): ThemeFormat? = fromFileExtension[fileName.substringAfterLast('.')]
     }
 }

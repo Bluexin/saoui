@@ -205,6 +205,7 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
         val entities: MutableList<EntityLivingBase> = mutableListOf()
         val trackedEntity = getMouseOver(mc.renderPartialTicks)
         if (trackedEntity is EntityLivingBase && trackedEntity.getRenderData()?.colorStateHandler?.shouldDrawHealth() == true) context.setTargetEntity(trackedEntity)
+        else context.setTargetEntity(null)
         entities.addAll(
             Client.minecraft.world.getEntitiesInAABBexcluding(Client.minecraft.player, AxisAlignedBB(Client.minecraft.player.position.add(-10, -5, -10), Client.minecraft.player.position.add(10, 5, 10))) {
                 it is EntityLivingBase && it.getRenderData()?.isAggressive == true && it.getRenderData()?.colorStateHandler?.shouldDrawHealth() == true && !entities.contains(it)
@@ -252,12 +253,12 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
         if (entity != null) {
             if (mc.world != null) {
                 mc.pointedEntity = null
-                val d0 = 64.0
+                val distance = 32.0
                 val vec3d = entity.getPositionEyes(partialTicks)
                 val vec3d1 = entity.getLook(1.0f)
-                val vec3d2 = vec3d.addVector(vec3d1.x * d0, vec3d1.y * d0, vec3d1.z * d0)
-                val list = mc.world.getEntitiesInAABBexcluding(entity, entity.entityBoundingBox.expand(vec3d1.x * d0, vec3d1.y * d0, vec3d1.z * d0).grow(1.0, 1.0, 1.0), Predicates.and(EntitySelectors.NOT_SPECTATING, Predicate { p_apply_1_ -> p_apply_1_ != null && p_apply_1_.canBeCollidedWith() }))
-                var d2 = d0
+                val vec3d2 = vec3d.addVector(vec3d1.x * distance, vec3d1.y * distance, vec3d1.z * distance)
+                val list = mc.world.getEntitiesInAABBexcluding(entity, entity.entityBoundingBox.expand(vec3d1.x * distance, vec3d1.y * distance, vec3d1.z * distance).grow(1.0, 1.0, 1.0), Predicates.and(EntitySelectors.NOT_SPECTATING, Predicate { p_apply_1_ -> p_apply_1_ != null && p_apply_1_.canBeCollidedWith() }))
+                var d2 = distance * distance
                 for (j in list.indices) {
                     val entity1 = list[j]
                     val axisalignedbb = entity1.entityBoundingBox.grow(entity1.collisionBorderSize.toDouble())
@@ -268,7 +269,7 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
                             d2 = 0.0
                         }
                     } else if (raytraceresult != null) {
-                        val d3 = vec3d.distanceTo(raytraceresult.hitVec)
+                        val d3 = vec3d.squareDistanceTo(raytraceresult.hitVec)
                         if (d3 < d2 || d2 == 0.0) {
                             if (entity1.lowestRidingEntity === entity.lowestRidingEntity && !entity1.canRiderInteract()) {
                                 if (d2 == 0.0) {

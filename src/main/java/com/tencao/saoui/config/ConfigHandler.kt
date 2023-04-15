@@ -42,4 +42,31 @@ object ConfigHandler {
         NS_BUILTIN, general("currentTheme"), DEFAULT_THEME,
         "The currently selected theme. If invalid or unavailable, this will default to the builtin sao theme"
     ).register()
+
+    // Added for JNLua
+    var forceNativeLibPlatform = ""
+        private set
+    var alwaysTryNative = false
+        private set
+    var forceNativeLibPathFirst = ""
+        private set
+    var nativeInTmpDir = false
+        private set
+    var logFullLibLoadErrors = false
+        private set
+    var limitMemory = false
+        private set
+    var disableLocaleChanging = true
+        private set
+    var forceLuaJ = false
+        private set
+    var registerLuaJArchitecture = false
+        private set
+    var enableLua53 = true
+        private set
+    var enableLua54 = true
+        private set
+    var defaultLua53 = true
+        private set
+    // end of JNLua
 }

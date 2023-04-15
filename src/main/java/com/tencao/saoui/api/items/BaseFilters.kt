@@ -304,7 +304,7 @@ enum class BaseFilters(val filter: (ItemStack, Boolean) -> Boolean) : IItemFilte
     override fun invoke(stack: ItemStack, equipped: Boolean) = filter(stack, equipped)
 
     companion object {
-        val mc = Client.minecraft
+        val mc by lazy { Client.minecraft }
 
         val baublesLoaded by lazy { Loader.isModLoaded("baubles") }
 

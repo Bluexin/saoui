@@ -31,7 +31,7 @@ import javax.xml.bind.annotation.*
  */
 @XmlRootElement
 @XmlSeeAlso(RepetitionGroup::class)
-open class ElementGroup : Element(), ElementParent {
+open class ElementGroup : CachingElementParent() {
 
     @field:SerializedName("children")
     @XmlElementWrapper(name = "children")
@@ -43,40 +43,6 @@ open class ElementGroup : Element(), ElementParent {
 
     private var texture: String? = null
 
-    @Transient
-    protected var cachedX = 0.0
-
-    @Transient
-    protected var cachedY = 0.0
-
-    @Transient
-    protected var cachedZ = 0.0
-
-    @Transient
-    protected var latestTicks = -1.0F
-
-    /**
-     * Returns true if the element should update it's position. Can be extremely useful in huge groups
-     */
-    protected fun checkUpdate(ctx: IHudDrawContext) = if (latestTicks == ctx.partialTicks) false else {
-        latestTicks = ctx.partialTicks; true
-    }
-
-    override fun getX(ctx: IHudDrawContext): Double {
-        updateCache(ctx)
-        return cachedX
-    }
-
-    override fun getY(ctx: IHudDrawContext): Double {
-        updateCache(ctx)
-        return cachedY
-    }
-
-    override fun getZ(ctx: IHudDrawContext): Double {
-        updateCache(ctx)
-        return cachedZ
-    }
-
     override fun draw(ctx: IHudDrawContext) {
         GLCore.glBlend(true)
         GLCore.color(1f, 1f, 1f, 1f)
@@ -87,20 +53,12 @@ open class ElementGroup : Element(), ElementParent {
         this.elements.forEach { it.draw(ctx) }
     }
 
-    override fun setup(parent: ElementParent): Boolean {
-        if (this.texture != null) this.rl = ResourceLocation(this.texture)
-        val res = super.setup(parent)
+    override fun setup(parent: ElementParent, fragments: Map<ResourceLocation, () -> Fragment>): Boolean {
+        val res = super.setup(parent, fragments)
+        this.rl = this.texture?.let(::ResourceLocation)
         var anonymous = 0
-        this.elements.forEach { if (it.name == DEFAULT_NAME) ++anonymous; it.setup(this) }
-        if (anonymous > 0) SAOCore.LOGGER.info("Set up $anonymous anonymous elements in $name.")
+        this.elements.forEach { if (it.name == DEFAULT_NAME) ++anonymous; it.setup(this, fragments) }
+//        if (anonymous > 0) SAOCore.LOGGER.info("Set up $anonymous anonymous elements in $name.")
         return res
-    }
-
-    private fun updateCache(ctx: IHudDrawContext) {
-        if (checkUpdate(ctx)) {
-            cachedX = (parent.get()?.getX(ctx) ?: 0.0) + (this.x?.invoke(ctx) ?: 0.0)
-            cachedY = (parent.get()?.getY(ctx) ?: 0.0) + (this.y?.invoke(ctx) ?: 0.0)
-            cachedZ = (parent.get()?.getZ(ctx) ?: 0.0) + (this.z?.invoke(ctx) ?: 0.0)
-        }
     }
 }

@@ -39,6 +39,7 @@ import net.minecraft.entity.player.EntityPlayer
 import net.minecraftforge.common.ForgeHooks
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
+import java.lang.ref.WeakReference
 import kotlin.math.min
 
 /**
@@ -67,18 +68,25 @@ class HudDrawContext(player: EntityPlayer = Client.player, val mc: Minecraft = C
     private var i = 0
     private var pt: List<PlayerInfo> = listOf()
     private var effects: List<StatusEffects>? = null
-    private var nearbyEntities: List<EntityLivingBase> = listOf()
-    private var targetEntity: EntityLivingBase? = null
+    private var nearbyEntities: List<WeakReference<EntityLivingBase>> = listOf()
+    private var targetEntity: WeakReference<EntityLivingBase>? = null
+    private var lastTargetedTick = 0L
+
     fun setPt(pt: List<PlayerInfo>) {
         this.pt = pt
     }
 
-    fun setTargetEntity(entity: EntityLivingBase) {
-        this.targetEntity = entity
+    fun setTargetEntity(entity: EntityLivingBase?) {
+        if (entity != null) {
+            this.targetEntity = entity?.let(::WeakReference)
+            lastTargetedTick = mc.world.totalWorldTime
+        } else if (targetEntity != null && mc.world.totalWorldTime - lastTargetedTick > 60) {
+            targetEntity = null
+        }
     }
 
     fun setNearbyEntities(entities: List<EntityLivingBase>) {
-        this.nearbyEntities = entities
+        this.nearbyEntities = entities.map(::WeakReference)
     }
 
     override fun username(): String {
@@ -270,30 +278,74 @@ class HudDrawContext(player: EntityPlayer = Client.player, val mc: Minecraft = C
     }
 
     override fun nearbyEntities(): List<EntityLivingBase> {
-        return nearbyEntities
+        return nearbyEntities.mapNotNull(WeakReference<EntityLivingBase>::get)
     }
 
-    override fun entityName(index: Int): String = nearbyEntities[index].displayName.formattedText
+    override fun entityName(index: Int): String? = nearbyEntities[index].get()?.displayName?.formattedText
 
-    override fun entityHp(index: Int): Float = nearbyEntities[index].health
+    override fun entityHp(index: Int): Float = nearbyEntities[index].get()?.health ?: 0F
 
-    override fun entityMaxHp(index: Int): Float = nearbyEntities[index].maxHealth
+    override fun entityMaxHp(index: Int): Float = nearbyEntities[index].get()?.maxHealth ?: 0F
 
     override fun entityHpPct(index: Int): Float = entityHp(index) / entityMaxHp(index)
 
     override fun entityHealthStep(index: Int): HealthStep = getStep(nearbyEntity(index), entityHpPct(index).toDouble())
 
-    override fun targetEntity(): EntityLivingBase? = targetEntity
+    override fun targetEntity(): EntityLivingBase? = targetEntity?.get()
 
-    override fun targetName(): String = targetEntity?.displayName?.formattedText ?: ""
+    override fun targetName(): String = targetEntity?.get()?.displayName?.formattedText ?: ""
 
-    override fun targetHp(): Float = targetEntity?.health ?: 0F
+    override fun targetHp(): Float = targetEntity?.get()?.health ?: 0F
 
-    override fun targetMaxHp(): Float = targetEntity?.maxHealth ?: 0F
+    override fun targetMaxHp(): Float = targetEntity?.get()?.maxHealth ?: 0F
 
-    override fun targetHpPct(): Float = if (targetEntity != null) targetHp() / targetMaxHp() else 0f
+    override fun targetHpPct(): Float = if (targetEntity?.get() != null) targetHp() / targetMaxHp() else 0f
 
-    override fun targetHealthStep(): HealthStep = getStep(targetEntity, targetHpPct().toDouble())
+    override fun targetHealthStep(): HealthStep = getStep(targetEntity?.get(), targetHpPct().toDouble())
+
+    private var context: Map<String, CValue<*>> = emptyMap()
+
+    override fun pushContext(context: Map<String, CValue<*>>) {
+        this.context = context
+    }
+
+    override fun popContext() {
+        this.context = emptyMap()
+    }
+
+    // TODO: error report ?
+    /**
+     * JEL dynamic context access
+     */
+    override fun getStringProperty(name: String): String = when (val prop = context[name]) {
+        null -> "<null>"
+        is CString -> prop.invoke(this)
+        else -> "<invalid type of $name>"
+    }
+
+    override fun getDoubleProperty(name: String): Double = when (val prop = context[name]) {
+        null -> 0.0
+        is CDouble -> prop.invoke(this)
+        else -> -1.0
+    }
+
+    override fun getIntProperty(name: String): Int = when (val prop = context[name]) {
+        null -> 0
+        is CInt -> prop.invoke(this)
+        else -> -1
+    }
+
+    override fun getBooleanProperty(name: String): Boolean = when (val prop = context[name]) {
+        null -> false
+        is CBoolean -> prop.invoke(this)
+        else -> false
+    }
+
+    override fun getUnitProperty(name: String): Unit = when (val prop = context[name]) {
+        null -> Unit
+        is CUnit -> prop.invoke(this)
+        else -> Unit
+    }
 
     init {
         this.player = player
