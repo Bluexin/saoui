@@ -26,7 +26,7 @@
                     <fragmentReference id="hex2:json_label">
                         <enabled>hasTargetEntity</enabled>
                         <variables>
-                            <variable key="text" type="STRING">"Looking at " + targetName + " (" + format("%.0f", targetHp) + "/" + format("%.0f", targetMaxHp) + ")"</variable>
+                            <variable key="text" type="STRING">targetName + " (" + format("%.0f", targetHp) + "/" + format("%.0f", targetMaxHp) + ")"</variable>
                         </variables>
                         <x cache="SIZE_CHANGE">scaledwidth / 2.0</x>
                         <y cache="STATIC">80</y>

@@ -70,12 +70,19 @@ class HudDrawContext(player: EntityPlayer = Client.player, val mc: Minecraft = C
     private var effects: List<StatusEffects>? = null
     private var nearbyEntities: List<WeakReference<EntityLivingBase>> = listOf()
     private var targetEntity: WeakReference<EntityLivingBase>? = null
+    private var lastTargetedTick = 0L
+
     fun setPt(pt: List<PlayerInfo>) {
         this.pt = pt
     }
 
-    fun setTargetEntity(entity: EntityLivingBase) {
-        this.targetEntity = WeakReference(entity)
+    fun setTargetEntity(entity: EntityLivingBase?) {
+        if (entity != null) {
+            this.targetEntity = entity?.let(::WeakReference)
+            lastTargetedTick = mc.world.totalWorldTime
+        } else if (targetEntity != null && mc.world.totalWorldTime - lastTargetedTick > 60) {
+            targetEntity = null
+        }
     }
 
     fun setNearbyEntities(entities: List<EntityLivingBase>) {
