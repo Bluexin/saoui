@@ -27,14 +27,14 @@ import net.minecraft.entity.EntityLivingBase
  *
  * @author Bluexin
  */
-sealed class CachedExpression<out T>(
+sealed class CachedExpression<out T: Any>(
     val expression: CompiledExpressionWrapper<T>,
     val expressionIntermediate: ExpressionIntermediate
 ) : Function1<IHudDrawContext, T> {
     protected abstract val cache: T?
 }
 
-class FrameCachedExpression<T>(
+class FrameCachedExpression<T: Any>(
     expression: CompiledExpressionWrapper<T>,
     expressionIntermediate: ExpressionIntermediate
 ) : CachedExpression<T>(expression, expressionIntermediate) {
@@ -53,7 +53,7 @@ class FrameCachedExpression<T>(
     }
 }
 
-class StaticCachedExpression<out T>(
+class StaticCachedExpression<out T: Any>(
     expression: CompiledExpressionWrapper<T>,
     expressionIntermediate: ExpressionIntermediate
 ) : CachedExpression<T>(expression, expressionIntermediate) {
@@ -110,12 +110,15 @@ class StaticCachedExpression<out T>(
         override fun targetMaxHp() = 0f
         override fun targetHpPct() = 0f
         override fun targetHealthStep() = HealthStep.INVALID
+        override fun getStringProperty(name: String): String = ""
+        override fun getDoubleProperty(name: String): Double = 0.0
+        override fun getIntProperty(name: String): Int = 0
     }
 
     override fun invoke(ctx: IHudDrawContext) = cache
 }
 
-class SizeCachedExpression<T>(
+class SizeCachedExpression<T: Any>(
     expression: CompiledExpressionWrapper<T>,
     expressionIntermediate: ExpressionIntermediate
 ) : CachedExpression<T>(expression, expressionIntermediate) {
@@ -137,7 +140,7 @@ class SizeCachedExpression<T>(
     }
 }
 
-class UnCachedExpression<out T>(
+class UnCachedExpression<out T: Any>(
     expression: CompiledExpressionWrapper<T>,
     expressionIntermediate: ExpressionIntermediate
 ) : CachedExpression<T>(expression, expressionIntermediate) {

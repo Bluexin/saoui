@@ -8,7 +8,7 @@
             <xs:documentation>Root element, used as 'bl:hud'.</xs:documentation>
         </xs:annotation>
         <xs:complexType>
-            <xs:sequence>
+            <xs:all>
                 <xs:element name="version" default="1.0" type="xs:string">
                     <xs:annotation>
                         <xs:documentation>Version string</xs:documentation>
@@ -24,7 +24,7 @@
                         </xs:sequence>
                     </xs:complexType>
                 </xs:element>
-            </xs:sequence>
+            </xs:all>
         </xs:complexType>
     </xs:element>
 

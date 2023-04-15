@@ -19,12 +19,15 @@ package com.tencao.saoui.api.themes;
 
 import com.tencao.saoui.effects.StatusEffects;
 import com.tencao.saoui.screens.util.HealthStep;
+import com.tencao.saoui.themes.util.CValue;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 
+import javax.annotation.Nonnull;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Getters to use in JEL (for access in xml themes).
@@ -354,6 +357,10 @@ public interface IHudDrawContext {
 
     // *** TARGET ENTITY ***
 
+    default boolean hasTargetEntity() {
+        return targetEntity() != null;
+    }
+
     EntityLivingBase targetEntity();
     /**
      * @return username of the target
@@ -379,4 +386,15 @@ public interface IHudDrawContext {
      * @return health step of the target
      */
     HealthStep targetHealthStep();
+
+    /**
+     * JEL access
+     */
+    String getStringProperty(@Nonnull final String name);
+    double getDoubleProperty(@Nonnull final String name);
+    int getIntProperty(@Nonnull final String name);
+
+    default void pushContext(Map<String, CValue<Object>> context) {}
+
+    default void popContext() {}
 }

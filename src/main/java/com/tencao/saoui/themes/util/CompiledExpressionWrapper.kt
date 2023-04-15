@@ -27,7 +27,7 @@ import gnu.jel.CompiledExpression
  *
  * @author Bluexin
  */
-sealed class CompiledExpressionWrapper<out T>(val compiledExpression: CompiledExpression) : Function1<IHudDrawContext, T> {
+sealed class CompiledExpressionWrapper<out T: Any>(val compiledExpression: CompiledExpression) : Function1<IHudDrawContext, T> {
     protected fun warn(e: Throwable) {
         val message = "An error occurred while executing an Expression"
         SAOCore.LOGGER.warn(message, e)

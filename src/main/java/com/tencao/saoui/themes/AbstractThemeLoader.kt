@@ -48,7 +48,7 @@ abstract class AbstractThemeLoader(protected val type: ThemeFormat) {
         runCatching {
             SettingsLoader.loadSettings(theme)?.forEach(Setting<*>::register)
             val hud = loadHud(theme.themeRoot.append("/${type.hudFileSuffix}"))
-            val fragments = theme.fragments.mapValues { (_, path) -> this.loadFragment(path) }
+            val fragments = theme.fragments.mapValues { (_, path) -> { this.loadFragment(path) } }
 
             hud to fragments
         }.onSuccess { (hud, fragments) ->

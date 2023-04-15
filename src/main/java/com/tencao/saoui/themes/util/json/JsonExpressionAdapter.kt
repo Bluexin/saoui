@@ -23,6 +23,7 @@ import com.google.gson.stream.JsonToken
 import com.google.gson.stream.JsonWriter
 import com.tencao.saoui.themes.AbstractThemeLoader
 import com.tencao.saoui.themes.util.*
+import com.tencao.saoui.themes.util.typeadapters.*
 import gnu.jel.CompiledExpression
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
@@ -32,9 +33,11 @@ import org.apache.logging.log4j.Logger
 
  * @author Bluexin
  */
-abstract class JsonExpressionAdapter<T> : TypeAdapter<CValue<T>>(), ExpressionAdapter<T> {
+abstract class JsonExpressionAdapter<T: Any>(
+    private val expressionAdapter: BasicExpressionAdapter<T>
+) : TypeAdapter<CValue<T>>() {
     private val concatSpaces = Regex("  +")
-    override val logger: Logger by lazy { LogManager.getLogger(javaClass) }
+    private val logger: Logger by lazy { LogManager.getLogger(javaClass) }
 
     override fun write(out: JsonWriter, value: CValue<T>) {
         val intermediate = value.value.expressionIntermediate
@@ -64,7 +67,7 @@ abstract class JsonExpressionAdapter<T> : TypeAdapter<CValue<T>>(), ExpressionAd
                     }
                 }
                 reader.endObject()
-                if (cacheType != null && expression != null) compile(ExpressionIntermediate().apply {
+                if (cacheType != null && expression != null) expressionAdapter.compile(ExpressionIntermediate().apply {
                     this.cacheType = cacheType!!
                     this.expression = expression!!
                 }) else {
@@ -74,7 +77,7 @@ abstract class JsonExpressionAdapter<T> : TypeAdapter<CValue<T>>(), ExpressionAd
                     null
                 }
             }
-            JsonToken.STRING -> compile(ExpressionIntermediate().apply {
+            JsonToken.STRING -> expressionAdapter.compile(ExpressionIntermediate().apply {
                 cacheType = CacheType.STATIC
                 expression = reader.nextString()
             })
@@ -86,54 +89,24 @@ abstract class JsonExpressionAdapter<T> : TypeAdapter<CValue<T>>(), ExpressionAd
 /**
  * Adapts an expression that should return a int.
  */
-class JsonIntExpressionAdapter : JsonExpressionAdapter<Int>() {
-    override fun value(c: CachedExpression<Int>) = CInt(c)
-
-    override val type: Class<*> = Integer.TYPE
-
-    override fun wrap(ce: CompiledExpression) = IntExpressionWrapper(ce)
-}
+class JsonIntExpressionAdapter : JsonExpressionAdapter<Int>(IntExpressionAdapter)
 
 /**
  * Adapts an expression that should return a double.
  */
-class JsonDoubleExpressionAdapter : JsonExpressionAdapter<Double>() {
-    override fun value(c: CachedExpression<Double>) = CDouble(c)
-
-    override val type: Class<*> = java.lang.Double.TYPE
-
-    override fun wrap(ce: CompiledExpression) = DoubleExpressionWrapper(ce)
-}
+class JsonDoubleExpressionAdapter : JsonExpressionAdapter<Double>(DoubleExpressionAdapter)
 
 /**
  * Adapts an expression that should return a String.
  */
-class JsonStringExpressionAdapter : JsonExpressionAdapter<String>() {
-    override fun value(c: CachedExpression<String>) = CString(c)
-
-    override val type: Class<*> = String::class.java
-
-    override fun wrap(ce: CompiledExpression) = StringExpressionWrapper(ce)
-}
+class JsonStringExpressionAdapter : JsonExpressionAdapter<String>(StringExpressionAdapter)
 
 /**
  * Adapts an expression that should return a boolean.
  */
-class JsonBooleanExpressionAdapter : JsonExpressionAdapter<Boolean>() {
-    override fun value(c: CachedExpression<Boolean>) = CBoolean(c)
-
-    override val type: Class<*> = java.lang.Boolean.TYPE
-
-    override fun wrap(ce: CompiledExpression) = BooleanExpressionWrapper(ce)
-}
+class JsonBooleanExpressionAdapter : JsonExpressionAdapter<Boolean>(BooleanExpressionAdapter)
 
 /**
  * Adapts an expression that should return [Unit] (aka void).
  */
-class JsonUnitExpressionAdapter : JsonExpressionAdapter<Unit>() {
-    override val type: Class<*>? = null
-
-    override fun value(c: CachedExpression<Unit>) = CUnit(c)
-
-    override fun wrap(ce: CompiledExpression) = UnitExpressionWrapper(ce)
-}
+class JsonUnitExpressionAdapter : JsonExpressionAdapter<Unit>(UnitExpressionAdapter)

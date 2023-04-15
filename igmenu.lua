@@ -57,3 +57,8 @@ tlCats = {
         end)
     end)
 }
+
+--[[ extra = {
+    fragment("hex2:label", 10, 100, { text = "Hello World from Fragment loaded by Lua" }),
+    fragment("hex2:label", 10, 120, { text = "Howdy ?" }),
+} ]]

@@ -28,41 +28,41 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter
  *
  * @author Bluexin
  */
-sealed class CValue<out T>(val value: CachedExpression<T>) : (IHudDrawContext) -> T {
+sealed class CValue<out T: Any>(val value: CachedExpression<T>) : (IHudDrawContext) -> T {
     override fun invoke(ctx: IHudDrawContext) = value(ctx)
 }
 
 /**
  * Custom Int type.
  */
-@XmlJavaTypeAdapter(IntExpressionAdapter::class)
+@XmlJavaTypeAdapter(XmlIntExpressionAdapter::class)
 @JsonAdapter(JsonIntExpressionAdapter::class)
 class CInt(value: CachedExpression<Int>) : CValue<Int>(value)
 
 /**
  * Custom Double type.
  */
-@XmlJavaTypeAdapter(DoubleExpressionAdapter::class)
+@XmlJavaTypeAdapter(XmlDoubleExpressionAdapter::class)
 @JsonAdapter(JsonDoubleExpressionAdapter::class)
 class CDouble(value: CachedExpression<Double>) : CValue<Double>(value)
 
 /**
  * Custom String type.
  */
-@XmlJavaTypeAdapter(StringExpressionAdapter::class)
+@XmlJavaTypeAdapter(XmlStringExpressionAdapter::class)
 @JsonAdapter(JsonStringExpressionAdapter::class)
 class CString(value: CachedExpression<String>) : CValue<String>(value)
 
 /**
  * Custom Boolean type.
  */
-@XmlJavaTypeAdapter(BooleanExpressionAdapter::class)
+@XmlJavaTypeAdapter(XmlBooleanExpressionAdapter::class)
 @JsonAdapter(JsonBooleanExpressionAdapter::class)
 class CBoolean(value: CachedExpression<Boolean>) : CValue<Boolean>(value)
 
 /**
  * Custom Unit/Void type.
  */
-@XmlJavaTypeAdapter(UnitExpressionAdapter::class)
+@XmlJavaTypeAdapter(XmlUnitExpressionAdapter::class)
 @JsonAdapter(JsonUnitExpressionAdapter::class)
 class CUnit(value: CachedExpression<Unit>) : CValue<Unit>(value)

@@ -40,7 +40,7 @@ open class Hud protected constructor(override val name: String = "MenuDefs") : E
 
     operator fun get(key: HudPartType) = parts[key]
 
-    fun setup(fragments: Map<ResourceLocation, Fragment>) = this.parts.values.forEach { it.setup(this, fragments) }
+    fun setup(fragments: Map<ResourceLocation, () -> Fragment>) = this.parts.values.forEach { it.setup(this, fragments) }
 
     fun draw(key: HudPartType, ctx: IHudDrawContext) {
         this[key]?.draw(ctx)

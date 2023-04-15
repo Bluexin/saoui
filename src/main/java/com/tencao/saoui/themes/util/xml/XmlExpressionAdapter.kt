@@ -18,13 +18,8 @@
 package com.tencao.saoui.themes.util.xml
 
 import com.tencao.saoui.themes.util.*
-import gnu.jel.CompilationException
+import com.tencao.saoui.themes.util.typeadapters.*
 import gnu.jel.CompiledExpression
-import gnu.jel.Evaluator
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
-import java.io.PrintWriter
-import java.io.StringWriter
 import javax.xml.bind.annotation.adapters.XmlAdapter
 
 /**
@@ -32,67 +27,38 @@ import javax.xml.bind.annotation.adapters.XmlAdapter
 
  * @author Bluexin
  */
-abstract class XmlExpressionAdapter<T> : XmlAdapter<ExpressionIntermediate, CValue<T>>(), ExpressionAdapter<T> {
-    override val logger: Logger by lazy { LogManager.getLogger(javaClass) }
+abstract class XmlExpressionAdapter<T: Any>(
+    private val expressionAdapter: BasicExpressionAdapter<T>
+) : XmlAdapter<ExpressionIntermediate, CValue<T>>() {
 
     @Throws(Exception::class)
-    override fun unmarshal(v: ExpressionIntermediate) = compile(v)
+    override fun unmarshal(v: ExpressionIntermediate) = expressionAdapter.compile(v)
 
     @Throws(Exception::class)
-    override fun marshal(v: CValue<T>) = throw UnsupportedOperationException("marshalling xml expressions isn't allowed just yet.") // TODO: see Evaluator.compileBits(...)
+    override fun marshal(v: CValue<T>) = v.value.expressionIntermediate
 }
 
 /**
  * Adapts an expression that should return a int.
  */
-class IntExpressionAdapter : XmlExpressionAdapter<Int>() {
-    override fun value(c: CachedExpression<Int>) = CInt(c)
-
-    override val type: Class<*> = Integer.TYPE
-
-    override fun wrap(ce: CompiledExpression) = IntExpressionWrapper(ce)
-}
+class XmlIntExpressionAdapter : XmlExpressionAdapter<Int>(IntExpressionAdapter)
 
 /**
  * Adapts an expression that should return a double.
  */
-class DoubleExpressionAdapter : XmlExpressionAdapter<Double>() {
-    override fun value(c: CachedExpression<Double>) = CDouble(c)
-
-    override val type: Class<*> = java.lang.Double.TYPE
-
-    override fun wrap(ce: CompiledExpression) = DoubleExpressionWrapper(ce)
-}
+class XmlDoubleExpressionAdapter : XmlExpressionAdapter<Double>(DoubleExpressionAdapter)
 
 /**
  * Adapts an expression that should return a String.
  */
-class StringExpressionAdapter : XmlExpressionAdapter<String>() {
-    override fun value(c: CachedExpression<String>) = CString(c)
-
-    override val type: Class<*> = String::class.java
-
-    override fun wrap(ce: CompiledExpression) = StringExpressionWrapper(ce)
-}
+class XmlStringExpressionAdapter : XmlExpressionAdapter<String>(StringExpressionAdapter)
 
 /**
  * Adapts an expression that should return a boolean.
  */
-class BooleanExpressionAdapter : XmlExpressionAdapter<Boolean>() {
-    override fun value(c: CachedExpression<Boolean>) = CBoolean(c)
-
-    override val type: Class<*> = java.lang.Boolean.TYPE
-
-    override fun wrap(ce: CompiledExpression) = BooleanExpressionWrapper(ce)
-}
+class XmlBooleanExpressionAdapter : XmlExpressionAdapter<Boolean>(BooleanExpressionAdapter)
 
 /**
  * Adapts an expression that should return [Unit] (aka void).
  */
-class UnitExpressionAdapter : XmlExpressionAdapter<Unit>() {
-    override val type: Class<*>? = null
-
-    override fun value(c: CachedExpression<Unit>) = CUnit(c)
-
-    override fun wrap(ce: CompiledExpression) = UnitExpressionWrapper(ce)
-}
+class XmlUnitExpressionAdapter : XmlExpressionAdapter<Unit>(UnitExpressionAdapter)

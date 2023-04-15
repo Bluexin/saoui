@@ -92,7 +92,7 @@ abstract class Element {
      * @return whether this is an anonymous element
      */
     @OverridingMethodsMustInvokeSuper
-    open fun setup(parent: ElementParent, fragments: Map<ResourceLocation, Fragment>): Boolean {
+    open fun setup(parent: ElementParent, fragments: Map<ResourceLocation, () -> Fragment>): Boolean {
         this.parent = WeakReference(parent)
         return if (name != DEFAULT_NAME) {
             SAOCore.LOGGER.info("Set up $this in ${parent.name}"); false
