@@ -163,11 +163,8 @@ open class IconElement(
         GLCore.color(ColorUtil.multiplyAlpha(getTextColor(mouse), transparency))
         if (icon.rl != null) {
             GLCore.glBindTexture(icon.rl!!)
-            icon.glDraw(pos + vec(1, 1), 5f)
         }
-        if (icon is ItemIcon) {
-            icon.glDraw(pos + vec(1, 1), 5f)
-        }
+        icon.glDraw(pos + vec(1, 1), 5f)
 
         GLCore.glBlend(false)
         GLCore.color(1f, 1f, 1f, 1f)

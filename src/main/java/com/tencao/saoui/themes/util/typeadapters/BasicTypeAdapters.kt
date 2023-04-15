@@ -13,7 +13,7 @@ sealed class BasicExpressionAdapter<T: Any> {
     private val logger: Logger by lazy { LogManager.getLogger(javaClass) }
 
     fun compile(v: ExpressionIntermediate) = try {
-        SAOCore.LOGGER.info("Compiling ${v.expression}")
+//        SAOCore.LOGGER.debug("Compiling ${v.expression}")
         value(v.cacheType.cacheExpression(wrap(Evaluator.compile(v.expression, LibHelper.LIB, type)), v))
     } catch (ce: CompilationException) {
         val sb = StringBuilder("An error occurred during theme loading. See more info below.\n")

@@ -74,7 +74,7 @@ abstract class Element {
     @Transient
     protected lateinit var parent: WeakReference<ElementParent>
 
-    val hasParent: Boolean get() = parent.get().let { it != null && it !is Hud }
+    val hasParent: Boolean get() = ::parent.isInitialized && parent.get().let { it != null && it !is Hud }
 
     /**
      * Draw this element on the screen.
@@ -95,7 +95,8 @@ abstract class Element {
     open fun setup(parent: ElementParent, fragments: Map<ResourceLocation, () -> Fragment>): Boolean {
         this.parent = WeakReference(parent)
         return if (name != DEFAULT_NAME) {
-            SAOCore.LOGGER.info("Set up $this in ${parent.name}"); false
+//            SAOCore.LOGGER.debug("Set up {} in {}", this, parent.name)
+            false
         } else true
     }
 

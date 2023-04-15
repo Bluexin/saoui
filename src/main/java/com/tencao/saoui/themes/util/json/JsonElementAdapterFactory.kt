@@ -8,6 +8,11 @@ import com.google.gson.reflect.TypeToken
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonWriter
 import com.tencao.saoui.themes.elements.Element
+import com.tencao.saoui.themes.elements.Expect
+import com.tencao.saoui.themes.elements.Fragment
+import com.tencao.saoui.themes.util.CacheType
+import com.tencao.saoui.themes.util.LibHelper
+import com.tencao.saoui.themes.util.typeadapters.JelType
 import java.util.*
 import javax.xml.bind.annotation.XmlSeeAlso
 import kotlin.reflect.KClass
@@ -20,9 +25,7 @@ class JsonElementAdapterFactory : TypeAdapterFactory {
         else null
 }
 
-class JsonElementAdapter(
-    private val gson: Gson
-) : TypeAdapter<Element>() {
+class JsonElementAdapter(private val gson: Gson) : TypeAdapter<Element>() {
 
     private val lookup: Map<String, Class<out Element>> = buildMap {
         val queue: Queue<KClass<out Element>> = LinkedList()

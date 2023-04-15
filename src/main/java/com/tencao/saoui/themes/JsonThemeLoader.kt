@@ -18,7 +18,7 @@
 package com.tencao.saoui.themes
 
 import com.google.gson.GsonBuilder
-import com.tencao.saoui.SAOCore
+import com.tencao.saoui.themes.elements.ElementParent
 import com.tencao.saoui.themes.elements.Fragment
 import com.tencao.saoui.themes.elements.Hud
 import java.io.File
@@ -42,18 +42,13 @@ object JsonThemeLoader : AbstractThemeLoader(ThemeFormat.JSON) {
         gson.fromJson(it.reader(), Fragment::class.java)
     }
 
-    fun exportHud(hud: Hud, toFile: File) {
+    fun export(what: ElementParent, toFile: File) {
         FileWriter(toFile).use {
             GsonBuilder()
                 .disableHtmlEscaping()
                 .setPrettyPrinting()
-                .create().toJson(hud, it)
+                .create().toJson(what, it)
             it.flush()
         }
-
-        val start = System.currentTimeMillis()
-        val newHud = loadHud(toFile)
-        newHud.setup(emptyMap())
-        SAOCore.LOGGER.info("Loaded theme and set it up in " + (System.currentTimeMillis() - start) + "ms.")
     }
 }

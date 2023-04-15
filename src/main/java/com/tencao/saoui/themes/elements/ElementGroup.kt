@@ -58,7 +58,7 @@ open class ElementGroup : CachingElementParent() {
         this.rl = this.texture?.let(::ResourceLocation)
         var anonymous = 0
         this.elements.forEach { if (it.name == DEFAULT_NAME) ++anonymous; it.setup(this, fragments) }
-        if (anonymous > 0) SAOCore.LOGGER.info("Set up $anonymous anonymous elements in $name.")
+//        if (anonymous > 0) SAOCore.LOGGER.info("Set up $anonymous anonymous elements in $name.")
         return res
     }
 }

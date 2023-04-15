@@ -1,10 +1,12 @@
 package com.tencao.saoui.themes.elements
 
+import com.google.gson.annotations.JsonAdapter
 import com.tencao.saoui.SAOCore
 import com.tencao.saoui.api.themes.IHudDrawContext
 import com.tencao.saoui.themes.AbstractThemeLoader
 import com.tencao.saoui.themes.util.CValue
 import com.tencao.saoui.themes.util.NamedExpressionIntermediate
+import com.tencao.saoui.themes.util.json.NamedExpressionJsonAdapter
 import com.tencao.saoui.themes.util.typeadapters.JelType
 import com.tencao.saoui.themes.util.xml.NamedExpressionXmlAdapter
 import net.minecraft.util.ResourceLocation
@@ -18,6 +20,7 @@ class FragmentReference : CachingElementParent() {
     @XmlAttribute
     private lateinit var id: String
 
+    @JsonAdapter(NamedExpressionJsonAdapter::class)
     @XmlJavaTypeAdapter(NamedExpressionXmlAdapter::class)
     private var variables: Map<String, CValue<*>?> = emptyMap()
 

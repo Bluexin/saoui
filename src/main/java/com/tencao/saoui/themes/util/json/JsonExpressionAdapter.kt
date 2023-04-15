@@ -54,35 +54,33 @@ abstract class JsonExpressionAdapter<T: Any>(
         }
     }
 
-    override fun read(reader: JsonReader): CValue<T>? {
-        return when (val nextToken = reader.peek()) {
-            JsonToken.BEGIN_OBJECT -> {
-                reader.beginObject()
-                var cacheType: CacheType? = null
-                var expression: String? = null
-                repeat(2) {
-                    when (reader.nextName()) {
-                        "cache" -> cacheType = CacheType.valueOf(reader.nextString())
-                        "expression" -> expression = reader.nextString()
-                    }
-                }
-                reader.endObject()
-                if (cacheType != null && expression != null) expressionAdapter.compile(ExpressionIntermediate().apply {
-                    this.cacheType = cacheType!!
-                    this.expression = expression!!
-                }) else {
-                    val message = "Unable to deserialize ${reader.path} : missing cache or expression"
-                    logger.warn(message)
-                    AbstractThemeLoader.Reporter += message
-                    null
+    override fun read(reader: JsonReader): CValue<T>? = when (val nextToken = reader.peek()) {
+        JsonToken.BEGIN_OBJECT -> {
+            reader.beginObject()
+            var cacheType: CacheType? = null
+            var expression: String? = null
+            repeat(2) {
+                when (reader.nextName()) {
+                    "cache" -> cacheType = CacheType.valueOf(reader.nextString())
+                    "expression" -> expression = reader.nextString()
                 }
             }
-            JsonToken.STRING -> expressionAdapter.compile(ExpressionIntermediate().apply {
-                cacheType = CacheType.STATIC
-                expression = reader.nextString()
-            })
-            else -> error("Unknown token $nextToken")
+            reader.endObject()
+            if (cacheType != null && expression != null) expressionAdapter.compile(ExpressionIntermediate().apply {
+                this.cacheType = cacheType!!
+                this.expression = expression!!
+            }) else {
+                val message = "Unable to deserialize ${reader.path} : missing cache or expression"
+                logger.warn(message)
+                AbstractThemeLoader.Reporter += message
+                null
+            }
         }
+        JsonToken.STRING -> expressionAdapter.compile(ExpressionIntermediate().apply {
+            cacheType = CacheType.STATIC
+            expression = reader.nextString()
+        })
+        else -> error("Unknown token $nextToken")
     }
 }
 
