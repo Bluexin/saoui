@@ -328,6 +328,18 @@ class HudDrawContext(player: EntityPlayer = Client.player, val mc: Minecraft = C
         else -> -1
     }
 
+    override fun getBooleanProperty(name: String): Boolean = when (val prop = context[name]) {
+        null -> false
+        is CBoolean -> prop.invoke(this)
+        else -> false
+    }
+
+    override fun getUnitProperty(name: String): Unit = when (val prop = context[name]) {
+        null -> Unit
+        is CUnit -> prop.invoke(this)
+        else -> Unit
+    }
+
     init {
         this.player = player
         this.itemRenderer = itemRenderer

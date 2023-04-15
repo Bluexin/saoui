@@ -1,6 +1,11 @@
 {
   "expect": {
-    "text": "STRING"
+    "text": "STRING",
+    "centered": {
+      "type": "BOOLEAN",
+      "default": "false",
+      "cache": "STATIC"
+    }
   },
   "children": [
     {

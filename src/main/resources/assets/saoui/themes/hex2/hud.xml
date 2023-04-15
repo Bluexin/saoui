@@ -38,10 +38,15 @@
             <key>EXPERIENCE</key>
             <value name="exp">
                 <enabled>!isEnabled(REMOVE_HPXP)</enabled>
-                <x cache="SIZE_CHANGE">scaledwidth / 2.0 -0.65</x>
-                <y cache="SIZE_CHANGE">scaledheight - 24 - 17</y>
+                <x cache="SIZE_CHANGE">scaledwidth / 2.0</x>
+                <y cache="SIZE_CHANGE">scaledheight - 64</y>
                 <children>
-                    <fragmentReference id="hex2:experience"/>
+                    <fragmentReference id="hex2:label">
+                        <variables>
+                            <variable type="STRING" key="text">format("%d", level)</variable>
+                            <variable type="BOOLEAN" key="centered" cache="STATIC">true</variable>
+                        </variables>
+                    </fragmentReference>
                 </children>
             </value>
         </entry>

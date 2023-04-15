@@ -22,7 +22,7 @@ class FragmentReference : CachingElementParent() {
 
     @JsonAdapter(NamedExpressionJsonAdapter::class)
     @XmlJavaTypeAdapter(NamedExpressionXmlAdapter::class)
-    private var variables: Map<String, CValue<*>?> = emptyMap()
+    private var variables: MutableMap<String, CValue<*>?> = mutableMapOf()
 
     @Transient
     private var fragment: Fragment? = null
@@ -43,14 +43,15 @@ class FragmentReference : CachingElementParent() {
             } else {
                 val missing = fragment?.expect?.variables.orEmpty().filter {
                     val inContext = variables[it.key]
-                    inContext == null || ((inContext.value.expressionIntermediate as? NamedExpressionIntermediate)?.type != it.type)
+                    inContext == null || inContext.type != it.type
                 }
-                if (missing.isNotEmpty()) {
-                    val present = variables.map { (key, value) -> Variable().apply {
-                        this.key = key
-                        this.type = (value?.value?.expressionIntermediate as? NamedExpressionIntermediate)?.type ?: JelType.ERROR
-                    } }
-                    val message = "Missing variables $missing for $id (present : $present) in "
+                val defaults = missing.filter(NamedExpressionIntermediate::hasDefault).toSet().onEach {
+                    variables[it.key] = it.type.expressionAdapter.compile(it)
+                }
+                val realMissing = missing - defaults
+                if (realMissing.isNotEmpty()) {
+                    val present = variables.map { (_, value) -> value?.value?.expressionIntermediate }
+                    val message = "Missing variables $realMissing for $id (present : $present) in "
                     SAOCore.LOGGER.warn(message + hierarchyName())
                     AbstractThemeLoader.Reporter += message + nameOrParent()
                 }
@@ -68,4 +69,6 @@ class FragmentReference : CachingElementParent() {
             ctx.popContext()
         }
     }
+
+    private val CValue<*>?.type get() = (this?.value?.expressionIntermediate as? NamedExpressionIntermediate)?.type
 }

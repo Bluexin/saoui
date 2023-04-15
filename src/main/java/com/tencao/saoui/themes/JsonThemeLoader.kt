@@ -21,6 +21,7 @@ import com.google.gson.GsonBuilder
 import com.tencao.saoui.themes.elements.ElementParent
 import com.tencao.saoui.themes.elements.Fragment
 import com.tencao.saoui.themes.elements.Hud
+import com.tencao.saoui.themes.util.json.AfterUnmarshalAdapterFactory
 import java.io.File
 import java.io.FileWriter
 import java.io.InputStream
@@ -32,7 +33,11 @@ import java.io.InputStream
  */
 object JsonThemeLoader : AbstractThemeLoader(ThemeFormat.JSON) {
 
-    private val gson by lazy { GsonBuilder().create() }
+    private val gson by lazy {
+        GsonBuilder()
+            .registerTypeAdapterFactory(AfterUnmarshalAdapterFactory())
+            .create()
+    }
 
     override fun InputStream.loadHud(): Hud = use {
         gson.fromJson(it.reader(), Hud::class.java)

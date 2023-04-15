@@ -137,7 +137,7 @@
                             <xs:documentation>Text to render on-screen (should resolve to a string).</xs:documentation>
                         </xs:annotation>
                     </xs:element>
-                    <xs:element name="shadow" default="true" minOccurs="0" type="CachedExpression">
+                    <xs:element name="shadow" default="true" minOccurs="0" type="xs:boolean">
                         <xs:annotation>
                             <xs:documentation>
                                 Whether the text should be rendered with a shadow (should resolve to a boolean).
@@ -298,6 +298,7 @@
     <xs:complexType name="TypedCachedExpression">
         <xs:simpleContent>
             <xs:extension base="CachedExpression">
+                <xs:attribute name="key" type="xs:string" use="required"/>
                 <xs:attribute name="type" type="ExpressionType" use="required"/>
             </xs:extension>
         </xs:simpleContent>
@@ -345,15 +346,7 @@
                     <xs:element name="variables">
                         <xs:complexType>
                             <xs:sequence maxOccurs="unbounded">
-                                <xs:element name="variable">
-                                    <xs:complexType>
-                                        <xs:complexContent>
-                                            <xs:extension base="TypedCachedExpression">
-                                                <xs:attribute name="key" type="xs:string" use="required"/>
-                                            </xs:extension>
-                                        </xs:complexContent>
-                                    </xs:complexType>
-                                </xs:element>
+                                <xs:element name="variable" type="TypedCachedExpression"/>
                             </xs:sequence>
                         </xs:complexType>
                     </xs:element>
@@ -375,15 +368,15 @@
                     <xs:element name="expect">
                         <xs:complexType>
                             <xs:sequence maxOccurs="unbounded">
-                                <xs:element name="variable">
-                                    <xs:complexType>
+                                <xs:element name="variable" type="TypedCachedExpression">
+                                    <!--<xs:complexType>
                                         <xs:complexContent>
                                             <xs:restriction base="xs:integer">
                                                 <xs:attribute name="key" type="xs:string" use="required"/>
                                                 <xs:attribute name="type" type="ExpressionType" use="required"/>
                                             </xs:restriction>
                                         </xs:complexContent>
-                                    </xs:complexType>
+                                    </xs:complexType>-->
                                 </xs:element>
                             </xs:sequence>
                         </xs:complexType>
@@ -416,6 +409,8 @@
             <xs:enumeration value="STRING"/>
             <xs:enumeration value="DOUBLE"/>
             <xs:enumeration value="INT"/>
+            <xs:enumeration value="BOOLEAN"/>
+            <xs:enumeration value="UNIT"/>
         </xs:restriction>
     </xs:simpleType>
 </xs:schema>

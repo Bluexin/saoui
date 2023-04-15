@@ -8,7 +8,7 @@ import javax.xml.bind.annotation.adapters.XmlAdapter
 
 class NamedExpressionXmlAdapter : XmlAdapter<Variables, Map<String, CValue<*>?>>() {
     override fun unmarshal(v: Variables) = v.variable.associate {
-        it.key to it.type.expressionAdapter.compile(it)
+        it.key to if (it.expression.isEmpty()) null else it.type.expressionAdapter.compile(it)
     }
 
     override fun marshal(v: Map<String, CValue<*>?>) = Variables().apply {

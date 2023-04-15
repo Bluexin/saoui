@@ -6,7 +6,6 @@ import com.google.gson.stream.JsonToken
 import com.google.gson.stream.JsonWriter
 import com.tencao.saoui.themes.AbstractThemeLoader
 import com.tencao.saoui.themes.elements.Expect
-import com.tencao.saoui.themes.elements.Variable
 import com.tencao.saoui.themes.util.*
 import com.tencao.saoui.themes.util.typeadapters.JelType
 import org.apache.logging.log4j.LogManager
@@ -21,7 +20,18 @@ class ExpectJsonAdapter : TypeAdapter<Expect>() {
             out.beginObject()
             value.variables.forEach {
                 out.name(it.key)
-                out.value(it.type.name)
+                if (it.hasDefault()) {
+                    out.beginObject()
+                        .name("type")
+                        .value(it.type.name)
+                        .name("default")
+                        .value(it.expression)
+
+                    if (it.cacheType != CacheType.PER_FRAME) out
+                        .name("cache")
+                        .value(it.cacheType.name)
+                    out.endObject()
+                } else out.value(it.type.name)
             }
             out.endObject()
         }
@@ -33,14 +43,29 @@ class ExpectJsonAdapter : TypeAdapter<Expect>() {
             val e = Expect(
                 buildList {
                     while (reader.hasNext()) {
-                        add(Variable().apply {
+                        add(NamedExpressionIntermediate().apply {
                             key = reader.nextName()
-                            type = reader.nextString().let(JelType::valueOf)
+                            when (val nestedToken = reader.peek()) {
+                                JsonToken.BEGIN_OBJECT -> {
+                                    reader.beginObject()
+                                    while (reader.hasNext()) when (reader.nextName()) {
+                                        "type" -> type = reader.nextString().let(JelType::valueOf)
+                                        "default" -> expression = reader.nextString()
+                                        "cache" -> cacheType = reader.nextString().let(CacheType::valueOf)
+                                    }
+                                    reader.endObject()
+                                }
+                                JsonToken.STRING -> type = reader.nextString().let(JelType::valueOf)
+                                else -> {
+                                    val message = "Unable to deserialize ${reader.path} : Unexpected token $nestedToken"
+                                    logger.warn(message)
+                                    AbstractThemeLoader.Reporter += message
+                                }
+                            }
                         })
                     }
                 }
             )
-            e.afterUnmarshal()
             reader.endObject()
             e
         }

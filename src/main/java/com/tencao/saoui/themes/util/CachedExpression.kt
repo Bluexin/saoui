@@ -110,9 +110,11 @@ class StaticCachedExpression<out T: Any>(
         override fun targetMaxHp() = 0f
         override fun targetHpPct() = 0f
         override fun targetHealthStep() = HealthStep.INVALID
-        override fun getStringProperty(name: String): String = ""
-        override fun getDoubleProperty(name: String): Double = 0.0
-        override fun getIntProperty(name: String): Int = 0
+        override fun getStringProperty(name: String) = ""
+        override fun getDoubleProperty(name: String) = 0.0
+        override fun getIntProperty(name: String) = 0
+        override fun getBooleanProperty(name: String) = false
+        override fun getUnitProperty(name: String) = Unit
     }
 
     override fun invoke(ctx: IHudDrawContext) = cache
