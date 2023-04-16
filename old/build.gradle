@@ -1,0 +1,257 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
+plugins {
+    id 'java'
+    id 'idea'
+    id 'org.jetbrains.kotlin.jvm' version '1.7.20'
+    id 'maven-publish'
+    id 'co.uzzu.dotenv.gradle' version '2.0.0'
+    id 'com.github.johnrengelman.shadow' version '6.1.0'
+    id 'net.minecraftforge.gradle' version '5.1.72'
+}
+
+idea {
+    module {
+        inheritOutputDirs = true
+        //Exclude directories from being managed
+        for (String excludeDirName in ["run", "out", "logs", "gradle"]) {
+            File excludeDir = new File(projectDir, excludeDirName)
+            excludeDirs.add(excludeDir)
+        }
+    }
+}
+
+version = "${mc_version}-${mod_version}"
+group = "com.tencao"
+archivesBaseName = "saoui"
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(8) // Mojang ships Java 8 to end users, so your mod should target Java 8.
+
+sourceSets {
+    api
+    main {
+        compileClasspath += sourceSets.api.output
+        runtimeClasspath += sourceSets.api.output
+        output.resourcesDir = new File(buildDir, 'combined')
+        java.destinationDirectory.fileValue(new File(buildDir, 'combined'))
+    }
+}
+
+minecraft {
+    mappings channel: 'snapshot', version: '20171007-1.12'
+    // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+
+    runs {
+        client {
+            workingDirectory project.file('run')
+
+            // Recommended logging data for a userdev environment
+            // The markers can be changed as needed.
+            // "SCAN": For mods scan.
+            // "REGISTRIES": For firing of registry events.
+            // "REGISTRYDUMP": For getting the contents of all registries.
+            property 'forge.logging.markers', 'REGISTRIES'
+//            property 'forge.logging.console.level', 'debug'
+
+            mods {
+                saoui {
+                    source sourceSets.main
+                    resources sourceSets.main
+                    classes sourceSets.main
+                }
+            }
+        }
+
+        server {
+            workingDirectory project.file('run')
+
+            // Recommended logging data for a userdev environment
+            // The markers can be changed as needed.
+            // "SCAN": For mods scan.
+            // "REGISTRIES": For firing of registry events.
+            // "REGISTRYDUMP": For getting the contents of all registries.
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'debug'
+
+            mods {
+                saoui {
+                    source sourceSets.main
+                }
+            }
+        }
+    }
+}
+
+configurations {
+    shadow {
+        transitive = false
+    }
+    implementation.extendsFrom shadow
+    apiImplementation.extendsFrom(implementation)
+    apiRuntimeOnly.extendsFrom(runtimeOnly)
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        name 'MinecraftForge Maven'
+        url 'https://files.minecraftforge.net/maven/'
+    }
+    maven {
+        name 'Tencao Maven'
+        url 'https://maven.tencao.com/repository/releases/'
+    }
+    maven {
+        name 'Tencao Maven'
+        url 'https://maven.tencao.com/repository/releases/'
+    }
+    maven {
+        name 'Bluexin'
+        url 'https://maven.bluexin.be/repository/releases/'
+    }
+    flatDir {
+        dirs 'libs'
+    }
+    maven {
+        name 'Sonatype OSSRH (Snapshots)'
+        url 'https://oss.sonatype.org/content/repositories/snapshots/'
+    }
+    ivy {
+        // Pulled from https://github.com/MightyPirates/OpenComputers/blob/1c0dc67182292895495cb0d421ec0f529d243d74/build.gradle
+        name 'asie dependency mirror'
+        artifactPattern "http://asie.pl/javadeps/[module]-[revision](-[classifier]).[ext]"
+        metadataSources {
+            artifact()
+        }
+    }
+}
+
+dependencies {
+    minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2860'
+
+    // implementation "net.shadowfacts:Forgelin:${forgelin_version}"
+    implementation 'io.github.chaosunity:forgelin:1.7.20.0'
+    implementation ('com.tencao:saomclib:1.12.2-1.4.11') { changing = true }
+    shadow 'be.bluexin.gnu.jel:gnu-jel:2.1.3'
+    shadow 'com.helger:ph-css:6.5.0'
+    shadow 'com.helger.commons:ph-commons:10.1.6'
+    shadow 'org.slf4j:slf4j-api:1.7.36'
+
+    shadow 'net.sandius.rembulan:rembulan-compiler:0.1-SNAPSHOT'
+    shadow 'net.sandius.rembulan:rembulan-stdlib:0.1-SNAPSHOT'
+
+    shadow 'org.classdump.luna:luna-all-shaded:0.4.1'
+
+    shadow group: 'none', name: 'OC-LuaJ', version: '20220907.1', ext: 'jar'
+    shadow group: 'none', name: 'OC-JNLua', version: '20220928.1', ext: 'jar'
+    shadow group: 'none', name: 'OC-JNLua-Natives', version: '20220928.1', ext: 'jar'
+
+    //compile 'com.helger:ph-css:6.1.1'
+} // TODO: move to new shadow system so it doesn't break dependency info
+
+javadoc {
+    source = [sourceSets.main.allJava, sourceSets.api.allJava]
+    // prevent java 8's strict doclint for javadocs from failing builds
+    options.addStringOption('Xdoclint:none', '-quiet')
+}
+
+jar {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+
+    afterEvaluate {
+        for (dep in configurations.shadow) {
+            from(project.zipTree(dep)) {
+                exclude 'META-INF/MANIFEST.MF'
+            }
+        }
+    }
+
+    manifest.attributes([
+            "Specification-Title"     : "SAOUI",
+            "Specification-Vendor"    : "Tencao, Bluexin",
+            "Specification-Version"   : "1", // We are version 1 of ourselves
+            "Implementation-Title"    : project.name,
+            "Implementation-Version"  : project.version,
+            "Implementation-Vendor"   : "Tencao, Bluexin",
+            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+    ])
+
+    finalizedBy 'reobfJar'
+}
+
+
+tasks.withType(Copy).configureEach {
+    includeEmptyDirs = false
+}
+
+tasks.register('sourcesJar', Jar.class) {
+    archiveClassifier.set('sources')
+    from sourceSets.main.allSource
+    from sourceSets.api.allSource
+}
+
+tasks.register('deobfJar', Jar.class) {
+    archiveClassifier.set('deobf')
+    from sourceSets.main.output
+    from sourceSets.api.output
+}
+
+tasks.register('shadeJar', ShadowJar.class) {
+    from sourceSets.main.output
+    configurations = [project.configurations.shadow]
+
+    //relocate 'gnu.jel', 'saoui.shade.gnu.jel'
+    relocate 'com.helger', 'saoui.shade.com.helger'
+    relocate 'org.slf4j', 'saoui.shade.org.slf4j'
+    finalizedBy 'reobfJar'
+}
+
+artifacts {
+    archives deobfJar
+    archives sourcesJar
+    archives shadeJar
+}
+
+tasks.register('reobf') {
+    dependsOn 'reobfJar'
+}
+
+java {
+    withSourcesJar()
+}
+
+jar.finalizedBy('reobfJar')
+tasks.build.dependsOn('shadeJar')
+tasks.idea.dependsOn('shadeJar')
+publish.dependsOn('reobfJar', 'deobfJar', 'sourcesJar', 'shadeJar')
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifact jar
+        }
+    }
+
+    repositories {
+        def remote = System.getenv('REPO_PWD') != null
+        maven {
+            def remoteURL = "https://maven.tencao.com/repository/" + (((String) project.version).contains("SNAPSHOT") ? "snapshots" : "repo-for-releases")
+            def localURL = "file://${buildDir}/repo"
+            url = remote ? remoteURL : localURL
+            if (remote) {
+                credentials(PasswordCredentials) {
+                    username = System.getenv('REPO_USR')
+                    password = System.getenv('REPO_PWD')
+                }
+            }
+        }
+    }
+}
+
+compileKotlin {
+    destinationDirectory = new File(buildDir, "combined")
+    kotlinOptions {
+        javaParameters = true
+        jvmTarget = 1.8
+    }
+}

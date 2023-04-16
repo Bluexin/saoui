@@ -1,20 +1,17 @@
-# text stuff
-* text=auto
-*.java text eol=lf
-*.groovy text eol=lf
-*.scala text eol=lf
+* text eol=lf
 *.sh text eol=lf
 *.bat text eol=crlf
-*.md text
-*.properties text
-
-#binary
-*.dat binary
-*.bin binary
+*.patch text eol=lf
+*.java text eol=lf
+*.kt text eol=lf
+*.gradle text eol=lf
 *.png binary
+*.gif binary
 *.exe binary
 *.dll binary
-*.zip binary
 *.jar binary
-*.7z binary
-*.db binary
+*.lzma binary
+*.zip binary
+*.pyd binary
+*.cfg text eol=lf
+*.jks binary

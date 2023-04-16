@@ -1,36 +1,25 @@
-# gradle
-.gradle
-build
-gradle-app.setting
-
-# GMCP plugin
-/minecraft
-
 # eclipse
+bin
+*.launch
 .settings
 .metadata
 .classpath
 .project
-bin
 
-# intellij
+# idea
 out
-*.idea
-*.iml
-
-# random stuff
-/repo/
-a.awk
-addChange.bat
-defaultSize.PNG
-editVer
-hp_example.PNG
-sao-1.10.2.zip
-run
 *.ipr
 *.iws
-/classes/
-/tmp/
-/libs/
-/mcp/
+*.iml
+.idea/*
+!.idea/scopes
+
+# gradle
+build
+.gradle
+
+# other
+eclipse
+run
 /convert/
+/tmp/

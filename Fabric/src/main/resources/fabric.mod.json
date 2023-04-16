@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "id": "mcui",
+  "version": "${version}",
+  "name": "Modular Customizable User Interface (WIP Name)",
+  "description": "This is an example description! Tell everyone what your mod is about!",
+  "authors": [
+    "Bluexin",
+    "Tencao"
+  ],
+  "contributors": [
+    "Blaez", "genetyx8"
+  ],
+  "contact": {
+    "homepage": "https://github.com/Bluexin/saoui/wiki",
+    "sources": "https://github.com/Bluexin/saoui"
+  },
+  "license": "CC0-1.0",
+  "icon": "assets/saoui/textures/logo.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      {
+        "value": "be.bluexin.mcui.MCUICore",
+        "adapter": "kotlin"
+      }
+    ]
+  },
+  "mixins": [
+    "modid.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.14",
+    "fabric": ">=0.78",
+    "minecraft": ">=1.19.4 <1.20",
+    "java": ">=17",
+    "fabric-language-kotlin": ">=1.9.3+kotlin.1.8.20"
+  }
+}
+  
