@@ -1,4 +1,4 @@
-package com.tencao.saoui.api.elements.animator.internal
+package be.bluexin.mcui.api.elements.animator.internal
 
 /**
  * This is a copy from the library LibrarianLib
@@ -6,8 +6,8 @@ package com.tencao.saoui.api.elements.animator.internal
  */
 
 import com.tencao.saomclib.utils.math.clamp
-import com.tencao.saoui.api.elements.animator.Lerper
-import com.tencao.saoui.api.elements.animator.LerperHandler
+import be.bluexin.mcui.api.elements.animator.Lerper
+import be.bluexin.mcui.api.elements.animator.LerperHandler
 import java.util.*
 import kotlin.math.max
 import kotlin.math.min

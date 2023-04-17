@@ -1,9 +1,9 @@
-package com.tencao.saoui.screens.util
+package be.bluexin.mcui.screens.util
 
-import com.tencao.saomclib.Client
-import com.tencao.saoui.SoundCore
-import com.tencao.saoui.play
-import com.tencao.saoui.util.CraftingUtil
+import be.bluexin.mcui.util.Client
+import be.bluexin.mcui.SoundCore
+import be.bluexin.mcui.play
+import be.bluexin.mcui.util.CraftingUtil
 import net.minecraft.client.gui.Gui
 import net.minecraft.client.gui.toasts.GuiToast
 import net.minecraft.client.gui.toasts.IToast
@@ -45,7 +45,7 @@ class CraftingAlert(private val itemStack: ItemStack) : IToast {
 
     companion object {
         fun new(stack: ItemStack) {
-            Client.minecraft.toastGui.add(CraftingAlert(stack))
+            Client.mc.toastGui.add(CraftingAlert(stack))
         }
     }
 }

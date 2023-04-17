@@ -15,17 +15,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.tencao.saoui.util
+package be.bluexin.mcui.util
 
 import com.tencao.saomclib.isNotEmpty
-import com.tencao.saoui.api.info.IPlayerStatsProvider
-import com.tencao.saoui.config.OptionCore
+import be.bluexin.mcui.api.info.IPlayerStatsProvider
+import be.bluexin.mcui.config.OptionCore
 import net.minecraft.client.resources.I18n
-import net.minecraft.entity.EntityLivingBase
+import net.minecraft.world.entity.LivingEntity
 import net.minecraft.entity.SharedMonsterAttributes
 import net.minecraft.entity.ai.attributes.AttributeModifier
 import net.minecraft.entity.passive.EntityHorse
-import net.minecraft.entity.player.EntityPlayer
+import net.minecraft.world.entity.player.Player
 import net.minecraft.inventory.EntityEquipmentSlot
 import java.text.DecimalFormat
 
@@ -40,9 +40,9 @@ class DefaultStatsProvider : IPlayerStatsProvider {
         return (attributeValue * 1000).toInt().toFloat() / 1000
     }
 
-    override fun getStatsString(player: EntityPlayer): List<String> {
+    override fun getStatsString(player: Player): List<String> {
         val builder = mutableListOf<String>()
-        val mount = player.ridingEntity as EntityLivingBase?
+        val mount = player.ridingEntity as LivingEntity?
 
         if (player.isRiding && OptionCore.MOUNT_STAT_VIEW.isEnabled) {
             val name = mount!!.name

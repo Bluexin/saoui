@@ -1,16 +1,16 @@
-package com.tencao.saoui.screens.ingame
+package be.bluexin.mcui.screens.ingame
 
-import com.tencao.saoui.GLCore
-import com.tencao.saoui.SAOCore
-import com.tencao.saoui.util.ColorUtil
-import com.tencao.saoui.util.UIUtil
+import be.bluexin.mcui.GLCore
+import be.bluexin.mcui.SAOCore
+import be.bluexin.mcui.util.ColorUtil
+import be.bluexin.mcui.util.UIUtil
 import net.minecraft.client.gui.GuiScreen
 import net.minecraft.client.gui.ScaledResolution
 import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.renderer.GlStateManager.DestFactor
 import net.minecraft.client.renderer.GlStateManager.SourceFactor
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats
-import net.minecraft.util.ResourceLocation
+import net.minecraft.resources.ResourceLocation
 
 class DeathGui : GuiScreen() {
 
@@ -82,7 +82,7 @@ class DeathGui : GuiScreen() {
     }
 
     companion object {
-        val rl = ResourceLocation(SAOCore.MODID, "textures/hud/buttons/death.png")
+        val rl = ResourceLocation(Constants.MOD_ID, "textures/hud/buttons/death.png")
         const val w = 280.0
         const val h = 100.0
     }

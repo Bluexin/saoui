@@ -14,12 +14,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package com.tencao.saoui.api.entity.rendering
+package be.bluexin.mcui.api.entity.rendering
 
-import com.tencao.saomclib.Client
-import com.tencao.saoui.util.getAttackClass
+import be.bluexin.mcui.util.Client
+import be.bluexin.mcui.util.getAttackClass
 import net.minecraft.entity.EntityLiving
-import net.minecraft.entity.EntityLivingBase
+import net.minecraft.world.entity.LivingEntity
 import net.minecraft.entity.IEntityOwnable
 import net.minecraft.entity.ai.EntityAIAttackMelee
 import net.minecraft.entity.ai.EntityAIAttackRanged
@@ -29,7 +29,7 @@ import net.minecraft.entity.monster.EntityPigZombie
 import net.minecraft.entity.monster.IMob
 import net.minecraft.entity.passive.EntityWolf
 import net.minecraft.entity.passive.IAnimals
-import net.minecraft.entity.player.EntityPlayer
+import net.minecraft.world.entity.player.Player
 import net.minecraftforge.common.util.FakePlayer
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
@@ -44,16 +44,16 @@ import java.lang.ref.WeakReference
  *
  * @author Bluexin
  */
-class MobColorStateHandler internal constructor(entity: EntityLivingBase) :
+class MobColorStateHandler internal constructor(entity: LivingEntity) :
     IColorStateHandler {
-    private val theEnt: WeakReference<EntityLivingBase> = WeakReference(entity)
+    private val theEnt: WeakReference<LivingEntity> = WeakReference(entity)
 
     /**
      * Caches value when it can (ie the value will never change again)
      */
     private var cached: ColorState? = null
 
-    private val mc = Client.minecraft
+    private val mc = Client.mc
 
     @get:SideOnly(Side.CLIENT)
     private val color: ColorState
@@ -65,13 +65,13 @@ class MobColorStateHandler internal constructor(entity: EntityLivingBase) :
             if (cached != null) cached
             return when {
                 !entity.isNonBoss -> ColorState.BOSS.also { cached = it }
-                entity is EntityPlayer && entity !is FakePlayer -> ColorState.INNOCENT.also { cached = it }
+                entity is Player && entity !is FakePlayer -> ColorState.INNOCENT.also { cached = it }
                 entity is EntityWolf && entity.isAngry -> ColorState.KILLER
                 entity is EntityPigZombie && entity.isAngry -> ColorState.KILLER
                 entity is IEntityOwnable && entity.owner != null -> if (entity.owner == mc.player) ColorState.INNOCENT else ColorState.VIOLENT
-                entity is IMob -> if (entity.canEntityBeSeen(mc.player) || entity.attackingEntity is EntityPlayer) ColorState.KILLER else ColorState.VIOLENT
+                entity is IMob -> if (entity.canEntityBeSeen(mc.player) || entity.attackingEntity is Player) ColorState.KILLER else ColorState.VIOLENT
                 entity is IAnimals -> ColorState.INNOCENT.also { cached = it }
-                entity is EntityLiving -> if (entity.targetTasks.taskEntries.any { it is EntityAIAttackMelee || it is EntityAIAttackRanged || it is EntityAINearestAttackableTarget<*> && it.getAttackClass() is EntityPlayer }) ColorState.KILLER else if (entity.targetTasks.taskEntries.any { it is EntityAIFindEntityNearestPlayer }) ColorState.VIOLENT else ColorState.INNOCENT
+                entity is EntityLiving -> if (entity.targetTasks.taskEntries.any { it is EntityAIAttackMelee || it is EntityAIAttackRanged || it is EntityAINearestAttackableTarget<*> && it.getAttackClass() is Player }) ColorState.KILLER else if (entity.targetTasks.taskEntries.any { it is EntityAIFindEntityNearestPlayer }) ColorState.VIOLENT else ColorState.INNOCENT
                 else -> ColorState.INVALID
             }
         }

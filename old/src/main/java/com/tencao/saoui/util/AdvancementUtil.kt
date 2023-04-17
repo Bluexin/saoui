@@ -1,15 +1,15 @@
-package com.tencao.saoui.util
+package be.bluexin.mcui.util
 
 import com.google.gson.JsonParseException
-import com.tencao.saomclib.Client
-import com.tencao.saoui.SAOCore
+import be.bluexin.mcui.util.Client
+import be.bluexin.mcui.SAOCore
 import net.minecraft.advancements.Advancement
 import net.minecraft.advancements.AdvancementList
 import net.minecraft.advancements.AdvancementManager
 import net.minecraft.advancements.AdvancementTreeNode
 import net.minecraft.item.crafting.CraftingManager
 import net.minecraft.util.JsonUtils
-import net.minecraft.util.ResourceLocation
+import net.minecraft.resources.ResourceLocation
 import net.minecraftforge.common.ForgeHooks
 import org.apache.commons.io.FilenameUtils
 import org.apache.commons.io.IOUtils
@@ -33,14 +33,14 @@ object AdvancementUtil {
     }
 
     fun getAdvancements(): Set<Advancement> {
-        return ADVANCEMENT_LIST.advancements.toSet().also { Client.minecraft.connection?.advancementManager?.advancementList?.advancements }
+        return ADVANCEMENT_LIST.advancements.toSet().also { Client.mc.connection?.advancementManager?.advancementList?.advancements }
     }
 
-    fun getCategories(): Set<Advancement> = ADVANCEMENT_LIST.roots.filter { !it.id.resourcePath.contains("recipe") && !it.children.none() }.toSet()
+    fun getCategories(): Set<Advancement> = ADVANCEMENT_LIST.roots.filter { !it.id.path.contains("recipe") && !it.children.none() }.toSet()
 
     fun getRecipes(): List<Advancement> {
         return getAdvancements().asSequence().filter {
-            it.id.resourcePath.contains("recipe") && it.parent != null
+            it.id.path.contains("recipe") && it.parent != null
         }.toList()
     }
 
@@ -69,7 +69,7 @@ object AdvancementUtil {
                     path = Paths.get(CraftingManager::class.java.getResource("/assets/minecraft/advancements").toURI())
                 } else {
                     if ("jar" != uri.scheme) {
-                        SAOCore.LOGGER.error("Unsupported scheme $uri trying to list all built-in advancements (NYI?)")
+                        Constants.LOG.error("Unsupported scheme $uri trying to list all built-in advancements (NYI?)")
                         this.hasErrored = true
                         return
                     }
@@ -92,10 +92,10 @@ object AdvancementUtil {
                                     map[resourcelocation] = advancement
                                 }
                             } catch (jsonparseexception: JsonParseException) {
-                                SAOCore.LOGGER.error("Parsing error loading built-in advancement $resourcelocation", jsonparseexception as Throwable)
+                                Constants.LOG.error("Parsing error loading built-in advancement $resourcelocation", jsonparseexception as Throwable)
                                 this.hasErrored = true
                             } catch (ioexception: IOException) {
-                                SAOCore.LOGGER.error("Couldn't read advancement $resourcelocation from $path1", ioexception as Throwable)
+                                Constants.LOG.error("Couldn't read advancement $resourcelocation from $path1", ioexception as Throwable)
                                 this.hasErrored = true
                             } finally {
                                 IOUtils.closeQuietly(bufferedreader as Reader?)
@@ -105,14 +105,14 @@ object AdvancementUtil {
                 }
                 return
             }
-            SAOCore.LOGGER.error("Couldn't find .mcassetsroot")
+            Constants.LOG.error("Couldn't find .mcassetsroot")
             this.hasErrored = true
         } catch (urisyntaxexception: IOException) {
-            SAOCore.LOGGER.error("Couldn't get a list of all built-in advancement files", urisyntaxexception as Throwable)
+            Constants.LOG.error("Couldn't get a list of all built-in advancement files", urisyntaxexception as Throwable)
             this.hasErrored = true
             return
         } catch (urisyntaxexception: URISyntaxException) {
-            SAOCore.LOGGER.error("Couldn't get a list of all built-in advancement files", urisyntaxexception as Throwable)
+            Constants.LOG.error("Couldn't get a list of all built-in advancement files", urisyntaxexception as Throwable)
             this.hasErrored = true
             return
         } finally {
@@ -121,4 +121,4 @@ object AdvancementUtil {
     }
 }
 
-fun Advancement.getProgress() = Client.minecraft.connection?.advancementManager?.getAdvancementToProgress()?.get(this)
+fun Advancement.getProgress() = Client.mc.connection?.advancementManager?.getAdvancementToProgress()?.get(this)

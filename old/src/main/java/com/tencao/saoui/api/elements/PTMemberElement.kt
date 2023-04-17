@@ -1,9 +1,9 @@
-package com.tencao.saoui.api.elements
+package be.bluexin.mcui.api.elements
 
-import com.tencao.saomclib.Client
+import be.bluexin.mcui.util.Client
 import com.tencao.saomclib.capabilities.getPartyCapability
 import com.tencao.saomclib.party.PlayerInfo
-import com.tencao.saoui.util.PlayerIcon
+import be.bluexin.mcui.util.PlayerIcon
 import net.minecraft.client.resources.I18n
 
 class PTMemberElement(val player: PlayerInfo) : IconLabelElement(PlayerIcon(player), if (party?.isInvited(player) == true) I18n.format("sao.party.player_invited", player.username) else player.username) {
@@ -18,7 +18,7 @@ class PTMemberElement(val player: PlayerInfo) : IconLabelElement(PlayerIcon(play
     }
 
     companion object {
-        val party = Client.minecraft.player.getPartyCapability().partyData
-        val invitedParty = Client.minecraft.player.getPartyCapability().inviteData
+        val party = Client.mc.player.getPartyCapability().partyData
+        val invitedParty = Client.mc.player.getPartyCapability().inviteData
     }
 }

@@ -1,27 +1,27 @@
-package com.tencao.saoui.api.elements
+package be.bluexin.mcui.api.elements
 
-import com.tencao.saomclib.Client
+import be.bluexin.mcui.util.Client
 import com.tencao.saomclib.utils.math.BoundingBox2D
 import com.tencao.saomclib.utils.math.Vec2d
 import com.tencao.saomclib.utils.math.vec
-import com.tencao.saoui.GLCore
-import com.tencao.saoui.SAOCore
-import com.tencao.saoui.config.OptionCore
-import com.tencao.saoui.resources.StringNames
-import com.tencao.saoui.screens.CoreGUI
-import com.tencao.saoui.screens.util.toIcon
-import com.tencao.saoui.util.ColorUtil
-import com.tencao.saoui.util.IconCore
-import com.tencao.saoui.util.PlayerStats
+import be.bluexin.mcui.GLCore
+import be.bluexin.mcui.SAOCore
+import be.bluexin.mcui.config.OptionCore
+import be.bluexin.mcui.resources.StringNames
+import be.bluexin.mcui.screens.CoreGUI
+import be.bluexin.mcui.screens.util.toIcon
+import be.bluexin.mcui.util.ColorUtil
+import be.bluexin.mcui.util.IconCore
+import be.bluexin.mcui.util.PlayerStats
 import net.minecraft.client.gui.inventory.GuiInventory
-import net.minecraft.entity.EntityLivingBase
-import net.minecraft.entity.player.EntityPlayer
-import net.minecraft.util.ResourceLocation
+import net.minecraft.world.entity.LivingEntity
+import net.minecraft.world.entity.player.Player
+import net.minecraft.resources.ResourceLocation
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.roundToInt
 
-class ProfileElement(var player: EntityPlayer, override var listed: Boolean) : IconElement(IconCore.PROFILE) {
+class ProfileElement(var player: Player, override var listed: Boolean) : IconElement(IconCore.PROFILE) {
 
     var w = 165
     var h = 256
@@ -37,10 +37,10 @@ class ProfileElement(var player: EntityPlayer, override var listed: Boolean) : I
     override val boundingBox: BoundingBox2D
         get() = if (!listed) BoundingBox2D(pos, pos) else BoundingBox2D(pos, pos + vec(w, h))
 
-    private val rl = ResourceLocation(SAOCore.MODID, "textures/menu/parts/profilebg.png")
+    private val rl = ResourceLocation(Constants.MOD_ID, "textures/menu/parts/profilebg.png")
 
     init {
-        Client.minecraft.player.armorInventoryList.forEachIndexed { index, itemStack ->
+        Client.mc.player.armorInventoryList.forEachIndexed { index, itemStack ->
             val icon = IconElement(itemStack.toIcon())
             icon.pos = when (index) {
                 0 -> Vec2d(left - w + 20, top + 50)
@@ -89,7 +89,7 @@ class ProfileElement(var player: EntityPlayer, override var listed: Boolean) : I
     }
 
     private fun drawCharacter(x: Double, y: Double) {
-        val tmp = player.ridingEntity as EntityLivingBase?
+        val tmp = player.ridingEntity as LivingEntity?
 
         GLCore.depth(true)
         if (player.isRiding && OptionCore.MOUNT_STAT_VIEW.isEnabled) {

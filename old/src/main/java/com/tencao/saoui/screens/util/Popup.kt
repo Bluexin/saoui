@@ -15,30 +15,30 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.tencao.saoui.screens.util
+package be.bluexin.mcui.screens.util
 
 import com.tencao.saomclib.party.PlayerInfo
 import com.tencao.saomclib.utils.math.Vec2d
 import com.tencao.saomclib.utils.math.vec
-import com.tencao.saoui.GLCore
-import com.tencao.saoui.GLCore.glTexturedRectV2
-import com.tencao.saoui.SAOCore
-import com.tencao.saoui.SoundCore
-import com.tencao.saoui.api.elements.IconElement
-import com.tencao.saoui.api.elements.IconTextElement
-import com.tencao.saoui.api.elements.animator.Easing
-import com.tencao.saoui.api.elements.basicAnimation
-import com.tencao.saoui.api.elements.getRequirementDesc
-import com.tencao.saoui.api.events.ProfileInfoEvent
-import com.tencao.saoui.play
-import com.tencao.saoui.screens.CoreGUI
-import com.tencao.saoui.screens.unaryPlus
-import com.tencao.saoui.util.*
+import be.bluexin.mcui.GLCore
+import be.bluexin.mcui.GLCore.glTexturedRectV2
+import be.bluexin.mcui.SAOCore
+import be.bluexin.mcui.SoundCore
+import be.bluexin.mcui.api.elements.IconElement
+import be.bluexin.mcui.api.elements.IconTextElement
+import be.bluexin.mcui.api.elements.animator.Easing
+import be.bluexin.mcui.api.elements.basicAnimation
+import be.bluexin.mcui.api.elements.getRequirementDesc
+import be.bluexin.mcui.api.events.ProfileInfoEvent
+import be.bluexin.mcui.play
+import be.bluexin.mcui.screens.CoreGUI
+import be.bluexin.mcui.screens.unaryPlus
+import be.bluexin.mcui.util.*
 import net.minecraft.advancements.Advancement
-import net.minecraft.client.Minecraft
+import net.minecraft.Client.mc
 import net.minecraft.inventory.Slot
 import net.minecraft.item.crafting.IRecipe
-import net.minecraft.util.ResourceLocation
+import net.minecraft.resources.ResourceLocation
 import net.minecraftforge.common.MinecraftForge
 import kotlin.math.max
 import kotlin.math.min
@@ -50,7 +50,7 @@ open class Popup<T : Any>(
     internal val buttons: Map<IconElement, T>
 ) : CoreGUI<T>(Vec2d.ZERO) {
 
-    private val rl = ResourceLocation(SAOCore.MODID, "textures/menu/parts/alertbg.png")
+    private val rl = ResourceLocation(Constants.MOD_ID, "textures/menu/parts/alertbg.png")
     internal /*private*/ var expansion = 0f
     internal /*private*/ var currheight = h * 0.625
     internal /*private*/ var eol = 1f
@@ -143,7 +143,7 @@ open class Popup<T : Any>(
         val step3 = max(h * 0.125 - h * 0.375 * (1 - expansion), 0.0) * text.size / 2f // TODO: handle multiline text
         val step5 = h * 0.375
 
-//        if (shadows < 20.0) SAOCore.LOGGER.info("h=$h; shadows=$shadows; step3=$step3; expansion=$expansion")
+//        if (shadows < 20.0) Constants.LOG.info("h=$h; shadows=$shadows; step3=$step3; expansion=$expansion")
 
         val h = h - h * 0.250 * (1 - expansion) + h * 0.0625 * (text.size + 2)
 

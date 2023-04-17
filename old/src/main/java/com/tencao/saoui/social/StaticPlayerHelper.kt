@@ -15,13 +15,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.tencao.saoui.social
+package be.bluexin.mcui.social
 
-import com.tencao.saoui.config.OptionCore
-import net.minecraft.client.Minecraft
+import be.bluexin.mcui.config.OptionCore
+import net.minecraft.Client.mc
 import net.minecraft.entity.Entity
-import net.minecraft.entity.EntityLivingBase
-import net.minecraft.entity.player.EntityPlayer
+import net.minecraft.world.entity.LivingEntity
+import net.minecraft.world.entity.player.Player
 import java.util.*
 import kotlin.math.max
 import kotlin.math.roundToLong
@@ -38,15 +38,15 @@ object StaticPlayerHelper {
     // private val healthSmooth = HashMap<UUID, Float>()
     private val hungerSmooth = HashMap<UUID, Float>()
 
-    fun listOnlinePlayers(mc: Minecraft, range: Double): List<EntityPlayer> {
-        return mc.world.getPlayers(EntityPlayer::class.java) { p -> mc.player.getDistance(p!!) <= range }
+    fun listOnlinePlayers(mc: Minecraft, range: Double): List<Player> {
+        return mc.world.getPlayers(Player::class.java) { p -> mc.player.getDistance(p!!) <= range }
     }
 
-    private fun listOnlinePlayers(mc: Minecraft): List<EntityPlayer> {
+    private fun listOnlinePlayers(mc: Minecraft): List<Player> {
         return mc.world.playerEntities
     }
 
-    fun findOnlinePlayer(mc: Minecraft, username: String): EntityPlayer? {
+    fun findOnlinePlayer(mc: Minecraft, username: String): Player? {
         return mc.world.getPlayerEntityByName(username)
     }
 
@@ -65,7 +65,7 @@ object StaticPlayerHelper {
         return isOnline(mc, arrayOf(name))[0]
     }
 
-    fun getName(player: EntityPlayer?): String {
+    fun getName(player: Player?): String {
         return if (player == null) "" else player.displayNameString
     }
 
@@ -93,7 +93,7 @@ object StaticPlayerHelper {
     /*
     fun getHealth(mc: Minecraft, entity: Entity?, time: Float): Float { // FIXME: this seems to break if called many times in a single render frame
         if (OptionCore.SMOOTH_HEALTH.isEnabled) {
-            val healthReal: Float = if (entity is EntityLivingBase)
+            val healthReal: Float = if (entity is LivingEntity)
                 entity.health
                 else 0f
             val uuid = entity?.uniqueID
@@ -106,7 +106,7 @@ object StaticPlayerHelper {
                         healthSmooth[uuid] = healthReal
                     }
 
-                    if (healthReal <= 0 && entity is EntityLivingBase) {
+                    if (healthReal <= 0 && entity is LivingEntity) {
                         val value = (18 - entity.deathTime).toFloat() / 18
 
                         if (value <= 0) healthSmooth.remove(uuid)
@@ -125,24 +125,24 @@ object StaticPlayerHelper {
                 }
             } else return healthReal
         } else
-            return if (entity is EntityLivingBase) max(0.0f, entity.health) else 0f
+            return if (entity is LivingEntity) max(0.0f, entity.health) else 0f
     }*/
 
     fun getMaxHealth(entity: Entity?): Float {
-        return if (entity is EntityLivingBase) max(0.0000001f, entity.maxHealth) else 1f
+        return if (entity is LivingEntity) max(0.0000001f, entity.maxHealth) else 1f
     }
 
     fun getHungerFract(mc: Minecraft, entity: Entity, time: Float) =
-        if (entity !is EntityPlayer) 1.0f
+        if (entity !is Player) 1.0f
         else getHungerLevel(mc, entity, time) / 20.0f
 
     fun getHungerLevel(mc: Minecraft, entity: Entity, time: Float): Float {
-        if (entity !is EntityPlayer) return 1.0f
+        if (entity !is Player) return 1.0f
         val hungerReal: Float
         if (OptionCore.SMOOTH_HEALTH.isEnabled) {
             val uuid = entity.getUniqueID()
 
-            hungerReal = entity.foodStats.foodLevel.toFloat()
+            hungerReal = entity.foodData.foodLevel.toFloat()
 
             if (hungerSmooth.containsKey(uuid)) {
                 var hungerValue: Float = hungerSmooth[uuid]!!
@@ -168,14 +168,14 @@ object StaticPlayerHelper {
                 hungerSmooth[uuid] = hungerReal
                 return hungerReal
             }
-        } else return entity.foodStats.foodLevel.toFloat()
+        } else return entity.foodData.foodLevel.toFloat()
     }
 
     private fun gameTimeDelay(mc: Minecraft, time: Float): Float {
         return if (time >= 0f) time else HEALTH_FRAME_FACTOR / gameFPS(mc)
     }
 
-    fun isCreative(player: EntityPlayer): Boolean { // TODO: test this!
+    fun isCreative(player: Player): Boolean { // TODO: test this!
         return player.capabilities.isCreativeMode
     }
 
@@ -183,7 +183,7 @@ object StaticPlayerHelper {
         return mc.limitFramerate
     }
 
-    fun thePlayer(): EntityPlayer {
+    fun thePlayer(): Player {
         return Minecraft.getMinecraft().player
     }
 }

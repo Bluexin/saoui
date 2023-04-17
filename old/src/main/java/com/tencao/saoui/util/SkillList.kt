@@ -15,11 +15,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.tencao.saoui.util
+package be.bluexin.mcui.util
 
-import com.tencao.saoui.api.entity.ISkill
-import com.tencao.saoui.api.screens.Actions
-import net.minecraft.client.Minecraft
+import be.bluexin.mcui.api.entity.ISkill
+import be.bluexin.mcui.api.screens.Actions
+import net.minecraft.Client.mc
 import net.minecraft.client.gui.inventory.GuiInventory
 import java.util.function.Consumer
 import java.util.stream.Stream

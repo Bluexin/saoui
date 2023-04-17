@@ -1,6 +1,6 @@
-package com.tencao.saoui.api.elements
+package be.bluexin.mcui.api.elements
 
-import com.tencao.saomclib.Client
+import be.bluexin.mcui.util.Client
 import com.tencao.saomclib.capabilities.getPartyCapability
 import com.tencao.saomclib.events.PartyEvent
 import com.tencao.saomclib.packets.party.PartyType
@@ -9,16 +9,16 @@ import com.tencao.saomclib.packets.party.updateServer
 import com.tencao.saomclib.party.IPartyData
 import com.tencao.saomclib.party.PlayerInfo
 import com.tencao.saomclib.party.playerInfo
-import com.tencao.saoui.util.IconCore
-import com.tencao.saoui.util.PlayerIcon
+import be.bluexin.mcui.util.IconCore
+import be.bluexin.mcui.util.PlayerIcon
 import net.minecraft.client.resources.I18n
-import net.minecraft.entity.player.EntityPlayer
+import net.minecraft.world.entity.player.Player
 import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 
 class PartyElement : IconLabelElement(IconCore.PARTY, I18n.format("sao.element.party")) {
 
-    val player: EntityPlayer = Client.minecraft.player
+    val player: Player = Client.mc.player
 
     // val partyElements = mutableListOf<PTMemberElement>()
     val partyCap by lazy { player.getPartyCapability() }
@@ -54,7 +54,7 @@ class PartyElement : IconLabelElement(IconCore.PARTY, I18n.format("sao.element.p
         }
         // elements[0].valid = !(partyCap.partyData?.isLeader(Minecraft().player) == false)
         // Don't bother with updating party functions if single player.
-        if (1 < (Client.minecraft.integratedServer?.currentPlayerCount ?: 2)) {
+        if (1 < (Client.mc.integratedServer?.currentPlayerCount ?: 2)) {
             partyList()
         }
         if (!this.selected) elementsSequence.forEach { it.hide() }
@@ -78,7 +78,7 @@ class PartyElement : IconLabelElement(IconCore.PARTY, I18n.format("sao.element.p
         }
     }
 
-    fun partyMemberButton(party: IPartyData, player: PlayerInfo, ourPlayer: EntityPlayer, invited: Boolean = false): CategoryButton =
+    fun partyMemberButton(party: IPartyData, player: PlayerInfo, ourPlayer: Player, invited: Boolean = false): CategoryButton =
         CategoryButton(PTMemberElement(player), this.tlParent) {
             +CategoryButton(IconLabelElement(IconCore.HELP, I18n.format("sao.element.inspect")), this.tlParent)
             if (party.leaderInfo.equals(ourPlayer)) {
@@ -98,7 +98,7 @@ class PartyElement : IconLabelElement(IconCore.PARTY, I18n.format("sao.element.p
         val party = partyCap.partyData
 
         if ((party != null && party.isLeader(player)) || party == null) +CategoryButton(IconLabelElement(IconCore.INVITE, I18n.format("sao.party.invite")), this.tlParent) {
-            Client.minecraft.connection?.playerInfoMap?.filter { it.gameProfile.id != player.uniqueID }?.forEach {
+            Client.mc.connection?.playerInfoMap?.filter { it.gameProfile.id != player.uniqueID }?.forEach {
                 +CategoryButton(IconLabelElement(PlayerIcon(PlayerInfo(it.gameProfile.id, it.gameProfile.name)), it.gameProfile.name), this.tlParent).onClick { _, _ ->
                     Type.INVITE.updateServer(PlayerInfo(it.gameProfile.id, it.gameProfile.name), PartyType.MAIN)
                     true

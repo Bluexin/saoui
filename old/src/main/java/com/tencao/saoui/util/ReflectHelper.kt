@@ -1,16 +1,16 @@
-package com.tencao.saoui.util
+package be.bluexin.mcui.util
 
 import net.minecraft.advancements.Advancement
 import net.minecraft.advancements.AdvancementProgress
 import net.minecraft.advancements.AdvancementRewards
-import net.minecraft.client.Minecraft
+import net.minecraft.Client.mc
 import net.minecraft.client.multiplayer.ClientAdvancementManager
 import net.minecraft.client.renderer.entity.RenderManager
 import net.minecraft.client.resources.FallbackResourceManager
 import net.minecraft.client.resources.IResourcePack
 import net.minecraft.client.resources.SimpleReloadableResourceManager
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget
-import net.minecraft.util.ResourceLocation
+import net.minecraft.resources.ResourceLocation
 import net.minecraft.util.Timer
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper
 import java.lang.reflect.Field

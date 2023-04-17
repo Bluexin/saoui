@@ -15,26 +15,26 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.tencao.saoui.renders
+package be.bluexin.mcui.renders
 
-import com.tencao.saomclib.Client
-import com.tencao.saoui.GLCore
-import com.tencao.saoui.api.entity.rendering.ColorState
-import com.tencao.saoui.capabilities.getRenderData
-import com.tencao.saoui.config.OptionCore
-import com.tencao.saoui.effects.DeathParticles
-import com.tencao.saoui.resources.StringNames
-import com.tencao.saoui.screens.util.HealthStep
-import com.tencao.saoui.social.StaticPlayerHelper
-import com.tencao.saoui.util.ColorUtil
-import com.tencao.saoui.util.renderPosX
-import com.tencao.saoui.util.renderPosY
-import com.tencao.saoui.util.renderPosZ
-import net.minecraft.client.Minecraft
+import be.bluexin.mcui.util.Client
+import be.bluexin.mcui.GLCore
+import be.bluexin.mcui.api.entity.rendering.ColorState
+import be.bluexin.mcui.capabilities.getRenderData
+import be.bluexin.mcui.config.OptionCore
+import be.bluexin.mcui.effects.DeathParticles
+import be.bluexin.mcui.resources.StringNames
+import be.bluexin.mcui.screens.util.HealthStep
+import be.bluexin.mcui.social.StaticPlayerHelper
+import be.bluexin.mcui.util.ColorUtil
+import be.bluexin.mcui.util.renderPosX
+import be.bluexin.mcui.util.renderPosY
+import be.bluexin.mcui.util.renderPosZ
+import net.minecraft.Client.mc
 import net.minecraft.client.renderer.entity.RenderManager
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats
 import net.minecraft.entity.Entity
-import net.minecraft.entity.EntityLivingBase
+import net.minecraft.world.entity.LivingEntity
 import net.minecraft.entity.monster.EntityMob
 import net.minecraft.world.EnumSkyBlock
 import net.minecraftforge.fml.common.Loader
@@ -68,16 +68,16 @@ object StaticRenderer { // TODO: add usage of scale, offset etc from capability
     private var cursorView = Pair(0.0, 0.0)
 
     fun render() {
-        val renderManager = Client.minecraft.renderManager
+        val renderManager = Client.mc.renderManager
         if (mc.renderPartialTicks != partialTicks) {
             updateView(renderManager)
         }
-        Client.minecraft.renderPartialTicks
+        Client.mc.renderPartialTicks
         mc.mcProfiler.startSection("setupStaticRender")
 
         GLCore.glBindTexture(StringNames.entities)
-        Client.minecraft.world.loadedEntityList.asSequence().filter { it is EntityLivingBase && it != Client.minecraft.player }.forEach {
-            val living = it as EntityLivingBase
+        Client.mc.world.loadedEntityList.asSequence().filter { it is LivingEntity && it != Client.mc.player }.forEach {
+            val living = it as LivingEntity
             if (living.isInWater && !mc.player.world.getBlockState(mc.player.position.up()).material.isLiquid) {
                 val state = mc.player.world.getBlockState(living.position.up(2))
                 if (state.material.isLiquid || state.material.isSolid || state.material.blocksLight()) {
@@ -139,7 +139,7 @@ object StaticRenderer { // TODO: add usage of scale, offset etc from capability
         }
     }
 
-    private fun doRenderColorCursor(renderManager: RenderManager, entity: EntityLivingBase, x: Double, y: Double, z: Double, distance: Int, color: ColorState) {
+    private fun doRenderColorCursor(renderManager: RenderManager, entity: LivingEntity, x: Double, y: Double, z: Double, distance: Int, color: ColorState) {
         if (entity.ridingEntity != null) return
 
         if (entity.world.isRemote) {
@@ -222,7 +222,7 @@ object StaticRenderer { // TODO: add usage of scale, offset etc from capability
         } else value
     }
 
-    private fun doRenderHealthBar(renderManager: RenderManager, living: EntityLivingBase, x: Double, y: Double, z: Double, distance: Int) {
+    private fun doRenderHealthBar(renderManager: RenderManager, living: LivingEntity, x: Double, y: Double, z: Double, distance: Int) {
         if (living.ridingEntity != null && living.ridingEntity === mc.player) return
         if (living.health > living.maxHealth) return
         if (Loader.isModLoaded("neat")) return
@@ -320,20 +320,20 @@ object StaticRenderer { // TODO: add usage of scale, offset etc from capability
     }
 
     private fun useColor(living: Entity, light: Float) {
-        if (living is EntityLivingBase) {
+        if (living is LivingEntity) {
             GLCore.color(HealthStep.getStep(living).rgba, light)
         } else {
             GLCore.color(HealthStep.GOOD.rgba, light)
         }
     }
 
-    private fun getHealthFactor(living: EntityLivingBase): Float {
-        Client.minecraft.mcProfiler.startSection("getHealthFactor")
+    private fun getHealthFactor(living: LivingEntity): Float {
+        Client.mc.mcProfiler.startSection("getHealthFactor")
         val normalFactor = living.health / StaticPlayerHelper.getMaxHealth(living)
         val delta = 1.0f - normalFactor
 
         val health = normalFactor + delta * delta / 2 * normalFactor
-        Client.minecraft.mcProfiler.endSection()
+        Client.mc.mcProfiler.endSection()
         return health
     }
 

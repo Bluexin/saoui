@@ -15,9 +15,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.tencao.saoui.api.elements
+package be.bluexin.mcui.api.elements
 
-import com.tencao.saoui.api.elements.animator.*
+import be.bluexin.mcui.api.elements.animator.*
 
 /**
  * Part of saoui by Bluexin, released under GNU GPLv3.

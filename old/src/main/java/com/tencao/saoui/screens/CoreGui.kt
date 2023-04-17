@@ -15,20 +15,20 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.tencao.saoui.screens
+package be.bluexin.mcui.screens
 
-import com.tencao.saomclib.Client
+import be.bluexin.mcui.util.Client
 import com.tencao.saomclib.utils.math.Vec2d
 import com.tencao.saomclib.utils.math.clamp
 import com.tencao.saomclib.utils.math.vec
-import com.tencao.saoui.GLCore
-import com.tencao.saoui.api.elements.*
-import com.tencao.saoui.api.elements.animator.Animation
-import com.tencao.saoui.api.elements.animator.Animator
-import com.tencao.saoui.api.screens.IIcon
-import com.tencao.saoui.config.OptionCore
-import com.tencao.saoui.screens.util.Popup
-import net.minecraft.client.Minecraft
+import be.bluexin.mcui.GLCore
+import be.bluexin.mcui.api.elements.*
+import be.bluexin.mcui.api.elements.animator.Animation
+import be.bluexin.mcui.api.elements.animator.Animator
+import be.bluexin.mcui.api.screens.IIcon
+import be.bluexin.mcui.config.OptionCore
+import be.bluexin.mcui.screens.util.Popup
+import net.minecraft.Client.mc
 import net.minecraft.client.gui.GuiScreen
 import net.minecraft.client.gui.ScaledResolution
 import net.minecraft.client.settings.KeyBinding
@@ -67,18 +67,18 @@ abstract class CoreGUI<T : Any>(final override var pos: Vec2d, override var dest
 
         if (OptionCore.UI_MOVEMENT.isEnabled) {
             if (!viewSet) {
-                playerView = Vec2f(Client.minecraft.player.rotationYaw, Client.minecraft.player.rotationPitch)
+                playerView = Vec2f(Client.mc.player.rotationYaw, Client.mc.player.rotationPitch)
                 previousMouse = Vec2d(mouseX.toDouble(), mouseY.toDouble())
                 viewSet = true
             } else {
-                Client.minecraft.player.rotationYaw = playerView.x - ((width / 2 - mouseX) / 2) * 0.25F
-                Client.minecraft.player.rotationPitch = playerView.y - ((height / 2 - mouseY) / 2) * 0.25F
+                Client.mc.player.rotationYaw = playerView.x - ((width / 2 - mouseX) / 2) * 0.25F
+                Client.mc.player.rotationPitch = playerView.y - ((height / 2 - mouseY) / 2) * 0.25F
                 pos = pos.add((mouseX - previousMouse.x) * 0.25, (mouseY - previousMouse.y) * 0.25)
                 previousMouse = Vec2d(mouseX.toDouble(), mouseY.toDouble())
             }
         } else if (viewSet) {
-            Client.minecraft.player.rotationYaw = playerView.x
-            Client.minecraft.player.rotationPitch = playerView.y
+            Client.mc.player.rotationYaw = playerView.x
+            Client.mc.player.rotationPitch = playerView.y
         }
         GLCore.translate(pos.x, pos.y, 0.0)
 
@@ -175,20 +175,20 @@ abstract class CoreGUI<T : Any>(final override var pos: Vec2d, override var dest
             } else {
                 elements.firstOrNull { it.isOpen && it.selected }?.keyTyped(typedChar, keyCode) ?: let {
                     // If no elements are open and focuseds
-                    if (keyCode == Client.minecraft.gameSettings.keyBindForward.keyCode || keyCode == Keyboard.KEY_UP) {
+                    if (keyCode == Client.mc.gameSettings.keyBindForward.keyCode || keyCode == Keyboard.KEY_UP) {
                         val selected = elements.firstOrNull { it.selected }
                         var index = elements.indexOf(selected)
                         if (index == -1) index = 0
                         else if (--index < 0) index = elements.size.minus(1)
                         selected?.selected = false
                         elements[index].selected = true
-                    } else if (keyCode == Client.minecraft.gameSettings.keyBindBack.keyCode || keyCode == Keyboard.KEY_DOWN) {
+                    } else if (keyCode == Client.mc.gameSettings.keyBindBack.keyCode || keyCode == Keyboard.KEY_DOWN) {
                         val selected = elements.firstOrNull { it.selected }
                         var index = elements.indexOf(selected)
                         if (++index >= elements.size) index = 0
                         selected?.selected = false
                         elements[index].selected = true
-                    } else if (keyCode == Client.minecraft.gameSettings.keyBindRight.keyCode || keyCode == Keyboard.KEY_RIGHT || keyCode == Client.minecraft.gameSettings.keyBindJump.keyCode || keyCode == Keyboard.KEY_RETURN) {
+                    } else if (keyCode == Client.mc.gameSettings.keyBindRight.keyCode || keyCode == Keyboard.KEY_RIGHT || keyCode == Client.mc.gameSettings.keyBindJump.keyCode || keyCode == Keyboard.KEY_RETURN) {
                         val selected = elements.firstOrNull { it.selected } ?: return
                         if (selected is CategoryButton) {
                             selected.open()

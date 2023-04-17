@@ -15,16 +15,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.tencao.saoui.api.elements
+package be.bluexin.mcui.api.elements
 
 import com.tencao.saomclib.utils.math.BoundingBox2D
 import com.tencao.saomclib.utils.math.Vec2d
 import com.tencao.saomclib.utils.math.vec
-import com.tencao.saoui.SAOCore
-import com.tencao.saoui.api.elements.animator.Easing
-import com.tencao.saoui.screens.CoreGUI
-import com.tencao.saoui.screens.MouseButton
-import com.tencao.saoui.screens.unaryPlus
+import be.bluexin.mcui.SAOCore
+import be.bluexin.mcui.api.elements.animator.Easing
+import be.bluexin.mcui.screens.CoreGUI
+import be.bluexin.mcui.screens.MouseButton
+import be.bluexin.mcui.screens.unaryPlus
 
 /**
  * Part of saoui by Bluexin, released under GNU GPLv3.
@@ -62,7 +62,7 @@ interface INeoParent {
         try {
             CoreGUI.animator.removeAnimationsFor(this)
         } catch (e: ConcurrentModificationException) {
-            SAOCore.LOGGER.fatal("Element caused a concurrent modification exception on animation")
+            Constants.LOG.fatal("Element caused a concurrent modification exception on animation")
             e.printStackTrace()
         }
         destination += delta

@@ -1,8 +1,8 @@
-package com.tencao.saoui.social.friends
+package be.bluexin.mcui.social.friends
 
-import com.tencao.saomclib.Client
+import be.bluexin.mcui.util.Client
 import com.tencao.saomclib.party.PlayerInfo
-import com.tencao.saoui.config.FriendData
+import be.bluexin.mcui.config.FriendData
 import java.util.*
 
 object FriendCore {
@@ -37,7 +37,7 @@ object FriendCore {
     }
 
     fun isFriendOnline(playerInfo: PlayerInfo): Boolean {
-        return Client.minecraft.connection?.playerInfoMap?.any { it.displayName?.formattedText?.equals(playerInfo.username, true) ?: false } ?: false
+        return Client.mc.connection?.playerInfoMap?.any { it.displayName?.formattedText?.equals(playerInfo.username, true) ?: false } ?: false
     }
 
     fun getOnlineList(): List<PlayerInfo> {

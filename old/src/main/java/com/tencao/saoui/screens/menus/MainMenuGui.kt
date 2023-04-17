@@ -1,7 +1,7 @@
-package com.tencao.saoui.screens.menus
+package be.bluexin.mcui.screens.menus
 
-import com.tencao.saoui.themes.AbstractThemeLoader
-import com.tencao.saoui.themes.ThemeManager
+import be.bluexin.mcui.themes.AbstractThemeLoader
+import be.bluexin.mcui.themes.ThemeManager
 import net.minecraft.client.gui.GuiButton
 import net.minecraft.client.gui.GuiLabel
 import net.minecraft.client.gui.GuiMainMenu

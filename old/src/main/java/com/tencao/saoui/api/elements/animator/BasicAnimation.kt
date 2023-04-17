@@ -1,4 +1,4 @@
-package com.tencao.saoui.api.elements.animator
+package be.bluexin.mcui.api.elements.animator
 
 /*
  * This is a copy from the library LibrarianLib

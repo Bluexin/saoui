@@ -1,7 +1,7 @@
-package com.tencao.saoui.api.elements.animator.internal
+package be.bluexin.mcui.api.elements.animator.internal
 
-import com.tencao.saoui.api.elements.animator.LerperHandler
-import com.tencao.saoui.api.elements.animator.registerLerper
+import be.bluexin.mcui.api.elements.animator.LerperHandler
+import be.bluexin.mcui.api.elements.animator.registerLerper
 
 /**
  * This is a copy from the library LibrarianLib

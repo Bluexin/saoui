@@ -15,11 +15,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.tencao.saoui.api.items
+package be.bluexin.mcui.api.items
 
-import com.tencao.saomclib.Client
-import com.tencao.saoui.api.screens.IIcon
-import com.tencao.saoui.util.IconCore
+import be.bluexin.mcui.util.Client
+import be.bluexin.mcui.api.screens.IIcon
+import be.bluexin.mcui.util.IconCore
 import net.minecraft.inventory.Slot
 import net.minecraft.item.ItemStack
 
@@ -70,13 +70,13 @@ interface IItemFilter : (ItemStack, Boolean) -> Boolean, (ItemStack) -> Boolean 
 
     companion object {
         fun getPlayerSlots(slotID: Int): Set<Slot> {
-            return Client.minecraft.player.openContainer.inventorySlots
+            return Client.mc.player.openContainer.inventorySlots
                 .filter { it.slotNumber == slotID }
                 .toSet()
         }
 
         fun getPlayerSlots(slotID: IntRange): Set<Slot> {
-            return Client.minecraft.player.openContainer.inventorySlots
+            return Client.mc.player.openContainer.inventorySlots
                 .filter { slotID.contains(it.slotNumber) }
                 .toSet()
         }

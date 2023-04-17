@@ -1,13 +1,13 @@
-package com.tencao.saoui.util
+package be.bluexin.mcui.util
 
-import com.tencao.saomclib.Client
+import be.bluexin.mcui.util.Client
 import net.minecraft.client.gui.GuiMainMenu
 import net.minecraft.client.gui.GuiMultiplayer
 import net.minecraft.realms.RealmsBridge
 
 object UIUtil {
 
-    val mc = Client.minecraft
+    val mc = Client.mc
 
     fun closeGame() {
         // This check needs to happen before disconnecting packet.

@@ -15,23 +15,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.tencao.saoui.events
+package be.bluexin.mcui.events
 
-import com.tencao.saoui.SoundCore
-import com.tencao.saoui.capabilities.getRenderData
-import com.tencao.saoui.config.OptionCore
-import com.tencao.saoui.playAtEntity
-import com.tencao.saoui.renders.StaticRenderer
-import com.tencao.saoui.screens.CoreGUI
-import com.tencao.saoui.screens.ingame.DeathGui
-import com.tencao.saoui.screens.menus.IngameMenu
-import com.tencao.saoui.screens.menus.MainMenuGui
+import be.bluexin.mcui.SoundCore
+import be.bluexin.mcui.capabilities.getRenderData
+import be.bluexin.mcui.config.OptionCore
+import be.bluexin.mcui.playAtEntity
+import be.bluexin.mcui.renders.StaticRenderer
+import be.bluexin.mcui.screens.CoreGUI
+import be.bluexin.mcui.screens.ingame.DeathGui
+import be.bluexin.mcui.screens.menus.IngameMenu
+import be.bluexin.mcui.screens.menus.MainMenuGui
 import net.minecraft.client.gui.GuiGameOver
 import net.minecraft.client.gui.GuiIngameMenu
 import net.minecraft.client.gui.GuiMainMenu
 import net.minecraft.client.gui.inventory.GuiContainerCreative
 import net.minecraft.client.gui.inventory.GuiInventory
-import net.minecraft.entity.EntityLivingBase
+import net.minecraft.world.entity.LivingEntity
 import net.minecraftforge.client.event.GuiOpenEvent
 import net.minecraftforge.client.event.RenderLivingEvent
 import net.minecraftforge.fml.relauncher.Side
@@ -40,7 +40,7 @@ import net.minecraftforge.fml.relauncher.SideOnly
 @SideOnly(Side.CLIENT)
 internal object RenderHandler {
 
-    private val deadHandlers = ArrayList<EntityLivingBase>()
+    private val deadHandlers = ArrayList<LivingEntity>()
     private var menuGUI = true
 
     fun deathHandlers() {
@@ -60,7 +60,7 @@ internal object RenderHandler {
         }
     }
 
-    fun addDeadMob(ent: EntityLivingBase) {
+    fun addDeadMob(ent: LivingEntity) {
         deadHandlers.add(ent)
     }
 

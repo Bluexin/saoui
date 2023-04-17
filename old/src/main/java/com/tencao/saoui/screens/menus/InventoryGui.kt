@@ -1,8 +1,8 @@
-package com.tencao.saoui.screens.menus
+package be.bluexin.mcui.screens.menus
 
 import com.tencao.saomclib.utils.math.Vec2d
-import com.tencao.saoui.api.elements.IconElement
-import com.tencao.saoui.screens.CoreGUI
+import be.bluexin.mcui.api.elements.IconElement
+import be.bluexin.mcui.screens.CoreGUI
 import net.minecraft.inventory.IInventory
 import net.minecraft.inventory.Slot
 

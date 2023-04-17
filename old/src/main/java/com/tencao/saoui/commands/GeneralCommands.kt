@@ -1,7 +1,7 @@
-package com.tencao.saoui.commands
+package be.bluexin.mcui.commands
 
 import com.tencao.saomclib.commands.CommandBase
-import com.tencao.saoui.themes.AbstractThemeLoader
+import be.bluexin.mcui.themes.AbstractThemeLoader
 import net.minecraft.command.ICommandSender
 import net.minecraft.server.MinecraftServer
 import net.minecraft.util.text.TextComponentString

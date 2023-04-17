@@ -15,15 +15,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.tencao.saoui
+package be.bluexin.mcui
 
-import com.tencao.saomclib.Client
+import be.bluexin.mcui.util.Client
 import com.tencao.saomclib.utils.math.Vec2d
 import com.tencao.saomclib.utils.math.vec
-import com.tencao.saoui.themes.ThemeManager
-import com.tencao.saoui.util.ColorUtil
-import com.tencao.saoui.util.append
-import net.minecraft.client.Minecraft
+import be.bluexin.mcui.themes.ThemeManager
+import be.bluexin.mcui.util.ColorUtil
+import be.bluexin.mcui.util.append
+import net.minecraft.Client.mc
 import net.minecraft.client.gui.FontRenderer
 import net.minecraft.client.renderer.BufferBuilder
 import net.minecraft.client.renderer.GlStateManager
@@ -32,7 +32,7 @@ import net.minecraft.client.renderer.texture.TextureManager
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats
 import net.minecraft.client.renderer.vertex.VertexFormat
 import net.minecraft.client.resources.IReloadableResourceManager
-import net.minecraft.util.ResourceLocation
+import net.minecraft.resources.ResourceLocation
 import net.minecraft.util.math.AxisAlignedBB
 import net.minecraft.util.math.Vec3d
 import net.minecraftforge.fml.relauncher.Side
@@ -127,10 +127,10 @@ object GLCore {
                     ThemeManager.currentTheme.texturesRoot.append("ascii.png")
                 ) ?: takeTextureIfExists(
                     ResourceLocation(
-                        ThemeManager.currentTheme.themeRoot.resourceDomain,
+                        ThemeManager.currentTheme.themeRoot.namespace,
                         "textures/ascii.png"
                     )
-                ) ?: ResourceLocation(SAOCore.MODID, "textures/ascii.png")
+                ) ?: ResourceLocation(Constants.MOD_ID, "textures/ascii.png")
             } else {
                 ResourceLocation("textures/font/ascii.png")
             }
@@ -162,7 +162,7 @@ object GLCore {
      */
     fun checkTexture(location: ResourceLocation): Boolean {
         return try {
-            Client.minecraft.resourceManager.getResource(location)
+            Client.mc.resourceManager.getResource(location)
             true
         } catch (e: Exception) {
             false

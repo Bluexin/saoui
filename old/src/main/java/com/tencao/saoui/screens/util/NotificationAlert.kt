@@ -1,10 +1,10 @@
-package com.tencao.saoui.screens.util
+package be.bluexin.mcui.screens.util
 
-import com.tencao.saomclib.Client
-import com.tencao.saoui.SoundCore
-import com.tencao.saoui.api.screens.IIcon
-import com.tencao.saoui.play
-import com.tencao.saoui.util.IconCore
+import be.bluexin.mcui.util.Client
+import be.bluexin.mcui.SoundCore
+import be.bluexin.mcui.api.screens.IIcon
+import be.bluexin.mcui.play
+import be.bluexin.mcui.util.IconCore
 import net.minecraft.client.gui.toasts.GuiToast
 import net.minecraft.client.gui.toasts.IToast
 import net.minecraft.client.renderer.GlStateManager
@@ -37,7 +37,7 @@ class NotificationAlert(val icon: IIcon, val title: String, val subtitle: String
 
     companion object {
         fun new(icon: IconCore, title: String, subtitle: String) {
-            Client.minecraft.toastGui.add(NotificationAlert(icon, title, subtitle))
+            Client.mc.toastGui.add(NotificationAlert(icon, title, subtitle))
         }
     }
 }

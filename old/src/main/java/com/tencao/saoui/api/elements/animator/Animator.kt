@@ -1,14 +1,14 @@
-package com.tencao.saoui.api.elements.animator
+package be.bluexin.mcui.api.elements.animator
 
 /**
  * This is a copy from the library LibrarianLib
  * This code is covered under GNU Lesser General Public License v3.0
  */
 
-import com.tencao.saomclib.Client
-import com.tencao.saoui.SAOCore
-import com.tencao.saoui.util.getRenderPartialTicksPaused
-import com.tencao.saoui.util.getTimer
+import be.bluexin.mcui.util.Client
+import be.bluexin.mcui.SAOCore
+import be.bluexin.mcui.util.getRenderPartialTicksPaused
+import be.bluexin.mcui.util.getTimer
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import net.minecraftforge.fml.common.gameevent.TickEvent
@@ -23,7 +23,7 @@ import java.util.*
  *
  * @sample AnimatorExamples.basic
  */
-@Mod.EventBusSubscriber(modid = SAOCore.MODID)
+@Mod.EventBusSubscriber(modid = Constants.MOD_ID)
 class Animator {
 
     init {
@@ -185,14 +185,14 @@ class Animator {
     companion object {
         @JvmStatic
         val screenPartialTicks: Float
-            get() = screenTicks + Client.minecraft.getTimer().renderPartialTicks
+            get() = screenTicks + Client.mc.getTimer().renderPartialTicks
 
         @JvmStatic
         val worldPartialTicks: Float
-            get() = if (Client.minecraft.isGamePaused) {
-                worldTicks + Client.minecraft.getRenderPartialTicksPaused()
+            get() = if (Client.mc.isGamePaused) {
+                worldTicks + Client.mc.getRenderPartialTicksPaused()
             } else {
-                worldTicks + Client.minecraft.getTimer().renderPartialTicks
+                worldTicks + Client.mc.getTimer().renderPartialTicks
             }
 
         var worldTicks = 0
@@ -211,7 +211,7 @@ class Animator {
         @SubscribeEvent
         @Suppress("UNUSED_PARAMETER")
         fun tick(e: TickEvent.ClientTickEvent) {
-            if (!Client.minecraft.isGamePaused) worldTicks++
+            if (!Client.mc.isGamePaused) worldTicks++
             screenTicks++
         }
 

@@ -15,10 +15,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.tencao.saoui.effects
+package be.bluexin.mcui.effects
 
-import com.tencao.saomclib.Client
-import com.tencao.saoui.GLCore
+import be.bluexin.mcui.util.Client
+import be.bluexin.mcui.GLCore
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
 import org.lwjgl.opengl.GL11
@@ -35,9 +35,9 @@ object RenderDispatcher {
         GLCore.glBlend(true)
         GLCore.blendFunc(GL11.GL_ONE, GL11.GL_ONE)
         GLCore.lighting(false)
-        Client.minecraft.mcProfiler.startSection("death particle")
+        Client.mc.mcProfiler.startSection("death particle")
         DeathParticles.dispatchQueuedRenders()
-        Client.minecraft.mcProfiler.endSection()
+        Client.mc.mcProfiler.endSection()
         GLCore.blendFunc(GL11.GL_ONE, GL11.GL_ZERO)
         GLCore.glBlend(false)
         GLCore.draw()

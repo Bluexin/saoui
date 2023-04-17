@@ -15,7 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.tencao.saoui.colorstates
+package be.bluexin.mcui.colorstates
 
 enum class CursorStatus {
 

@@ -15,27 +15,27 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.tencao.saoui
+package be.bluexin.mcui
 
-import com.tencao.saomclib.Client
+import be.bluexin.mcui.util.Client
 import com.tencao.saomclib.SAOMCLib
 import com.tencao.saomclib.capabilities.CapabilitiesHandler
-import com.tencao.saoui.api.elements.registry.ElementRegistry
-import com.tencao.saoui.api.events.EventInitStatsProvider
-import com.tencao.saoui.capabilities.RenderCapability
-import com.tencao.saoui.commands.SaouiCommand
-import com.tencao.saoui.config.ConfigHandler
-import com.tencao.saoui.config.FriendData
-import com.tencao.saoui.config.OptionCore
-import com.tencao.saoui.config.Settings
-import com.tencao.saoui.events.EventCore
-import com.tencao.saoui.screens.CoreGUI
-import com.tencao.saoui.themes.ThemeManager
-import com.tencao.saoui.util.AdvancementUtil
-import com.tencao.saoui.util.DefaultStatsProvider
-import com.tencao.saoui.util.PlayerStats
+import be.bluexin.mcui.api.elements.registry.ElementRegistry
+import be.bluexin.mcui.api.events.EventInitStatsProvider
+import be.bluexin.mcui.capabilities.RenderCapability
+import be.bluexin.mcui.commands.SaouiCommand
+import be.bluexin.mcui.config.ConfigHandler
+import be.bluexin.mcui.config.FriendData
+import be.bluexin.mcui.config.OptionCore
+import be.bluexin.mcui.config.Settings
+import be.bluexin.mcui.events.EventCore
+import be.bluexin.mcui.screens.CoreGUI
+import be.bluexin.mcui.themes.ThemeManager
+import be.bluexin.mcui.util.AdvancementUtil
+import be.bluexin.mcui.util.DefaultStatsProvider
+import be.bluexin.mcui.util.PlayerStats
 import net.minecraft.client.resources.SimpleReloadableResourceManager
-import net.minecraft.entity.EntityLivingBase
+import net.minecraft.world.entity.LivingEntity
 import net.minecraftforge.client.ClientCommandHandler
 import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.fml.common.Loader
@@ -51,7 +51,7 @@ import java.io.File
 import java.util.concurrent.ConcurrentHashMap
 
 @Mod(
-    modid = SAOCore.MODID,
+    modid = Constants.MOD_ID,
     name = SAOCore.NAME,
     version = SAOCore.VERSION,
     clientSideOnly = true,
@@ -66,9 +66,9 @@ object SAOCore {
     const val VERSION = "2.1.7"
     const val DEPS = "required-after:saomclib@[1.4.8,);after:mantle"
 
-    val mc by lazy { Client.minecraft }
+    val mc by lazy { Client.mc }
 
-    val saoConfDir: File by lazy { confDir(File(Client.minecraft.mcDataDir, "config")) }
+    val saoConfDir: File by lazy { confDir(File(Client.mc.mcDataDir, "config")) }
     val isSAOMCLibServerSide: Boolean
         get() = SAOMCLib.proxy.isServerSideLoaded
 
@@ -94,7 +94,7 @@ object SAOCore {
         CapabilitiesHandler.registerEntityCapability(
             RenderCapability::class.java,
             RenderCapability.Storage()
-        ) { `object`: Any -> `object` is EntityLivingBase }
+        ) { `object`: Any -> `object` is LivingEntity }
     }
 
     @Mod.EventHandler

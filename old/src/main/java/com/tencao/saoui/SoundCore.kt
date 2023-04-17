@@ -15,12 +15,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.tencao.saoui
+package be.bluexin.mcui
 
-import com.tencao.saomclib.Client
+import be.bluexin.mcui.util.Client
 import net.minecraft.client.audio.PositionedSoundRecord
 import net.minecraft.entity.Entity
-import net.minecraft.util.ResourceLocation
+import net.minecraft.resources.ResourceLocation
 import net.minecraft.util.SoundCategory
 import net.minecraft.util.SoundEvent
 import net.minecraftforge.event.RegistryEvent
@@ -36,7 +36,7 @@ enum class SoundCore {
     ORB_DROPDOWN,
     PARTICLES_DEATH;
 
-    val sound = SoundEvent(ResourceLocation(SAOCore.MODID, name.lowercase(Locale.getDefault())))
+    val sound = SoundEvent(ResourceLocation(Constants.MOD_ID, name.lowercase(Locale.getDefault())))
 
     companion object {
         @SubscribeEvent
@@ -46,5 +46,5 @@ enum class SoundCore {
     }
 }
 
-fun SoundCore.play() = Client.minecraft.soundHandler.playSound(PositionedSoundRecord.getMasterRecord(this.sound, 1.0f))
+fun SoundCore.play() = Client.mc.soundHandler.playSound(PositionedSoundRecord.getMasterRecord(this.sound, 1.0f))
 fun SoundCore.playAtEntity(ent: Entity) = ent.world.playSound(ent.posX, ent.posY, ent.posZ, this.sound, SoundCategory.AMBIENT, 1.0f, 1.0f, true)

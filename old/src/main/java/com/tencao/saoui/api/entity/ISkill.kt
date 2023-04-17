@@ -15,12 +15,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.tencao.saoui.api.entity
+package be.bluexin.mcui.api.entity
 
-import com.tencao.saoui.api.events.EventInitSkills
-import com.tencao.saoui.api.screens.Actions
-import com.tencao.saoui.api.screens.IIcon
-import net.minecraft.client.Minecraft
+import be.bluexin.mcui.api.events.EventInitSkills
+import be.bluexin.mcui.api.screens.Actions
+import be.bluexin.mcui.api.screens.IIcon
+import net.minecraft.Client.mc
 import net.minecraft.client.gui.inventory.GuiInventory
 
 /**

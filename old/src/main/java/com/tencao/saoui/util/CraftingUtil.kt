@@ -1,9 +1,9 @@
-package com.tencao.saoui.util
+package be.bluexin.mcui.util
 
 import com.google.common.collect.Lists
-import com.tencao.saomclib.Client
-import com.tencao.saoui.screens.util.CraftingAlert
-import net.minecraft.client.entity.EntityPlayerSP
+import be.bluexin.mcui.util.Client
+import be.bluexin.mcui.screens.util.CraftingAlert
+import net.minecraft.client.entity.PlayerSP
 import net.minecraft.client.gui.recipebook.RecipeList
 import net.minecraft.client.util.RecipeBookClient
 import net.minecraft.client.util.RecipeItemHelper
@@ -16,10 +16,10 @@ import java.util.function.Consumer
 
 object CraftingUtil {
 
-    val player: EntityPlayerSP
+    val player: PlayerSP
         get() = Client.player
     val world: World
-        get() = Client.minecraft.world
+        get() = Client.mc.world
     val recipeList = RecipeList()
     val stackedContents = RecipeItemHelper()
     private var timesInventoryChanged = 0
@@ -63,7 +63,7 @@ object CraftingUtil {
 
     fun setupCraft() {
         if (currentRecipe != null) {
-            Client.minecraft.playerController.func_194338_a(player.openContainer.windowId, currentRecipe!!, false, player)
+            Client.mc.playerController.func_194338_a(player.openContainer.windowId, currentRecipe!!, false, player)
         } else {
             resetCraft()
         }
@@ -75,7 +75,7 @@ object CraftingUtil {
 
     fun craft(recipe: IRecipe, count: Int): Boolean {
         return if (canCraft(recipe)) {
-            Client.minecraft.playerController.func_194338_a(player.openContainer.windowId, recipe, true, player)
+            Client.mc.playerController.func_194338_a(player.openContainer.windowId, recipe, true, player)
             this.currentRecipe = recipe
             this.craftLimit = count
             this.craftReady = true
@@ -91,7 +91,7 @@ object CraftingUtil {
         this.craftLimit = 0
         this.currentCount = 0
         for (i in 1..4) {
-            Client.minecraft.playerController.windowClick(player.openContainer.windowId, i, 0, ClickType.QUICK_MOVE, player)
+            Client.mc.playerController.windowClick(player.openContainer.windowId, i, 0, ClickType.QUICK_MOVE, player)
         }
     }
 
@@ -103,7 +103,7 @@ object CraftingUtil {
             return
         }
 
-        var stack = Client.minecraft.playerController.windowClick(player.openContainer.windowId, 0, 0, ClickType.PICKUP, player)
+        var stack = Client.mc.playerController.windowClick(player.openContainer.windowId, 0, 0, ClickType.PICKUP, player)
         if (stack.isEmpty) {
             resetCraft()
             return
@@ -111,14 +111,14 @@ object CraftingUtil {
         player.openContainer.inventorySlots
             .filter { it.slotNumber !in IntRange(0, 4) && it.isItemValid(stack) && it.hasStack && it.stack.count != it.stack.maxStackSize && ContainerPlayer.canAddItemToSlot(it, stack, true) }
             .any slotCheck@{
-                stack = Client.minecraft.playerController.windowClick(player.openContainer.windowId, it.slotNumber, 0, ClickType.PICKUP, player)
+                stack = Client.mc.playerController.windowClick(player.openContainer.windowId, it.slotNumber, 0, ClickType.PICKUP, player)
                 stack.isEmpty
             }
         if (!stack.isEmpty) {
             player.openContainer.inventorySlots
                 .filter { it.slotNumber !in IntRange(0, 4) && !it.hasStack && it.isItemValid(stack) }
                 .any slotCheck@{
-                    stack = Client.minecraft.playerController.windowClick(player.openContainer.windowId, it.slotNumber, 0, ClickType.PICKUP, player)
+                    stack = Client.mc.playerController.windowClick(player.openContainer.windowId, it.slotNumber, 0, ClickType.PICKUP, player)
                     stack.isEmpty
                 }
         }

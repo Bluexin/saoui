@@ -15,27 +15,27 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.tencao.saoui.screens.menus
+package be.bluexin.mcui.screens.menus
 
-import com.tencao.saomclib.Client
+import be.bluexin.mcui.util.Client
 import com.tencao.saomclib.utils.math.Vec2d
 import com.tencao.saomclib.utils.math.vec
-import com.tencao.saoui.SAOCore
-import com.tencao.saoui.SoundCore
-import com.tencao.saoui.api.elements.CategoryButton
-import com.tencao.saoui.api.elements.IconElement
-import com.tencao.saoui.api.elements.NeoElement
-import com.tencao.saoui.api.elements.animator.Easing
-import com.tencao.saoui.api.elements.basicAnimation
-import com.tencao.saoui.api.elements.registry.ElementRegistry
-import com.tencao.saoui.api.events.MenuBuildingEvent
-import com.tencao.saoui.api.screens.IIcon
-import com.tencao.saoui.play
-import com.tencao.saoui.screens.CoreGUI
-import com.tencao.saoui.screens.unaryPlus
-import com.tencao.saoui.screens.util.PopupNotice
-import com.tencao.saoui.util.CraftingUtil
-import com.tencao.saoui.util.UIUtil
+import be.bluexin.mcui.SAOCore
+import be.bluexin.mcui.SoundCore
+import be.bluexin.mcui.api.elements.CategoryButton
+import be.bluexin.mcui.api.elements.IconElement
+import be.bluexin.mcui.api.elements.NeoElement
+import be.bluexin.mcui.api.elements.animator.Easing
+import be.bluexin.mcui.api.elements.basicAnimation
+import be.bluexin.mcui.api.elements.registry.ElementRegistry
+import be.bluexin.mcui.api.events.MenuBuildingEvent
+import be.bluexin.mcui.api.screens.IIcon
+import be.bluexin.mcui.play
+import be.bluexin.mcui.screens.CoreGUI
+import be.bluexin.mcui.screens.unaryPlus
+import be.bluexin.mcui.screens.util.PopupNotice
+import be.bluexin.mcui.util.CraftingUtil
+import be.bluexin.mcui.util.UIUtil
 import net.minecraft.client.resources.I18n.format
 import net.minecraftforge.common.MinecraftForge
 
@@ -106,7 +106,7 @@ class IngameMenu(elements: MutableList<NeoElement> = mutableListOf()) : CoreGUI<
     }
 
     companion object {
-        val mc = Client.minecraft
+        val mc = Client.mc
         var hasChecked: Boolean = false
         fun tlCategory(
             icon: IIcon,

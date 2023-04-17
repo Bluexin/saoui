@@ -1,6 +1,6 @@
-package com.tencao.saoui.api.elements
+package be.bluexin.mcui.api.elements
 
-import com.tencao.saoui.screens.util.toIcon
+import be.bluexin.mcui.screens.util.toIcon
 import net.minecraft.advancements.Advancement
 import net.minecraft.item.crafting.IRecipe
 

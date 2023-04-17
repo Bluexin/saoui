@@ -1,6 +1,6 @@
-package com.tencao.saoui.api.events
+package be.bluexin.mcui.api.events
 
-import com.tencao.saoui.api.info.IOption
+import be.bluexin.mcui.api.info.IOption
 import net.minecraftforge.fml.common.eventhandler.Event
 
 /**

@@ -15,15 +15,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.tencao.saoui.resources
+package be.bluexin.mcui.resources
 
-import com.tencao.saoui.GLCore
-import com.tencao.saoui.SAOCore
-import com.tencao.saoui.effects.StatusEffects
-import com.tencao.saoui.themes.ThemeManager
-import com.tencao.saoui.util.IconCore
-import com.tencao.saoui.util.append
-import net.minecraft.util.ResourceLocation
+import be.bluexin.mcui.GLCore
+import be.bluexin.mcui.SAOCore
+import be.bluexin.mcui.effects.StatusEffects
+import be.bluexin.mcui.themes.ThemeManager
+import be.bluexin.mcui.util.IconCore
+import be.bluexin.mcui.util.append
+import net.minecraft.resources.ResourceLocation
 import net.minecraftforge.fml.relauncher.Side
 import net.minecraftforge.fml.relauncher.SideOnly
 import java.util.*
@@ -32,7 +32,7 @@ import java.util.*
 object StringNames {
 
     private fun logMissingAndUse(type: String, default: ResourceLocation): ResourceLocation {
-        SAOCore.LOGGER.info("Theme {} missing custom {}, defaulting to SAO", ThemeManager.currentTheme, type)
+        Constants.LOG.info("Theme {} missing custom {}, defaulting to SAO", ThemeManager.currentTheme, type)
         return default
     }
 
@@ -78,10 +78,10 @@ object StringNames {
     lateinit var particleLarge: ResourceLocation
     lateinit var statusIcons: ResourceLocation
 
-    private val defaultGui = ResourceLocation(SAOCore.MODID, "textures/sao/gui.png")
-    private val defaultSlot = ResourceLocation(SAOCore.MODID, "textures/slot.png")
-    private val defaultEntities = ResourceLocation(SAOCore.MODID, "textures/sao/entities.png")
-    private val defaultParticleLarge = ResourceLocation(SAOCore.MODID, "textures/sao/particlelarge.png")
-    private val defaultStatusIcons = ResourceLocation(SAOCore.MODID, "textures/sao/status_icons/")
-    private val defaultMenuIcons = ResourceLocation(SAOCore.MODID, "textures/sao/")
+    private val defaultGui = ResourceLocation(Constants.MOD_ID, "textures/sao/gui.png")
+    private val defaultSlot = ResourceLocation(Constants.MOD_ID, "textures/slot.png")
+    private val defaultEntities = ResourceLocation(Constants.MOD_ID, "textures/sao/entities.png")
+    private val defaultParticleLarge = ResourceLocation(Constants.MOD_ID, "textures/sao/particlelarge.png")
+    private val defaultStatusIcons = ResourceLocation(Constants.MOD_ID, "textures/sao/status_icons/")
+    private val defaultMenuIcons = ResourceLocation(Constants.MOD_ID, "textures/sao/")
 }

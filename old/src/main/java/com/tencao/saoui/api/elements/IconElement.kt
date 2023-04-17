@@ -15,25 +15,25 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.tencao.saoui.api.elements
+package be.bluexin.mcui.api.elements
 
-import com.tencao.saomclib.Client
+import be.bluexin.mcui.util.Client
 import com.tencao.saomclib.utils.math.BoundingBox2D
 import com.tencao.saomclib.utils.math.Vec2d
 import com.tencao.saomclib.utils.math.clamp
 import com.tencao.saomclib.utils.math.vec
-import com.tencao.saoui.GLCore
-import com.tencao.saoui.api.elements.registry.DrawType
-import com.tencao.saoui.api.screens.IIcon
-import com.tencao.saoui.config.OptionCore
-import com.tencao.saoui.resources.StringNames
-import com.tencao.saoui.screens.MouseButton
-import com.tencao.saoui.screens.util.ItemIcon
-import com.tencao.saoui.util.ColorIntent
-import com.tencao.saoui.util.ColorUtil
-import net.minecraft.client.Minecraft
+import be.bluexin.mcui.GLCore
+import be.bluexin.mcui.api.elements.registry.DrawType
+import be.bluexin.mcui.api.screens.IIcon
+import be.bluexin.mcui.config.OptionCore
+import be.bluexin.mcui.resources.StringNames
+import be.bluexin.mcui.screens.MouseButton
+import be.bluexin.mcui.screens.util.ItemIcon
+import be.bluexin.mcui.util.ColorIntent
+import be.bluexin.mcui.util.ColorUtil
+import net.minecraft.Client.mc
 import net.minecraft.client.renderer.GlStateManager
-import net.minecraft.util.ResourceLocation
+import net.minecraft.resources.ResourceLocation
 import net.minecraftforge.fml.client.config.GuiUtils
 import java.util.*
 import kotlin.collections.set
@@ -63,7 +63,7 @@ open class IconElement(
         set(value) {
             val c = validElementsSequence.count()
             if (c > 6) field = (value /*+ c*/) % (c)
-//            SAOCore.LOGGER.info("Result: $field (tried $value)")
+//            Constants.LOG.info("Result: $field (tried $value)")
         }
     val transparency: Float
         get() {
@@ -220,8 +220,8 @@ open class IconElement(
             description,
             mouse.xi,
             mouse.yi,
-            Client.minecraft.displayWidth,
-            Client.minecraft.displayHeight,
+            Client.mc.displayWidth,
+            Client.mc.displayHeight,
             width - 20,
             GLCore.glFont
         )
@@ -387,7 +387,7 @@ open class IconElement(
 
     override fun show() {
         visible = true
-//        SAOCore.LOGGER.info("Showing $this")
+//        Constants.LOG.info("Showing $this")
     }
 
     override fun toString(): String {

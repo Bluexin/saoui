@@ -15,11 +15,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.tencao.saoui.events
+package be.bluexin.mcui.events
 
-import com.tencao.saoui.SoundCore
-import com.tencao.saoui.events.EventCore.mc
-import com.tencao.saoui.play
+import be.bluexin.mcui.SoundCore
+import be.bluexin.mcui.events.EventCore.mc
+import be.bluexin.mcui.play
 import net.minecraft.client.multiplayer.GuiConnecting
 import net.minecraft.client.settings.KeyBinding
 import net.minecraftforge.client.event.ClientChatReceivedEvent

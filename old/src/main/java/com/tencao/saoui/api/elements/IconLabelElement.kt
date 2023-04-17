@@ -15,18 +15,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.tencao.saoui.api.elements
+package be.bluexin.mcui.api.elements
 
 import com.tencao.saomclib.utils.math.BoundingBox2D
 import com.tencao.saomclib.utils.math.Vec2d
 import com.tencao.saomclib.utils.math.vec
-import com.tencao.saoui.GLCore
-import com.tencao.saoui.api.elements.registry.DrawType
-import com.tencao.saoui.api.screens.IIcon
-import com.tencao.saoui.config.OptionCore
-import com.tencao.saoui.resources.StringNames
-import com.tencao.saoui.screens.unaryPlus
-import com.tencao.saoui.util.ColorUtil
+import be.bluexin.mcui.GLCore
+import be.bluexin.mcui.api.elements.registry.DrawType
+import be.bluexin.mcui.api.screens.IIcon
+import be.bluexin.mcui.config.OptionCore
+import be.bluexin.mcui.resources.StringNames
+import be.bluexin.mcui.screens.unaryPlus
+import be.bluexin.mcui.util.ColorUtil
 import kotlin.math.max
 
 /**

@@ -15,11 +15,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.tencao.saoui.effects
+package be.bluexin.mcui.effects
 
-import com.tencao.saoui.GLCore
-import com.tencao.saoui.resources.StringNames
-import net.minecraft.client.Minecraft
+import be.bluexin.mcui.GLCore
+import be.bluexin.mcui.resources.StringNames
+import net.minecraft.Client.mc
 import net.minecraft.client.particle.Particle
 import net.minecraft.client.renderer.BufferBuilder
 import net.minecraft.entity.Entity

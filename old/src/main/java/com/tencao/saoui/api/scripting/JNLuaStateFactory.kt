@@ -1,9 +1,9 @@
-package com.tencao.saoui.api.scripting
+package be.bluexin.mcui.api.scripting
 
 import com.google.common.base.Strings
 import com.google.common.io.PatternFilenameFilter
-import com.tencao.saoui.SAOCore
-import com.tencao.saoui.config.ConfigHandler
+import be.bluexin.mcui.SAOCore
+import be.bluexin.mcui.config.ConfigHandler
 import li.cil.repack.com.naef.jnlua.LuaState
 import li.cil.repack.com.naef.jnlua.LuaStateFiveFour
 import li.cil.repack.com.naef.jnlua.LuaStateFiveThree
@@ -168,12 +168,12 @@ abstract class JNLuaStateFactory {
 
         if (SystemUtils.IS_OS_WINDOWS && !ConfigHandler.alwaysTryNative) {
             if (SystemUtils.IS_OS_WINDOWS_XP) {
-                SAOCore.LOGGER.warn("Sorry, but Windows XP isn't supported. I'm afraid you'll have to use a newer Windows. I very much recommend upgrading your Windows, anyway, since Microsoft has stopped supporting Windows XP in April 2014.")
+                Constants.LOG.warn("Sorry, but Windows XP isn't supported. I'm afraid you'll have to use a newer Windows. I very much recommend upgrading your Windows, anyway, since Microsoft has stopped supporting Windows XP in April 2014.")
                 return
             }
 
             if (SystemUtils.IS_OS_WINDOWS_2003) {
-                SAOCore.LOGGER.warn("Sorry, but Windows Server 2003 isn't supported. I'm afraid you'll have to use a newer Windows.")
+                Constants.LOG.warn("Sorry, but Windows Server 2003 isn't supported. I'm afraid you'll have to use a newer Windows.")
                 return
             }
         }
@@ -184,19 +184,19 @@ abstract class JNLuaStateFactory {
             if (libraryTest.canRead()) {
                 tmpLibFile = libraryTest
                 currentLib = libraryTest.absolutePath
-                SAOCore.LOGGER.info("Found forced-path filesystem library $currentLib.")
+                Constants.LOG.info("Found forced-path filesystem library $currentLib.")
             } else
-                SAOCore.LOGGER.warn("forceNativeLibPathFirst is set, but $currentLib was not found there. Falling back to checking the built-in libraries.")
+                Constants.LOG.warn("forceNativeLibPathFirst is set, but $currentLib was not found there. Falling back to checking the built-in libraries.")
         }
 
         if (currentLib.isEmpty()) {
             val libraryUrl = javaClass.getResource("/assets/opencomputers/lib/$libraryName")
             if (libraryUrl == null) {
-                SAOCore.LOGGER.warn("Native library with name '$libraryName' not found.")
+                Constants.LOG.warn("Native library with name '$libraryName' not found.")
                 return
             }
 
-            val tmpLibName = "${SAOCore.MODID}-${SAOCore.VERSION}-$version-$libraryName"
+            val tmpLibName = "${Constants.MOD_ID}-${SAOCore.VERSION}-$version-$libraryName"
             val tmpBasePath = if (ConfigHandler.nativeInTmpDir) {
                 val path = System.getProperty("java.io.tmpdir")
                 when {
@@ -213,7 +213,7 @@ abstract class JNLuaStateFactory {
                 if (libDir.isDirectory) {
                     for (file in libDir.listFiles(
                         PatternFilenameFilter(
-                            "^" + Pattern.quote("${SAOCore.MODID}-") + ".*" + Pattern.quote(
+                            "^" + Pattern.quote("${Constants.MOD_ID}-") + ".*" + Pattern.quote(
                                 "-$libraryName"
                             ) + "$"
                         )
@@ -258,7 +258,7 @@ abstract class JNLuaStateFactory {
                         // Ignore.
                     }
                     if (tmpLibFile.exists()) {
-                        SAOCore.LOGGER.warn("Could not update native library '${tmpLibFile.name}'!")
+                        Constants.LOG.warn("Could not update native library '${tmpLibFile.name}'!")
                     }
                 }
             }
@@ -293,13 +293,13 @@ abstract class JNLuaStateFactory {
                 System.load(currentLib)
                 create().close()
             }
-            SAOCore.LOGGER.info("Found a compatible native library: '${tmpLibFile.name}'.")
+            Constants.LOG.info("Found a compatible native library: '${tmpLibFile.name}'.")
             haveNativeLibrary = true
         } catch (t: Throwable) {
             if (ConfigHandler.logFullLibLoadErrors) {
-                SAOCore.LOGGER.warn("Could not load native library '${tmpLibFile.name}'.", t)
+                Constants.LOG.warn("Could not load native library '${tmpLibFile.name}'.", t)
             } else {
-                SAOCore.LOGGER.trace("Could not load native library '${tmpLibFile.name}'.")
+                Constants.LOG.trace("Could not load native library '${tmpLibFile.name}'.")
             }
             tmpLibFile.delete()
         }
@@ -309,7 +309,7 @@ abstract class JNLuaStateFactory {
         init()
 
         if (!haveNativeLibrary) {
-            SAOCore.LOGGER.warn("Platform doesn't support JNLua !")
+            Constants.LOG.warn("Platform doesn't support JNLua !")
         }
     }
 
@@ -402,13 +402,13 @@ abstract class JNLuaStateFactory {
 
                 return state
             } catch (t: Throwable) {
-                SAOCore.LOGGER.warn("Failed creating Lua state.", t)
+                Constants.LOG.warn("Failed creating Lua state.", t)
                 state.close()
             }
         } catch (_: UnsatisfiedLinkError) {
-            SAOCore.LOGGER.error("Failed loading the native libraries.")
+            Constants.LOG.error("Failed loading the native libraries.")
         } catch (t: Throwable) {
-            SAOCore.LOGGER.warn("Failed creating Lua state.", t)
+            Constants.LOG.warn("Failed creating Lua state.", t)
 
         }
         return null

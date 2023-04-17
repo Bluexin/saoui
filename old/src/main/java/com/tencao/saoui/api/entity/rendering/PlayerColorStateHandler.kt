@@ -15,15 +15,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.tencao.saoui.api.entity.rendering
+package be.bluexin.mcui.api.entity.rendering
 
-import com.tencao.saomclib.Client
-import com.tencao.saoui.SAOCore
-import com.tencao.saoui.api.entity.rendering.ColorState.*
-import com.tencao.saoui.capabilities.getRenderData
-import net.minecraft.entity.player.EntityPlayer
+import be.bluexin.mcui.util.Client
+import be.bluexin.mcui.SAOCore
+import be.bluexin.mcui.api.entity.rendering.ColorState.*
+import be.bluexin.mcui.capabilities.getRenderData
+import net.minecraft.world.entity.player.Player
 import net.minecraft.nbt.NBTTagCompound
-import net.minecraft.util.ResourceLocation
+import net.minecraft.resources.ResourceLocation
 import java.lang.ref.WeakReference
 import java.util.*
 
@@ -32,9 +32,9 @@ import java.util.*
  *
  * @author Bluexin
  */
-class PlayerColorStateHandler(thePlayer: EntityPlayer) : IColorStateHandler {
+class PlayerColorStateHandler(thePlayer: Player) : IColorStateHandler {
 
-    private val thePlayer: WeakReference<EntityPlayer> = WeakReference(thePlayer)
+    private val thePlayer: WeakReference<Player> = WeakReference(thePlayer)
     private var ticksForRedemption: Int = 0
     private var tickForGamePlayCheck: Int = 0
     private var currentState = getInnocent()
@@ -51,8 +51,8 @@ class PlayerColorStateHandler(thePlayer: EntityPlayer) : IColorStateHandler {
      * Use this to handle anything special.
      */
     override fun tick() {
-        if (--tickForGamePlayCheck <= 0 && Client.minecraft.connection != null) {
-            val gamemode = Client.minecraft.connection!!.playerInfoMap.firstOrNull { it.gameProfile.id == thePlayer.get()?.uniqueID }?.gameType
+        if (--tickForGamePlayCheck <= 0 && Client.mc.connection != null) {
+            val gamemode = Client.mc.connection!!.playerInfoMap.firstOrNull { it.gameProfile.id == thePlayer.get()?.uniqueID }?.gameType
             if (gamemode != null) {
                 currentState = when {
                     gamemode.isCreative -> {
@@ -89,7 +89,7 @@ class PlayerColorStateHandler(thePlayer: EntityPlayer) : IColorStateHandler {
      *
      * @param target the player hit
      */
-    fun hit(target: EntityPlayer) {
+    fun hit(target: Player) {
         // TODO Fix Me
         val targetState = target.getRenderData()?.colorStateHandler?.colorState
         if (targetState !== KILLER && targetState !== VIOLENT && this.currentState !== KILLER) {
@@ -103,7 +103,7 @@ class PlayerColorStateHandler(thePlayer: EntityPlayer) : IColorStateHandler {
      *
      * @param target the player killed
      */
-    fun kill(target: EntityPlayer) {
+    fun kill(target: Player) {
         // TODO Fix Me
         val targetState = target.getRenderData()?.colorStateHandler?.colorState
         if (targetState !== KILLER && targetState !== VIOLENT) {
@@ -145,7 +145,7 @@ class PlayerColorStateHandler(thePlayer: EntityPlayer) : IColorStateHandler {
 
     companion object {
 
-        private val KEY = ResourceLocation(SAOCore.MODID, "playerColorHandler").toString()
+        private val KEY = ResourceLocation(Constants.MOD_ID, "playerColorHandler").toString()
 
         /**
          * How long a player's state will persist.

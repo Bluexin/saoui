@@ -15,17 +15,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.tencao.saoui.api.items
+package be.bluexin.mcui.api.items
 
 import baubles.api.BaublesApi
 import baubles.api.IBauble
-import com.tencao.saomclib.Client
+import be.bluexin.mcui.util.Client
 import com.tencao.saomclib.toolClasses
-import com.tencao.saoui.api.screens.IIcon
-import com.tencao.saoui.screens.util.toIcon
-import com.tencao.saoui.util.IconCore
+import be.bluexin.mcui.api.screens.IIcon
+import be.bluexin.mcui.screens.util.toIcon
+import be.bluexin.mcui.util.IconCore
 import net.minecraft.client.resources.I18n
-import net.minecraft.entity.player.EntityPlayer
+import net.minecraft.world.entity.player.Player
 import net.minecraft.init.Blocks
 import net.minecraft.init.Items
 import net.minecraft.inventory.IInventory
@@ -304,11 +304,11 @@ enum class BaseFilters(val filter: (ItemStack, Boolean) -> Boolean) : IItemFilte
     override fun invoke(stack: ItemStack, equipped: Boolean) = filter(stack, equipped)
 
     companion object {
-        val mc by lazy { Client.minecraft }
+        val mc by lazy { Client.mc }
 
         val baublesLoaded by lazy { Loader.isModLoaded("baubles") }
 
-        fun getBaubles(player: EntityPlayer): IInventory? {
+        fun getBaubles(player: Player): IInventory? {
             return if (!baublesLoaded) {
                 null
             } else {

@@ -1,10 +1,10 @@
-package com.tencao.saoui.api.elements
+package be.bluexin.mcui.api.elements
 
-import com.tencao.saoui.screens.CoreGUI
-import com.tencao.saoui.screens.util.PopupCraft
-import com.tencao.saoui.screens.util.toIcon
-import com.tencao.saoui.util.CraftingUtil
-import com.tencao.saoui.util.IconCore
+import be.bluexin.mcui.screens.CoreGUI
+import be.bluexin.mcui.screens.util.PopupCraft
+import be.bluexin.mcui.screens.util.toIcon
+import be.bluexin.mcui.util.CraftingUtil
+import be.bluexin.mcui.util.IconCore
 import net.minecraft.client.resources.I18n
 import net.minecraft.creativetab.CreativeTabs
 

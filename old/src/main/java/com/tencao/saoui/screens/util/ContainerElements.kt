@@ -15,29 +15,29 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.tencao.saoui.screens.util
+package be.bluexin.mcui.screens.util
 
 import com.tencao.saomclib.isNotEmpty
 import com.tencao.saomclib.toolClasses
 import com.tencao.saomclib.utils.get
 import com.tencao.saomclib.utils.math.Vec2d
-import com.tencao.saoui.GLCore
-import com.tencao.saoui.api.elements.CategoryButton
-import com.tencao.saoui.api.elements.IconLabelElement
-import com.tencao.saoui.api.items.IItemFilter
-import com.tencao.saoui.api.screens.IIcon
-import com.tencao.saoui.events.EventCore.mc
-import com.tencao.saoui.screens.CoreGUI
-import com.tencao.saoui.screens.MouseButton
-import com.tencao.saoui.util.IconCore
+import be.bluexin.mcui.GLCore
+import be.bluexin.mcui.api.elements.CategoryButton
+import be.bluexin.mcui.api.elements.IconLabelElement
+import be.bluexin.mcui.api.items.IItemFilter
+import be.bluexin.mcui.api.screens.IIcon
+import be.bluexin.mcui.events.EventCore.mc
+import be.bluexin.mcui.screens.CoreGUI
+import be.bluexin.mcui.screens.MouseButton
+import be.bluexin.mcui.util.IconCore
 import net.minecraft.block.Block
-import net.minecraft.client.Minecraft
+import net.minecraft.Client.mc
 import net.minecraft.client.renderer.RenderHelper
 import net.minecraft.client.resources.I18n
 import net.minecraft.client.util.ITooltipFlag
 import net.minecraft.inventory.*
 import net.minecraft.item.*
-import net.minecraft.util.ResourceLocation
+import net.minecraft.resources.ResourceLocation
 import net.minecraftforge.fml.common.registry.ForgeRegistries
 
 fun CategoryButton.itemList(inventory: Container, filter: IItemFilter) {

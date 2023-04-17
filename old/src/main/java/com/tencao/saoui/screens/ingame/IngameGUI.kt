@@ -15,22 +15,22 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.tencao.saoui.screens.ingame
+package be.bluexin.mcui.screens.ingame
 
 import com.google.common.base.Predicate
 import com.google.common.base.Predicates
-import com.tencao.saomclib.Client
+import be.bluexin.mcui.util.Client
 import com.tencao.saomclib.capabilities.getPartyCapability
 import com.tencao.saomclib.party.PlayerInfo
-import com.tencao.saoui.GLCore
-import com.tencao.saoui.capabilities.getRenderData
-import com.tencao.saoui.config.ConfigHandler
-import com.tencao.saoui.config.OptionCore
-import com.tencao.saoui.screens.util.HealthStep
-import com.tencao.saoui.themes.ThemeManager
-import com.tencao.saoui.themes.elements.HudPartType
-import com.tencao.saoui.themes.util.HudDrawContext
-import net.minecraft.client.Minecraft
+import be.bluexin.mcui.GLCore
+import be.bluexin.mcui.capabilities.getRenderData
+import be.bluexin.mcui.config.ConfigHandler
+import be.bluexin.mcui.config.OptionCore
+import be.bluexin.mcui.screens.util.HealthStep
+import be.bluexin.mcui.themes.ThemeManager
+import be.bluexin.mcui.themes.elements.HudPartType
+import be.bluexin.mcui.themes.util.HudDrawContext
+import net.minecraft.Client.mc
 import net.minecraft.client.gui.Gui
 import net.minecraft.client.gui.GuiOverlayDebug
 import net.minecraft.client.gui.ScaledResolution
@@ -38,8 +38,8 @@ import net.minecraft.client.renderer.GlStateManager
 import net.minecraft.client.renderer.OpenGlHelper
 import net.minecraft.client.resources.I18n
 import net.minecraft.entity.Entity
-import net.minecraft.entity.EntityLivingBase
-import net.minecraft.entity.player.EntityPlayer
+import net.minecraft.world.entity.LivingEntity
+import net.minecraft.world.entity.player.Player
 import net.minecraft.util.EntitySelectors
 import net.minecraft.util.StringUtils
 import net.minecraft.util.math.AxisAlignedBB
@@ -83,7 +83,7 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
 
         super.renderGameOverlay(partialTicks)
 
-        if (OptionCore.ALWAYS_SHOW.isEnabled && !this.mc.playerController.shouldDrawHUD() && this.mc.renderViewEntity is EntityPlayer) {
+        if (OptionCore.ALWAYS_SHOW.isEnabled && !this.mc.playerController.shouldDrawHUD() && this.mc.renderViewEntity is Player) {
             if (renderHealth) renderHealth(width, height)
             // TODO add option//
             if (renderArmor) renderArmor(width, height)
@@ -202,14 +202,14 @@ class IngameGUI(mc: Minecraft) : GuiIngameForge(mc) {
 
     fun renderEnemyHealth(width: Int, height: Int) {
         mc.mcProfiler.startSection("enemy health")
-        val entities: MutableList<EntityLivingBase> = mutableListOf()
+        val entities: MutableList<LivingEntity> = mutableListOf()
         val trackedEntity = getMouseOver(mc.renderPartialTicks)
-        if (trackedEntity is EntityLivingBase && trackedEntity.getRenderData()?.colorStateHandler?.shouldDrawHealth() == true) context.setTargetEntity(trackedEntity)
+        if (trackedEntity is LivingEntity && trackedEntity.getRenderData()?.colorStateHandler?.shouldDrawHealth() == true) context.setTargetEntity(trackedEntity)
         else context.setTargetEntity(null)
         entities.addAll(
-            Client.minecraft.world.getEntitiesInAABBexcluding(Client.minecraft.player, AxisAlignedBB(Client.minecraft.player.position.add(-10, -5, -10), Client.minecraft.player.position.add(10, 5, 10))) {
-                it is EntityLivingBase && it.getRenderData()?.isAggressive == true && it.getRenderData()?.colorStateHandler?.shouldDrawHealth() == true && !entities.contains(it)
-            }.map { it as EntityLivingBase }.sortedBy { entityLivingBase -> entityLivingBase.getDistance(Client.minecraft.player) }.take(5)
+            Client.mc.world.getEntitiesInAABBexcluding(Client.mc.player, AxisAlignedBB(Client.mc.player.position.add(-10, -5, -10), Client.mc.player.position.add(10, 5, 10))) {
+                it is LivingEntity && it.getRenderData()?.isAggressive == true && it.getRenderData()?.colorStateHandler?.shouldDrawHealth() == true && !entities.contains(it)
+            }.map { it as LivingEntity }.sortedBy { LivingEntity -> LivingEntity.getDistance(Client.mc.player) }.take(5)
         )
         entities.sortBy { it.health / it.maxHealth }
         context.setNearbyEntities(entities)

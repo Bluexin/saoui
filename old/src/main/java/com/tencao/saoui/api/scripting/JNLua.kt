@@ -1,16 +1,16 @@
-package com.tencao.saoui.api.scripting
+package be.bluexin.mcui.api.scripting
 
 import com.tencao.saomclib.message
-import com.tencao.saoui.SAOCore
-import com.tencao.saoui.api.elements.CategoryButton
-import com.tencao.saoui.api.elements.INeoParent
-import com.tencao.saoui.api.elements.optionCategory
-import com.tencao.saoui.api.elements.registry.ElementRegistry
-import com.tencao.saoui.api.items.IItemFilter
-import com.tencao.saoui.api.items.ItemFilterRegister
-import com.tencao.saoui.config.OptionCore
-import com.tencao.saoui.screens.menus.IngameMenu
-import com.tencao.saoui.util.IconCore
+import be.bluexin.mcui.SAOCore
+import be.bluexin.mcui.api.elements.CategoryButton
+import be.bluexin.mcui.api.elements.INeoParent
+import be.bluexin.mcui.api.elements.optionCategory
+import be.bluexin.mcui.api.elements.registry.ElementRegistry
+import be.bluexin.mcui.api.items.IItemFilter
+import be.bluexin.mcui.api.items.ItemFilterRegister
+import be.bluexin.mcui.config.OptionCore
+import be.bluexin.mcui.screens.menus.IngameMenu
+import be.bluexin.mcui.util.IconCore
 import li.cil.repack.com.naef.jnlua.LuaState
 import li.cil.repack.com.naef.jnlua.NamedJavaFunction
 import net.minecraft.client.gui.GuiScreen
@@ -73,7 +73,7 @@ object JNLua {
 
                 // Get and print result
                 val tableSize = state.tableSize(-1)
-                SAOCore.LOGGER.debug("Found $tableSize categories from Lua")
+                Constants.LOG.debug("Found $tableSize categories from Lua")
 
                 repeat(tableSize) {
                     state.pushInteger(it.toLong() + 1)
@@ -82,23 +82,23 @@ object JNLua {
                     // Get and print result
                     if (state.isString(-1)) {
                         val result = state.checkString(-1)
-                        SAOCore.LOGGER.debug("Found $result from Lua")
+                        Constants.LOG.debug("Found $result from Lua")
                     } else if (state.isJavaObject(-1, CategoryButton::class.java)) {
                         val category = state.checkJavaObject(-1, CategoryButton::class.java)
                         tlCategories += category
-                        SAOCore.LOGGER.debug("Foound Category $category")
-                    } else SAOCore.LOGGER.debug("Found unknown (${state.type(-1)}) in Lua")
+                        Constants.LOG.debug("Foound Category $category")
+                    } else Constants.LOG.debug("Found unknown (${state.type(-1)}) in Lua")
                     state.pop(1)
                 }
 
                 state.pop(1)
             } catch (e: Exception) {
-                SAOCore.LOGGER.warn("Something went wrong evaluating Lua script", e)
+                Constants.LOG.warn("Something went wrong evaluating Lua script", e)
                 IngameMenu.mc.player?.message("Evaluating igmenu.lua failed : ${e.message}")
             } finally {
 //                state.close() // TODO : figure out proper state lifecycle. Closing it prevents lazy callbacks
             }
-        } else SAOCore.LOGGER.fatal("Unable to create state")
+        } else Constants.LOG.fatal("Unable to create state")
 
         return tlCategories
     }
@@ -152,7 +152,7 @@ inline fun <T> LuaState.catching(default: T, body: () -> T): T {
     } catch (e: Exception) {
         val stack = (1..this.top).map { "$it: ${type(it)}" }
         val message = "Evaluation failed. Stack : ${stack.joinToString()}"
-        SAOCore.LOGGER.warn(message, e)
+        Constants.LOG.warn(message, e)
         IngameMenu.mc.player?.apply {
             message(message)
             e.message?.let { message(it) }

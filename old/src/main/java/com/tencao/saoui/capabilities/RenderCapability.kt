@@ -15,21 +15,21 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.tencao.saoui.capabilities
+package be.bluexin.mcui.capabilities
 
-import com.tencao.saomclib.Client
+import be.bluexin.mcui.util.Client
 import com.tencao.saomclib.capabilities.AbstractCapability
 import com.tencao.saomclib.capabilities.AbstractEntityCapability
 import com.tencao.saomclib.capabilities.Key
-import com.tencao.saoui.SAOCore
-import com.tencao.saoui.api.entity.rendering.*
-import com.tencao.saoui.api.events.ColorStateEvent
-import net.minecraft.entity.EntityLivingBase
-import net.minecraft.entity.player.EntityPlayer
+import be.bluexin.mcui.SAOCore
+import be.bluexin.mcui.api.entity.rendering.*
+import be.bluexin.mcui.api.events.ColorStateEvent
+import net.minecraft.world.entity.LivingEntity
+import net.minecraft.world.entity.player.Player
 import net.minecraft.nbt.NBTBase
 import net.minecraft.nbt.NBTTagCompound
 import net.minecraft.util.EnumFacing
-import net.minecraft.util.ResourceLocation
+import net.minecraft.resources.ResourceLocation
 import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.common.capabilities.Capability
 import net.minecraftforge.common.capabilities.CapabilityInject
@@ -76,8 +76,8 @@ class RenderCapability : AbstractEntityCapability() {
     }
 
     fun updateHealthSmooth(partialTicks: Float) {
-        if (theEnt is EntityPlayer) {
-            Client.minecraft.mcProfiler.startSection("updateHealthSmooth")
+        if (theEnt is Player) {
+            Client.mc.mcProfiler.startSection("updateHealthSmooth")
             when {
                 theEnt.health == theEnt.maxHealth -> healthSmooth = theEnt.maxHealth
                 theEnt.health <= 0 -> {
@@ -88,7 +88,7 @@ class RenderCapability : AbstractEntityCapability() {
                 else -> healthSmooth = theEnt.health
             }
             healthSmooth = max(0.0f, healthSmooth)
-            Client.minecraft.mcProfiler.endSection()
+            Client.mc.mcProfiler.endSection()
         } else healthSmooth = -1f
     }
 
@@ -97,17 +97,17 @@ class RenderCapability : AbstractEntityCapability() {
     }
 
     private fun gameFPS(): Int {
-        return net.minecraft.client.Minecraft.getDebugFPS()
+        return net.minecraft.Client.mc.getDebugFPS()
     }
 
     /**
      * The entity this capability refers to.
      */
-    lateinit var theEnt: EntityLivingBase
+    lateinit var theEnt: LivingEntity
 
     override fun setup(param: Any): AbstractCapability {
         super.setup(param)
-        theEnt = param as EntityLivingBase
+        theEnt = param as LivingEntity
 
         return this
     }
@@ -134,7 +134,7 @@ class RenderCapability : AbstractEntityCapability() {
     }
 
     private fun getColorState(): IColorStateHandler {
-        return (theEnt as? IColorStatedEntity)?.colorState ?: (theEnt as? EntityPlayer)?.let { PlayerColorStateHandler(it) } ?: MobColorStateHandler(theEnt)
+        return (theEnt as? IColorStatedEntity)?.colorState ?: (theEnt as? Player)?.let { PlayerColorStateHandler(it) } ?: MobColorStateHandler(theEnt)
     }
 
     class Storage : Capability.IStorage<RenderCapability> {
@@ -162,7 +162,7 @@ class RenderCapability : AbstractEntityCapability() {
 
     companion object {
         @Key
-        val KEY = ResourceLocation(SAOCore.MODID, "renders")
+        val KEY = ResourceLocation(Constants.MOD_ID, "renders")
 
         /**
          * Unique instance for the capability (for registering).
@@ -178,8 +178,8 @@ class RenderCapability : AbstractEntityCapability() {
          *
          * @param player player to sync
          */
-        fun syncClient(player: EntityPlayer) { // TODO: implement
-            //        PacketPipeline.sendTo(new SyncExtStats(player), (EntityPlayerMP) player);
+        fun syncClient(player: Player) { // TODO: implement
+            //        PacketPipeline.sendTo(new SyncExtStats(player), (PlayerMP) player);
         }
 
         private const val HEALTH_ANIMATION_FACTOR = 0.075f
@@ -193,4 +193,4 @@ class RenderCapability : AbstractEntityCapability() {
  * @param ent the entity to get the capability for
  * @return the capability
  */
-fun EntityLivingBase.getRenderData() = this.getCapability(RenderCapability.RENDER_CAPABILITY, null)
+fun LivingEntity.getRenderData() = this.getCapability(RenderCapability.RENDER_CAPABILITY, null)

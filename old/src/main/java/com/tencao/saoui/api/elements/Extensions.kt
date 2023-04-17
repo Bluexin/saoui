@@ -15,37 +15,37 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.tencao.saoui.api.elements
+package be.bluexin.mcui.api.elements
 
-import com.tencao.saomclib.Client
+import be.bluexin.mcui.util.Client
 import com.tencao.saomclib.utils.delegate
 import com.tencao.saomclib.utils.math.Vec2d
 import com.tencao.saomclib.utils.math.vec
-import com.tencao.saoui.SAOCore
-import com.tencao.saoui.SoundCore
-import com.tencao.saoui.api.screens.IIcon
-import com.tencao.saoui.api.scripting.catching
-import com.tencao.saoui.config.OptionCore
-import com.tencao.saoui.play
-import com.tencao.saoui.screens.CoreGUI
-import com.tencao.saoui.screens.MouseButton
-import com.tencao.saoui.screens.menus.IngameMenu
-import com.tencao.saoui.screens.unaryPlus
-import com.tencao.saoui.screens.util.PopupAdvancement
-import com.tencao.saoui.screens.util.toIcon
-import com.tencao.saoui.themes.ThemeManager
-import com.tencao.saoui.themes.ThemeMetadata
-import com.tencao.saoui.util.AdvancementUtil
-import com.tencao.saoui.util.IconCore
-import com.tencao.saoui.util.getProgress
-import com.tencao.saoui.util.getRecipes
+import be.bluexin.mcui.SAOCore
+import be.bluexin.mcui.SoundCore
+import be.bluexin.mcui.api.screens.IIcon
+import be.bluexin.mcui.api.scripting.catching
+import be.bluexin.mcui.config.OptionCore
+import be.bluexin.mcui.play
+import be.bluexin.mcui.screens.CoreGUI
+import be.bluexin.mcui.screens.MouseButton
+import be.bluexin.mcui.screens.menus.IngameMenu
+import be.bluexin.mcui.screens.unaryPlus
+import be.bluexin.mcui.screens.util.PopupAdvancement
+import be.bluexin.mcui.screens.util.toIcon
+import be.bluexin.mcui.themes.ThemeManager
+import be.bluexin.mcui.themes.ThemeMetadata
+import be.bluexin.mcui.util.AdvancementUtil
+import be.bluexin.mcui.util.IconCore
+import be.bluexin.mcui.util.getProgress
+import be.bluexin.mcui.util.getRecipes
 import li.cil.repack.com.naef.jnlua.LuaValueProxy
 import net.minecraft.advancements.Advancement
 import net.minecraft.client.resources.I18n
 import net.minecraft.client.resources.I18n.format
-import net.minecraft.entity.player.EntityPlayer
+import net.minecraft.world.entity.player.Player
 import net.minecraft.init.Items
-import net.minecraft.util.ResourceLocation
+import net.minecraft.resources.ResourceLocation
 import net.minecraftforge.fml.common.registry.ForgeRegistries
 import org.lwjgl.input.Keyboard
 import java.lang.ref.WeakReference
@@ -140,27 +140,27 @@ open class CategoryButton(
 
     override fun keyTyped(typedChar: Char, keyCode: Int) {
         elementsSequence.firstOrNull { it.isOpen && it.selected }?.keyTyped(typedChar, keyCode) ?: let {
-            if (keyCode == Client.minecraft.gameSettings.keyBindForward.keyCode || keyCode == Keyboard.KEY_UP) {
+            if (keyCode == Client.mc.gameSettings.keyBindForward.keyCode || keyCode == Keyboard.KEY_UP) {
                 val selected = elementsSequence.firstOrNull { it.selected }
                 var index = elements.indexOf(selected)
                 if (index == -1) index = 0
                 else if (--index < 0) index = elements.size.minus(1)
                 selected?.selected = false
                 elements[index].selected = true
-            } else if (keyCode == Client.minecraft.gameSettings.keyBindBack.keyCode || keyCode == Keyboard.KEY_DOWN) {
+            } else if (keyCode == Client.mc.gameSettings.keyBindBack.keyCode || keyCode == Keyboard.KEY_DOWN) {
                 val selected = elementsSequence.firstOrNull { it.selected }
                 var index = elements.indexOf(selected)
                 if (++index >= elements.size) index = 0
                 selected?.selected = false
                 elements[index].selected = true
-            } else if (keyCode == Client.minecraft.gameSettings.keyBindRight.keyCode || keyCode == Keyboard.KEY_RIGHT || keyCode == Client.minecraft.gameSettings.keyBindJump.keyCode || keyCode == Keyboard.KEY_RETURN) {
+            } else if (keyCode == Client.mc.gameSettings.keyBindRight.keyCode || keyCode == Keyboard.KEY_RIGHT || keyCode == Client.mc.gameSettings.keyBindJump.keyCode || keyCode == Keyboard.KEY_RETURN) {
                 val selected = elementsSequence.firstOrNull { it.selected } ?: return
                 if (selected is CategoryButton) {
                     selected.open()
                 } else if (selected is IconElement) {
                     selected.onClickBody(selected.pos, MouseButton.LEFT)
                 }
-            } else if (keyCode == Client.minecraft.gameSettings.keyBindLeft.keyCode || keyCode == Keyboard.KEY_LEFT || keyCode == Client.minecraft.gameSettings.keyBindAttack.keyCode) {
+            } else if (keyCode == Client.mc.gameSettings.keyBindLeft.keyCode || keyCode == Keyboard.KEY_LEFT || keyCode == Client.mc.gameSettings.keyBindAttack.keyCode) {
                 close(false)
             }
         }
@@ -298,8 +298,8 @@ open class CategoryButton(
         return cat
     }
 
-    fun profile(player: EntityPlayer, body: (CategoryButton.() -> Unit)? = null): CategoryButton {
-        val cat = CategoryButton(ProfileElement(player, player != Client.minecraft.player), this, body)
+    fun profile(player: Player, body: (CategoryButton.() -> Unit)? = null): CategoryButton {
+        val cat = CategoryButton(ProfileElement(player, player != Client.mc.player), this, body)
         +cat
         return cat
     }
@@ -442,8 +442,8 @@ fun INeoParent.themeButton(theme: ThemeMetadata): IconLabelElement {
     but.onClick { _, _ ->
         ThemeManager.load(theme.id)
         OptionCore.VANILLA_UI.disable()
-        Client.minecraft.displayGuiScreen(null)
-        Client.minecraft.displayGuiScreen(IngameMenu())
+        Client.mc.displayGuiScreen(null)
+        Client.mc.displayGuiScreen(IngameMenu())
         true
     }
     but.parent = this

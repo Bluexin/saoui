@@ -15,9 +15,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.tencao.saoui.events
+package be.bluexin.mcui.events
 
-import com.tencao.saomclib.Client
+import be.bluexin.mcui.util.Client
 import com.tencao.saomclib.events.PartyEvent
 import com.tencao.saomclib.localize
 import com.tencao.saomclib.packets.party.PartyType
@@ -25,20 +25,20 @@ import com.tencao.saomclib.packets.party.Type
 import com.tencao.saomclib.packets.party.updateServer
 import com.tencao.saomclib.party.PlayerInfo
 import com.tencao.saomclib.party.playerInfo
-import com.tencao.saoui.capabilities.getRenderData
-import com.tencao.saoui.effects.RenderDispatcher
-import com.tencao.saoui.renders.StaticRenderer
-import com.tencao.saoui.screens.CoreGUI
-import com.tencao.saoui.screens.ingame.IngameGUI
-import com.tencao.saoui.screens.menus.IngameMenu
-import com.tencao.saoui.screens.util.NotificationAlert
-import com.tencao.saoui.screens.util.Popup
-import com.tencao.saoui.screens.util.PopupYesNo
-import com.tencao.saoui.util.CraftingUtil
-import com.tencao.saoui.util.IconCore
-import net.minecraft.client.Minecraft
+import be.bluexin.mcui.capabilities.getRenderData
+import be.bluexin.mcui.effects.RenderDispatcher
+import be.bluexin.mcui.renders.StaticRenderer
+import be.bluexin.mcui.screens.CoreGUI
+import be.bluexin.mcui.screens.ingame.IngameGUI
+import be.bluexin.mcui.screens.menus.IngameMenu
+import be.bluexin.mcui.screens.util.NotificationAlert
+import be.bluexin.mcui.screens.util.Popup
+import be.bluexin.mcui.screens.util.PopupYesNo
+import be.bluexin.mcui.util.CraftingUtil
+import be.bluexin.mcui.util.IconCore
+import net.minecraft.Client.mc
 import net.minecraft.client.settings.GameSettings
-import net.minecraft.entity.EntityLivingBase
+import net.minecraft.world.entity.LivingEntity
 import net.minecraftforge.client.event.*
 import net.minecraftforge.event.entity.EntityJoinWorldEvent
 import net.minecraftforge.event.entity.living.LivingDeathEvent
@@ -65,15 +65,15 @@ object EventCore {
 
     @SubscribeEvent
     fun onEntityJoin(e: EntityJoinWorldEvent) {
-        if (e.entity is EntityLivingBase && (e.entity as EntityLivingBase).getRenderData()?.initialized == false) {
-            (e.entity as EntityLivingBase).getRenderData()?.initialize()
+        if (e.entity is LivingEntity && (e.entity as LivingEntity).getRenderData()?.initialized == false) {
+            (e.entity as LivingEntity).getRenderData()?.initialize()
         }
     }
 
     @SubscribeEvent
     fun onEntitySpawn(e: LivingSpawnEvent) {
-        if (e.entity is EntityLivingBase && (e.entity as EntityLivingBase).getRenderData()?.initialized == false) {
-            (e.entity as EntityLivingBase).getRenderData()?.initialize()
+        if (e.entity is LivingEntity && (e.entity as LivingEntity).getRenderData()?.initialized == false) {
+            (e.entity as LivingEntity).getRenderData()?.initialize()
         }
     }
 
@@ -85,7 +85,7 @@ object EventCore {
     @SubscribeEvent
     fun renderTickListener(e: TickEvent.RenderTickEvent) {
         RenderHandler.deathHandlers()
-        Client.minecraft.player?.getRenderData()?.update(e.renderTickTime)
+        Client.mc.player?.getRenderData()?.update(e.renderTickTime)
     }
 
     @SubscribeEvent
@@ -110,7 +110,7 @@ object EventCore {
     @SubscribeEvent
     fun renderWorldListener(event: RenderWorldLastEvent) {
         RenderDispatcher.dispatch()
-        if (Client.minecraft.player != null && Client.minecraft.renderManager.renderViewEntity != null) StaticRenderer.render()
+        if (Client.mc.player != null && Client.mc.renderManager.renderViewEntity != null) StaticRenderer.render()
     }
 
     @SubscribeEvent
@@ -135,10 +135,10 @@ object EventCore {
             notifications.remove(notification)
             NotificationAlert.new(IconCore.PARTY, "notificationPartyInviteTimeoutTitle".localize(), "")
         } else {
-            (Client.minecraft.currentScreen as? CoreGUI<*>)?.getPopup?.text?.any { line ->
+            (Client.mc.currentScreen as? CoreGUI<*>)?.getPopup?.text?.any { line ->
                 line.contains(e.partyData.leaderInfo.username, true)
             }?.run {
-                (Client.minecraft.currentScreen as? CoreGUI<*>)?.getPopup?.onGuiClosed()
+                (Client.mc.currentScreen as? CoreGUI<*>)?.getPopup?.onGuiClosed()
             }
         }
     }
@@ -182,10 +182,10 @@ object EventCore {
             partyNotification.plusAssign {
                 when (it) {
                     PopupYesNo.Result.YES -> {
-                        Type.ACCEPTINVITE.updateServer(Client.minecraft.player.playerInfo(), PartyType.INVITE)
+                        Type.ACCEPTINVITE.updateServer(Client.mc.player.playerInfo(), PartyType.INVITE)
                     }
                     PopupYesNo.Result.NO -> {
-                        Type.CANCELINVITE.updateServer(Client.minecraft.player.playerInfo(), PartyType.INVITE)
+                        Type.CANCELINVITE.updateServer(Client.mc.player.playerInfo(), PartyType.INVITE)
                     }
                 }
             }
@@ -249,5 +249,5 @@ object EventCore {
     internal val mc = Minecraft.getMinecraft()
 
     // Safe reference to player
-    internal val player = PlayerInfo(Client.minecraft.session.profile)
+    internal val player = PlayerInfo(Client.mc.session.profile)
 }

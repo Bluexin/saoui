@@ -1,4 +1,4 @@
-package com.tencao.saoui.api.elements.registry
+package be.bluexin.mcui.api.elements.registry
 
 enum class DrawType {
     BACKGROUND,

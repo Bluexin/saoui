@@ -1,14 +1,14 @@
-package com.tencao.saoui.api.elements.animator
+package be.bluexin.mcui.api.elements.animator
 
 /**
  * This is a copy from the library LibrarianLib
  * This code is covered under GNU Lesser General Public License v3.0
  */
 
-import com.tencao.saoui.api.elements.animator.internal.ColorLerper
-import com.tencao.saoui.api.elements.animator.internal.PrimitiveLerpers
-import com.tencao.saoui.api.elements.animator.internal.StringLerper
-import com.tencao.saoui.api.elements.animator.internal.VecLerpers
+import be.bluexin.mcui.api.elements.animator.internal.ColorLerper
+import be.bluexin.mcui.api.elements.animator.internal.PrimitiveLerpers
+import be.bluexin.mcui.api.elements.animator.internal.StringLerper
+import be.bluexin.mcui.api.elements.animator.internal.VecLerpers
 
 /**
  * Handles the registering and accessing of [Lerper]s

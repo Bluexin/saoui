@@ -1,4 +1,4 @@
-package com.tencao.saoui.api.items
+package be.bluexin.mcui.api.items
 
 import net.minecraft.item.ItemStack
 

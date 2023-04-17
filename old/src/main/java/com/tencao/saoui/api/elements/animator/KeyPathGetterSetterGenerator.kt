@@ -1,13 +1,13 @@
-package com.tencao.saoui.api.elements.animator
+package be.bluexin.mcui.api.elements.animator
 
 /**
  * This is a copy from the library LibrarianLib
  * This code is covered under GNU Lesser General Public License v3.0
  */
 
-import com.tencao.saoui.api.elements.animator.internal.ArrayReflect
-import com.tencao.saoui.api.elements.animator.internal.ImmutableFieldMutatorHandler
-import com.tencao.saoui.api.elements.animator.internal.MethodHandleHelper
+import be.bluexin.mcui.api.elements.animator.internal.ArrayReflect
+import be.bluexin.mcui.api.elements.animator.internal.ImmutableFieldMutatorHandler
+import be.bluexin.mcui.api.elements.animator.internal.MethodHandleHelper
 import java.lang.reflect.Field
 import java.lang.reflect.Modifier
 import kotlin.reflect.KClass

@@ -15,9 +15,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.tencao.saoui.util
+package be.bluexin.mcui.util
 
-import com.tencao.saoui.api.info.IPlayerStatsProvider
+import be.bluexin.mcui.api.info.IPlayerStatsProvider
 
 /**
  * Part of saoui

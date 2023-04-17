@@ -1,9 +1,9 @@
-package com.tencao.saoui.commands
+package be.bluexin.mcui.commands
 
 import net.minecraft.command.CommandBase
 import net.minecraft.command.ICommandSender
 import net.minecraft.command.WrongUsageException
-import net.minecraft.entity.player.EntityPlayer
+import net.minecraft.world.entity.player.Player
 import net.minecraft.server.MinecraftServer
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.text.ITextComponent
@@ -16,7 +16,7 @@ object SaouiCommand : CommandBase(), IClientCommand {
     override fun getName() = "saoui"
     override fun getUsage(sender: ICommandSender) = "commands.saoui.usage"
     override fun getRequiredPermissionLevel() = 0
-    override fun checkPermission(server: MinecraftServer, sender: ICommandSender) = sender is EntityPlayer
+    override fun checkPermission(server: MinecraftServer, sender: ICommandSender) = sender is Player
 
     override fun execute(server: MinecraftServer, sender: ICommandSender, params: Array<String>) {
         if (params.isEmpty()) throw WrongUsageException(getUsage(sender))

@@ -15,13 +15,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.tencao.saoui.util
+package be.bluexin.mcui.util
 
-import com.tencao.saoui.GLCore
-import com.tencao.saoui.GLCore.glTexturedRectV2
-import com.tencao.saoui.SAOCore
-import com.tencao.saoui.api.screens.IIcon
-import net.minecraft.util.ResourceLocation
+import be.bluexin.mcui.GLCore
+import be.bluexin.mcui.GLCore.glTexturedRectV2
+import be.bluexin.mcui.SAOCore
+import be.bluexin.mcui.api.screens.IIcon
+import net.minecraft.resources.ResourceLocation
 import java.util.*
 
 enum class IconCore : IIcon {

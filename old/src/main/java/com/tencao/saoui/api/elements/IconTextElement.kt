@@ -1,11 +1,11 @@
-package com.tencao.saoui.api.elements
+package be.bluexin.mcui.api.elements
 
 import com.tencao.saomclib.utils.math.Vec2d
 import com.tencao.saomclib.utils.math.vec
-import com.tencao.saoui.GLCore
-import com.tencao.saoui.config.OptionCore
-import com.tencao.saoui.util.ColorUtil
-import com.tencao.saoui.util.IconCore
+import be.bluexin.mcui.GLCore
+import be.bluexin.mcui.config.OptionCore
+import be.bluexin.mcui.util.ColorUtil
+import be.bluexin.mcui.util.IconCore
 
 class IconTextElement(var text: String, override val description: MutableList<String> = mutableListOf()) : IconElement(IconCore.NONE) {
 
