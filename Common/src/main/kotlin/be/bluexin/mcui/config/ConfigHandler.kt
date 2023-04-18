@@ -17,10 +17,9 @@
 
 package be.bluexin.mcui.config
 
-import be.bluexin.mcui.SAOCore
+import be.bluexin.mcui.Constants
 import be.bluexin.mcui.config.Settings.NS_BUILTIN
 import net.minecraft.resources.ResourceLocation
-import net.minecraftforge.common.config.Configuration.CATEGORY_GENERAL
 
 /**
  * Part of SAOUI
@@ -30,7 +29,7 @@ import net.minecraftforge.common.config.Configuration.CATEGORY_GENERAL
 object ConfigHandler {
     val DEFAULT_THEME = ResourceLocation(Constants.MOD_ID, "sao")
 
-    private fun general(key: String) = ResourceLocation(CATEGORY_GENERAL, key)
+    private fun general(key: String) = ResourceLocation("general", key)
 
     var lastVersion by StringSetting(NS_BUILTIN, general("lastUpdate"), "nothing").register()
     var ignoreUpdate by BooleanSetting(NS_BUILTIN, general("ignoreUpdate"), true).register()

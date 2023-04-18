@@ -1,7 +1,9 @@
-package be.bluexin.mcui.compat
+package be.bluexin.mcui.config
+
+import net.minecraft.resources.ResourceLocation
 
 interface Configuration {
-    fun get(namespace: String, path: String, write: String, comment: String?, type: Property.Type): Property
+    fun get(key: ResourceLocation, default: String, comment: String?, type: Property.Type): Property
     fun save()
 }
 

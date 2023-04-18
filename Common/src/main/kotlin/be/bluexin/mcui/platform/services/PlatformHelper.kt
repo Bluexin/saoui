@@ -1,5 +1,8 @@
 package be.bluexin.mcui.platform.services
 
+import be.bluexin.mcui.config.Configuration
+import net.minecraft.resources.ResourceLocation
+
 interface PlatformHelper {
     /**
      * Gets the name of the current platform
@@ -30,4 +33,8 @@ interface PlatformHelper {
      */
     val environmentName: String
         get() = if (isDevelopmentEnvironment) "development" else "production"
+
+    // TODO : gonna need to register them at some point (hopefully this can be done while the game is running too)
+    // An alternative would be to use NightConfig directly
+    fun config(namespace: ResourceLocation): Configuration
 }

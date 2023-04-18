@@ -17,35 +17,22 @@
 
 package be.bluexin.mcui.config
 
-import be.bluexin.mcui.GLCore
-import be.bluexin.mcui.api.events.OptionTriggerEvent
 import be.bluexin.mcui.api.info.IOption
-import net.minecraft.Client.mc
-import net.minecraft.client.resources.I18n
+import net.minecraft.client.resources.language.I18n
 import net.minecraft.resources.ResourceLocation
-import net.minecraftforge.common.MinecraftForge
-import net.minecraftforge.common.config.Configuration
-import net.minecraftforge.fml.relauncher.Side
-import net.minecraftforge.fml.relauncher.SideOnly
-import gnu.jel.reflect.Boolean as GBoolean
-import gnu.jel.reflect.Double as GDouble
 
-@SideOnly(Side.CLIENT)
 enum class OptionCore(
     /**
      * @return Returns the Option name in String format
-     *
-     * Deprecated:
-     * @see OptionCore.toString
      */
-    val unformattedName: String,
+    private val unformattedName: String,
     private val defaultValue: Boolean,
-    private val category: OptionCore?,
+    override val category: OptionCore?,
     /**
      * @return Returns true if this is a Category or not
      */
     val isCategory: Boolean = category == null,
-    private val restricted: Boolean = false
+    override val isRestricted: Boolean = false
 ) : IOption {
 
     // Main Categories
@@ -103,9 +90,9 @@ enum class OptionCore(
     DEV_CRYSTAL("optionDevCrystal", defaultValue = true, category = ENTITY_CRYSTALS),
 
     // Hotbar
-    DEFAULT_HOTBAR("optionDefaultHotbar", defaultValue = false, category = HOTBAR_OPTIONS, restricted = true),
-    HOR_HOTBAR("optionHorHotbar", defaultValue = false, category = HOTBAR_OPTIONS, restricted = true),
-    VER_HOTBAR("optionVerHotbar", defaultValue = true, category = HOTBAR_OPTIONS, restricted = true),
+    DEFAULT_HOTBAR("optionDefaultHotbar", defaultValue = false, category = HOTBAR_OPTIONS, isRestricted = true),
+    HOR_HOTBAR("optionHorHotbar", defaultValue = false, category = HOTBAR_OPTIONS, isRestricted = true),
+    VER_HOTBAR("optionVerHotbar", defaultValue = true, category = HOTBAR_OPTIONS, isRestricted = true),
 
     // Effects
     SPINNING_CRYSTALS("optionSpinning", defaultValue = true, category = EFFECTS),
@@ -136,11 +123,11 @@ enum class OptionCore(
 
     override fun toString() = name
 
-    val displayName: String by lazy { I18n.format(unformattedName) }
-    val description: List<String> by lazy { listOf(I18n.format("$unformattedName.desc")) }
+    val displayName: String by lazy { I18n.get(unformattedName) }
+    val description: List<String> by lazy { listOf(I18n.get("$unformattedName.desc")) }
 
     private val setting = if (isCategory) null else BooleanSetting(
-        Settings.NS_BUILTIN, ResourceLocation(category?.name ?: Configuration.CATEGORY_GENERAL, name),
+        Settings.NS_BUILTIN, ResourceLocation(category?.name ?: "general", name),
         defaultValue, description.singleOrNull()
     ).register()
 
@@ -161,35 +148,12 @@ enum class OptionCore(
         } else {
             val newValue = !this.value
             this.value = newValue
-            if (this == CUSTOM_FONT) GLCore.setFont(Minecraft.getMinecraft(), newValue)
+//            if (this == CUSTOM_FONT) GLCore.setFont(Minecraft.getMinecraft(), newValue)
         }
-        MinecraftForge.EVENT_BUS.post(OptionTriggerEvent(this))
+//        MinecraftForge.EVENT_BUS.post(OptionTriggerEvent(this))
     }
 
-    /**
-     * @return Returns true if the Option is selected/enabled
-     */
-    override fun isEnabled(): Boolean {
-        return this.value
-    }
-
-    /**
-     * This checks if the Option is restricted or not.
-     * Restricted Options can only have one option enabled
-     * in their Category.
-
-     * @return Returns true if restricted
-     */
-    override fun isRestricted(): Boolean {
-        return this.restricted
-    }
-
-    /**
-     * @return Returns the Category
-     */
-    override fun getCategory(): OptionCore? {
-        return this.category
-    }
+    override val isEnabled: Boolean get() = value
 
     /**
      * @return Returns the Category

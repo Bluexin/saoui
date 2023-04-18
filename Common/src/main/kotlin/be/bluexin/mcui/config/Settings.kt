@@ -1,7 +1,8 @@
 package be.bluexin.mcui.config
 
 import be.bluexin.mcui.Constants
-import be.bluexin.mcui.compat.Configuration
+import be.bluexin.mcui.platform.Services
+import be.bluexin.mcui.platform.services.PlatformHelper
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.onFailure
@@ -28,7 +29,7 @@ object Settings {
         val (config, setting) = getConfigAndSetting(namespace, key, "get") ?: return null
         val (_, _, default, comment, read, write, validate, type) = setting
 
-        val property = config.get(key.namespace, key.path, write(default), comment, type)
+        val property = config.get(key, write(default), comment, type)
         return read(property.string)?.takeIf(validate) ?: default
     }
 
@@ -37,7 +38,7 @@ object Settings {
         val config = getConfig(setting.namespace, "get") ?: return default
 
         val property = try {
-            config.get(key.namespace, key.path, write(default), comment, type)
+            config.get(key, write(default), comment, type)
         } catch (e: Exception) {
             throw e
         }
@@ -48,7 +49,7 @@ object Settings {
         val (config, setting) = getConfigAndSetting(namespace, key, "set") ?: return
         val (_, _, default, comment, read, write, validate, type) = setting
 
-        val property = config.get(key.namespace, key.path, write(default), comment, type)
+        val property = config.get(key, write(default), comment, type)
         read(value)?.takeIf(validate)?.let { property.set(value) }
         notifyUpdate(namespace)
     }
@@ -57,7 +58,7 @@ object Settings {
         val (namespace, key, default, comment, _, write, validate, type) = setting
         val config = getConfig(namespace, "set") ?: return
 
-        val property = config.get(key.namespace, key.path, write(default), comment, type)
+        val property = config.get(key, write(default), comment, type)
         value.takeIf(validate)?.let { property.set(write(value)) }
         notifyUpdate(namespace)
     }
@@ -94,6 +95,7 @@ object Settings {
             val dir = if (isBuiltIn) Constants.configDirectory else File(Constants.configDirectory, namespace.namespace)
             dir.mkdirs()
             // TODO
+            configurations[namespace] = Services.PLATFORM.config(namespace)
             /*configurations[namespace] = Configuration(
                 File(dir, if (isBuiltIn) "main.cfg" else "${namespace.path}.cfg")
             ).also {

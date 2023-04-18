@@ -1,6 +1,5 @@
 package be.bluexin.mcui.config
 
-import be.bluexin.mcui.compat.Property
 import com.google.gson.annotations.JsonAdapter
 import be.bluexin.mcui.themes.util.json.JsonSettingAdapterFactory
 import net.minecraft.resources.ResourceLocation
