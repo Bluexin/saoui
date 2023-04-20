@@ -3,7 +3,7 @@ package be.bluexin.mcui.themes
 import be.bluexin.mcui.themes.elements.Fragment
 import be.bluexin.mcui.themes.elements.Hud
 import java.io.InputStream
-import javax.xml.bind.JAXBContext
+import jakarta.xml.bind.JAXBContext
 
 object XmlThemeLoader : AbstractThemeLoader(ThemeFormat.XML) {
 

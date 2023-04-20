@@ -16,9 +16,8 @@
  */
 package be.bluexin.mcui.themes.util
 
-import be.bluexin.mcui.api.info.IPlayerStatsProvider
+import be.bluexin.mcui.api.info.PlayerStatsProvider
 import be.bluexin.mcui.api.themes.IHudDrawContext
-import be.bluexin.mcui.capabilities.getRenderData
 import be.bluexin.mcui.effects.StatusEffects
 import be.bluexin.mcui.effects.StatusEffects.Companion.getEffects
 import be.bluexin.mcui.social.StaticPlayerHelper.getHungerLevel
@@ -28,20 +27,13 @@ import be.bluexin.mcui.util.Client
 import be.bluexin.mcui.util.HealthStep
 import be.bluexin.mcui.util.HealthStep.Companion.getStep
 import be.bluexin.mcui.util.PlayerStats.Companion.instance
-import com.tencao.saomclib.party.PlayerInfo
-import net.minecraft.block.material.Material
+import com.mojang.blaze3d.platform.Window
 import net.minecraft.client.Minecraft
-import net.minecraft.client.entity.PlayerSP
 import net.minecraft.client.gui.Font
-import net.minecraft.client.gui.FontRenderer
-import net.minecraft.client.gui.ScaledResolution
-import net.minecraft.client.renderer.RenderItem
+import net.minecraft.client.player.LocalPlayer
 import net.minecraft.client.renderer.entity.ItemRenderer
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.player.Player
-import net.minecraftforge.api.distmarker.Dist
-import net.minecraftforge.api.distmarker.OnlyIn
-import net.minecraftforge.common.ForgeHooks
 import java.lang.ref.WeakReference
 import kotlin.math.min
 
@@ -51,39 +43,38 @@ import kotlin.math.min
  *
  * @author Bluexin
  */
-@OnlyIn(Dist.CLIENT)
-class HudDrawContext(player: Player = Client.player, val mc: Minecraft = Client.mc, itemRenderer: ItemRenderer = Client.mc.itemRenderer) :
+class HudDrawContext(player: Player = Client.mc.player!!, val mc: Minecraft = Client.mc, itemRenderer: ItemRenderer = Client.mc.itemRenderer) :
     IHudDrawContext {
     /*
     Feel free to add anything you'd need here.
      */
-    private val username: String = player.displayNameString
-    private val itemRenderer: RenderItem
-    private val usernameWidth: Double = (1 + (mc.fontRenderer.getStringWidth(username) + 4) / 5.0) * 5
-    private val stats: IPlayerStatsProvider = instance().stats
+    private val username: String = player.displayName.string
+    private val itemRenderer: ItemRenderer
+    private val usernameWidth: Double = (1 + (mc.font.width(username) + 4) / 5.0) * 5
+    private val stats: PlayerStatsProvider = instance().stats
     private var player: Player
     private var healthStep: HealthStep? = null
     private var z = 0f
     private var hp = 0f
     private var maxHp = 0f
-    private var scaledResolution: ScaledResolution? = null
+    private lateinit var scaledResolution: Window
     private var partialTicks = 0f
     private var i = 0
-    private var pt: List<PlayerInfo> = listOf()
+//    private var pt: List<PlayerInfo> = listOf()
     private var effects: List<StatusEffects>? = null
     private var nearbyEntities: List<WeakReference<LivingEntity>> = listOf()
     private var targetEntity: WeakReference<LivingEntity>? = null
     private var lastTargetedTick = 0L
 
-    fun setPt(pt: List<PlayerInfo>) {
+    /*fun setPt(pt: List<PlayerInfo>) {
         this.pt = pt
-    }
+    }*/
 
     fun setTargetEntity(entity: LivingEntity?) {
         if (entity != null) {
-            this.targetEntity = entity?.let(::WeakReference)
-            lastTargetedTick = mc.world.totalWorldTime
-        } else if (targetEntity != null && mc.world.totalWorldTime - lastTargetedTick > 60) {
+            this.targetEntity = entity.let(::WeakReference)
+            lastTargetedTick = entity.level.gameTime
+        } else if (targetEntity != null && mc.level!!.gameTime - lastTargetedTick > 60) {
             targetEntity = null
         }
     }
@@ -143,7 +134,7 @@ class HudDrawContext(player: Player = Client.player, val mc: Minecraft = Client.
         this.player = player
     }
 
-    override fun getItemRenderer(): RenderItem {
+    override fun getItemRenderer(): ItemRenderer {
         return itemRenderer
     }
 
@@ -152,18 +143,18 @@ class HudDrawContext(player: Player = Client.player, val mc: Minecraft = Client.
     }
 
     override fun selectedslot(): Int {
-        return player.inventory.currentItem
+        return player.inventory.selected
     }
 
     override fun scaledwidth(): Int {
-        return scaledResolution!!.scaledWidth
+        return scaledResolution.guiScaledWidth
     }
 
     override fun scaledheight(): Int {
-        return scaledResolution!!.scaledHeight
+        return scaledResolution.guiScaledHeight
     }
 
-    fun setScaledResolution(scaledResolution: ScaledResolution?) {
+    fun setScaledResolution(scaledResolution: Window) {
         this.scaledResolution = scaledResolution
     }
 
@@ -172,15 +163,15 @@ class HudDrawContext(player: Player = Client.player, val mc: Minecraft = Client.
     }
 
     override fun offhandEmpty(slot: Int): Boolean {
-        return player.inventory.offHandInventory[0].isEmpty
+        return player.inventory.offhand[slot].isEmpty
     }
 
     override fun strWidth(s: String): Int {
-        return mc.fontRenderer.getStringWidth(s)
+        return mc.font.width(s)
     }
 
     override fun strHeight(): Int {
-        return mc.fontRenderer.FONT_HEIGHT
+        return mc.font.lineHeight
     }
 
     override fun absorption(): Float {
@@ -196,7 +187,7 @@ class HudDrawContext(player: Player = Client.player, val mc: Minecraft = Client.
     }
 
     override fun horsejump(): Float {
-        return (player as PlayerSP).horseJumpPower
+        return (player as LocalPlayer).jumpRidingScale
     }
 
     fun getI(): Int {
@@ -212,17 +203,17 @@ class HudDrawContext(player: Player = Client.player, val mc: Minecraft = Client.
     }
 
     override fun ptName(index: Int): String {
-        return pt[index].username
+        return "" //pt[index].username
     }
 
     override fun ptHp(index: Int): Float {
-        return pt[index].let {
+        return 0f /*pt[index].let {
             it.player?.getRenderData()?.healthSmooth ?: it.health
-        }
+        }*/
     }
 
     override fun ptMaxHp(index: Int): Float {
-        return pt[index].maxHealth
+        return 0f //pt[index].maxHealth
     }
 
     override fun ptHpPct(index: Int): Float {
@@ -230,12 +221,13 @@ class HudDrawContext(player: Player = Client.player, val mc: Minecraft = Client.
     }
 
     override fun ptSize(): Int {
-        return pt.size
+        return 0 //pt.size
     }
 
     override fun ptHealthStep(index: Int): HealthStep {
-        val ptMember = pt[index]
-        return getStep(ptMember, ptHpPct(index).toDouble())
+        return HealthStep.INVALID
+        /*val ptMember = pt[index]
+        return getStep(ptMember, ptHpPct(index).toDouble())*/
     }
 
     override fun foodLevel(): Float {
@@ -251,40 +243,40 @@ class HudDrawContext(player: Player = Client.player, val mc: Minecraft = Client.
     }
 
     override fun hasMount(): Boolean {
-        return player.isRiding
+        return player.isPassenger
     }
 
     override fun mountHp(): Float {
-        val t = player.ridingEntity
+        val t = player.vehicle
         return if (t is LivingEntity) {
             t.health
         } else 0f
     }
 
     override fun mountMaxHp(): Float {
-        val t = player.ridingEntity
+        val t = player.vehicle
         return if (t is LivingEntity) {
             t.maxHealth
         } else 1f
     }
 
     override fun inWater(): Boolean {
-        return player.isInsideOfMaterial(Material.WATER)
+        return player.isInWater
     }
 
     override fun air(): Int {
-        return player.air
+        return player.airSupply
     }
 
     override fun armor(): Int {
-        return ForgeHooks.getTotalArmorValue(player)
+        return player.armorValue
     }
 
     override fun nearbyEntities(): List<LivingEntity> {
         return nearbyEntities.mapNotNull(WeakReference<LivingEntity>::get)
     }
 
-    override fun entityName(index: Int): String? = nearbyEntities[index].get()?.displayName?.formattedText
+    override fun entityName(index: Int): String? = nearbyEntities[index].get()?.displayName?.string
 
     override fun entityHp(index: Int): Float = nearbyEntities[index].get()?.health ?: 0F
 
@@ -296,7 +288,7 @@ class HudDrawContext(player: Player = Client.player, val mc: Minecraft = Client.
 
     override fun targetEntity(): LivingEntity? = targetEntity?.get()
 
-    override fun targetName(): String = targetEntity?.get()?.displayName?.formattedText ?: ""
+    override fun targetName(): String = targetEntity?.get()?.displayName?.string ?: ""
 
     override fun targetHp(): Float = targetEntity?.get()?.health ?: 0F
 

@@ -1,6 +1,6 @@
 package be.bluexin.mcui.config
 
-import com.tencao.saomclib.party.PlayerInfo
+/*import com.tencao.saomclib.party.PlayerInfo
 import be.bluexin.mcui.SAOCore
 import net.minecraftforge.common.config.Configuration
 import java.io.File
@@ -27,4 +27,4 @@ object FriendData {
         friendDataList.forEach { player -> config[CATEGORY_FRIENDS, player.username, player.uuidString] }
         config.save()
     }
-}
+}*/

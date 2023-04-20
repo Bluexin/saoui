@@ -18,10 +18,12 @@
 package be.bluexin.mcui.social
 
 import be.bluexin.mcui.config.OptionCore
-import net.minecraft.Client.mc
-import net.minecraft.entity.Entity
+import net.minecraft.client.Minecraft
+import net.minecraft.world.entity.Entity
 import net.minecraft.world.entity.LivingEntity
+import net.minecraft.world.entity.ai.targeting.TargetingConditions
 import net.minecraft.world.entity.player.Player
+import net.minecraft.world.phys.AABB
 import java.util.*
 import kotlin.math.max
 import kotlin.math.roundToLong
@@ -39,15 +41,16 @@ object StaticPlayerHelper {
     private val hungerSmooth = HashMap<UUID, Float>()
 
     fun listOnlinePlayers(mc: Minecraft, range: Double): List<Player> {
-        return mc.world.getPlayers(Player::class.java) { p -> mc.player.getDistance(p!!) <= range }
+//        return mc.level!!.getNearbyPlayers(TargetingConditions.forNonCombat(), mc.player!!, AABB.ofSize()) { p -> mc.player.getDistance(p!!) <= range }
+        return mc.level!!.players().filter { mc.player!!.distanceToSqr(it) <= range * range }
     }
 
     private fun listOnlinePlayers(mc: Minecraft): List<Player> {
-        return mc.world.playerEntities
+        return mc.level!!.players()
     }
 
     fun findOnlinePlayer(mc: Minecraft, username: String): Player? {
-        return mc.world.getPlayerEntityByName(username)
+        return listOnlinePlayers(mc).find { it.name.string == username }
     }
 
     private fun isOnline(mc: Minecraft, names: Array<String>): BooleanArray { // TODO: update a boolean[] upon player join server? (/!\ client-side)
@@ -66,7 +69,7 @@ object StaticPlayerHelper {
     }
 
     fun getName(player: Player?): String {
-        return if (player == null) "" else player.displayNameString
+        return if (player == null) "" else player.displayName.string
     }
 
     fun getName(mc: Minecraft): String {
@@ -140,7 +143,7 @@ object StaticPlayerHelper {
         if (entity !is Player) return 1.0f
         val hungerReal: Float
         if (OptionCore.SMOOTH_HEALTH.isEnabled) {
-            val uuid = entity.getUniqueID()
+            val uuid = entity.uuid
 
             hungerReal = entity.foodData.foodLevel.toFloat()
 
@@ -172,18 +175,10 @@ object StaticPlayerHelper {
     }
 
     private fun gameTimeDelay(mc: Minecraft, time: Float): Float {
-        return if (time >= 0f) time else HEALTH_FRAME_FACTOR / gameFPS(mc)
+        return if (time >= 0f) time else HEALTH_FRAME_FACTOR / mc.fps
     }
 
     fun isCreative(player: Player): Boolean { // TODO: test this!
-        return player.capabilities.isCreativeMode
-    }
-
-    private fun gameFPS(mc: Minecraft): Int {
-        return mc.limitFramerate
-    }
-
-    fun thePlayer(): Player {
-        return Minecraft.getMinecraft().player
+        return player.isCreative
     }
 }

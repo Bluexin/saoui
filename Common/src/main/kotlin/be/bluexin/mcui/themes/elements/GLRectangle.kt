@@ -17,13 +17,12 @@
 
 package be.bluexin.mcui.themes.elements
 
-import be.bluexin.mcui.GLCore
 import be.bluexin.mcui.api.themes.IHudDrawContext
 import be.bluexin.mcui.themes.util.CDouble
 import be.bluexin.mcui.themes.util.CInt
+import jakarta.xml.bind.annotation.XmlRootElement
+import jakarta.xml.bind.annotation.XmlSeeAlso
 import net.minecraft.resources.ResourceLocation
-import javax.xml.bind.annotation.XmlRootElement
-import javax.xml.bind.annotation.XmlSeeAlso
 
 /**
  * Part of saoui by Bluexin.
@@ -53,17 +52,17 @@ open class GLRectangle : Element() {
         val y = (this.y?.invoke(ctx) ?: 0.0) + (p?.getY(ctx) ?: 0.0)
         val z = (this.z?.invoke(ctx) ?: 0.0) + (p?.getZ(ctx) ?: 0.0) + ctx.z
 
-        GLCore.glBlend(true)
-        GLCore.color(this.rgba?.invoke(ctx) ?: 0xFFFFFFFF.toInt())
-        if (this.rl != null) GLCore.glBindTexture(this.rl!!)
-        GLCore.glTexturedRectV2(
+//        GLCore.glBlend(true)
+//        GLCore.color(this.rgba?.invoke(ctx) ?: 0xFFFFFFFF.toInt())
+//        if (this.rl != null) GLCore.glBindTexture(this.rl!!)
+        /*GLCore.glTexturedRectV2(
             x, y, z, w?.invoke(ctx) ?: 0.0, h?.invoke(ctx) ?: 0.0,
             srcX?.invoke(ctx)
                 ?: 0.0,
             srcY?.invoke(ctx) ?: 0.0, srcW?.invoke(ctx) ?: w?.invoke(ctx) ?: 0.0,
             srcH?.invoke(ctx)
                 ?: h?.invoke(ctx) ?: 0.0
-        )
+        )*/
     }
 
     override fun setup(parent: ElementParent, fragments: Map<ResourceLocation, () -> Fragment>): Boolean {

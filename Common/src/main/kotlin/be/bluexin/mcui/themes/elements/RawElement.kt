@@ -17,11 +17,10 @@
 
 package be.bluexin.mcui.themes.elements
 
-import be.bluexin.mcui.GLCore
 import be.bluexin.mcui.api.themes.IHudDrawContext
 import be.bluexin.mcui.themes.util.CUnit
+import jakarta.xml.bind.annotation.XmlRootElement
 import net.minecraft.resources.ResourceLocation
-import javax.xml.bind.annotation.XmlRootElement
 
 /**
  * Part of saoui by Bluexin, released under GNU GPLv3.
@@ -43,13 +42,13 @@ class RawElement : Element() {
     }
 
     override fun draw(ctx: IHudDrawContext) {
-        GLCore.pushMatrix()
+//        GLCore.pushMatrix()
         val p: ElementParent? = this.parent.get()
         val x = (this.x?.invoke(ctx) ?: 0.0) + (p?.getX(ctx) ?: 0.0)
         val y = (this.y?.invoke(ctx) ?: 0.0) + (p?.getY(ctx) ?: 0.0)
         val z = (this.z?.invoke(ctx) ?: 0.0) + (p?.getZ(ctx) ?: 0.0) + ctx.z
-        GLCore.translate(x, y, z)
+//        GLCore.translate(x, y, z)
         expression(ctx)
-        GLCore.popMatrix()
+//        GLCore.popMatrix()
     }
 }

@@ -29,7 +29,7 @@ import net.minecraft.world.entity.player.Player
  *
  * @author Bluexin
  */
-interface IPlayerStatsProvider {
+interface PlayerStatsProvider {
     /**
      * Getter for the player's level.
      *

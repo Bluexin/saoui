@@ -3,7 +3,7 @@ package be.bluexin.mcui.themes.util.xml
 import be.bluexin.mcui.themes.util.CValue
 import be.bluexin.mcui.themes.util.NamedExpressionIntermediate
 import be.bluexin.mcui.themes.util.Variables
-import javax.xml.bind.annotation.adapters.XmlAdapter
+import jakarta.xml.bind.annotation.adapters.XmlAdapter
 
 class NamedExpressionXmlAdapter : XmlAdapter<Variables, Map<String, CValue<*>?>>() {
     override fun unmarshal(v: Variables) = v.variable.associate {

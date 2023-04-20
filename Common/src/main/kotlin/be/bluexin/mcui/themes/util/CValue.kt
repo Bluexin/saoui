@@ -23,7 +23,7 @@ import be.bluexin.mcui.themes.util.json.*
 import be.bluexin.mcui.themes.util.xml.*
 import be.bluexin.mcui.themes.util.json.*
 import be.bluexin.mcui.themes.util.xml.*
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter
 
 /**
  * Wraps around custom types implementation for XML loading and value caching.

@@ -17,7 +17,7 @@
 
 package be.bluexin.mcui.themes.util
 
-import be.bluexin.mcui.SAOCore
+import be.bluexin.mcui.Constants
 import be.bluexin.mcui.api.themes.IHudDrawContext
 import be.bluexin.mcui.themes.AbstractThemeLoader
 import gnu.jel.CompiledExpression

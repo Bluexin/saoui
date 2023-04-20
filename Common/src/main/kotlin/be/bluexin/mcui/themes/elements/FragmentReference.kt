@@ -1,17 +1,17 @@
 package be.bluexin.mcui.themes.elements
 
-import com.google.gson.annotations.JsonAdapter
-import be.bluexin.mcui.SAOCore
+import be.bluexin.mcui.Constants
 import be.bluexin.mcui.api.themes.IHudDrawContext
 import be.bluexin.mcui.themes.AbstractThemeLoader
 import be.bluexin.mcui.themes.util.CValue
 import be.bluexin.mcui.themes.util.NamedExpressionIntermediate
 import be.bluexin.mcui.themes.util.json.NamedExpressionJsonAdapter
 import be.bluexin.mcui.themes.util.xml.NamedExpressionXmlAdapter
+import com.google.gson.annotations.JsonAdapter
+import jakarta.xml.bind.annotation.XmlAttribute
+import jakarta.xml.bind.annotation.XmlRootElement
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter
 import net.minecraft.resources.ResourceLocation
-import javax.xml.bind.annotation.XmlAttribute
-import javax.xml.bind.annotation.XmlRootElement
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter
 
 @XmlRootElement
 class FragmentReference : CachingElementParent() {

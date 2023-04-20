@@ -19,7 +19,7 @@ package be.bluexin.mcui.themes.elements
 
 import be.bluexin.mcui.api.themes.IHudDrawContext
 import net.minecraft.resources.ResourceLocation
-import javax.xml.bind.annotation.XmlRootElement
+import jakarta.xml.bind.annotation.XmlRootElement
 
 /**
  * Part of saoui by Bluexin.

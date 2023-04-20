@@ -17,10 +17,9 @@
 
 package be.bluexin.mcui.themes.elements
 
-import be.bluexin.mcui.GLCore
 import be.bluexin.mcui.api.themes.IHudDrawContext
 import be.bluexin.mcui.themes.util.CString
-import javax.xml.bind.annotation.XmlRootElement
+import jakarta.xml.bind.annotation.XmlRootElement
 
 /**
  * Part of saoui by Bluexin.
@@ -37,8 +36,8 @@ open class GLString : GLRectangle() {
         if (enabled?.invoke(ctx) == false) return
         val p = this.parent.get()
         val x = (this.x?.invoke(ctx) ?: 0.0) + (p?.getX(ctx) ?: 0.0)
-        val y = (this.y?.invoke(ctx) ?: 0.0) + (p?.getY(ctx) ?: 0.0) + ((this.h?.invoke(ctx) ?: 0.0) - ctx.fontRenderer.FONT_HEIGHT) / 2.0
+        val y = (this.y?.invoke(ctx) ?: 0.0) + (p?.getY(ctx) ?: 0.0) + ((this.h?.invoke(ctx) ?: 0.0) - ctx.fontRenderer.lineHeight) / 2.0
 
-        GLCore.glString(ctx.fontRenderer, this.text(ctx), x.toInt(), y.toInt(), rgba?.invoke(ctx) ?: 0xFFFFFFFF.toInt(), shadow)
+//        GLCore.glString(ctx.fontRenderer, this.text(ctx), x.toInt(), y.toInt(), rgba?.invoke(ctx) ?: 0xFFFFFFFF.toInt(), shadow)
     }
 }

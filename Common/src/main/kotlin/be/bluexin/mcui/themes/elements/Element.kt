@@ -22,11 +22,12 @@ import be.bluexin.mcui.api.themes.IHudDrawContext
 import be.bluexin.mcui.themes.util.CBoolean
 import be.bluexin.mcui.themes.util.CDouble
 import be.bluexin.mcui.themes.util.json.JsonElementAdapterFactory
+import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.resources.ResourceLocation
 import java.lang.ref.WeakReference
 import javax.annotation.OverridingMethodsMustInvokeSuper
-import javax.xml.bind.annotation.XmlAttribute
-import javax.xml.bind.annotation.XmlSeeAlso
+import jakarta.xml.bind.annotation.XmlAttribute
+import jakarta.xml.bind.annotation.XmlSeeAlso
 
 /**
  * Used to map a xml element with x, y, z coordinates and an "enabled" toggle.
@@ -74,6 +75,8 @@ abstract class Element {
     protected lateinit var parent: WeakReference<ElementParent>
 
     val hasParent: Boolean get() = ::parent.isInitialized && parent.get().let { it != null && it !is Hud }
+
+    protected val pose = PoseStack() // TODO : figure this out
 
     /**
      * Draw this element on the screen.

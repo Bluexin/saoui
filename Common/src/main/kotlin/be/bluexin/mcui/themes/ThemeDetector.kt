@@ -1,7 +1,7 @@
 package be.bluexin.mcui.themes
 
+import be.bluexin.mcui.Constants
 import be.bluexin.mcui.util.Client
-import be.bluexin.mcui.SAOCore
 import be.bluexin.mcui.util.append
 import net.minecraft.resources.ResourceLocation
 import java.io.File
@@ -23,11 +23,11 @@ object ThemeDetector {
         val candidates = mutableMapOf<ResourceLocation, ThemeMetadata>()
 
         // Built-in
-        candidates += SAOCore.modFile.findThemePaths().extractThemesMetadata(Constants.MOD_ID)
+//        candidates += SAOCore.modFile.findThemePaths().extractThemesMetadata(Constants.MOD_ID)
 
         // Loaded resource packs
-        Client.mc.resourcePackRepository.repositoryEntries.map {
-            it.resourcePackName to Client.mc.resourcePackRepository.dirResourcepacks.resolve(it.resourcePackName)
+        Client.mc.resourcePackRepository.selectedPacks.map {
+            it.id to File("") // TODO : it.open()
         }.forEach { (name, location) ->
             candidates += location.findThemePaths().extractThemesMetadata(name)
         }

@@ -1,9 +1,9 @@
 package be.bluexin.mcui.themes.util
 
-import be.bluexin.mcui.SAOCore
+import be.bluexin.mcui.Constants
 import be.bluexin.mcui.themes.util.typeadapters.JelType
-import javax.xml.bind.Unmarshaller
-import javax.xml.bind.annotation.XmlAttribute
+import jakarta.xml.bind.Unmarshaller
+import jakarta.xml.bind.annotation.XmlAttribute
 
 class NamedExpressionIntermediate : ExpressionIntermediate() {
     @get:XmlAttribute

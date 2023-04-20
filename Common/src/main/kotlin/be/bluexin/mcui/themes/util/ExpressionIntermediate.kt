@@ -17,8 +17,8 @@
 
 package be.bluexin.mcui.themes.util
 
-import javax.xml.bind.annotation.XmlAttribute
-import javax.xml.bind.annotation.XmlValue
+import jakarta.xml.bind.annotation.XmlAttribute
+import jakarta.xml.bind.annotation.XmlValue
 
 /**
  * Part of saoui by Bluexin.
@@ -34,8 +34,10 @@ open class ExpressionIntermediate {
     var expression = "" // Will get replaced by the loading
         get() {
             var f = field
-            if (LibHelper.obfuscated) f = f.replace("format(", "func_135052_a(")
+            // TODO : new obf ?
+//            if (LibHelper.obfuscated) f = f.replace("format(", "func_135052_a(")
             f = f.replace('\n', ' ')
+                .replace("format(", "language.getOrDefault(")
             return f
         }
 }

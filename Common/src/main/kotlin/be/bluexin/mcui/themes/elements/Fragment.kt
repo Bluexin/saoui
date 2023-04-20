@@ -1,14 +1,14 @@
 package be.bluexin.mcui.themes.elements
 
-import com.google.gson.annotations.JsonAdapter
-import be.bluexin.mcui.SAOCore
+import be.bluexin.mcui.Constants
 import be.bluexin.mcui.themes.util.AfterUnmarshal
 import be.bluexin.mcui.themes.util.LibHelper
 import be.bluexin.mcui.themes.util.NamedExpressionIntermediate
 import be.bluexin.mcui.themes.util.json.ExpectJsonAdapter
-import javax.xml.bind.Unmarshaller
-import javax.xml.bind.annotation.XmlElement
-import javax.xml.bind.annotation.XmlRootElement
+import com.google.gson.annotations.JsonAdapter
+import jakarta.xml.bind.Unmarshaller
+import jakarta.xml.bind.annotation.XmlElement
+import jakarta.xml.bind.annotation.XmlRootElement
 
 @XmlRootElement(namespace = "http://www.bluexin.be/com/saomc/saoui/fragment-schema")
 class Fragment @JvmOverloads constructor(

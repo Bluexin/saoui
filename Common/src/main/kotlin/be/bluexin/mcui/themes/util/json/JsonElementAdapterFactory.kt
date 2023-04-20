@@ -8,7 +8,7 @@ import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonWriter
 import be.bluexin.mcui.themes.elements.Element
 import java.util.*
-import javax.xml.bind.annotation.XmlSeeAlso
+import jakarta.xml.bind.annotation.XmlSeeAlso
 import kotlin.reflect.KClass
 import kotlin.reflect.full.findAnnotation
 

@@ -22,7 +22,7 @@ import be.bluexin.mcui.themes.util.ExpressionIntermediate
 import be.bluexin.mcui.themes.util.typeadapters.*
 import be.bluexin.mcui.themes.util.*
 import be.bluexin.mcui.themes.util.typeadapters.*
-import javax.xml.bind.annotation.adapters.XmlAdapter
+import jakarta.xml.bind.annotation.adapters.XmlAdapter
 
 /**
  * Part of saoui by Bluexin.

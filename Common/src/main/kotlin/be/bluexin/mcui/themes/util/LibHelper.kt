@@ -17,19 +17,20 @@
 
 package be.bluexin.mcui.themes.util
 
+import be.bluexin.mcui.Constants
 import be.bluexin.mcui.api.info.IOption
 import be.bluexin.mcui.api.themes.IHudDrawContext
 import be.bluexin.mcui.config.OptionCore
 import be.bluexin.mcui.config.Settings
 import be.bluexin.mcui.effects.StatusEffects
-import be.bluexin.mcui.util.HealthStep
-import be.bluexin.mcui.themes.util.typeadapters.*
+import be.bluexin.mcui.platform.Services
+import be.bluexin.mcui.themes.util.typeadapters.JelType
 import be.bluexin.mcui.util.ColorUtil
+import be.bluexin.mcui.util.HealthStep
 import gnu.jel.CompilationException
 import gnu.jel.DVMap
 import gnu.jel.Library
-import net.minecraft.client.resources.I18n
-import net.minecraft.launchwrapper.Launch
+import net.minecraft.locale.Language
 
 /**
  * Part of saoui by Bluexin.
@@ -40,9 +41,9 @@ object LibHelper {
     private val contextResolver = ContextAwareDVMap()
 
     val LIB: Library by lazy {
-        val staticLib = arrayOf(Math::class.java, HealthStep::class.java, StatusEffects::class.java, OptionCore::class.java, Settings.JelWrappers::class.java, I18n::class.java, ColorUtil::class.java)
+        val staticLib = arrayOf(Math::class.java, HealthStep::class.java, StatusEffects::class.java, OptionCore::class.java, Settings.JelWrappers::class.java, ColorUtil::class.java)
         val dynLib = arrayOf(IHudDrawContext::class.java)
-        val dotClasses = arrayOf(String::class.java, IOption::class.java, List::class.java, StatusEffects::class.java, HealthStep::class.java, ColorUtil::class.java)
+        val dotClasses = arrayOf(String::class.java, IOption::class.java, List::class.java, StatusEffects::class.java, HealthStep::class.java, ColorUtil::class.java, Language::class.java)
         Library(staticLib, dynLib, dotClasses, contextResolver, null)
     }
 
@@ -55,7 +56,7 @@ object LibHelper {
     }
 
     val obfuscated: Boolean by lazy {
-        val obf = !(Launch.blackboard["fml.deobfuscatedEnvironment"] as Boolean)
+        val obf = !Services.PLATFORM.isDevelopmentEnvironment
         Constants.LOG.debug("Obfuscated: $obf")
         obf
     }

@@ -17,18 +17,18 @@
 
 package be.bluexin.mcui.util
 
-import be.bluexin.mcui.api.info.IPlayerStatsProvider
+import be.bluexin.mcui.api.info.PlayerStatsProvider
 
 /**
  * Part of saoui
 
  * @author Bluexin
  */
-class PlayerStats private constructor(val stats: IPlayerStatsProvider) {
+class PlayerStats private constructor(val stats: PlayerStatsProvider) {
     companion object {
         private var instance: PlayerStats? = null
 
-        fun init(provider: IPlayerStatsProvider) {
+        fun init(provider: PlayerStatsProvider) {
             check(instance == null) { "PlayerStats already initialized!" }
             instance = PlayerStats(provider)
         }

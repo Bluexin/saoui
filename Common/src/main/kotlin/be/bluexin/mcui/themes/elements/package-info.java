@@ -23,5 +23,5 @@
 @XmlAccessorType(value = XmlAccessType.FIELD)
 package be.bluexin.mcui.themes.elements;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;

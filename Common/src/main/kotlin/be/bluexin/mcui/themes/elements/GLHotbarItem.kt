@@ -17,14 +17,12 @@
 
 package be.bluexin.mcui.themes.elements
 
-import be.bluexin.mcui.GLCore
 import be.bluexin.mcui.api.themes.IHudDrawContext
 import be.bluexin.mcui.themes.util.CInt
-import net.minecraft.client.renderer.RenderHelper
+import jakarta.xml.bind.annotation.XmlRootElement
+import net.minecraft.world.entity.HumanoidArm
 import net.minecraft.world.entity.player.Player
-import net.minecraft.item.ItemStack
-import net.minecraft.util.EnumHandSide
-import javax.xml.bind.annotation.XmlRootElement
+import net.minecraft.world.item.ItemStack
 
 /**
  * Part of saoui by Bluexin.
@@ -37,43 +35,43 @@ open class GLHotbarItem : GLRectangle() {
     protected lateinit var slot: CInt
     protected lateinit var itemXoffset: CInt
     protected lateinit var itemYoffset: CInt
-    protected var hand: EnumHandSide? = null
+    protected var hand: HumanoidArm? = null
 
     /*
     From net.minecraft.client.gui.GuiIngame
      */
     private fun renderHotbarItem(x: Int, y: Int, partialTicks: Float, player: Player, stack: ItemStack, ctx: IHudDrawContext) {
         if (stack.isEmpty) return
-        val f = stack.animationsToGo.toFloat() - partialTicks
+        val f = stack.useDuration - partialTicks
 
         if (f > 0.0f) {
-            GLCore.pushMatrix()
+//            GLCore.pushMatrix()
             val f1 = 1.0f + f / 5.0f
-            GLCore.translate((x + 8).toFloat(), (y + 12).toFloat(), 0.0f)
-            GLCore.scale(1.0f / f1, (f1 + 1.0f) / 2.0f, 1.0f)
-            GLCore.translate((-(x + 8)).toFloat(), (-(y + 12)).toFloat(), 0.0f)
+//            GLCore.translate((x + 8).toFloat(), (y + 12).toFloat(), 0.0f)
+//            GLCore.scale(1.0f / f1, (f1 + 1.0f) / 2.0f, 1.0f)
+//            GLCore.translate((-(x + 8)).toFloat(), (-(y + 12)).toFloat(), 0.0f)
         }
 
-        ctx.itemRenderer.renderItemAndEffectIntoGUI(player, stack, x, y)
+        ctx.itemRenderer.renderGuiItem(pose, stack, x, y)
 
-        if (f > 0.0f) GLCore.popMatrix()
+//        if (f > 0.0f) GLCore.popMatrix()
 
-        ctx.itemRenderer.renderItemOverlays(ctx.fontRenderer, stack, x, y)
+        ctx.itemRenderer.renderGuiItemDecorations(pose, ctx.fontRenderer, stack, x, y)
     }
 
     override fun draw(ctx: IHudDrawContext) {
-        if (enabled?.invoke(ctx) == false || hand == ctx.player.primaryHand) return
+        if (enabled?.invoke(ctx) == false || hand == ctx.player.mainArm) return
         super.draw(ctx)
 
         val p: ElementParent? = this.parent.get()
-        val it: ItemStack = if (hand == null) ctx.player.inventory.mainInventory[slot(ctx)]
-        else ctx.player.inventory.offHandInventory[slot(ctx)]
+        val it: ItemStack = if (hand == null) ctx.player.inventory.items[slot(ctx)]
+        else ctx.player.inventory.offhand[slot(ctx)]
 
         if (it == ItemStack.EMPTY) return
 
-        GLCore.glBlend(false)
-        GLCore.glRescaleNormal(true)
-        RenderHelper.enableGUIStandardItemLighting()
+//        GLCore.glBlend(false)
+//        GLCore.glRescaleNormal(true)
+//        RenderHelper.enableGUIStandardItemLighting()
 
         renderHotbarItem(
             (x?.invoke(ctx)?.toInt() ?: 0) + itemXoffset(ctx) + (p?.getX(ctx)?.toInt() ?: 0),
@@ -84,8 +82,8 @@ open class GLHotbarItem : GLRectangle() {
             ctx
         )
 
-        GLCore.glRescaleNormal(false)
-        RenderHelper.disableStandardItemLighting()
-        GLCore.glBlend(true)
+//        GLCore.glRescaleNormal(false)
+//        RenderHelper.disableStandardItemLighting()
+//        GLCore.glBlend(true)
     }
 }

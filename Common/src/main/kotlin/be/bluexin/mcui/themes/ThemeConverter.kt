@@ -1,6 +1,5 @@
 package be.bluexin.mcui.themes
 
-import net.minecraft.launchwrapper.Launch
 import net.minecraft.resources.ResourceLocation
 import org.apache.logging.log4j.LogManager
 import java.io.File
@@ -16,7 +15,7 @@ object ThemeConverter {
 
     @JvmStatic
     fun main(args: Array<String>) {
-        Launch.blackboard = mapOf("fml.deobfuscatedEnvironment" to true)
+//        Launch.blackboard = mapOf("fml.deobfuscatedEnvironment" to true)
         if (args.size != 2) {
             logger.error(
                 "Wrong arguments provided : {}, expected [xml theme path] [output file path]",

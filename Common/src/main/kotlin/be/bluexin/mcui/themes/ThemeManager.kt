@@ -17,34 +17,27 @@
 
 package be.bluexin.mcui.themes
 
-import be.bluexin.mcui.util.Client
-import be.bluexin.mcui.GLCore
 import be.bluexin.mcui.commands.GeneralCommands
+import be.bluexin.mcui.commands.SaouiCommand
 import be.bluexin.mcui.config.ConfigHandler
-import be.bluexin.mcui.config.OptionCore
 import be.bluexin.mcui.config.Settings
 import be.bluexin.mcui.themes.elements.Hud
-import net.minecraft.Client.mc
-import net.minecraft.client.resources.I18n
-import net.minecraft.client.resources.IResourceManager
+import be.bluexin.mcui.util.Client
+import net.minecraft.ChatFormatting
+import net.minecraft.network.chat.ClickEvent
+import net.minecraft.network.chat.Component
+import net.minecraft.network.chat.HoverEvent
+import net.minecraft.network.chat.Style
 import net.minecraft.resources.ResourceLocation
-import net.minecraft.util.text.Style
-import net.minecraft.util.text.TextComponentString
-import net.minecraft.util.text.TextComponentTranslation
-import net.minecraft.util.text.TextFormatting
-import net.minecraft.util.text.event.ClickEvent
-import net.minecraft.util.text.event.HoverEvent
-import net.minecraftforge.client.resource.IResourceType
-import net.minecraftforge.client.resource.ISelectiveResourceReloadListener
-import net.minecraftforge.client.resource.VanillaResourceType
-import java.util.function.Predicate
+import net.minecraft.server.packs.resources.ResourceManager
+import net.minecraft.server.packs.resources.ResourceManagerReloadListener
 
 /**
  * Part of saoui by Bluexin.
  *
  * @author Bluexin
  */
-object ThemeManager : ISelectiveResourceReloadListener {
+object ThemeManager : ResourceManagerReloadListener {
 
     // TODO: tests
     // TODO: theme versions
@@ -67,46 +60,48 @@ object ThemeManager : ISelectiveResourceReloadListener {
         currentTheme.type.loader().load(currentTheme)
         reportLoading()
 
-        if (!isReloading) GLCore.setFont(Minecraft.getMinecraft(), OptionCore.CUSTOM_FONT.isEnabled)
+//        if (!isReloading) GLCore.setFont(Client.mc, OptionCore.CUSTOM_FONT.isEnabled)
     }
 
-    override fun onResourceManagerReload(resourceManager: IResourceManager, types: Predicate<IResourceType>) {
-        if (types.test(VanillaResourceType.TEXTURES)) {
-            themeList = ThemeDetector.listThemes()
-            isReloading = true
-            load()
-            isReloading = false
-        }
+    // TODO: this supports async stuff now
+    override fun onResourceManagerReload(var1: ResourceManager) {
+        themeList = ThemeDetector.listThemes()
+        isReloading = true
+        load()
+        isReloading = false
     }
 
     private fun reportLoading() {
-        Client.mc.ingameGUI?.chatGUI?.let {
-            val style = Style().apply {
-                clickEvent = ClickEvent(ClickEvent.Action.RUN_COMMAND, "/saoui ${GeneralCommands.PRINT_ERRORS.getID()}")
-            }
-            TextComponentTranslation(
+        Client.mc.chatListener.let {
+            val style = Style.EMPTY
+                .withClickEvent(ClickEvent(ClickEvent.Action.RUN_COMMAND, SaouiCommand.useCommand(GeneralCommands.PRINT_ERRORS)))
+
+            Component.translatable(
                 "saoui.menu.errors",
                 AbstractThemeLoader.Reporter.errors.size,
-                TextComponentString(
-                    if (I18n.hasKey(currentTheme.nameTranslationKey)) I18n.format(currentTheme.nameTranslationKey)
-                    else currentTheme.name
+                    Component.translatableWithFallback(
+                    currentTheme.nameTranslationKey,
+                    currentTheme.name
                 ).apply {
-                    this.style = Style().setHoverEvent(
+                    this.style = Style.EMPTY.withHoverEvent(
                         HoverEvent(
                             HoverEvent.Action.SHOW_TEXT,
-                            TextComponentString(currentTheme.id.toString())
+                            Component.literal(currentTheme.id.toString())
                         )
                     )
                 }
             ).apply {
                 this.style = style
-                it.printChatMessage(this)
+                it.handleSystemMessage(this, false)
             }
-            if (AbstractThemeLoader.Reporter.errors.isNotEmpty()) TextComponentTranslation("saoui.menu.clicktoexpand").apply {
-                this.style = style.createShallowCopy()
-                    .setColor(TextFormatting.GRAY)
-                    .setItalic(true)
-                it.printChatMessage(this)
+            if (AbstractThemeLoader.Reporter.errors.isNotEmpty()) Component.translatableWithFallback(
+                "saoui.menu.clicktoexpand",
+                "(click to expand)"
+            ).apply {
+                this.style = style
+                    .withColor(ChatFormatting.GRAY)
+                    .withItalic(true)
+                it.handleSystemMessage(this, false)
             }
         }
     }
