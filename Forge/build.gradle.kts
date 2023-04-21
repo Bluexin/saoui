@@ -15,7 +15,7 @@ minecraft {
 
     if ((findProperty("forge_ats_enabled") as? String).toBoolean()) {
         accessTransformer(file("src/main/resources/META-INF/accesstransformer.cfg"))
-        logger.debug("Forge Access Transformers are enabled for this ")
+        logger.debug("Forge Access Transformers are enabled for this project")
     }
 
     runs {

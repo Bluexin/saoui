@@ -64,7 +64,7 @@ object ThemeManager : ResourceManagerReloadListener {
     }
 
     // TODO: this supports async stuff now
-    override fun onResourceManagerReload(var1: ResourceManager) {
+    override fun onResourceManagerReload(resourceManager: ResourceManager) {
         themeList = ThemeDetector.listThemes()
         isReloading = true
         load()

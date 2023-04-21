@@ -111,7 +111,7 @@ abstract class AbstractThemeLoader(protected val type: ThemeFormat) {
     private fun loadCss(location: ResourceLocation) {
         val start = System.currentTimeMillis()
 
-        Client.resourceManager.getResource(location).map { styleSheet ->
+        Client.resourceManager.getResource(location).ifPresent { styleSheet ->
             try {
                 val aCSS = CSSReader.readFromStream(
                     object : IHasInputStream {

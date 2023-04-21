@@ -18,7 +18,7 @@
 package be.bluexin.mcui
 
 import be.bluexin.mcui.util.Client
-import com.tencao.saomclib.utils.math.Vec2d
+import org.joml.Vector2d
 import com.tencao.saomclib.utils.math.vec
 import be.bluexin.mcui.themes.ThemeManager
 import be.bluexin.mcui.util.ColorUtil
@@ -114,7 +114,7 @@ object GLCore {
     }
 
     @JvmOverloads
-    fun glString(string: String, pos: Vec2d, argb: Int, shadow: Boolean = false, centered: Boolean = false) {
+    fun glString(string: String, pos: Vector2d, argb: Int, shadow: Boolean = false, centered: Boolean = false) {
         glString(string, pos.xi, pos.yi, argb, shadow, centered)
     }
 
@@ -175,10 +175,10 @@ object GLCore {
     @JvmOverloads
     fun glTexturedRectV2(
         pos: Vec3d,
-        size: Vec2d,
-        srcPos: Vec2d = Vec2d.ZERO,
-        srcSize: Vec2d = size,
-        textureSize: Vec2d = vec(256, 256)
+        size: Vector2d,
+        srcPos: Vector2d = Vector2d.ZERO,
+        srcSize: Vector2d = size,
+        textureSize: Vector2d = vec(256, 256)
     ) {
         glTexturedRectV2(
             x = pos.x, y = pos.y, z = pos.z,

@@ -17,8 +17,12 @@ pluginManagement {
         }
     }
     val kotlin_version: String by settings
+    val registration_utils_version: String by settings
     resolutionStrategy.eachPlugin {
         if (requested.id.namespace?.startsWith("org.jetbrains.kotlin") == true) useVersion(kotlin_version)
+        else when (requested.id.id) {
+            "com.matyrobbrt.mc.registrationutils" -> useVersion(registration_utils_version)
+        }
     }
 }
 

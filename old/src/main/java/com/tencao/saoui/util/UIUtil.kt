@@ -19,13 +19,13 @@ object UIUtil {
 
         when {
             singlePlayerCheck -> {
-                this.mc.displayGuiScreen(GuiMainMenu())
+                this.mc.setScreen(GuiMainMenu())
             }
             realmsCheck -> {
                 RealmsBridge().switchToRealms(GuiMainMenu())
             }
             else -> {
-                this.mc.displayGuiScreen(GuiMultiplayer(GuiMainMenu()))
+                this.mc.setScreen(GuiMultiplayer(GuiMainMenu()))
             }
         }
     }

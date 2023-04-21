@@ -59,14 +59,14 @@ class DefaultStatsProvider : IPlayerStatsProvider {
             health /= 10.0
             val healthFormated = df1.format(health)
 
-            builder.add(I18n.format("displayName") + ": $name")
-            builder.add(I18n.format("displayHpLong") + ": $healthFormated/$maxHealth")
-            builder.add(I18n.format("displayResLong") + ": $resistance")
-            builder.add(I18n.format("displaySpdLong") + ": $speedFormated")
+            builder.add(I18n.get("displayName") + ": $name")
+            builder.add(I18n.get("displayHpLong") + ": $healthFormated/$maxHealth")
+            builder.add(I18n.get("displayResLong") + ": $resistance")
+            builder.add(I18n.get("displaySpdLong") + ": $speedFormated")
             if (mount is EntityHorse) {
                 jump = mount.horseJumpStrength
                 val jumpFormated = df3.format(jump)
-                builder.add(I18n.format("displayJmpLong") + ": $jumpFormated")
+                builder.add(I18n.get("displayJmpLong") + ": $jumpFormated")
             }
         } else {
             val level = PlayerStats.instance().stats.getLevel(player)
@@ -100,12 +100,12 @@ class DefaultStatsProvider : IPlayerStatsProvider {
             val agility = attr(player.aiMoveSpeed.toDouble()) * 10
             val resistance = attr(player.totalArmorValue.toDouble())
 
-            builder.add(I18n.format("displayLvLong") + ": $level")
-            builder.add(I18n.format("displayXpLong") + ": $experience")
-            builder.add(I18n.format("displayHpLong") + ": $health/$maxHealth")
-            builder.add(I18n.format("displayStrLong") + ": $strength")
-            builder.add(I18n.format("displayDexLong") + ": $agility")
-            builder.add(I18n.format("displayResLong") + ": $resistance")
+            builder.add(I18n.get("displayLvLong") + ": $level")
+            builder.add(I18n.get("displayXpLong") + ": $experience")
+            builder.add(I18n.get("displayHpLong") + ": $health/$maxHealth")
+            builder.add(I18n.get("displayStrLong") + ": $strength")
+            builder.add(I18n.get("displayDexLong") + ": $agility")
+            builder.add(I18n.get("displayResLong") + ": $resistance")
         }
 
         return builder

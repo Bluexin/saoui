@@ -1,6 +1,7 @@
 package be.bluexin.mcui
 
 import net.minecraftforge.fml.common.Mod
+import net.minecraftforge.fml.util.ObfuscationReflectionHelper
 
 @Mod(Constants.MOD_ID)
 object MCUICore {

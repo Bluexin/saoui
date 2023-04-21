@@ -21,6 +21,7 @@ minecraft {
             }
         }
     }
+    accessWideners(file("src/main/resources/${property("mod_id")}.accesswidener"))
 }
 
 dependencies {

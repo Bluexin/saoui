@@ -44,6 +44,8 @@ loom {
             runDir = "run"
         }
     }
+
+    accessWidenerPath.set(project(":Common").file("src/main/resources/${property("mod_id")}.accesswidener"))
 }
 
 

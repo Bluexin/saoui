@@ -10,10 +10,26 @@ import org.jetbrains.kotlinx.serialization.gradle.SerializationGradleSubplugin
 import java.time.Instant
 
 plugins {
-    java
+    `java-library`
     `maven-publish`
     kotlin("jvm") apply false
     kotlin("plugin.serialization") apply false
+    id("com.matyrobbrt.mc.registrationutils")
+}
+
+registrationUtils {
+    group("$group.registration")
+    projects {
+        register("Common") {
+            type("common")
+        }
+        register("Fabric") {
+            type("fabric")
+        }
+        register("Forge") {
+            type("forge")
+        }
+    }
 }
 
 subprojects {
