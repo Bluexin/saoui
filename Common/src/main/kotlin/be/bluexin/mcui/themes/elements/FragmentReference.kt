@@ -8,6 +8,7 @@ import be.bluexin.mcui.themes.util.NamedExpressionIntermediate
 import be.bluexin.mcui.themes.util.json.NamedExpressionJsonAdapter
 import be.bluexin.mcui.themes.util.xml.NamedExpressionXmlAdapter
 import com.google.gson.annotations.JsonAdapter
+import com.mojang.blaze3d.vertex.PoseStack
 import jakarta.xml.bind.annotation.XmlAttribute
 import jakarta.xml.bind.annotation.XmlRootElement
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter
@@ -60,11 +61,11 @@ class FragmentReference : CachingElementParent() {
         return anonymous
     }
 
-    override fun draw(ctx: IHudDrawContext) {
+    override fun draw(ctx: IHudDrawContext, poseStack: PoseStack) {
         if (enabled?.invoke(ctx) == false) return
         fragment?.let {
             ctx.pushContext(variables)
-            it.draw(ctx)
+            it.draw(ctx, poseStack)
             ctx.popContext()
         }
     }

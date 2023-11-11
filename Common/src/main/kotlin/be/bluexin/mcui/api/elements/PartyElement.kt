@@ -1,27 +1,16 @@
 package be.bluexin.mcui.api.elements
 
 import be.bluexin.mcui.util.Client
-import com.tencao.saomclib.capabilities.getPartyCapability
-import com.tencao.saomclib.events.PartyEvent
-import com.tencao.saomclib.packets.party.PartyType
-import com.tencao.saomclib.packets.party.Type
-import com.tencao.saomclib.packets.party.updateServer
-import com.tencao.saomclib.party.IPartyData
-import com.tencao.saomclib.party.PlayerInfo
-import com.tencao.saomclib.party.playerInfo
 import be.bluexin.mcui.util.IconCore
-import be.bluexin.mcui.util.PlayerIcon
-import net.minecraft.client.resources.I18n
-import net.minecraft.world.entity.player.Player
-import net.minecraftforge.common.MinecraftForge
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
+import net.minecraft.client.player.LocalPlayer
+import net.minecraft.client.resources.language.I18n
 
 class PartyElement : IconLabelElement(IconCore.PARTY, I18n.get("sao.element.party")) {
 
-    val player: Player = Client.mc.player
+    val player: LocalPlayer? get() = Client.mc.player
 
     // val partyElements = mutableListOf<PTMemberElement>()
-    val partyCap by lazy { player.getPartyCapability() }
+//    val partyCap by lazy { player.getPartyCapability() }
 
     /**
      * Override the default element sequence to merge our party elements while keeping them separate.
@@ -29,7 +18,7 @@ class PartyElement : IconLabelElement(IconCore.PARTY, I18n.get("sao.element.part
     // override val elementsSequence: Sequence<NeoElement> = elements.asSequence().filter(NeoElement::listed).plus(partyElements.asSequence().filter(NeoElement::listed))
     // override val otherElementsSequence: Sequence<NeoElement> = elements.asSequence().filter { !it.listed }.plus(partyElements.asSequence().filter { !it.listed })
 
-    init {
+    /*init {
         MinecraftForge.EVENT_BUS.register(this)
         resetPartyData()
     }
@@ -37,7 +26,7 @@ class PartyElement : IconLabelElement(IconCore.PARTY, I18n.get("sao.element.part
     @SubscribeEvent
     fun partyRefresh(e: PartyEvent.Refresh) {
         resetPartyData()
-    }
+    }*/
 
     private fun resetPartyData() {
         // Only remove invalid entries, this will prevent menus
@@ -48,20 +37,20 @@ class PartyElement : IconLabelElement(IconCore.PARTY, I18n.get("sao.element.part
         }
         elements.clear()
         partyExtras()
-        elements.removeIf {
+        /*elements.removeIf {
             it is PTMemberElement && partyCap.partyData?.isMember(it.player) != true &&
                 partyCap.partyData?.isInvited(it.player) != true
-        }
+        }*/
         // elements[0].valid = !(partyCap.partyData?.isLeader(Minecraft().player) == false)
         // Don't bother with updating party functions if single player.
-        if (1 < (Client.mc.integratedServer?.currentPlayerCount ?: 2)) {
+        /*if (1 < (Client.mc.integratedServer?.currentPlayerCount ?: 2)) {
             partyList()
-        }
+        }*/
         if (!this.selected) elementsSequence.forEach { it.hide() }
     }
 
     fun partyList() {
-        val party = partyCap.partyData
+        /*val party = partyCap.partyData
 
         if (party != null) {
             party.getMembers().filter { !it.equals(player) }.forEach { ptmember ->
@@ -75,10 +64,10 @@ class PartyElement : IconLabelElement(IconCore.PARTY, I18n.get("sao.element.part
                     +partyMemberButton(party, ptmember, player, true)
                 }
             }
-        }
+        }*/
     }
 
-    fun partyMemberButton(party: IPartyData, player: PlayerInfo, ourPlayer: Player, invited: Boolean = false): CategoryButton =
+    /*fun partyMemberButton(party: IPartyData, player: PlayerInfo, ourPlayer: Player, invited: Boolean = false): CategoryButton =
         CategoryButton(PTMemberElement(player), this.tlParent) {
             +CategoryButton(IconLabelElement(IconCore.HELP, I18n.get("sao.element.inspect")), this.tlParent)
             if (party.leaderInfo.equals(ourPlayer)) {
@@ -92,10 +81,10 @@ class PartyElement : IconLabelElement(IconCore.PARTY, I18n.get("sao.element.part
                     }
                 }
             }
-        }
+        }*/
 
     fun partyExtras() {
-        val party = partyCap.partyData
+        /*val party = partyCap.partyData
 
         if ((party != null && party.isLeader(player)) || party == null) +CategoryButton(IconLabelElement(IconCore.INVITE, I18n.get("sao.party.invite")), this.tlParent) {
             Client.mc.connection?.playerInfoMap?.filter { it.gameProfile.id != player.uniqueID }?.forEach {
@@ -121,6 +110,6 @@ class PartyElement : IconLabelElement(IconCore.PARTY, I18n.get("sao.element.part
                     true
                 }
             }
-        }
+        }*/
     }
 }

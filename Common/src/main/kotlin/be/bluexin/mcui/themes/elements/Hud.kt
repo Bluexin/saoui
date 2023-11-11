@@ -18,6 +18,7 @@
 package be.bluexin.mcui.themes.elements
 
 import be.bluexin.mcui.api.themes.IHudDrawContext
+import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.resources.ResourceLocation
 import jakarta.xml.bind.annotation.XmlRootElement
 
@@ -42,7 +43,7 @@ open class Hud protected constructor(override val name: String = "MenuDefs") : E
 
     fun setup(fragments: Map<ResourceLocation, () -> Fragment>) = this.parts.values.forEach { it.setup(this, fragments) }
 
-    fun draw(key: HudPartType, ctx: IHudDrawContext) {
-        this[key]?.draw(ctx)
+    fun draw(key: HudPartType, ctx: IHudDrawContext, poseStack: PoseStack) {
+        this[key]?.draw(ctx, poseStack)
     }
 }

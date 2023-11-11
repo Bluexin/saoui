@@ -22,10 +22,9 @@ import be.bluexin.mcui.api.elements.animator.Easing
 import be.bluexin.mcui.screens.CoreGUI
 import be.bluexin.mcui.screens.MouseButton
 import be.bluexin.mcui.screens.unaryPlus
-import be.bluexin.mcui.util.BoundingBox2D
-import be.bluexin.mcui.util.contains
-import be.bluexin.mcui.util.plus
-import org.joml.Vector2d
+import be.bluexin.mcui.util.math.BoundingBox2D
+import be.bluexin.mcui.util.math.Vec2d
+import com.mojang.blaze3d.vertex.PoseStack
 
 /**
  * Part of saoui by Bluexin, released under GNU GPLv3.
@@ -53,13 +52,13 @@ interface INeoParent {
         get() {
             return tlParent as? CoreGUI<*>
         }
-    var pos: Vector2d
-    var destination: Vector2d
+    var pos: Vec2d
+    var destination: Vec2d
     var scroll
         get() = 0
         set(_) = Unit
     var isOpen: Boolean
-    fun move(delta: Vector2d) {
+    fun move(delta: Vec2d) {
         try {
             CoreGUI.animator.removeAnimationsFor(this)
         } catch (e: ConcurrentModificationException) {
@@ -74,8 +73,8 @@ interface INeoParent {
         }
     }
 
-    fun mouseClicked(pos: Vector2d, mouseButton: MouseButton) = false
-    fun keyTyped(typedChar: Char, keyCode: Int)
+    fun mouseClicked(pos: Vec2d, mouseButton: MouseButton) = false
+    fun keyReleased(keyCode: Int, scanCode: Int, modifiers: Int): Boolean
     fun isFocus(): Boolean {
         return isOpen || parent?.isOpen == true || (controllingParent as? CategoryButton)?.elements?.none { it.isOpen } ?: (controllingParent as? CoreGUI<*>)?.elements?.none { it.isOpen } ?: parent?.isOpen ?: true
     }
@@ -109,14 +108,14 @@ interface NeoElement : INeoParent {
         get() = 1f
         set(_) = Unit
     val scale
-        get() = Vector2d(1.0)
+        get() = Vec2d(1.0)
     val canDraw: Boolean
-        get() = opacity >= 0.03 || scale != Vector2d()
+        get() = opacity >= 0.03 || scale != Vec2d.ZERO
 
-    fun drawBackground(mouse: Vector2d, partialTicks: Float)
-    fun draw(mouse: Vector2d, partialTicks: Float)
-    fun drawForeground(mouse: Vector2d, partialTicks: Float)
-    operator fun contains(pos: Vector2d) = pos in boundingBox
+    fun drawBackground(poseStack: PoseStack, mouse: Vec2d, partialTicks: Float)
+    fun draw(poseStack: PoseStack, mouse: Vec2d, partialTicks: Float)
+    fun drawForeground(poseStack: PoseStack, mouse: Vec2d, partialTicks: Float)
+    operator fun contains(pos: Vec2d) = pos in boundingBox
 
     fun init() {}
     fun hide() = Unit
@@ -165,11 +164,11 @@ interface NeoParent : NeoElement {
                 val bb1 = elements[0].idealBoundingBox
                 val bbNew = element.idealBoundingBox
                 if (bb1.widthI() >= bbNew.widthI()) {
-                    element.idealBoundingBox = BoundingBox2D(bbNew.min, vec(bb1.width(), bbNew.height()))
+                    element.idealBoundingBox = BoundingBox2D(bbNew.min, Vec2d(bb1.width(), bbNew.height()))
                 } else {
                     elementsSequence.forEach {
                         val bb = it.idealBoundingBox
-                        it.idealBoundingBox = BoundingBox2D(bb.min, vec(bbNew.width(), bb.height()))
+                        it.idealBoundingBox = BoundingBox2D(bb.min, Vec2d(bbNew.width(), bb.height()))
                     }
                     element.idealBoundingBox = bbNew
                 }
@@ -184,7 +183,7 @@ interface NeoParent : NeoElement {
         this@NeoParent += this
     }
 
-    override operator fun contains(pos: Vector2d) = super.contains(pos) /*||
+    override operator fun contains(pos: Vec2d) = super.contains(pos) /*||
             with(pos + vec(childrenXOffset, childrenYOffset)) {
                 var npos = this
                 elementsSequence.filter(NeoElement::visible).any {

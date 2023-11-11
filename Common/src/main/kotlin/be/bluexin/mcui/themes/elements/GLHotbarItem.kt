@@ -17,8 +17,10 @@
 
 package be.bluexin.mcui.themes.elements
 
+import be.bluexin.mcui.GLCore
 import be.bluexin.mcui.api.themes.IHudDrawContext
 import be.bluexin.mcui.themes.util.CInt
+import com.mojang.blaze3d.vertex.PoseStack
 import jakarta.xml.bind.annotation.XmlRootElement
 import net.minecraft.world.entity.HumanoidArm
 import net.minecraft.world.entity.player.Player
@@ -40,28 +42,36 @@ open class GLHotbarItem : GLRectangle() {
     /*
     From net.minecraft.client.gui.GuiIngame
      */
-    private fun renderHotbarItem(x: Int, y: Int, partialTicks: Float, player: Player, stack: ItemStack, ctx: IHudDrawContext) {
+    private fun renderHotbarItem(
+        x: Int,
+        y: Int,
+        partialTicks: Float,
+        player: Player,
+        stack: ItemStack,
+        ctx: IHudDrawContext,
+        poseStack: PoseStack
+    ) {
         if (stack.isEmpty) return
         val f = stack.useDuration - partialTicks
 
         if (f > 0.0f) {
-//            GLCore.pushMatrix()
+            poseStack.pushPose()
             val f1 = 1.0f + f / 5.0f
-//            GLCore.translate((x + 8).toFloat(), (y + 12).toFloat(), 0.0f)
-//            GLCore.scale(1.0f / f1, (f1 + 1.0f) / 2.0f, 1.0f)
-//            GLCore.translate((-(x + 8)).toFloat(), (-(y + 12)).toFloat(), 0.0f)
+            poseStack.translate((x + 8).toFloat(), (y + 12).toFloat(), 0.0f)
+            poseStack.scale(1.0f / f1, (f1 + 1.0f) / 2.0f, 1.0f)
+            poseStack.translate((-(x + 8)).toFloat(), (-(y + 12)).toFloat(), 0.0f)
         }
 
-        ctx.itemRenderer.renderGuiItem(pose, stack, x, y)
+        ctx.itemRenderer.renderGuiItem(poseStack, stack, x, y)
 
-//        if (f > 0.0f) GLCore.popMatrix()
+        if (f > 0.0f) poseStack.popPose()
 
-        ctx.itemRenderer.renderGuiItemDecorations(pose, ctx.fontRenderer, stack, x, y)
+        ctx.itemRenderer.renderGuiItemDecorations(poseStack, ctx.fontRenderer, stack, x, y)
     }
 
-    override fun draw(ctx: IHudDrawContext) {
+    override fun draw(ctx: IHudDrawContext, poseStack: PoseStack) {
         if (enabled?.invoke(ctx) == false || hand == ctx.player.mainArm) return
-        super.draw(ctx)
+        super.draw(ctx, poseStack)
 
         val p: ElementParent? = this.parent.get()
         val it: ItemStack = if (hand == null) ctx.player.inventory.items[slot(ctx)]
@@ -79,7 +89,8 @@ open class GLHotbarItem : GLRectangle() {
             ctx.partialTicks,
             ctx.player,
             it,
-            ctx
+            ctx,
+            poseStack
         )
 
 //        GLCore.glRescaleNormal(false)

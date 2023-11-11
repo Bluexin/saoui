@@ -5,9 +5,8 @@ package be.bluexin.mcui.api.elements.animator.internal
  * This code is covered under GNU Lesser General Public License v3.0
  */
 
-import org.joml.Vector2d
-import com.tencao.saomclib.utils.math.vec
-import net.minecraft.util.math.Vec3d
+import be.bluexin.mcui.util.math.*
+import org.joml.*
 
 /**
  * TODO: Document file VecMutators
@@ -22,24 +21,24 @@ object VecMutators {
 
     init {
 
-        //region Vector2d
+        //region Vec2d
         ImmutableFieldMutatorHandler.registerProvider(
-            Vector2d::class.java,
-            object : ImmutableFieldMutatorProvider<Vector2d> {
-                override fun getMutatorForImmutableField(name: String): ImmutableFieldMutator<Vector2d>? {
+            Vec2d::class.java,
+            object : ImmutableFieldMutatorProvider<Vec2d> {
+                override fun getMutatorForImmutableField(name: String): ImmutableFieldMutator<Vec2d>? {
                     when (name) {
                         "x" -> {
-                            return object : ImmutableFieldMutator<Vector2d> {
-                                override fun mutate(target: Vector2d, value: Any?): Vector2d {
-                                    value ?: throw IllegalArgumentException("Cannot set Vector2d.x to null")
+                            return object : ImmutableFieldMutator<Vec2d> {
+                                override fun mutate(target: Vec2d, value: Any?): Vec2d {
+                                    value ?: throw IllegalArgumentException("Cannot set Vec2d.x to null")
                                     return target.withX(doubleFrom(value))
                                 }
                             }
                         }
                         "y" -> {
-                            return object : ImmutableFieldMutator<Vector2d> {
-                                override fun mutate(target: Vector2d, value: Any?): Vector2d {
-                                    value ?: throw IllegalArgumentException("Cannot set Vector2d.y to null")
+                            return object : ImmutableFieldMutator<Vec2d> {
+                                override fun mutate(target: Vec2d, value: Any?): Vec2d {
+                                    value ?: throw IllegalArgumentException("Cannot set Vec2d.y to null")
                                     return target.withY(doubleFrom(value))
                                 }
                             }
@@ -51,32 +50,32 @@ object VecMutators {
         )
         //endregion
 
-        //region Vec3d
+        //region Vector3d
         ImmutableFieldMutatorHandler.registerProvider(
-            Vec3d::class.java,
-            object : ImmutableFieldMutatorProvider<Vec3d> {
-                override fun getMutatorForImmutableField(name: String): ImmutableFieldMutator<Vec3d>? {
+            Vector3dc::class.java,
+            object : ImmutableFieldMutatorProvider<Vector3dc> {
+                override fun getMutatorForImmutableField(name: String): ImmutableFieldMutator<Vector3dc>? {
                     when (name) {
                         "x" -> {
-                            return object : ImmutableFieldMutator<Vec3d> {
-                                override fun mutate(target: Vec3d, value: Any?): Vec3d {
-                                    value ?: throw IllegalArgumentException("Cannot set Vec3d.x to null")
+                            return object : ImmutableFieldMutator<Vector3dc> {
+                                override fun mutate(target: Vector3dc, value: Any?): Vector3dc {
+                                    value ?: throw IllegalArgumentException("Cannot set Vector3d.x to null")
                                     return target.withX(doubleFrom(value))
                                 }
                             }
                         }
                         "y" -> {
-                            return object : ImmutableFieldMutator<Vec3d> {
-                                override fun mutate(target: Vec3d, value: Any?): Vec3d {
-                                    value ?: throw IllegalArgumentException("Cannot set Vec3d.y to null")
+                            return object : ImmutableFieldMutator<Vector3dc> {
+                                override fun mutate(target: Vector3dc, value: Any?): Vector3dc {
+                                    value ?: throw IllegalArgumentException("Cannot set Vector3d.y to null")
                                     return target.withX(doubleFrom(value))
                                 }
                             }
                         }
                         "z" -> {
-                            return object : ImmutableFieldMutator<Vec3d> {
-                                override fun mutate(target: Vec3d, value: Any?): Vec3d {
-                                    value ?: throw IllegalArgumentException("Cannot set Vec3d.z to null")
+                            return object : ImmutableFieldMutator<Vector3dc> {
+                                override fun mutate(target: Vector3dc, value: Any?): Vector3dc {
+                                    value ?: throw IllegalArgumentException("Cannot set Vector3d.z to null")
                                     return target.withZ(doubleFrom(value))
                                 }
                             }
@@ -90,52 +89,66 @@ object VecMutators {
     }
 }
 
-fun Vector2d.withX(other: Double) = vec(other, y)
-fun Vector2d.withY(other: Double) = vec(x, other)
+fun Vec2d.withX(other: Double) = vec(other, y)
+fun Vec2d.withY(other: Double) = vec(x, other)
 
-operator fun Vec3d.times(other: Vec3d): Vec3d = vec(x * other.x, y * other.y, z * other.z)
-operator fun Vec3d.times(other: Double): Vec3d = scale(other)
-operator fun Vec3d.times(other: Float): Vec3d = this * other.toDouble()
-operator fun Vec3d.times(other: Int): Vec3d = this * other.toDouble()
+operator fun Vector3dc.times(other: Vector3dc): Vector3d = mul(other, Vector3d())
+operator fun Vector3dc.times(other: Double): Vector3d = mul(other, Vector3d())
+operator fun Vector3dc.times(other: Float): Vector3d = this * other.toDouble()
+operator fun Vector3dc.times(other: Int): Vector3d = this * other.toDouble()
 
-operator fun Vec3d.div(other: Vec3d) = vec(x / other.x, y / other.y, z / other.z)
-operator fun Vec3d.div(other: Double): Vec3d = this * (1 / other)
-operator fun Vec3d.div(other: Float): Vec3d = this / other.toDouble()
-operator fun Vec3d.div(other: Int): Vec3d = this / other.toDouble()
+operator fun Vector3dc.div(other: Vector3dc) = div(other, Vector3d())
+operator fun Vector3dc.div(other: Double): Vector3d = div(other, Vector3d())
+operator fun Vector3dc.div(other: Float): Vector3d = this / other.toDouble()
+operator fun Vector3dc.div(other: Int): Vector3d = this / other.toDouble()
 
-operator fun Vec3d.plus(other: Vec3d): Vec3d = add(other)
-operator fun Vec3d.minus(other: Vec3d): Vec3d = subtract(other)
-operator fun Vec3d.unaryMinus(): Vec3d = this * -1.0
+operator fun Vector3dc.plus(other: Vector3dc): Vector3d = add(other, Vector3d())
+operator fun Vector3dc.minus(other: Vector3dc): Vector3d = sub(other, Vector3d())
+operator fun Vector3dc.unaryMinus(): Vector3d = negate(Vector3d())
 
-infix fun Vec3d.dot(other: Vec3d) = dotProduct(other)
+operator fun Vector2dc.times(other: Vector2dc): Vector2d = mul(other, Vector2d())
+operator fun Vector2dc.times(other: Double): Vector2d = mul(other, Vector2d())
+operator fun Vector2dc.times(other: Float): Vector2d = this * other.toDouble()
+operator fun Vector2dc.times(other: Int): Vector2d = this * other.toDouble()
 
-infix fun Vec3d.cross(other: Vec3d): Vec3d = crossProduct(other)
+operator fun Vector2dc.div(other: Vector2dc) = div(other, Vector2d())
+operator fun Vector2dc.div(other: Double): Vector2d = div(other, Vector2d())
+operator fun Vector2dc.div(other: Float): Vector2d = this / other.toDouble()
+operator fun Vector2dc.div(other: Int): Vector2d = this / other.toDouble()
 
-infix fun Vec3d.angle(other: Vec3d) = kotlin.math.acos((this dot other) / (lengthVector() * other.lengthVector()))
+operator fun Vector2dc.plus(other: Vector2dc): Vector2d = add(other, Vector2d())
+operator fun Vector2dc.minus(other: Vector2dc): Vector2d = sub(other, Vector2d())
+operator fun Vector2dc.unaryMinus(): Vector2dc = negate(Vector2d())
 
-fun Vec3d.withX(other: Double) = vec(other, y, z)
-fun Vec3d.withY(other: Double) = vec(x, other, z)
-fun Vec3d.withZ(other: Double) = vec(x, y, other)
+infix fun Vector3d.dot(other: Vector3d) = dot(other)
 
-fun Vec3d.withX(other: Float) = withX(other.toDouble())
-fun Vec3d.withY(other: Float) = withY(other.toDouble())
-fun Vec3d.withZ(other: Float) = withZ(other.toDouble())
+infix fun Vector3d.cross(other: Vector3d): Vector3d = cross(other)
 
-fun Vec3d.withX(other: Int) = withX(other.toDouble())
-fun Vec3d.withY(other: Int) = withY(other.toDouble())
-fun Vec3d.withZ(other: Int) = withZ(other.toDouble())
+infix fun Vector3d.angle(other: Vector3d) = angle(other)
 
-val Vec3d.crossMatrix get() = javax.vecmath.Matrix3d(
+fun Vector3dc.withX(other: Double) = vec(other, y, z)
+fun Vector3dc.withY(other: Double) = vec(x, other, z)
+fun Vector3dc.withZ(other: Double) = vec(x, y, other)
+
+fun Vector3dc.withX(other: Float) = withX(other.toDouble())
+fun Vector3dc.withY(other: Float) = withY(other.toDouble())
+fun Vector3dc.withZ(other: Float) = withZ(other.toDouble())
+
+fun Vector3dc.withX(other: Int) = withX(other.toDouble())
+fun Vector3dc.withY(other: Int) = withY(other.toDouble())
+fun Vector3dc.withZ(other: Int) = withZ(other.toDouble())
+
+val Vector3dc.crossMatrix get() = Matrix3d(
     0.0, -z, y,
     z, 0.0, -x,
     -y, x, 0.0
 )
-val Vec3d.tensorMatrix get() = javax.vecmath.Matrix3d(
+val Vector3d.tensorMatrix get() = Matrix3d(
     x * x, x * y, x * z,
     y * x, y * y, y * z,
     z * x, z * y, z * z
 )
 
-operator fun Vec3d.component1() = x
-operator fun Vec3d.component2() = y
-operator fun Vec3d.component3() = z
+operator fun Vector3d.component1() = x
+operator fun Vector3d.component2() = y
+operator fun Vector3d.component3() = z

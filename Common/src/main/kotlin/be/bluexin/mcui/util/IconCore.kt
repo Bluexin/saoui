@@ -18,14 +18,20 @@
 package be.bluexin.mcui.util
 
 import be.bluexin.mcui.api.screens.IIcon
+import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.resources.ResourceLocation
 import java.util.*
 
 enum class IconCore : IIcon {
 
     NONE {
-        override fun glDraw(x: Int, y: Int, z: Float) = Unit
-        override fun glDrawUnsafe(x: Int, y: Int) = Unit
+        override fun glDraw(
+            x: Int,
+            y: Int,
+            z: Float,
+            poseStack: PoseStack
+        ) = Unit
+        override fun glDrawUnsafe(x: Int, y: Int, poseStack: PoseStack) = Unit
         override fun getRL(): ResourceLocation? = null
     },
     OPTION,
@@ -56,7 +62,7 @@ enum class IconCore : IIcon {
     SPRINTING,
     SNEAKING;
 
-    override fun glDraw(x: Int, y: Int, z: Float) {
+    override fun glDraw(x: Int, y: Int, z: Float, poseStack: PoseStack) {
         // GLCore.color(1f, 1f, 1f, 1f)
 //        GLCore.glBlend(true)
 //        GLCore.glBindTexture(rl)
@@ -64,7 +70,7 @@ enum class IconCore : IIcon {
 //        GLCore.glBlend(false)
     }
 
-    override fun glDrawUnsafe(x: Int, y: Int) {
+    override fun glDrawUnsafe(x: Int, y: Int, poseStack: PoseStack) {
 //        glTexturedRectV2(x.toDouble(), y.toDouble(), width = 16.0, height = 16.0, srcX = 0.0, srcY = 0.0, srcWidth = 256.0, srcHeight = 256.0)
     }
 

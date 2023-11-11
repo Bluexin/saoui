@@ -1,24 +1,19 @@
 package be.bluexin.mcui.api.elements.registry
 
-import be.bluexin.mcui.SAOCore
 import be.bluexin.mcui.api.elements.*
-import be.bluexin.mcui.api.events.MenuBuildingEvent
 import be.bluexin.mcui.api.items.IItemFilter
 import be.bluexin.mcui.api.items.ItemFilterRegister
 import be.bluexin.mcui.api.screens.IIcon
 import be.bluexin.mcui.api.scripting.JNLua
 import be.bluexin.mcui.config.OptionCore
-import be.bluexin.mcui.events.EventCore
 import be.bluexin.mcui.screens.menus.IngameMenu
 import be.bluexin.mcui.screens.util.PopupYesNo
 import be.bluexin.mcui.screens.util.itemList
-import be.bluexin.mcui.util.AdvancementUtil
 import be.bluexin.mcui.util.Client
 import be.bluexin.mcui.util.IconCore
-import com.tencao.saomclib.utils.math.vec
-import net.minecraft.client.gui.GuiIngameMenu
-import net.minecraft.client.gui.GuiOptions
-import net.minecraft.client.multiplayer.ClientAdvancements
+import be.bluexin.mcui.util.math.vec
+import net.minecraft.client.gui.screens.OptionsScreen
+import net.minecraft.client.gui.screens.PauseScreen
 import net.minecraft.client.resources.language.I18n
 import net.minecraft.network.chat.Component
 import net.minecraft.server.packs.resources.ResourceManager
@@ -39,9 +34,9 @@ object ElementRegistry : ResourceManagerReloadListener {
 
     fun initRegistry() {
         registeredElements.clear()
-        val event = MenuBuildingEvent(JNLua.loadIngameMenu())
+//        val event = MenuBuildingEvent(JNLua.loadIngameMenu())
 //        MinecraftForge.EVENT_BUS.post(event)
-        registeredElements[Type.INGAMEMENU] = event.elements
+//        registeredElements[Type.INGAMEMENU] = event.elements
     }
 
     fun getDefaultElements(): MutableList<NeoElement> {
@@ -109,10 +104,13 @@ object ElementRegistry : ResourceManagerReloadListener {
             tlCategory(IconCore.NAVIGATION, index++) {
                 setWip()
                 category(IconCore.QUEST, I18n.get("sao.element.quest")) {
-                    AdvancementUtil.getCategories().forEach {
+                    /*AdvancementUtil.getCategories().forEach {
                         advancementCategory(it)
+                    }*/
+                    +IconLabelElement(IconCore.CANCEL, "Not yet implemented").apply {
+                        disabled = true
                     }
-                    Client.mc.player.connection.advancements
+//                    Client.mc.player.connection.advancements
                 }
                 recipes()
             },
@@ -120,7 +118,7 @@ object ElementRegistry : ResourceManagerReloadListener {
                 category(IconCore.OPTION, I18n.get("sao.element.options")) {
                     category(IconCore.OPTION, I18n.get("guiOptions")) {
                         onClick { _, _ ->
-                            Client.mc.setScreen(GuiOptions(controllingGUI, EventCore.mc.gameSettings))
+                            Client.mc.setScreen(OptionsScreen(controllingGUI!!, Client.mc.options))
                             true
                         }
                     }
@@ -130,7 +128,7 @@ object ElementRegistry : ResourceManagerReloadListener {
                 }
                 category(IconCore.HELP, I18n.get("sao.element.menu")) {
                     onClick { _, _ ->
-                        Client.mc.setScreen(GuiIngameMenu())
+                        Client.mc.setScreen(PauseScreen(true))
                         true
                     }
                 }
@@ -156,7 +154,7 @@ object ElementRegistry : ResourceManagerReloadListener {
                 override fun show() {
                     super.show()
                     this.elements.clear()
-                    itemList(Client.mc.player.inventoryContainer, filter)
+                    itemList(Client.mc.player!!.inventoryMenu, filter)
                 }
 
                 override fun hide() {

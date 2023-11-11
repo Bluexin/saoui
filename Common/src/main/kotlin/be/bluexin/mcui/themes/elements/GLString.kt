@@ -19,6 +19,7 @@ package be.bluexin.mcui.themes.elements
 
 import be.bluexin.mcui.api.themes.IHudDrawContext
 import be.bluexin.mcui.themes.util.CString
+import com.mojang.blaze3d.vertex.PoseStack
 import jakarta.xml.bind.annotation.XmlRootElement
 
 /**
@@ -32,7 +33,7 @@ open class GLString : GLRectangle() {
     protected lateinit var text: CString
     private val shadow = true
 
-    override fun draw(ctx: IHudDrawContext) {
+    override fun draw(ctx: IHudDrawContext, poseStack: PoseStack) {
         if (enabled?.invoke(ctx) == false) return
         val p = this.parent.get()
         val x = (this.x?.invoke(ctx) ?: 0.0) + (p?.getX(ctx) ?: 0.0)

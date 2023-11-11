@@ -1,4 +1,5 @@
 package be.bluexin.mcui.screens.menus
+/*
 
 import be.bluexin.mcui.themes.AbstractThemeLoader
 import be.bluexin.mcui.themes.ThemeManager
@@ -41,3 +42,4 @@ class MainMenuGui : GuiMainMenu() {
         if (button.id == 0x03001) errorDetailsLabel.visible = !errorDetailsLabel.visible
     }
 }
+*/

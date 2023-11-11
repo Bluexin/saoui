@@ -18,6 +18,7 @@
 package be.bluexin.mcui.effects
 
 import be.bluexin.mcui.api.screens.IIcon
+import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.effect.MobEffects
 import net.minecraft.world.entity.LivingEntity
@@ -59,7 +60,7 @@ enum class StatusEffects : IIcon {
         get() = TODO("Not yet implemented") //StringNames.statusIcons.append("${name.lowercase(Locale.getDefault())}.png")
 
     @Suppress("unused")
-    override fun glDraw(x: Int, y: Int, z: Float) {
+    override fun glDraw(x: Int, y: Int, z: Float, poseStack: PoseStack) {
 //        GLCore.glBindTexture(icons)
 //        GLCore.glTexturedRectV2(x.toDouble(), y.toDouble(), z.toDouble(), 16.0, 16.0, srcWidth = 16.0, srcHeight = 16.0, textureW = 16, textureH = 16)
     }

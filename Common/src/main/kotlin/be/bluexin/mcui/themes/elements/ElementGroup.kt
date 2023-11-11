@@ -17,9 +17,11 @@
 
 package be.bluexin.mcui.themes.elements
 
+import be.bluexin.mcui.Constants
+import be.bluexin.mcui.GLCore
 import be.bluexin.mcui.api.themes.IHudDrawContext
-import be.bluexin.mcui.themes.elements.*
 import com.google.gson.annotations.SerializedName
+import com.mojang.blaze3d.vertex.PoseStack
 import jakarta.xml.bind.annotation.*
 import net.minecraft.resources.ResourceLocation
 
@@ -42,14 +44,14 @@ open class ElementGroup : CachingElementParent() {
 
     private var texture: String? = null
 
-    override fun draw(ctx: IHudDrawContext) {
-//        GLCore.glBlend(true)
-//        GLCore.color(1f, 1f, 1f, 1f)
+    override fun draw(ctx: IHudDrawContext, poseStack: PoseStack) {
+        GLCore.glBlend(true)
+        GLCore.color(1f, 1f, 1f, 1f)
 
         if (enabled?.invoke(ctx) == false) return
-//        if (this.rl != null) GLCore.glBindTexture(this.rl!!)
+        if (this.rl != null) GLCore.glBindTexture(this.rl!!)
 
-        this.elements.forEach { it.draw(ctx) }
+        this.elements.forEach { it.draw(ctx, poseStack) }
     }
 
     override fun setup(parent: ElementParent, fragments: Map<ResourceLocation, () -> Fragment>): Boolean {
@@ -57,7 +59,7 @@ open class ElementGroup : CachingElementParent() {
         this.rl = this.texture?.let(::ResourceLocation)
         var anonymous = 0
         this.elements.forEach { if (it.name == DEFAULT_NAME) ++anonymous; it.setup(this, fragments) }
-//        if (anonymous > 0) Constants.LOG.info("Set up $anonymous anonymous elements in $name.")
+        if (anonymous > 0) Constants.LOG.info("Set up $anonymous anonymous elements in $name.")
         return res
     }
 }

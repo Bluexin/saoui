@@ -17,8 +17,10 @@
 
 package be.bluexin.mcui.themes.elements
 
+import be.bluexin.mcui.GLCore
 import be.bluexin.mcui.api.themes.IHudDrawContext
 import be.bluexin.mcui.themes.util.CUnit
+import com.mojang.blaze3d.vertex.PoseStack
 import jakarta.xml.bind.annotation.XmlRootElement
 import net.minecraft.resources.ResourceLocation
 
@@ -41,14 +43,14 @@ class RawElement : Element() {
         return anonymous
     }
 
-    override fun draw(ctx: IHudDrawContext) {
-//        GLCore.pushMatrix()
+    override fun draw(ctx: IHudDrawContext, poseStack: PoseStack) {
+        poseStack.pushPose()
         val p: ElementParent? = this.parent.get()
         val x = (this.x?.invoke(ctx) ?: 0.0) + (p?.getX(ctx) ?: 0.0)
         val y = (this.y?.invoke(ctx) ?: 0.0) + (p?.getY(ctx) ?: 0.0)
         val z = (this.z?.invoke(ctx) ?: 0.0) + (p?.getZ(ctx) ?: 0.0) + ctx.z
-//        GLCore.translate(x, y, z)
+        poseStack.translate(x, y, z)
         expression(ctx)
-//        GLCore.popMatrix()
+        poseStack.popPose()
     }
 }

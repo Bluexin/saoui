@@ -17,38 +17,28 @@
 
 package be.bluexin.mcui.api.elements
 
-import be.bluexin.mcui.util.Client
-import com.tencao.saomclib.utils.delegate
-import org.joml.Vector2d
-import com.tencao.saomclib.utils.math.vec
-import be.bluexin.mcui.SAOCore
-import be.bluexin.mcui.SoundCore
 import be.bluexin.mcui.api.screens.IIcon
 import be.bluexin.mcui.api.scripting.catching
 import be.bluexin.mcui.config.OptionCore
-import be.bluexin.mcui.play
 import be.bluexin.mcui.screens.CoreGUI
 import be.bluexin.mcui.screens.MouseButton
 import be.bluexin.mcui.screens.menus.IngameMenu
 import be.bluexin.mcui.screens.unaryPlus
 import be.bluexin.mcui.screens.util.PopupAdvancement
-import be.bluexin.mcui.screens.util.toIcon
 import be.bluexin.mcui.themes.ThemeManager
 import be.bluexin.mcui.themes.ThemeMetadata
-import be.bluexin.mcui.util.AdvancementUtil
+import be.bluexin.mcui.util.Client
 import be.bluexin.mcui.util.IconCore
-import be.bluexin.mcui.util.getProgress
-import be.bluexin.mcui.util.getRecipes
+import be.bluexin.mcui.util.delegate
+import be.bluexin.mcui.util.math.Vec2d
+import be.bluexin.mcui.util.math.vec
+import com.mojang.blaze3d.platform.InputConstants
+import com.mojang.blaze3d.vertex.PoseStack
 import li.cil.repack.com.naef.jnlua.LuaValueProxy
 import net.minecraft.advancements.Advancement
-import net.minecraft.client.resources.I18n.get
 import net.minecraft.client.resources.language.I18n
-import net.minecraft.core.registries.Registries
-import net.minecraft.world.entity.player.Player
 import net.minecraft.resources.ResourceLocation
-import net.minecraft.world.item.Items
-import net.minecraftforge.fml.common.registry.ForgeRegistries
-import org.lwjgl.input.Keyboard
+import net.minecraft.world.entity.player.Player
 import java.lang.ref.WeakReference
 import kotlin.math.max
 import kotlin.math.min
@@ -89,10 +79,10 @@ open class CategoryButton(
         delegate.onClick { _, _ ->
             if (elements.isNotEmpty() && !selected && !disabled) {
                 open()
-                SoundCore.MENU_POPUP.play()
+//                SoundCore.MENU_POPUP.play()
             } else if (selected) {
                 close()
-                SoundCore.DIALOG_CLOSE.play()
+//                SoundCore.DIALOG_CLOSE.play()
             }
 
             true
@@ -107,7 +97,7 @@ open class CategoryButton(
         init?.invoke(this)
     }
 
-    override fun onClick(body: (Vector2d, MouseButton) -> Boolean) = delegate.onClick(body)
+    override fun onClick(body: (Vec2d, MouseButton) -> Boolean) = delegate.onClick(body)
 
     @JvmName("onClick")
     @Suppress("unused") // for lua
@@ -127,43 +117,61 @@ open class CategoryButton(
         }
     }
 
-    override fun onClickOut(body: (Vector2d, MouseButton) -> Unit) = delegate.onClickOut(body)
+    override fun onClickOut(body: (Vec2d, MouseButton) -> Unit) = delegate.onClickOut(body)
     override fun hide() = delegate.hide()
     override fun show() = delegate.show()
-    override fun drawBackground(mouse: Vector2d, partialTicks: Float) = delegate.drawBackground(mouse, partialTicks)
-    override fun draw(mouse: Vector2d, partialTicks: Float) = delegate.draw(mouse, partialTicks)
-    override fun drawForeground(mouse: Vector2d, partialTicks: Float) = delegate.drawForeground(mouse, partialTicks)
-    override fun contains(pos: Vector2d) = delegate.contains(pos)
+    override fun drawBackground(poseStack: PoseStack, mouse: Vec2d, partialTicks: Float) = delegate.drawBackground(
+        poseStack,
+        mouse,
+        partialTicks
+    )
+    override fun draw(poseStack: PoseStack, mouse: Vec2d, partialTicks: Float) = delegate.draw(
+        poseStack, mouse,
+        partialTicks
+    )
+    override fun drawForeground(poseStack: PoseStack, mouse: Vec2d, partialTicks: Float) = delegate.drawForeground(
+        poseStack, mouse,
+        partialTicks
+    )
+    override fun contains(pos: Vec2d) = delegate.contains(pos)
     override fun update() {
         super.update()
         delegate.update()
     }
 
-    override fun keyTyped(typedChar: Char, keyCode: Int) {
-        elementsSequence.firstOrNull { it.isOpen && it.selected }?.keyTyped(typedChar, keyCode) ?: let {
-            if (keyCode == Client.mc.gameSettings.keyBindForward.keyCode || keyCode == Keyboard.KEY_UP) {
+    override fun keyReleased(keyCode: Int, scanCode: Int, modifiers: Int): Boolean {
+        return elementsSequence.firstOrNull { it.isOpen && it.selected }?.keyReleased(keyCode, scanCode, modifiers) ?: let {
+            if (Client.mc.options.keyUp.matches(keyCode, -1) || keyCode == InputConstants.KEY_UP) {
                 val selected = elementsSequence.firstOrNull { it.selected }
                 var index = elements.indexOf(selected)
                 if (index == -1) index = 0
                 else if (--index < 0) index = elements.size.minus(1)
                 selected?.selected = false
                 elements[index].selected = true
-            } else if (keyCode == Client.mc.gameSettings.keyBindBack.keyCode || keyCode == Keyboard.KEY_DOWN) {
+                true
+            } else if (Client.mc.options.keyDown.matches(keyCode, -1) || keyCode == InputConstants.KEY_DOWN) {
                 val selected = elementsSequence.firstOrNull { it.selected }
                 var index = elements.indexOf(selected)
                 if (++index >= elements.size) index = 0
                 selected?.selected = false
                 elements[index].selected = true
-            } else if (keyCode == Client.mc.gameSettings.keyBindRight.keyCode || keyCode == Keyboard.KEY_RIGHT || keyCode == Client.mc.gameSettings.keyBindJump.keyCode || keyCode == Keyboard.KEY_RETURN) {
-                val selected = elementsSequence.firstOrNull { it.selected } ?: return
+                true
+            } else if (Client.mc.options.keyRight.matches(keyCode, -1)
+                || keyCode == InputConstants.KEY_RIGHT
+                || Client.mc.options.keyJump.matches(keyCode, -1)
+                || keyCode == InputConstants.KEY_RETURN
+            ) {
+                val selected = elementsSequence.firstOrNull { it.selected }
                 if (selected is CategoryButton) {
                     selected.open()
-                } else if (selected is IconElement) {
-                    selected.onClickBody(selected.pos, MouseButton.LEFT)
-                }
-            } else if (keyCode == Client.mc.gameSettings.keyBindLeft.keyCode || keyCode == Keyboard.KEY_LEFT || keyCode == Client.mc.gameSettings.keyBindAttack.keyCode) {
+                    true
+                } else selected is IconElement && selected.onClickBody(selected.pos, MouseButton.LEFT)
+            } else if (Client.mc.options.keyLeft.matches(keyCode, -1)
+                || keyCode == InputConstants.KEY_LEFT
+                || Client.mc.options.keyAttack.matches(keyCode, -1)) {
                 close(false)
-            }
+                true
+            } else false
         }
     }
 
@@ -183,7 +191,7 @@ open class CategoryButton(
             +anim
             openAnim = WeakReference(anim)
 
-            if (controllingParent is CoreGUI<*>) tlParent.move(Vector2d.ZERO)
+            if (controllingParent is CoreGUI<*>) tlParent.move(Vec2d.ZERO)
             else tlParent.move(vec(-boundingBox.width(), 0))
         }
     }
@@ -213,7 +221,7 @@ open class CategoryButton(
         element.hide()
     }
 
-    override fun mouseClicked(pos: Vector2d, mouseButton: MouseButton): Boolean {
+    override fun mouseClicked(pos: Vec2d, mouseButton: MouseButton): Boolean {
         return if ((mouseButton == MouseButton.SCROLL_DOWN || mouseButton == MouseButton.SCROLL_UP) && openAnim?.get()?.finished == false) true else delegate.mouseClicked(pos, mouseButton)
     }
 
@@ -283,7 +291,7 @@ open class CategoryButton(
 
     fun partyMenu(): CategoryButton {
         val partyElement = PartyElement()
-        if (!SAOCore.isSAOMCLibServerSide) {
+        if (true/*!SAOCore.isSAOMCLibServerSide*/) {
             partyElement.disabled = true
             partyElement.description.add(I18n.get("saoui.server"))
         }
@@ -313,13 +321,16 @@ open class CategoryButton(
 
     fun recipes(): CategoryButton {
         val cat = CategoryButton(IconLabelElement(IconCore.CRAFTING, I18n.get("sao.element.recipes")), this) {
-            addRecipes(AdvancementUtil.getRecipes())
+            +IconLabelElement(IconCore.CANCEL, "Not yet implemented").apply {
+                disabled = true
+            }
+//            addRecipes(AdvancementUtil.getRecipes())
         }
         +cat
         return cat
     }
 
-    fun advancementCategory(advancement: Advancement): CategoryButton {
+    /*fun advancementCategory(advancement: Advancement): CategoryButton {
         return if (advancement.getProgress() != null && advancement.getProgress()!!.isDone) {
             val cat = CategoryButton(AdvancementElement(advancement, true), this) {
                 category(Items.WRITTEN_BOOK.toIcon(), I18n.get("sao.element.quest.completed")) {
@@ -332,7 +343,7 @@ open class CategoryButton(
             +cat
             cat
         } else advancement(advancement)
-    }
+    }*/
 
     fun addAdvancements(advancements: Sequence<Advancement>) {
         advancements.forEach {

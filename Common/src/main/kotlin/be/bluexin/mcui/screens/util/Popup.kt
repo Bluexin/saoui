@@ -17,38 +17,32 @@
 
 package be.bluexin.mcui.screens.util
 
-import com.tencao.saomclib.party.PlayerInfo
-import org.joml.Vector2d
-import com.tencao.saomclib.utils.math.vec
+import be.bluexin.mcui.Constants
 import be.bluexin.mcui.GLCore
 import be.bluexin.mcui.GLCore.glTexturedRectV2
-import be.bluexin.mcui.SAOCore
-import be.bluexin.mcui.SoundCore
 import be.bluexin.mcui.api.elements.IconElement
 import be.bluexin.mcui.api.elements.IconTextElement
 import be.bluexin.mcui.api.elements.animator.Easing
 import be.bluexin.mcui.api.elements.basicAnimation
 import be.bluexin.mcui.api.elements.getRequirementDesc
-import be.bluexin.mcui.api.events.ProfileInfoEvent
-import be.bluexin.mcui.play
 import be.bluexin.mcui.screens.CoreGUI
 import be.bluexin.mcui.screens.unaryPlus
 import be.bluexin.mcui.util.*
+import be.bluexin.mcui.util.math.Vec2d
+import be.bluexin.mcui.util.math.vec
+import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.advancements.Advancement
-import net.minecraft.Client.mc
-import net.minecraft.inventory.Slot
-import net.minecraft.item.crafting.IRecipe
+import net.minecraft.client.Minecraft
 import net.minecraft.resources.ResourceLocation
-import net.minecraftforge.common.MinecraftForge
+import net.minecraft.world.inventory.Slot
 import kotlin.math.max
-import kotlin.math.min
 
 open class Popup<T : Any>(
-    open var title: String,
+    open var popupTitle: String,
     open var text: List<String>,
     open var footer: String,
     internal val buttons: Map<IconElement, T>
-) : CoreGUI<T>(Vector2d.ZERO) {
+) : CoreGUI<T>(Vec2d.ZERO) {
 
     private val rl = ResourceLocation(Constants.MOD_ID, "textures/menu/parts/alertbg.png")
     internal /*private*/ var expansion = 0f
@@ -56,14 +50,14 @@ open class Popup<T : Any>(
     internal /*private*/ var eol = 1f
 
     var mouseSet: Boolean = false
-    override var previousMouse: Vector2d = Vector2d(0.0, 0.0)
+    override var previousMouse: Vec2d = Vec2d(0.0, 0.0)
 
     companion object {
         internal const val w = 220.0
         internal const val h = 160.0
     }
 
-    override fun initGui() {
+    override fun init() {
         val animDuration = 20f
 
         elements.clear()
@@ -75,12 +69,10 @@ open class Popup<T : Any>(
         val childrenXOffset = (-w / 2) + (childrenXSeparator / 2 - 9)
         val childrenYOffset = h * 0.1875 - 9 + h * 0.03125 * (text.size)
 
-        buttons.asSequence().forEachIndexed { index, entry ->
-            val button = entry.key
-            val result = entry.value
+        buttons.asSequence().forEachIndexed<Map.Entry<IconElement, T>> { index, (button, result) ->
             button.onClick { _, _ ->
                 this@Popup.result = result
-                onGuiClosed()
+                onClose()
                 true
             }
             button.pos = vec(childrenXOffset + childrenXSeparator * index, childrenYOffset)
@@ -97,7 +89,7 @@ open class Popup<T : Any>(
             }
             +basicAnimation(button, "scale") {
                 duration = animDuration
-                from = Vector2d.ZERO
+                from = Vec2d.ZERO
                 easing = object : Easing() {
                     override fun invoke(progress: Float): Float {
                         val t = easeInQuint(progress)
@@ -118,19 +110,19 @@ open class Popup<T : Any>(
             duration = animDuration
             easing = Easing.easeInQuint
         }
-        SoundCore.MESSAGE.play()
+//        SoundCore.MESSAGE.play()
     }
 
-    override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
+    override fun render(poseStack: PoseStack, mouseX: Int, mouseY: Int, partialTicks: Float) {
         // TODO: these could be moved to Liblib's Sprites. Maybe.
 
-        GLCore.pushMatrix()
-        GLCore.translate(pos.x, pos.y, 0.0)
+        poseStack.pushPose()
+        poseStack.translate(pos.x, pos.y, 0.0)
         if (expansion < 0.2f) {
-            GLCore.glScalef(expansion * 4 + 0.2f, expansion * 4 + 0.2f, 1f)
+            poseStack.scale(expansion * 4 + 0.2f, expansion * 4 + 0.2f, 1f)
         }
         if (eol < 1f) {
-            GLCore.glScalef(eol, 1f, 1f)
+            poseStack.scale(eol, 1f, 1f)
         }
 
         val shadows = if (expansion > 0.66f) {
@@ -205,11 +197,12 @@ open class Popup<T : Any>(
         ) // Button bar
 
         if (alpha > 0.03f) GLCore.glString(
-            title,
-            -GLCore.glStringWidth(title) / 2,
+            popupTitle,
+            -GLCore.glStringWidth(popupTitle) / 2,
             (-h / 2.0 + step1 / 2).toInt(),
             ColorUtil.DEFAULT_BOX_FONT_COLOR.multiplyAlpha(alpha),
-            centered = true
+            centered = true,
+            poseStack = poseStack
         )
         (text.indices).forEach {
             if (alpha > 0.56f) GLCore.glString(
@@ -217,7 +210,8 @@ open class Popup<T : Any>(
                 -GLCore.glStringWidth(text[it]) / 2,
                 (-h / 2.0 + step1 + shadows + step3 / (text.size) * (it + 0.5)).toInt(),
                 ColorUtil.DEFAULT_FONT_COLOR.multiplyAlpha((alpha - 0.5f) / 0.5f),
-                centered = true
+                centered = true,
+                poseStack = poseStack
             )
         }
         if (alpha > 0.03f) GLCore.glString(
@@ -225,7 +219,8 @@ open class Popup<T : Any>(
             -GLCore.glStringWidth(footer) / 2,
             (-h / 2.0 + step1 + shadows + step3 + (step5 / 2)).toInt(),
             ColorUtil.DEFAULT_BOX_FONT_COLOR.multiplyAlpha(alpha),
-            centered = true
+            centered = true,
+            poseStack = poseStack
         )
 
         // Guides
@@ -244,33 +239,39 @@ open class Popup<T : Any>(
         glTexturedRectV2(childrenXOffset, -h / 2, 1.0, h, 5.0, 120.0, 2.0, 2.0)
         glTexturedRectV2(childrenXOffset + childrenXSeparator, -h / 2, 1.0, h, 5.0, 120.0, 2.0, 2.0)*/
 
-        GLCore.popMatrix()
+        poseStack.popPose()
 
-        super.drawScreen(mouseX, mouseY, partialTicks)
+        super.render(poseStack, mouseX, mouseY, partialTicks)
     }
 
-    override fun mouseClickMove(mouseX: Int, mouseY: Int, clickedMouseButton: Int, timeSinceLastClick: Long) {
+    override fun mouseDragged(
+        mouseX: Double,
+        mouseY: Double,
+        clickedMouseButton: Int,
+        dragX: Double,
+        dragY: Double
+    ): Boolean {
         if (!mouseSet) {
-            previousMouse = Vector2d(mouseX.toDouble(), mouseY.toDouble())
+            previousMouse = Vec2d(mouseX, mouseY)
             mouseSet = true
         }
         pos = pos.add(mouseX - previousMouse.x, mouseY - previousMouse.y)
-        previousMouse = Vector2d(mouseX.toDouble(), mouseY.toDouble())
-        super.mouseClickMove(mouseX, mouseY, clickedMouseButton, timeSinceLastClick)
+        previousMouse = Vec2d(mouseX, mouseY)
+        return super.mouseDragged(mouseX, mouseY, clickedMouseButton, dragX, dragY)
     }
 
-    override fun mouseReleased(mouseX: Int, mouseY: Int, state: Int) {
+    override fun mouseReleased(mouseX: Double, mouseY: Double, state: Int): Boolean {
         mouseSet = false
-        super.mouseReleased(mouseX, mouseY, state)
+        return super.mouseReleased(mouseX, mouseY, state)
     }
 
-    override fun onGuiClosed() {
+    override fun onClose() {
         +basicAnimation(this, "eol") {
             to = 0f
             easing = Easing.linear
             duration = 10f
             completion = Runnable {
-                super.onGuiClosed()
+                super.onClose()
             }
         }
         elements.forEach { button ->
@@ -286,7 +287,7 @@ open class Popup<T : Any>(
             }
         }
 
-        SoundCore.DIALOG_CLOSE.play()
+//        SoundCore.DIALOG_CLOSE.play()
     }
 }
 
@@ -389,12 +390,10 @@ class PopupSlotSelection(title: String, text: List<String>, footer: String, slot
 
     companion object {
 
-        fun getButtons(slots: Set<Slot>): Map<IconElement, Int> {
-            val map = mutableMapOf<IconElement, Int>()
+        fun getButtons(slots: Set<Slot>): Map<IconElement, Int> = buildMap {
             slots.forEach {
-                map[IconElement(it.stack.toIcon())] = it.slotNumber
+                put(IconElement(it.item.toIcon()), it.index)
             }
-            return map
         }
     }
 }
@@ -430,9 +429,9 @@ class PopupHotbarSelection(title: String, text: List<String>, footer: String) :
 
         fun getHotbarList(): Map<IconElement, Result> {
             val map = linkedMapOf<IconElement, Result>()
-            val inventory = Minecraft.getMinecraft().player.inventoryContainer
+            val inventory = Minecraft.getInstance().player?.inventory ?: return map
             for (i in 36..44) {
-                val stack = inventory.getSlot(i).stack
+                val stack = inventory.getItem(i)
                 map[
                     IconElement(stack.toIcon())
                         .setBgColor(ColorIntent.NORMAL, ColorUtil.DEFAULT_COLOR)
@@ -446,7 +445,7 @@ class PopupHotbarSelection(title: String, text: List<String>, footer: String) :
     }
 }
 
-class PopupPlayerInspect(player: PlayerInfo, elements: List<IconElement>) : Popup<Int>(
+/*class PopupPlayerInspect(player: PlayerInfo, elements: List<IconElement>) : Popup<Int>(
     player.username,
     player.player?.let {
         val playerInfo = ProfileInfoEvent(it, PlayerStats.instance().stats.getStatsString(it))
@@ -460,9 +459,9 @@ class PopupPlayerInspect(player: PlayerInfo, elements: List<IconElement>) : Popu
     init {
         result = -1
     }
-}
+}*/
 
-class PopupCraft(val recipe: IRecipe) :
+/*class PopupCraft(val recipe: Recipe<*>) :
     Popup<Int>(recipe.recipeOutput.displayName, recipe.recipeOutput.itemDesc(), "", getButtons()) {
     private val countPerCraft = recipe.recipeOutput.count
     override var result: Int = countPerCraft
@@ -488,7 +487,7 @@ class PopupCraft(val recipe: IRecipe) :
             button.onClick { _, _ ->
                 if (result == 0) {
                     CraftingUtil.craft(recipe, this.result / countPerCraft)
-                    onGuiClosed()
+                    onClose()
                 } else {
                     // Add result to current stack count
                     this.result += (countPerCraft * result)
@@ -513,7 +512,7 @@ class PopupCraft(val recipe: IRecipe) :
             }
             +basicAnimation(button, "scale") {
                 duration = animDuration
-                from = Vector2d.ZERO
+                from = Vec2d.ZERO
                 easing = object : Easing() {
                     override fun invoke(progress: Float): Float {
                         val t = easeInQuint(progress)
@@ -548,10 +547,10 @@ class PopupCraft(val recipe: IRecipe) :
             )
         }
     }
-}
+}*/
 
 class PopupAdvancement(advancement: Advancement) : Popup<PopupAdvancement.Result>(
-    advancement.displayText.unformattedText,
+    advancement.display?.title?.toString().orEmpty(),
     advancement.getRequirementDesc(),
     "",
     mapOf(

@@ -17,35 +17,28 @@
 
 package be.bluexin.mcui.screens.util
 
-import com.tencao.saomclib.isNotEmpty
-import com.tencao.saomclib.toolClasses
-import com.tencao.saomclib.utils.get
-import org.joml.Vector2d
-import be.bluexin.mcui.GLCore
 import be.bluexin.mcui.api.elements.CategoryButton
 import be.bluexin.mcui.api.elements.IconLabelElement
 import be.bluexin.mcui.api.items.IItemFilter
 import be.bluexin.mcui.api.screens.IIcon
-import be.bluexin.mcui.events.EventCore.mc
 import be.bluexin.mcui.screens.CoreGUI
 import be.bluexin.mcui.screens.MouseButton
+import be.bluexin.mcui.util.Client
+import be.bluexin.mcui.util.Client.mc
 import be.bluexin.mcui.util.IconCore
-import net.minecraft.block.Block
-import net.minecraft.Client.mc
-import net.minecraft.client.renderer.RenderHelper
-import net.minecraft.client.resources.I18n
-import net.minecraft.client.util.ITooltipFlag
-import net.minecraft.inventory.*
-import net.minecraft.item.*
-import net.minecraft.resources.ResourceLocation
+import be.bluexin.mcui.util.math.Vec2d
+import com.mojang.blaze3d.vertex.PoseStack
+import net.minecraft.client.resources.language.I18n
+import net.minecraft.world.inventory.AbstractContainerMenu
+import net.minecraft.world.inventory.Slot
 import net.minecraft.world.item.Item
 import net.minecraft.world.item.ItemStack
+import net.minecraft.world.item.TooltipFlag
 import net.minecraft.world.level.block.Block
-import net.minecraftforge.fml.common.registry.ForgeRegistries
 
-fun CategoryButton.itemList(inventory: Container, filter: IItemFilter) {
-    inventory.inventorySlots.forEach { slot ->
-        +ItemStackElement(slot, filter.getValidSlots(), Vector2d.ZERO, filter.getValidSlots().contains(slot), filter)
+fun CategoryButton.itemList(inventory: AbstractContainerMenu, filter: IItemFilter) {
+    inventory.slots.forEach { slot ->
+        +ItemStackElement(slot, filter.getValidSlots(), Vec2d.ZERO, filter.getValidSlots().contains(slot), filter)
     }
     +object : IconLabelElement(icon = IconCore.NONE, label = I18n.get("gui.empty")) {
         private var mark = false
@@ -66,14 +59,15 @@ fun CategoryButton.itemList(inventory: Container, filter: IItemFilter) {
     }
 }
 
-class ItemStackElement(private val slot: Slot, val equipSlots: Set<Slot>, pos: Vector2d, override var highlighted: Boolean, private val filter: (iss: ItemStack) -> Boolean) :
-    IconLabelElement(icon = slot.stack.toIcon(), pos = pos) {
+class ItemStackElement(private val slot: Slot, val equipSlots: Set<Slot>, pos: Vec2d, override var highlighted: Boolean, private val filter: (iss: ItemStack) -> Boolean) :
+    IconLabelElement(icon = slot.item.toIcon(), pos = pos) {
 
     init {
         onClick { _, button ->
             if (button == MouseButton.LEFT) {
                 if (tlParent is CoreGUI<*>) {
-                    (tlParent as CoreGUI<*>).openGui(PopupItem(label, itemStack.itemDesc(), if (mc.gameSettings.advancedItemTooltips) ForgeRegistries.ITEMS.getKey(itemStack.item).toString() else "")) += {
+                    itemStack
+                    (tlParent as CoreGUI<*>).openGui(PopupItem(label, itemStack.itemDesc(), if (mc.options.advancedItemTooltips) Item.getId(itemStack.item).toString() else "")) += {
                         when (it) {
                             PopupItem.Result.EQUIP -> handleEquip()
                             PopupItem.Result.DROP -> handleDrop()
@@ -92,33 +86,33 @@ class ItemStackElement(private val slot: Slot, val equipSlots: Set<Slot>, pos: V
         if (equipSlots.size > 1) {
             (tlParent as CoreGUI<*>).openGui(PopupSlotSelection(label, listOf("Select a slot"), "", equipSlots.filter { it != slot }.toSet())) += {
                 if (it != -1) {
-                    swapItems(equipSlots.first { slot -> slot.slotNumber == it })
+                    swapItems(equipSlots.first { slot -> slot.index == it })
                 }
             }
         } else if (equipSlots.first() == slot) {
             var stack = itemStack
-            mc.player.openContainer.inventorySlots
-                .filter { it.slotNumber !in IntRange(0, 4) && it.isItemValid(stack) && it.hasStack && it.stack.count != it.stack.maxStackSize && ContainerPlayer.canAddItemToSlot(it, stack, true) }
+            mc.player!!.inventoryMenu.slots
+                .filter { it.index !in IntRange(0, 4) && it.mayPlace(stack) && it.hasItem() && it.item.count != it.item.maxStackSize /*&& ContainerPlayer.canAddItemToSlot(it, stack, true)*/ }
                 .any slotCheck@{
                     stack = moveItems(it)
                     stack.isEmpty
                 }
-            if (stack.isNotEmpty) {
-                mc.player.openContainer.inventorySlots
-                    .filter { it.slotNumber !in IntRange(0, 4) && !it.hasStack && it.isItemValid(stack) }
+            if (!stack.isEmpty) {
+                mc.player!!.inventoryMenu.slots
+                    .filter { it.index !in IntRange(0, 4) && !it.hasItem() && it.mayPlace(stack) }
                     .any slotCheck@{
                         stack = moveItems(it)
                         stack.isEmpty
                     }
             }
-            if (stack.isNotEmpty) {
+            if (!stack.isEmpty) {
                 throwItem()
             }
         } else {
             swapItems(equipSlots.first())
         }
 
-        mc.player.openContainer.detectAndSendChanges()
+        mc.player?.containerMenu?.broadcastChanges()
         (controllingParent as? CategoryButton)?.reInit()
     }
 
@@ -135,17 +129,18 @@ class ItemStackElement(private val slot: Slot, val equipSlots: Set<Slot>, pos: V
      * the currently held item
      */
     fun moveItems(slot: Slot): ItemStack {
-        return mc.playerController.windowClick(mc.player.openContainer.windowId, slot.slotNumber, 0, ClickType.PICKUP, mc.player)
+//        return mc.player.windowClick(mc.player.openContainer.windowId, slot.index, 0, ClickType.PICKUP, mc.player)
+        return ItemStack.EMPTY
     }
 
     fun swapItems(otherSlot: Slot) {
-        mc.playerController.windowClick(mc.player.inventoryContainer.windowId, otherSlot.slotNumber, 0, ClickType.PICKUP, mc.player)
-        mc.playerController.windowClick(mc.player.inventoryContainer.windowId, slotID, 0, ClickType.PICKUP, mc.player)
-        mc.playerController.windowClick(mc.player.inventoryContainer.windowId, otherSlot.slotNumber, 0, ClickType.PICKUP, mc.player)
+//        mc.player.windowClick(mc.player.inventoryContainer.windowId, otherSlot.index, 0, ClickType.PICKUP, mc.player)
+//        mc.player.windowClick(mc.player.inventoryContainer.windowId, slotID, 0, ClickType.PICKUP, mc.player)
+//        mc.player.windowClick(mc.player.inventoryContainer.windowId, otherSlot.index, 0, ClickType.PICKUP, mc.player)
     }
 
     fun throwItem() {
-        mc.playerController.windowClick(mc.player.inventoryContainer.windowId, slotID, 0, ClickType.THROW, mc.player)
+//        mc.player.windowClick(mc.player.inventoryContainer.windowId, slotID, 0, ClickType.THROW, mc.player)
     }
 
     /**
@@ -175,36 +170,36 @@ class ItemStackElement(private val slot: Slot, val equipSlots: Set<Slot>, pos: V
     }
 
     private val itemStack
-        get() = with(slot.stack) {
+        get() = with(slot.item) {
             return@with if (filter(this)) this
             else ItemStack.EMPTY
         }
 
     private val slotID
-        get() = slot.slotNumber
+        get() = slot.index
 
     override var valid: Boolean
-        get() = itemStack.isNotEmpty
+        get() = !itemStack.isEmpty
         set(_) {}
 
     override var label: String = ""
-        get() = if (itemStack.isNotEmpty) {
-            if (itemStack.count > 1) I18n.get("saoui.formatItems", itemStack.getTooltip(mc.player, ITooltipFlag.TooltipFlags.NORMAL)[0], itemStack.count)
-            else I18n.get("saoui.formatItem", itemStack.getTooltip(mc.player, ITooltipFlag.TooltipFlags.NORMAL)[0])
+        get() = if (!itemStack.isEmpty) {
+            if (itemStack.count > 1) I18n.get("saoui.formatItems", itemStack.getTooltipLines(mc.player, TooltipFlag.NORMAL)[0], itemStack.count)
+            else I18n.get("saoui.formatItem", itemStack.getTooltipLines(mc.player, TooltipFlag.NORMAL)[0])
         } else I18n.get("gui.empty")
 }
 
 class ItemIcon(private val itemStack: () -> ItemStack) : IIcon {
-    private val itemRenderer by lazy { Minecraft.getMinecraft().renderItem }
+    private val itemRenderer by lazy { Client.mc.itemRenderer }
 
-    override fun glDraw(x: Int, y: Int, z: Float) {
-        val f = itemStack().animationsToGo.toFloat()/* - partialTicks*/
+    override fun glDraw(x: Int, y: Int, z: Float, poseStack: PoseStack) {
+        /*val f = itemStack().animationsToGo.toFloat()*//* - partialTicks*//*
         RenderHelper.disableStandardItemLighting()
 
         itemRenderer.zLevel += z
 
         if (f > 0.0f) {
-            GLCore.pushMatrix()
+            poseStack.pushPose()
             val f1 = 1.0f + f / 5.0f
             GLCore.translate((x + 8).toFloat(), (y + 12).toFloat(), z)
             GLCore.scale(1.0f / f1, (f1 + 1.0f) / 2.0f, z.plus(1))
@@ -217,7 +212,7 @@ class ItemIcon(private val itemStack: () -> ItemStack) : IIcon {
 
         itemRenderer.zLevel -= z
 
-        if (f > 0.0f) GLCore.popMatrix()
+        if (f > 0.0f) poseStack.popPose()*/
 
 //        itemRenderer.renderItemOverlays(fontRenderer, itemStack, x, y)
     }
@@ -229,7 +224,7 @@ fun ItemStack.toIcon(): ItemIcon = ItemIcon { this }
 
 fun ItemStack.itemDesc(): List<String> {
     val stringBuilder = mutableListOf<String>()
-    val desc = getTooltip(mc.player, ITooltipFlag.TooltipFlags.NORMAL)
+    /*val desc = getTooltip(mc.player, ITooltipFlag.TooltipFlags.NORMAL)
     desc.removeAt(0)
     if (item is ItemTool) {
         if (toolClasses.isNotEmpty()) {
@@ -336,11 +331,12 @@ fun ItemStack.itemDesc(): List<String> {
         stringBuilder.add(I18n.get("itemDesc.type", I18n.get("itemDesc.material")))
     }
 
-    stringBuilder.addAll(desc)
+    stringBuilder.addAll(desc)*/
 
     return stringBuilder
 }
 
+/*
 fun IInventory.asSequence(): Sequence<ItemStack> {
     return Sequence {
         object : Iterator<ItemStack> {
@@ -378,3 +374,4 @@ inline fun IInventory.forEach(body: (ItemStack) -> Unit) {
 }
 
 operator fun IInventory.get(index: Int): ItemStack = getStackInSlot(index)
+*/

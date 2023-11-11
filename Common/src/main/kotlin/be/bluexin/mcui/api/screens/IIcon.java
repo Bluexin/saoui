@@ -17,8 +17,9 @@
 
 package be.bluexin.mcui.api.screens;
 
+import be.bluexin.mcui.util.math.Vec2d;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.resources.ResourceLocation;
-import org.joml.Vector2dc;
 
 import javax.annotation.Nullable;
 
@@ -36,23 +37,24 @@ public interface IIcon {
      * Called when this icon needs to be drawn on screen, at given x and y coordinates.
      * The given coordinates should be the upper-left corner of this icon.
      *
-     * @param x x-coordinate to start drawing from
-     * @param y y-coordinate to start drawing from
+     * @param x         x-coordinate to start drawing from
+     * @param y         y-coordinate to start drawing from
+     * @param poseStack
      */
-    default void glDraw(int x, int y) { this.glDraw(x, y, 0); }
+    default void glDraw(int x, int y, PoseStack poseStack) { this.glDraw(x, y, 0, poseStack); }
 
-    void glDraw(int x, int y, float z);
+    void glDraw(int x, int y, float z, PoseStack poseStack);
 
-    default void glDraw(Vector2dc pos, float z) {
-        glDraw((int) pos.x(), (int) pos.y(), z);
+    default void glDraw(Vec2d pos, float z, PoseStack poseStack) {
+        glDraw((int) pos.getXi(), (int) pos.getYi(), z, poseStack);
     }
 
-    default void glDrawUnsafe(int x, int y) {
-        this.glDraw(x, y);
+    default void glDrawUnsafe(int x, int y, PoseStack poseStack) {
+        this.glDraw(x, y, poseStack);
     }
 
-    default void glDrawUnsafe(Vector2dc pos) {
-        glDrawUnsafe((int) pos.x(), (int) pos.y());
+    default void glDrawUnsafe(Vec2d pos, PoseStack poseStack) {
+        glDrawUnsafe(pos.getXi(), pos.getYi(), poseStack);
     }
 
     default int getWidth() {

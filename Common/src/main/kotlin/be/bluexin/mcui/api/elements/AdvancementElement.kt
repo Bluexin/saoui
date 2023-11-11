@@ -5,7 +5,7 @@ import net.minecraft.advancements.Advancement
 import net.minecraft.world.item.Items
 
 data class AdvancementElement(val advancement: Advancement, val category: Boolean = false, val desc: List<String> = advancement.getRequirementDesc()) : IconLabelElement(
-    icon = advancement.display?.icon?.toIcon() ?: if (advancement.getProgress()?.isDone == true) Items.MAP.toIcon() else Items.MAP.toIcon(),
+    icon = advancement.display?.icon?.toIcon() ?: if (/*advancement.getProgress()?.isDone ==*/ true) Items.MAP.toIcon() else Items.MAP.toIcon(),
     label = advancement.display?.title?.string ?: "unknown"
 )
 

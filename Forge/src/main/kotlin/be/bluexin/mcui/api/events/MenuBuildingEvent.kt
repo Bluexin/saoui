@@ -1,7 +1,7 @@
 package be.bluexin.mcui.api.events
 
 import be.bluexin.mcui.api.elements.NeoElement
-import net.minecraftforge.fml.common.eventhandler.Event
+import net.minecraftforge.eventbus.api.Event
 
 /**
  * This event is called everytime the menu is

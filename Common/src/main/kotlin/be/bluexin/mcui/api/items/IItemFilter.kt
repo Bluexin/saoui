@@ -17,11 +17,12 @@
 
 package be.bluexin.mcui.api.items
 
-import be.bluexin.mcui.util.Client
 import be.bluexin.mcui.api.screens.IIcon
+import be.bluexin.mcui.util.Client
 import be.bluexin.mcui.util.IconCore
-import net.minecraft.inventory.Slot
-import net.minecraft.item.ItemStack
+import net.minecraft.world.inventory.InventoryMenu
+import net.minecraft.world.inventory.Slot
+import net.minecraft.world.item.ItemStack
 
 /**
  * This is used to send a specific set of items to be rendered as slots
@@ -69,20 +70,18 @@ interface IItemFilter : (ItemStack, Boolean) -> Boolean, (ItemStack) -> Boolean 
     fun getValidSlots(): Set<Slot> { return hotbarSlots() }
 
     companion object {
-        fun getPlayerSlots(slotID: Int): Set<Slot> {
-            return Client.mc.player.openContainer.inventorySlots
-                .filter { it.slotNumber == slotID }
-                .toSet()
+        fun getPlayerSlots(slotId: Int): Set<Slot> {
+            return setOf(Client.mc.player!!.inventoryMenu.getSlot(slotId))
         }
 
         fun getPlayerSlots(slotID: IntRange): Set<Slot> {
-            return Client.mc.player.openContainer.inventorySlots
-                .filter { slotID.contains(it.slotNumber) }
+            return Client.mc.player!!.inventoryMenu.slots
+                .filter { it.index in slotID }
                 .toSet()
         }
 
         fun hotbarSlots(): Set<Slot> {
-            return getPlayerSlots(36..44)
+            return getPlayerSlots(InventoryMenu.USE_ROW_SLOT_START until InventoryMenu.USE_ROW_SLOT_END)
         }
     }
 }

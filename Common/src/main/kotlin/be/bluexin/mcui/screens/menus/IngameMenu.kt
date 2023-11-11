@@ -17,34 +17,22 @@
 
 package be.bluexin.mcui.screens.menus
 
-import be.bluexin.mcui.util.Client
-import org.joml.Vector2d
-import com.tencao.saomclib.utils.math.vec
-import be.bluexin.mcui.SAOCore
-import be.bluexin.mcui.SoundCore
 import be.bluexin.mcui.api.elements.CategoryButton
 import be.bluexin.mcui.api.elements.IconElement
 import be.bluexin.mcui.api.elements.NeoElement
-import be.bluexin.mcui.api.elements.animator.Easing
-import be.bluexin.mcui.api.elements.basicAnimation
 import be.bluexin.mcui.api.elements.registry.ElementRegistry
-import be.bluexin.mcui.api.events.MenuBuildingEvent
 import be.bluexin.mcui.api.screens.IIcon
-import be.bluexin.mcui.play
 import be.bluexin.mcui.screens.CoreGUI
-import be.bluexin.mcui.screens.unaryPlus
-import be.bluexin.mcui.screens.util.PopupNotice
-import be.bluexin.mcui.util.CraftingUtil
-import be.bluexin.mcui.util.UIUtil
-import net.minecraft.client.resources.I18n.get
-import net.minecraftforge.common.MinecraftForge
+import be.bluexin.mcui.util.Client
+import be.bluexin.mcui.util.math.Vec2d
+import be.bluexin.mcui.util.math.vec
 
 /**
  * Part of saoui by Bluexin, released under GNU GPLv3.
  *
  * @author Bluexin
  */
-class IngameMenu(elements: MutableList<NeoElement> = mutableListOf()) : CoreGUI<Unit>(Vector2d.ZERO, elements = elements) {
+class IngameMenu(elements: MutableList<NeoElement> = mutableListOf()) : CoreGUI<Unit>(Vec2d.ZERO, elements = elements) {
 
     var loggingOut = false
 
@@ -52,29 +40,29 @@ class IngameMenu(elements: MutableList<NeoElement> = mutableListOf()) : CoreGUI<
         get() = Unit
         set(_) {}
 
-    override fun initGui() {
+    override fun init() {
         elements.clear()
         val defaultList = getDefaultElements()
         // TODO : now we hooked up ElementRegistry this event is being sent more than before !
-        val event = MenuBuildingEvent(defaultList)
-        MinecraftForge.EVENT_BUS.post(event)
-        event.elements.forEach {
+//        val event = MenuBuildingEvent(defaultList)
+//        MinecraftForge.EVENT_BUS.post(event)
+        /*event.elements.forEach {
             it.parent = this
             it.show()
             +basicAnimation(it, "pos") {
                 duration = 20f
-                from = Vector2d.ZERO
+                from = Vec2d.ZERO
                 easing = Easing.easeInOutQuint
             }
         }
-        elements.addAll(event.elements)
+        elements.addAll(event.elements)*/
 
         pos = vec(width / 2.0 - 10, (height - elements.size * 20) / 2.0)
         destination = pos
-        SoundCore.ORB_DROPDOWN.play()
+//        SoundCore.ORB_DROPDOWN.play()
 
         if (!hasChecked) {
-            if (!SAOCore.isSAOMCLibServerSide) {
+            /*if (!SAOCore.isSAOMCLibServerSide) {
                 openGui(
                     PopupNotice(
                         format("notificationSAOMCLibTitle"),
@@ -82,27 +70,27 @@ class IngameMenu(elements: MutableList<NeoElement> = mutableListOf()) : CoreGUI<
                         ""
                     )
                 )
-            }
+            }*/
             hasChecked = true
         }
     }
 
-    override fun updateScreen() {
+    /*override fun updateScreen() {
         if (loggingOut) {
             UIUtil.closeGame()
         } else {
             CraftingUtil.updateItemHelper()
             super.updateScreen()
         }
-    }
+    }*/
 
     fun getDefaultElements(): List<NeoElement> {
         return ElementRegistry.registeredElements[ElementRegistry.Type.INGAMEMENU]
             ?: ElementRegistry.getDefaultElements()
     }
 
-    override fun doesGuiPauseGame(): Boolean {
-        return loggingOut || super.doesGuiPauseGame()
+    override fun isPauseScreen(): Boolean {
+        return loggingOut || super.isPauseScreen()
     }
 
     companion object {

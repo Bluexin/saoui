@@ -1,7 +1,7 @@
 package be.bluexin.mcui.api.events
 
 import be.bluexin.mcui.api.info.IOption
-import net.minecraftforge.fml.common.eventhandler.Event
+import net.minecraftforge.eventbus.api.Event
 
 /**
  * This is called when an option is clicked

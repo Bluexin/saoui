@@ -5,8 +5,9 @@ package be.bluexin.mcui.api.elements.animator
  * This code is covered under GNU Lesser General Public License v3.0
  */
 
-import net.minecraft.util.math.MathHelper
+import java.lang.Math
 import kotlin.math.pow
+import org.joml.Math as JomlMath
 
 /**
  * An easing function. Used to make more natural transitions.
@@ -201,7 +202,7 @@ abstract class Easing {
                 val a = c
                 val s = p / 4
                 t -= 1
-                return -(a * 2.0.pow((10 * t).toDouble()).toFloat() * MathHelper.sin((t * d - s) * (2 * Math.PI.toFloat()) / p)) + b
+                return -(a * 2.0.pow((10 * t).toDouble()).toFloat() * JomlMath.sin((t * d - s) * (2 * JomlMath.PI.toFloat()) / p)) + b
             }
         }
 
@@ -215,7 +216,7 @@ abstract class Easing {
                 val p = d * .3f
                 val a = c
                 val s = p / 4
-                return a * 2.0.pow((-10 * t).toDouble()).toFloat() * MathHelper.sin((t * d - s) * (2 * Math.PI.toFloat()) / p) + c + b
+                return a * 2.0.pow((-10 * t).toDouble()).toFloat() * JomlMath.sin((t * d - s) * (2 * JomlMath.PI.toFloat()) / p) + c + b
             }
         }
 
@@ -230,9 +231,9 @@ abstract class Easing {
                 val a = c
                 val s = p / 4
                 t -= 1
-                if (t < 1) return -.5f * (a * 2.0.pow((10 * t).toDouble()).toFloat() * MathHelper.sin((t * d - s) * (2 * Math.PI.toFloat()) / p)) + b
+                if (t < 1) return -.5f * (a * 2.0.pow((10 * t).toDouble()).toFloat() * JomlMath.sin((t * d - s) * (2 * Math.PI.toFloat()) / p)) + b
                 t -= 1
-                return a * 2.0.pow((-10 * t).toDouble()).toFloat() * MathHelper.sin((t * d - s) * (2 * Math.PI.toFloat()) / p) * .5f + c + b
+                return a * 2.0.pow((-10 * t).toDouble()).toFloat() * JomlMath.sin((t * d - s) * (2 * Math.PI.toFloat()) / p) * .5f + c + b
             }
         }
 

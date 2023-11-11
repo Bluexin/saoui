@@ -1,6 +1,6 @@
 package be.bluexin.mcui.screens.ingame
 
-import be.bluexin.mcui.GLCore
+/*import be.bluexin.mcui.GLCore
 import be.bluexin.mcui.SAOCore
 import be.bluexin.mcui.util.ColorUtil
 import be.bluexin.mcui.util.UIUtil
@@ -86,4 +86,4 @@ class DeathGui : GuiScreen() {
         const val w = 280.0
         const val h = 100.0
     }
-}
+}*/

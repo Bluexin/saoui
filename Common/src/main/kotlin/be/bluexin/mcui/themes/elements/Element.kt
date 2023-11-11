@@ -76,15 +76,13 @@ abstract class Element {
 
     val hasParent: Boolean get() = ::parent.isInitialized && parent.get().let { it != null && it !is Hud }
 
-    protected val pose = PoseStack() // TODO : figure this out
-
     /**
      * Draw this element on the screen.
      * This method should handle all the GL calls.
      *
      * @param ctx additional info about the draws
      */
-    abstract fun draw(ctx: IHudDrawContext)
+    abstract fun draw(ctx: IHudDrawContext, poseStack: PoseStack)
 
     /**
      * Called during setup, used to initialize anything extra (after it has finished loading)

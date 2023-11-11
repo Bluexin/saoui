@@ -5,7 +5,6 @@ package be.bluexin.mcui.api.elements.animator.internal
  * This code is covered under GNU Lesser General Public License v3.0
  */
 
-import com.tencao.saomclib.utils.math.clamp
 import be.bluexin.mcui.api.elements.animator.LerperHandler
 import be.bluexin.mcui.api.elements.animator.registerLerper
 import java.awt.Color

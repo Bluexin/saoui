@@ -17,18 +17,15 @@
 
 package be.bluexin.mcui.resources
 
+import be.bluexin.mcui.Constants
 import be.bluexin.mcui.GLCore
-import be.bluexin.mcui.SAOCore
 import be.bluexin.mcui.effects.StatusEffects
 import be.bluexin.mcui.themes.ThemeManager
 import be.bluexin.mcui.util.IconCore
 import be.bluexin.mcui.util.append
 import net.minecraft.resources.ResourceLocation
-import net.minecraftforge.fml.relauncher.Side
-import net.minecraftforge.fml.relauncher.SideOnly
 import java.util.*
 
-@SideOnly(Side.CLIENT)
 object StringNames {
 
     private fun logMissingAndUse(type: String, default: ResourceLocation): ResourceLocation {

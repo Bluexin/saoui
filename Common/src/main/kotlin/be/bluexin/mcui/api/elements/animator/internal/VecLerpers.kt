@@ -5,10 +5,10 @@ package be.bluexin.mcui.api.elements.animator.internal
  * This code is covered under GNU Lesser General Public License v3.0
  */
 
-import org.joml.Vector2d
 import be.bluexin.mcui.api.elements.animator.LerperHandler
 import be.bluexin.mcui.api.elements.animator.registerLerper
-import net.minecraft.util.math.Vec3d
+import org.joml.Vector2d
+import org.joml.Vector3d
 
 /**
  * TODO: Document file VecLerpers
@@ -21,7 +21,7 @@ object VecLerpers {
             from + (to - from) * frac
         }
 
-        LerperHandler.registerLerper(Vec3d::class.javaObjectType) { from, to, frac ->
+        LerperHandler.registerLerper(Vector3d::class.javaObjectType) { from, to, frac ->
             from + (to - from) * frac
         }
     }

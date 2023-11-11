@@ -1,17 +1,8 @@
 package be.bluexin.mcui.api.elements
 
-import be.bluexin.mcui.util.Client
-import com.tencao.saomclib.capabilities.getPartyCapability
-import com.tencao.saomclib.packets.party.PartyType
-import com.tencao.saomclib.packets.party.Type
-import com.tencao.saomclib.packets.party.updateServer
-import com.tencao.saomclib.party.PlayerInfo
-import be.bluexin.mcui.screens.CoreGUI
-import be.bluexin.mcui.screens.util.PopupPlayerInspect
-import be.bluexin.mcui.social.friends.FriendCore
 import be.bluexin.mcui.util.IconCore
-import be.bluexin.mcui.util.PlayerIcon
-import net.minecraft.client.resources.I18n
+import net.minecraft.client.multiplayer.PlayerInfo
+import net.minecraft.client.resources.language.I18n
 
 class FriendElement(override var parent: INeoParent?) : IconLabelElement(IconCore.FRIEND, I18n.get("sao.element.friends")) {
 
@@ -32,22 +23,21 @@ class FriendElement(override var parent: INeoParent?) : IconLabelElement(IconCor
         elements.clear()
         +CategoryButton(IconLabelElement(IconCore.FRIEND, I18n.get("sao.element.add_friend")), this.tlParent)
         addFriendButton = elements.first() as CategoryButton
-        Client.mc.connection?.playerInfoMap?.forEach {
-            val playerInfo = PlayerInfo(it.gameProfile.id, it.gameProfile.name)
+        /*Client.mc.connection?.onlinePlayers?.forEach { playerInfo ->
             if (!FriendCore.isFriend(playerInfo) && playerInfo.uuid != Client.mc.player.uniqueID) {
                 addFriend(playerInfo)
             }
-        }
+        }*/
 
         +CategoryButton(IconLabelElement(IconCore.LOGOUT, I18n.get("sao.element.offline_friends")), this.tlParent) {
-            FriendCore.getOfflineList().sortedBy { it.username }.forEach { player ->
+            /*FriendCore.getOfflineList().sortedBy { it.username }.forEach { player ->
                 removeFriend(player)
-            }
+            }*/
         }
 
-        FriendCore.getOnlineList().sortedBy { it.username }.forEach { player ->
+        /*FriendCore.getOnlineList().sortedBy { it.username }.forEach { player ->
             removeFriend(player)
-        }
+        }*/
 
         if (!this.selected) elementsSequence.forEach { it.hide() }
         dirty = false
@@ -60,7 +50,7 @@ class FriendElement(override var parent: INeoParent?) : IconLabelElement(IconCor
     }
 
     private fun addFriend(player: PlayerInfo) {
-        addFriendButton.category(PlayerIcon(player), player.username) {
+        /*addFriendButton.category(PlayerIcon(player), player.username) {
             onClick { _, _ ->
                 val party = Client.mc.player.getPartyCapability().partyData
                 (tlParent as? CoreGUI<*>)?.openGui(
@@ -89,11 +79,11 @@ class FriendElement(override var parent: INeoParent?) : IconLabelElement(IconCor
 
                 true
             }
-        }
+        }*/
     }
 
     fun removeFriend(player: PlayerInfo) {
-        +CategoryButton(IconLabelElement(PlayerIcon(player), player.username), tlParent) {
+        /*+CategoryButton(IconLabelElement(PlayerIcon(player), player.username), tlParent) {
             highlighted = player.isOnline
             onClick { _, _ ->
                 val party = Client.mc.player.getPartyCapability().partyData
@@ -123,6 +113,6 @@ class FriendElement(override var parent: INeoParent?) : IconLabelElement(IconCor
 
                 true
             }
-        }
+        }*/
     }
 }

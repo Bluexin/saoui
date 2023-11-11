@@ -18,21 +18,25 @@
 package be.bluexin.mcui.api.elements
 
 import be.bluexin.mcui.GLCore
+import be.bluexin.mcui.api.elements.animator.Easing
 import be.bluexin.mcui.api.elements.registry.DrawType
 import be.bluexin.mcui.api.screens.IIcon
 import be.bluexin.mcui.config.OptionCore
 import be.bluexin.mcui.resources.StringNames
 import be.bluexin.mcui.screens.MouseButton
+import be.bluexin.mcui.screens.unaryPlus
 import be.bluexin.mcui.util.Client
 import be.bluexin.mcui.util.ColorIntent
 import be.bluexin.mcui.util.ColorUtil
-import com.tencao.saomclib.utils.math.BoundingBox2D
-import com.tencao.saomclib.utils.math.vec
-import net.minecraft.client.renderer.GlStateManager
+import be.bluexin.mcui.util.math.BoundingBox2D
+import be.bluexin.mcui.util.math.vec
 import net.minecraft.resources.ResourceLocation
-import net.minecraftforge.fml.client.config.GuiUtils
-import org.joml.AxisAngle4d
-import org.joml.Vector2d
+import be.bluexin.mcui.util.math.Vec2d
+import com.mojang.blaze3d.platform.GlStateManager
+import com.mojang.blaze3d.vertex.PoseStack
+import net.minecraft.client.gui.GuiComponent
+import net.minecraft.network.chat.Style
+import net.minecraft.util.FormattedCharSequence
 import java.util.*
 import kotlin.collections.set
 import kotlin.math.max
@@ -45,17 +49,17 @@ import kotlin.math.min
  */
 open class IconElement(
     val icon: IIcon,
-    override var pos: Vector2d = Vector2d(),
-    override var destination: Vector2d = pos,
+    override var pos: Vec2d = Vec2d.ZERO,
+    override var destination: Vec2d = pos,
     var width: Int = 19,
     var height: Int = 19,
     open val description: MutableList<String> = mutableListOf()
-) : NeoParent {
+) : NeoParent, GuiComponent() {
 
     val RES_ITEM_GLINT = ResourceLocation("textures/misc/enchanted_item_glint.png")
-    var onClickBody: (Vector2d, MouseButton) -> Boolean = { _, _ -> true }
+    var onClickBody: (Vec2d, MouseButton) -> Boolean = { _, _ -> true }
         private set
-    private var onClickOutBody: (Vector2d, MouseButton) -> Unit = { _, _ -> }
+    private var onClickOutBody: (Vec2d, MouseButton) -> Unit = { _, _ -> }
     override val elements: MutableList<NeoElement> = mutableListOf()
     override var scroll = -3
         set(value) {
@@ -85,7 +89,7 @@ open class IconElement(
         ColorIntent.HOVERED to ColorUtil.HOVER_FONT_COLOR.rgba,
         ColorIntent.DISABLED to ColorUtil.DISABLED_FONT_COLOR.rgba
     )
-    override val boundingBox get() = AxisAngle4d(pos, pos + vec(20, 20))
+    override val boundingBox get() = BoundingBox2D(pos, pos + vec(20, 20))
     override val childrenXOffset = 25
     override val childrenYSeparator = 20
     override var parent: INeoParent? = null
@@ -99,13 +103,13 @@ open class IconElement(
         set(value) {
             field = value.coerceIn(0f, 1f)
         }
-    override var scale = Vector2d.ONE
+    override var scale = Vec2d.ONE
     override fun init() {
-        /*+basicAnimation(this, "pos") {
+        +basicAnimation(this, "pos") {
             duration = 20f
-            from = Vector2d.ZERO
+            from = Vec2d.ZERO
             easing = Easing.easeInOutQuint
-        }*/
+        }
     }
 
     protected fun childrenOrderedForRendering(): Sequence<NeoElement> {
@@ -129,92 +133,101 @@ open class IconElement(
         }
     }
 
-    override fun drawBackground(mouse: Vector2d, partialTicks: Float) {
+    override fun drawBackground(poseStack: PoseStack, mouse: Vec2d, partialTicks: Float) {
         if (!canDraw) return
-        GLCore.pushMatrix()
-        if (scale != Vector2d.ONE) GLCore.glScalef(scale.xf, scale.yf, 1f)
+        poseStack.pushPose()
+        if (scale != Vec2d.getPooled(1.0)) poseStack.scale(scale.xf, scale.yf, 1f)
         val mouseCheck = mouse in this || selected
         GLCore.glBlend(true)
         GLCore.color(ColorUtil.multiplyAlpha(getColor(mouse), transparency))
         GLCore.glBindTexture(StringNames.gui)
-        GLCore.glTexturedRectV2(
+        blit(
+            poseStack, pos.xi, pos.yi,
+            1, 26, width, height,
+        )
+        /*GLCore.glTexturedRectV2(
             pos.x,
             pos.y,
             width = width.toDouble(),
             height = height.toDouble(),
             srcX = 1.0,
             srcY = 26.0
-        )
+        )*/
         if (mouseCheck && OptionCore.MOUSE_OVER_EFFECT.isEnabled && !disabled) {
-            mouseOverEffect()
+            mouseOverEffect(poseStack)
         }
         GLCore.glBlend(false)
         GLCore.color(1f, 1f, 1f, 1f)
-        drawChildren(mouse, partialTicks, DrawType.BACKGROUND)
-        GLCore.popMatrix()
+        drawChildren(mouse, partialTicks, DrawType.BACKGROUND, poseStack)
+        poseStack.popPose()
     }
 
-    override fun draw(mouse: Vector2d, partialTicks: Float) {
+    override fun draw(poseStack: PoseStack, mouse: Vec2d, partialTicks: Float) {
         if (!canDraw) return
-        GLCore.pushMatrix()
-        GLCore.glBlend(true)
+        poseStack.pushPose()
+//        GLCore.glBlend(true)
         GLCore.color(ColorUtil.multiplyAlpha(getTextColor(mouse), transparency))
         if (icon.rl != null) {
             GLCore.glBindTexture(icon.rl!!)
         }
-        icon.glDraw(pos + vec(1, 1), 5f)
+        icon.glDraw(pos + vec(1, 1), 5f, poseStack)
 
-        GLCore.glBlend(false)
+//        GLCore.glBlend(false)
         GLCore.color(1f, 1f, 1f, 1f)
-        drawChildren(mouse, partialTicks, DrawType.DRAW)
-        GLCore.popMatrix()
+        drawChildren(mouse, partialTicks, DrawType.DRAW, poseStack)
+        poseStack.popPose()
     }
 
-    override fun drawForeground(mouse: Vector2d, partialTicks: Float) {
+    override fun drawForeground(poseStack: PoseStack, mouse: Vec2d, partialTicks: Float) {
         if (!canDraw) return
-        GLCore.pushMatrix()
+        poseStack.pushPose()
         if (mouse in this) {
-            drawHoveringText(mouse)
+            drawHoveringText(poseStack, mouse)
             GLCore.lighting(false)
         }
-        drawChildren(mouse, partialTicks, DrawType.FOREGROUND)
-        GLCore.popMatrix()
+        drawChildren(mouse, partialTicks, DrawType.FOREGROUND, poseStack)
+        poseStack.popPose()
     }
 
-    fun mouseOverEffect() {
+    fun mouseOverEffect(poseStack: PoseStack) {
         GLCore.glBindTexture(RES_ITEM_GLINT)
         GLCore.depth(true)
-        GlStateManager.depthMask(false)
-        GlStateManager.depthFunc(514)
+        GlStateManager._depthMask(false)
+        GlStateManager._depthFunc(514)
         GLCore.glBlend(true)
-        GLCore.blendFunc(GlStateManager.SourceFactor.SRC_COLOR.factor, GlStateManager.DestFactor.ONE.factor)
-        GlStateManager.matrixMode(5890)
-        GLCore.pushMatrix()
-        GLCore.scale(8.0f, 8.0f, 8.0f)
-        val f = (Minecraft.getSystemTime() % 3000L).toFloat() / 3000.0f / 8.0f
-        GLCore.translate(f, 0.0f, 0.0f)
-        GLCore.glRotatef(-50.0f, 0.0f, 0.0f, 1.0f)
+        GLCore.blendFunc(GlStateManager.SourceFactor.SRC_COLOR.value, GlStateManager.DestFactor.ONE.value)
+//        GlStateManager.matrixMode(5890)
+        poseStack.pushPose()
+        poseStack.scale(8.0f, 8.0f, 8.0f)
+        val f = (System.currentTimeMillis() % 3000L).toFloat() / 3000.0f / 8.0f
+        poseStack.translate(f, 0.0f, 0.0f)
+//        poseStack.rotateAround(-50.0f, 0.0f, 0.0f, 1.0f)
         GLCore.glTexturedRectV2(pos.x, pos.y, width = width.toDouble(), height = height.toDouble())
-        GLCore.popMatrix()
-        GLCore.pushMatrix()
-        GLCore.scale(8.0f, 8.0f, 8.0f)
-        val f1 = (Minecraft.getSystemTime() % 4873L).toFloat() / 4873.0f / 8.0f
-        GLCore.translate(-f1, 0.0f, 0.0f)
-        GLCore.glRotatef(10.0f, 0.0f, 0.0f, 1.0f)
+        poseStack.popPose()
+        poseStack.pushPose()
+        poseStack.scale(8.0f, 8.0f, 8.0f)
+        val f1 = (System.currentTimeMillis() % 4873L).toFloat() / 4873.0f / 8.0f
+        poseStack.translate(-f1, 0.0f, 0.0f)
+//        poseStack.rotateAround(10.0f, 0.0f, 0.0f, 1.0f)
         GLCore.glTexturedRectV2(pos.x, pos.y, width = width.toDouble(), height = height.toDouble())
-        GLCore.popMatrix()
-        GlStateManager.matrixMode(5888)
+        poseStack.popPose()
+//        GlStateManager.matrixMode(5888)
         GLCore.blendFunc(
-            GlStateManager.SourceFactor.SRC_ALPHA.factor,
-            GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA.factor
+            GlStateManager.SourceFactor.SRC_ALPHA.value,
+            GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA.value
         )
-        GlStateManager.depthFunc(515)
+        GlStateManager._depthFunc(515)
         GLCore.depthMask(true)
-        // GLCore.depth(false)
+        GLCore.depth(false)
     }
 
-    open fun drawHoveringText(mouse: Vector2d) {
-        GuiUtils.drawHoveringText(
+    open fun drawHoveringText(poseStack: PoseStack, mouse: Vec2d) {
+        drawString(
+            poseStack, Client.mc.font,
+            FormattedCharSequence.fromList(description.map { FormattedCharSequence.forward(it, Style.EMPTY) }),
+            mouse.xi, mouse.yi, -1593835521 // TODO : check colour
+        )
+        /*GuiUtils.drawHoveringText(
             description,
             mouse.xi,
             mouse.yi,
@@ -222,7 +235,7 @@ open class IconElement(
             Client.mc.displayHeight,
             width - 20,
             GLCore.glFont
-        )
+        )*/
         /*GuiUtils.drawHoveringText(description, mouse.xi, mouse.yi, width, height, -1, GLCore.glFont)
         if (description.isNotEmpty()) {
             GlStateManager.disableRescaleNormal()
@@ -273,44 +286,48 @@ open class IconElement(
         }*/
     }
 
-    fun drawChildren(mouse: Vector2d, partialTicks: Float, drawType: DrawType) {
+    fun drawChildren(mouse: Vec2d, partialTicks: Float, drawType: DrawType, poseStack: PoseStack) {
         var nmouse = mouse - pos - vec(childrenXOffset, childrenYOffset)
         if (visibleElementsSequence.count() > 0) {
             val c = visibleElementsSequence.take(7).count()
             val centering = ((c + c % 2 - 2) * childrenYSeparator) / 2.0
-            GLCore.translate(pos.x + childrenXOffset, pos.y + childrenYOffset - centering, 0.0)
+//            GLCore.translate(pos.x + childrenXOffset, pos.y + childrenYOffset - centering, 0.0)
+            poseStack.pushPose()
+            poseStack.translate(pos.x + childrenXOffset, pos.y + childrenYOffset - centering, 0.0)
             nmouse = mouse - pos - vec(childrenXOffset, childrenYOffset - centering)
             childrenOrderedForRendering().forEachIndexed { i, it ->
                 if (c == 7 && (i == 0 || i == 6)) it.opacity /= 2
                 when (drawType) {
-                    DrawType.BACKGROUND -> it.drawBackground(nmouse, partialTicks)
-                    DrawType.DRAW -> it.draw(nmouse, partialTicks)
-                    DrawType.FOREGROUND -> it.drawForeground(nmouse, partialTicks)
+                    DrawType.BACKGROUND -> it.drawBackground(poseStack, nmouse, partialTicks)
+                    DrawType.DRAW -> it.draw(poseStack, nmouse, partialTicks)
+                    DrawType.FOREGROUND -> it.drawForeground(poseStack, nmouse, partialTicks)
                 }
-                GLCore.translate(childrenXSeparator.toDouble(), childrenYSeparator.toDouble(), 0.0)
+//                GLCore.translate(childrenXSeparator.toDouble(), childrenYSeparator.toDouble(), 0.0)
+                poseStack.translate(childrenXSeparator.toDouble(), childrenYSeparator.toDouble(), 0.0)
                 nmouse -= vec(childrenXSeparator, childrenYSeparator)
                 if (c == 7 && (i == 0 || i == 6)) it.opacity *= 2
             }
+            poseStack.popPose()
             nmouse = mouse - pos - vec(childrenXOffset, childrenYOffset - centering)
         }
 
         otherElementsSequence.forEach {
             when (drawType) {
-                DrawType.BACKGROUND -> it.drawBackground(nmouse, partialTicks)
-                DrawType.DRAW -> it.draw(nmouse, partialTicks)
-                DrawType.FOREGROUND -> it.drawForeground(nmouse, partialTicks)
+                DrawType.BACKGROUND -> it.drawBackground(poseStack, nmouse, partialTicks)
+                DrawType.DRAW -> it.draw(poseStack, nmouse, partialTicks)
+                DrawType.FOREGROUND -> it.drawForeground(poseStack, nmouse, partialTicks)
             }
         }
     }
 
-    open fun getColor(mouse: Vector2d): Int {
+    open fun getColor(mouse: Vec2d): Int {
         return if (disabled) bgColorScheme[ColorIntent.DISABLED] ?: ColorUtil.DISABLED_COLOR.rgba
         else if (highlighted || mouse in this || selected) {
             bgColorScheme[ColorIntent.HOVERED] ?: ColorUtil.DEFAULT_COLOR.rgba
         } else bgColorScheme[ColorIntent.NORMAL] ?: ColorUtil.HOVER_COLOR.rgba
     }
 
-    open fun getTextColor(mouse: Vector2d): Int {
+    open fun getTextColor(mouse: Vec2d): Int {
         return if (disabled) fontColorScheme[ColorIntent.DISABLED]
             ?: ColorUtil.DISABLED_FONT_COLOR.rgba else if (highlighted || mouse in this || selected) {
             fontColorScheme[ColorIntent.HOVERED] ?: ColorUtil.HOVER_FONT_COLOR.rgba
@@ -319,7 +336,7 @@ open class IconElement(
         } else fontColorScheme[ColorIntent.NORMAL] ?: ColorUtil.DEFAULT_FONT_COLOR.rgba
     }
 
-    override fun mouseClicked(pos: Vector2d, mouseButton: MouseButton): Boolean {
+    override fun mouseClicked(pos: Vec2d, mouseButton: MouseButton): Boolean {
         if (this.parent is CategoryButton && this.highlighted && this.elementsSequence.none { it is CategoryButton && it.highlighted }) {
             when (mouseButton) {
                 MouseButton.SCROLL_UP -> {
@@ -354,8 +371,7 @@ open class IconElement(
         }
     }
 
-    override fun keyTyped(typedChar: Char, keyCode: Int) {
-    }
+    override fun keyReleased(keyCode: Int, scanCode: Int, modifiers: Int) = false
 
     fun setBgColor(intent: ColorIntent, rgba: Int): IconElement {
         bgColorScheme[intent] = rgba
@@ -369,12 +385,12 @@ open class IconElement(
     }
 
     fun setFontColor(intent: ColorIntent, color: ColorUtil): IconElement = setFontColor(intent, color.rgba)
-    open fun onClick(body: (Vector2d, MouseButton) -> Boolean): NeoElement {
+    open fun onClick(body: (Vec2d, MouseButton) -> Boolean): NeoElement {
         onClickBody = body
         return this
     }
 
-    open fun onClickOut(body: (Vector2d, MouseButton) -> Unit): NeoElement {
+    open fun onClickOut(body: (Vec2d, MouseButton) -> Unit): NeoElement {
         onClickOutBody = body
         return this
     }

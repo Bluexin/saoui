@@ -1,43 +1,43 @@
 package be.bluexin.mcui.screens.util
 
-import be.bluexin.mcui.util.Client
-import be.bluexin.mcui.SoundCore
 import be.bluexin.mcui.api.screens.IIcon
-import be.bluexin.mcui.play
+import be.bluexin.mcui.util.Client
 import be.bluexin.mcui.util.IconCore
-import net.minecraft.client.gui.toasts.GuiToast
-import net.minecraft.client.gui.toasts.IToast
-import net.minecraft.client.renderer.GlStateManager
+import com.mojang.blaze3d.systems.RenderSystem
+import com.mojang.blaze3d.vertex.PoseStack
+import net.minecraft.client.gui.GuiComponent
+import net.minecraft.client.gui.components.toasts.Toast
+import net.minecraft.client.gui.components.toasts.ToastComponent
 
-class NotificationAlert(val icon: IIcon, val title: String, val subtitle: String) : IToast {
+class NotificationAlert(val icon: IIcon, val title: String, val subtitle: String) : Toast {
 
     private var firstDrawTime: Long = 0
     private var newDisplay = true
 
-    override fun draw(toastGui: GuiToast, delta: Long): IToast.Visibility {
+    override fun render(poseStack: PoseStack, toastGui: ToastComponent, delta: Long): Toast.Visibility {
         if (newDisplay) {
             firstDrawTime = delta
             newDisplay = false
-            SoundCore.MESSAGE.play()
+//            SoundCore.MESSAGE.play()
         }
 
-        toastGui.minecraft.textureManager.bindTexture(IToast.TEXTURE_TOASTS)
-        GlStateManager.color(1.0f, 1.0f, 1.0f)
-        toastGui.drawTexturedModalRect(0, 0, 0, 96, 160, 32)
-        icon.glDraw(6, 8)
+        RenderSystem.setShaderTexture(0, Toast.TEXTURE)
+//        GlStateManager.color(1.0f, 1.0f, 1.0f)
+        GuiComponent.blit(poseStack, 0, 0, 0, 96, 160, 32)
+        icon.glDraw(6, 8, poseStack)
 
         if (subtitle.isEmpty()) {
-            toastGui.minecraft.fontRenderer.drawString(title, 25, 12, -11534256)
+            toastGui.minecraft.font.draw(poseStack, title, 25f, 12f, -11534256)
         } else {
-            toastGui.minecraft.fontRenderer.drawString(title, 25, 7, -11534256)
-            toastGui.minecraft.fontRenderer.drawString(subtitle, 25, 18, -16777216)
+            toastGui.minecraft.font.draw(poseStack, title, 25f, 7f, -11534256)
+            toastGui.minecraft.font.draw(poseStack, subtitle, 25f, 18f, -16777216)
         }
-        return if (delta - firstDrawTime < 5000L) IToast.Visibility.SHOW else IToast.Visibility.HIDE
+        return if (delta - firstDrawTime < 5000L) Toast.Visibility.SHOW else Toast.Visibility.HIDE
     }
 
     companion object {
         fun new(icon: IconCore, title: String, subtitle: String) {
-            Client.mc.toastGui.add(NotificationAlert(icon, title, subtitle))
+            Client.mc.toasts.addToast(NotificationAlert(icon, title, subtitle))
         }
     }
 }

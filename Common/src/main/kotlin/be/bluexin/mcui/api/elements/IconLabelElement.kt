@@ -17,9 +17,9 @@
 
 package be.bluexin.mcui.api.elements
 
-import com.tencao.saomclib.utils.math.BoundingBox2D
-import org.joml.Vector2d
-import com.tencao.saomclib.utils.math.vec
+import be.bluexin.mcui.util.math.BoundingBox2D
+import be.bluexin.mcui.util.math.Vec2d
+import be.bluexin.mcui.util.math.vec
 import be.bluexin.mcui.GLCore
 import be.bluexin.mcui.api.elements.registry.DrawType
 import be.bluexin.mcui.api.screens.IIcon
@@ -27,6 +27,7 @@ import be.bluexin.mcui.config.OptionCore
 import be.bluexin.mcui.resources.StringNames
 import be.bluexin.mcui.screens.unaryPlus
 import be.bluexin.mcui.util.ColorUtil
+import com.mojang.blaze3d.vertex.PoseStack
 import kotlin.math.max
 
 /**
@@ -34,7 +35,7 @@ import kotlin.math.max
  *
  * @author Bluexin
  */
-open class IconLabelElement(icon: IIcon, open var label: String = "", pos: Vector2d = Vector2d.ZERO, override val description: MutableList<String> = mutableListOf()) : IconElement(icon, pos, width = 84, height = 18) {
+open class IconLabelElement(icon: IIcon, open var label: String = "", pos: Vec2d = Vec2d.ZERO, override val description: MutableList<String> = mutableListOf()) : IconElement(icon, pos, width = 84, height = 18) {
 
     override val boundingBox get() = BoundingBox2D(pos, pos + vec(width, height))
     override var idealBoundingBox: BoundingBox2D
@@ -62,61 +63,72 @@ open class IconLabelElement(icon: IIcon, open var label: String = "", pos: Vecto
     /**
      * @see IElement.drawBackground
      */
-    override fun drawBackground(mouse: Vector2d, partialTicks: Float) {
+    override fun drawBackground(poseStack: PoseStack, mouse: Vec2d, partialTicks: Float) {
         if (!canDraw) return
-        GLCore.pushMatrix()
-        if (scale != Vector2d.ONE) GLCore.glScalef(scale.xf, scale.yf, 1f)
+        poseStack.pushPose()
+        if (scale != Vec2d.ONE) poseStack.scale(scale.xf, scale.yf, 1f)
         val mouseCheck = mouse in this || selected
         GLCore.glBlend(true)
         GLCore.depth(true)
         GLCore.color(ColorUtil.multiplyAlpha(getColor(mouse), transparency))
         GLCore.glBindTexture(StringNames.slot)
-        GLCore.glTexturedRectV2(pos.x, pos.y, width = width.toDouble(), height = height.toDouble(), srcX = 0.0, srcY = 40.0, srcWidth = 84.0, srcHeight = 18.0)
+        GLCore.glTexturedRectV2(
+            pos.x,
+            pos.y,
+            width = width.toDouble(),
+            height = height.toDouble(),
+            srcX = 0.0,
+            srcY = 40.0,
+            srcWidth = 84.0,
+            srcHeight = 18.0
+        )
         if (mouseCheck && OptionCore.MOUSE_OVER_EFFECT.isEnabled && !disabled) {
-            mouseOverEffect()
+            mouseOverEffect(poseStack)
         }
         GLCore.glBlend(false)
         GLCore.depth(false)
         GLCore.color(1f, 1f, 1f, 1f)
-        drawChildren(mouse, partialTicks, DrawType.BACKGROUND)
-        GLCore.popMatrix()
+        drawChildren(mouse, partialTicks, DrawType.BACKGROUND, poseStack)
+        poseStack.popPose()
     }
 
     /**
      * @see IElement.draw
      */
-    override fun draw(mouse: Vector2d, partialTicks: Float) {
+    override fun draw(poseStack: PoseStack, mouse: Vec2d, partialTicks: Float) {
         if (!canDraw) return
-        GLCore.pushMatrix()
+        poseStack.pushPose()
         GLCore.glBlend(true)
         val color = ColorUtil.multiplyAlpha(getTextColor(mouse), transparency)
         GLCore.color(color)
         if (icon.rl != null) GLCore.glBindTexture(icon.rl!!)
-        icon.glDrawUnsafe(pos + vec(1, 1))
+        icon.glDrawUnsafe(pos + vec(1, 1), poseStack)
         if (this.highlighted || (mouse in this || selected)) {
-            GLCore.glString(label, pos + vec(22, height / 2), color, shadow = OptionCore.TEXT_SHADOW.isEnabled, centered = true)
+            GLCore.glString(label, pos + vec(22, height / 2), color, shadow = OptionCore.TEXT_SHADOW.isEnabled, centered = true,
+                poseStack = poseStack
+            )
         } else {
-            GLCore.glString(label, pos + vec(22, height / 2), color, shadow = false, centered = true)
+            GLCore.glString(label, pos + vec(22, height / 2), color, shadow = false, centered = true, poseStack = poseStack)
         }
         GLCore.glBlend(false)
         GLCore.color(1f, 1f, 1f, 1f)
-        drawChildren(mouse, partialTicks, DrawType.DRAW)
-        GLCore.popMatrix()
+        drawChildren(mouse, partialTicks, DrawType.DRAW, poseStack)
+        poseStack.popPose()
     }
 
     /**
      * @see IElement.drawForeground
      */
-    override fun drawForeground(mouse: Vector2d, partialTicks: Float) {
+    override fun drawForeground(poseStack: PoseStack, mouse: Vec2d, partialTicks: Float) {
         if (!canDraw) return
-        GLCore.pushMatrix()
+        poseStack.pushPose()
         if (mouse in this) {
-            drawHoveringText(mouse)
+            drawHoveringText(poseStack, mouse)
             GLCore.lighting(false)
             GLCore.depth(false)
         }
-        drawChildren(mouse, partialTicks, DrawType.FOREGROUND)
-        GLCore.popMatrix()
+        drawChildren(mouse, partialTicks, DrawType.FOREGROUND, poseStack)
+        poseStack.popPose()
     }
 
     override fun toString(): String {

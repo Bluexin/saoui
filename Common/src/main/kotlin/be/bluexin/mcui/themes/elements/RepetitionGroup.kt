@@ -19,6 +19,7 @@ package be.bluexin.mcui.themes.elements
 
 import be.bluexin.mcui.api.themes.IHudDrawContext
 import be.bluexin.mcui.themes.util.CInt
+import com.mojang.blaze3d.vertex.PoseStack
 import jakarta.xml.bind.annotation.XmlRootElement
 
 /**
@@ -31,13 +32,13 @@ open class RepetitionGroup : ElementGroup() {
 
     protected var amount: CInt? = null
 
-    override fun draw(ctx: IHudDrawContext) {
+    override fun draw(ctx: IHudDrawContext, poseStack: PoseStack) {
         if (enabled?.invoke(ctx) == true) return
 
         val m = amount?.invoke(ctx) ?: 0
         for (i in 0 until m) {
             ctx.setI(i)
-            super.draw(ctx)
+            super.draw(ctx, poseStack)
         }
     }
 }

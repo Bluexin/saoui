@@ -151,7 +151,7 @@ object StaticRenderer { // TODO: add usage of scale, offset etc from capability
                 val f = 1.6f
                 val f1 = 0.016666668f * f
 
-                GLCore.pushMatrix()
+                poseStack.pushPose()
                 GLCore.glTranslatef(x.toFloat() + 0.0f, y.toFloat() + sizeMult * entity.height + sizeMult * 1.1f, z.toFloat())
                 GLCore.glNormal3f(0.0f, 1.0f, 0.0f)
                 GLCore.glRotatef(-renderManager.playerViewY, 0.0f, 1.0f, 0.0f)
@@ -208,7 +208,7 @@ object StaticRenderer { // TODO: add usage of scale, offset etc from capability
                 GLCore.draw()
 
                 GLCore.lighting(true)
-                GLCore.popMatrix()
+                poseStack.popPose()
             }
         }
     }
@@ -230,7 +230,7 @@ object StaticRenderer { // TODO: add usage of scale, offset etc from capability
         val d3 = living.getDistanceSq(renderManager.renderViewEntity)
 
         if (d3 <= distance) {
-            GLCore.pushMatrix()
+            poseStack.pushPose()
             GLCore.depth(true)
             GLCore.glCullFace(false)
             GLCore.glBlend(true)
@@ -280,7 +280,7 @@ object StaticRenderer { // TODO: add usage of scale, offset etc from capability
 
             GLCore.glCullFace(true)
             GLCore.lighting(true)
-            GLCore.popMatrix()
+            poseStack.popPose()
         }
     }
 

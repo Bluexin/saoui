@@ -17,21 +17,17 @@
 
 package be.bluexin.mcui.api.items
 
-import baubles.api.BaublesApi
-import baubles.api.IBauble
-import be.bluexin.mcui.util.Client
-import com.tencao.saomclib.toolClasses
 import be.bluexin.mcui.api.screens.IIcon
 import be.bluexin.mcui.screens.util.toIcon
+import be.bluexin.mcui.util.Client
 import be.bluexin.mcui.util.IconCore
-import net.minecraft.client.resources.I18n
-import net.minecraft.world.entity.player.Player
-import net.minecraft.init.Blocks
-import net.minecraft.init.Items
-import net.minecraft.inventory.IInventory
-import net.minecraft.inventory.Slot
-import net.minecraft.item.*
-import net.minecraftforge.fml.common.Loader
+import net.minecraft.client.resources.language.I18n
+import net.minecraft.world.entity.EquipmentSlot
+import net.minecraft.world.entity.LivingEntity
+import net.minecraft.world.inventory.InventoryMenu.ARMOR_SLOT_END
+import net.minecraft.world.inventory.Slot
+import net.minecraft.world.item.*
+import net.minecraft.world.level.block.Blocks
 
 /**
  * TODO: use [ItemTool.getToolClasses] for moar modded compat
@@ -60,7 +56,7 @@ enum class BaseFilters(val filter: (ItemStack, Boolean) -> Boolean) : IItemFilte
     },
 
     HELMET({ stack, _ ->
-        mc.player.inventoryContainer.inventorySlots.first { it.slotNumber == 5 }.isItemValid(stack)
+        EquipmentSlot.HEAD == LivingEntity.getEquipmentSlotForItem(stack)
     }) {
         override val icon: IIcon
             get() = Items.CHAINMAIL_HELMET.toIcon()
@@ -71,13 +67,11 @@ enum class BaseFilters(val filter: (ItemStack, Boolean) -> Boolean) : IItemFilte
         override val category: IItemFilter
             get() = ARMOR
 
-        override fun getValidSlots(): Set<Slot> {
-            return IItemFilter.getPlayerSlots(5)
-        }
+        override fun getValidSlots() = IItemFilter.getPlayerSlots(ARMOR_SLOT_END - 1 - EquipmentSlot.HEAD.index)
     },
 
     CHESTPLATES({ stack, _ ->
-        mc.player.openContainer.inventorySlots.first { it.slotNumber == 6 }.isItemValid(stack)
+        EquipmentSlot.CHEST == LivingEntity.getEquipmentSlotForItem(stack)
     }) {
         override val icon: IIcon
             get() = Items.CHAINMAIL_CHESTPLATE.toIcon()
@@ -88,13 +82,11 @@ enum class BaseFilters(val filter: (ItemStack, Boolean) -> Boolean) : IItemFilte
         override val category: IItemFilter
             get() = ARMOR
 
-        override fun getValidSlots(): Set<Slot> {
-            return IItemFilter.getPlayerSlots(6)
-        }
+        override fun getValidSlots() = IItemFilter.getPlayerSlots(ARMOR_SLOT_END - 1 - EquipmentSlot.CHEST.index)
     },
 
     LEGGINS({ stack, _ ->
-        mc.player.inventoryContainer.inventorySlots.first { it.slotNumber == 7 }.isItemValid(stack)
+        net.minecraft.world.entity.EquipmentSlot.LEGS == net.minecraft.world.entity.LivingEntity.getEquipmentSlotForItem(stack)
     }) {
         override val icon: IIcon
             get() = Items.CHAINMAIL_LEGGINGS.toIcon()
@@ -105,13 +97,11 @@ enum class BaseFilters(val filter: (ItemStack, Boolean) -> Boolean) : IItemFilte
         override val category: IItemFilter
             get() = ARMOR
 
-        override fun getValidSlots(): Set<Slot> {
-            return IItemFilter.getPlayerSlots(7)
-        }
+        override fun getValidSlots(): Set<Slot> = IItemFilter.getPlayerSlots(ARMOR_SLOT_END - 1 - EquipmentSlot.LEGS.index)
     },
 
     BOOTS({ stack, _ ->
-        mc.player.inventoryContainer.inventorySlots.first { it.slotNumber == 8 }.isItemValid(stack)
+        net.minecraft.world.entity.EquipmentSlot.FEET == net.minecraft.world.entity.LivingEntity.getEquipmentSlotForItem(stack)
     }) {
         override val icon: IIcon
             get() = Items.CHAINMAIL_BOOTS.toIcon()
@@ -122,9 +112,7 @@ enum class BaseFilters(val filter: (ItemStack, Boolean) -> Boolean) : IItemFilte
         override val category: IItemFilter
             get() = ARMOR
 
-        override fun getValidSlots(): Set<Slot> {
-            return IItemFilter.getPlayerSlots(8)
-        }
+        override fun getValidSlots(): Set<Slot> = IItemFilter.getPlayerSlots(ARMOR_SLOT_END - 1 - EquipmentSlot.FEET.index)
     },
 
     /*
@@ -161,7 +149,7 @@ enum class BaseFilters(val filter: (ItemStack, Boolean) -> Boolean) : IItemFilte
             get() = true
     },
 
-    SWORDS({ stack, _ -> stack.item is ItemSword || stack.toolClasses.contains("sword") }) {
+    SWORDS({ stack, _ -> stack.item is SwordItem /*|| stack.toolClasses.contains("sword")*/ }) {
         override val icon: IIcon
             get() = Items.IRON_SWORD.toIcon()
 
@@ -172,7 +160,11 @@ enum class BaseFilters(val filter: (ItemStack, Boolean) -> Boolean) : IItemFilte
             get() = WEAPONS
     },
 
-    BOWS({ stack, _ -> stack.item is ItemBow || stack.item.getItemUseAction(stack) == EnumAction.BOW || stack.toolClasses.contains("bow") }) {
+    BOWS({ stack, _ ->
+        stack.item is BowItem || stack.item.getUseAnimation(stack) == UseAnim.BOW /*|| stack.toolClasses.contains(
+            "bow"
+        )*/
+    }) {
         override val icon: IIcon
             get() = Items.BOW.toIcon()
 
@@ -197,7 +189,7 @@ enum class BaseFilters(val filter: (ItemStack, Boolean) -> Boolean) : IItemFilte
             get() = true
     },
 
-    PICKAXES({ stack, _ -> stack.item is ItemPickaxe || stack.toolClasses.contains("pickaxe") }) {
+    PICKAXES({ stack, _ -> stack.item is PickaxeItem/* || stack.toolClasses.contains("pickaxe")*/ }) {
         override val icon: IIcon
             get() = Items.IRON_PICKAXE.toIcon()
 
@@ -208,7 +200,7 @@ enum class BaseFilters(val filter: (ItemStack, Boolean) -> Boolean) : IItemFilte
             get() = TOOLS
     },
 
-    AXES({ stack, _ -> stack.item is ItemAxe || stack.toolClasses.contains("axe") }) {
+    AXES({ stack, _ -> stack.item is AxeItem/* || stack.toolClasses.contains("axe")*/ }) {
         override val icon: IIcon
             get() = Items.IRON_AXE.toIcon()
 
@@ -219,7 +211,7 @@ enum class BaseFilters(val filter: (ItemStack, Boolean) -> Boolean) : IItemFilte
             get() = TOOLS
     },
 
-    SHOVELS({ stack, _ -> stack.item is ItemSpade }) {
+    SHOVELS({ stack, _ -> stack.item is ShovelItem }) {
         override val icon: IIcon
             get() = Items.IRON_SHOVEL.toIcon()
 
@@ -232,8 +224,9 @@ enum class BaseFilters(val filter: (ItemStack, Boolean) -> Boolean) : IItemFilte
 
     COMPATTOOLS({ stack, _ ->
         val item = stack.item
-        values().filter { it.category == TOOLS && it != COMPATTOOLS }.none { it.invoke(stack) } &&
-            (item is ItemTool || item is ItemHoe || item is ItemShears)
+        @Suppress("UNINITIALIZED_ENUM_COMPANION_WARNING") // used in a callback
+        values.filter { it.category == TOOLS && it != COMPATTOOLS }.none { it.invoke(stack) } &&
+                (item is DiggerItem || item is ShearsItem)
     }) {
         override val icon: IIcon
             get() = Items.SHEARS.toIcon()
@@ -245,7 +238,8 @@ enum class BaseFilters(val filter: (ItemStack, Boolean) -> Boolean) : IItemFilte
             get() = TOOLS
     },
 
-    ACCESSORY({ stack, _ -> baublesLoaded && stack.item is IBauble }) {
+    // TODO : replace with Curio or whatever is the modern alternative
+    /*ACCESSORY({ stack, _ -> baublesLoaded && stack.item is IBauble }) {
         override val icon: IIcon
             get() = Items.GHAST_TEAR.toIcon()
 
@@ -254,7 +248,7 @@ enum class BaseFilters(val filter: (ItemStack, Boolean) -> Boolean) : IItemFilte
 
         override val category: IItemFilter
             get() = EQUIPMENT
-    },
+    },*/
 
     ITEMS({ _, _ -> false }) {
         override val displayName: String
@@ -264,8 +258,8 @@ enum class BaseFilters(val filter: (ItemStack, Boolean) -> Boolean) : IItemFilte
     },
 
     CONSUMABLES({ stack, _ ->
-        val action = stack.itemUseAction
-        action == EnumAction.DRINK || action == EnumAction.EAT
+        val action = stack.useAnimation
+        action == UseAnim.DRINK || action == UseAnim.EAT
     }) {
         override val icon: IIcon
             get() = Items.APPLE.toIcon()
@@ -277,7 +271,7 @@ enum class BaseFilters(val filter: (ItemStack, Boolean) -> Boolean) : IItemFilte
             get() = ITEMS
     },
 
-    BLOCKS({ stack, _ -> stack.item is ItemBlock }) {
+    BLOCKS({ stack, _ -> stack.item is BlockItem }) {
         override val icon: IIcon
             get() = Blocks.COBBLESTONE.toIcon()
         override val displayName: String
@@ -306,14 +300,16 @@ enum class BaseFilters(val filter: (ItemStack, Boolean) -> Boolean) : IItemFilte
     companion object {
         val mc by lazy { Client.mc }
 
-        val baublesLoaded by lazy { Loader.isModLoaded("baubles") }
+//        val baublesLoaded by lazy { Loader.isModLoaded("baubles") }
 
-        fun getBaubles(player: Player): IInventory? {
+        /*fun getBaubles(player: Player): IInventory? {
             return if (!baublesLoaded) {
                 null
             } else {
                 BaublesApi.getBaubles(player)
             }
-        }
+        }*/
+
+        val values by lazy { values() }
     }
 }

@@ -17,10 +17,6 @@
 
 package be.bluexin.mcui.screens
 
-import be.bluexin.mcui.util.Client
-import org.joml.Vector2d
-import com.tencao.saomclib.utils.math.clamp
-import com.tencao.saomclib.utils.math.vec
 import be.bluexin.mcui.GLCore
 import be.bluexin.mcui.api.elements.*
 import be.bluexin.mcui.api.elements.animator.Animation
@@ -28,24 +24,32 @@ import be.bluexin.mcui.api.elements.animator.Animator
 import be.bluexin.mcui.api.screens.IIcon
 import be.bluexin.mcui.config.OptionCore
 import be.bluexin.mcui.screens.util.Popup
-import net.minecraft.Client.mc
-import net.minecraft.client.gui.GuiScreen
-import net.minecraft.client.gui.ScaledResolution
-import net.minecraft.client.settings.KeyBinding
-import net.minecraft.util.math.Vec2f
-import org.lwjgl.input.Keyboard
-import org.lwjgl.input.Mouse
+import be.bluexin.mcui.util.Client
+import be.bluexin.mcui.util.math.Vec2d
+import be.bluexin.mcui.util.math.clamp
+import be.bluexin.mcui.util.math.vec
+import com.mojang.blaze3d.platform.InputConstants
+import com.mojang.blaze3d.vertex.PoseStack
+import net.minecraft.client.KeyMapping
+import net.minecraft.client.Minecraft
+import net.minecraft.client.gui.screens.Screen
+import net.minecraft.network.chat.Component
+import net.minecraft.world.phys.Vec2
 
 /**
  * Part of saoui by Bluexin, released under GNU GPLv3.
  *
  * @author Bluexin
  */
-abstract class CoreGUI<T : Any>(final override var pos: Vector2d, override var destination: Vector2d = pos, val elements: MutableList<NeoElement> = mutableListOf()) : GuiScreen(), INeoParent {
+abstract class CoreGUI<T : Any>(
+    final override var pos: Vec2d,
+    override var destination: Vec2d = pos,
+    val elements: MutableList<NeoElement> = mutableListOf()
+) : Screen(Component.literal("Core GUI")), INeoParent {
 
     var viewSet: Boolean = false
-    var playerView: Vec2f = Vec2f.ZERO
-    open var previousMouse: Vector2d = Vector2d(0.0, 0.0)
+    var playerView: Vec2 = Vec2(0f, 0f)
+    open var previousMouse: Vec2d = Vec2d(0.0, 0.0)
 
     var subGui: CoreGUI<*>? = null
         private set
@@ -61,74 +65,85 @@ abstract class CoreGUI<T : Any>(final override var pos: Vector2d, override var d
             } else subGui?.getPopup
         }
 
-    override fun drawScreen(mouseX: Int, mouseY: Int, partialTicks: Float) {
+    override fun render(poseStack: PoseStack, mouseX: Int, mouseY: Int, partialTicks: Float) {
         GLCore.glBlend(true)
-        GLCore.pushMatrix()
+        poseStack.pushPose()
 
         if (OptionCore.UI_MOVEMENT.isEnabled) {
             if (!viewSet) {
-                playerView = Vec2f(Client.mc.player.rotationYaw, Client.mc.player.rotationPitch)
-                previousMouse = Vector2d(mouseX.toDouble(), mouseY.toDouble())
+                playerView = Client.mc.player!!.rotationVector
+                previousMouse = Vec2d(mouseX.toDouble(), mouseY.toDouble())
                 viewSet = true
             } else {
-                Client.mc.player.rotationYaw = playerView.x - ((width / 2 - mouseX) / 2) * 0.25F
-                Client.mc.player.rotationPitch = playerView.y - ((height / 2 - mouseY) / 2) * 0.25F
+                Client.mc.player!!.xRotO = playerView.x - ((width / 2 - mouseX) / 2) * 0.25F
+                Client.mc.player!!.yRotO = playerView.y - ((height / 2 - mouseY) / 2) * 0.25F
                 pos = pos.add((mouseX - previousMouse.x) * 0.25, (mouseY - previousMouse.y) * 0.25)
-                previousMouse = Vector2d(mouseX.toDouble(), mouseY.toDouble())
+                previousMouse = Vec2d(mouseX.toDouble(), mouseY.toDouble())
             }
         } else if (viewSet) {
-            Client.mc.player.rotationYaw = playerView.x
-            Client.mc.player.rotationPitch = playerView.y
+            Client.mc.player!!.xRotO = playerView.x
+            Client.mc.player!!.yRotO = playerView.y
         }
-        GLCore.translate(pos.x, pos.y, 0.0)
+        poseStack.translate(pos.x, pos.y, 0.0)
 
-        val mousePos = if (subGui == null) vec(mouseX, mouseY) - pos else Vector2d.NEG_INFINITY
-        elements.forEach { it.drawBackground(mousePos, partialTicks) }
-        elements.forEach { it.draw(mousePos, partialTicks) }
-        elements.forEach { it.drawForeground(mousePos, partialTicks) }
+        val mousePos = if (subGui == null) vec(mouseX, mouseY) - pos else Vec2d.NEG_INFINITY
+        elements.forEach { it.drawBackground(poseStack, mousePos, partialTicks) }
+        elements.forEach { it.draw(poseStack, mousePos, partialTicks) }
+        elements.forEach { it.drawForeground(poseStack, mousePos, partialTicks) }
 
-        // GLCore.lighting(false)
+        GLCore.lighting(false)
 
-        GLCore.popMatrix()
+        poseStack.popPose()
 
-        subGui?.drawScreen(mouseX, mouseY, partialTicks)
+        subGui?.render(poseStack, mouseX, mouseY, partialTicks)
     }
 
-    override fun updateScreen() {
+    /*override fun updateScreen() {
         subGui?.updateScreen() ?: elements.forEach(NeoElement::update)
-    }
+    }*/
 
-    override fun handleMouseInput() {
+
+    /*override fun handleMouseInput() {
         super.handleMouseInput()
 
         val i = Mouse.getEventDWheel()
 
-        val x = Mouse.getEventX() * this.width / this.mc.displayWidth
-        val y = this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1
+        val x = Mouse.getEventX() * this.width / Client.mc.displayWidth
+        val y = this.height - Mouse.getEventY() * this.height / Client.mc.displayHeight - 1
 
         if (i > 0) this.mouseClicked(vec(x, y), MouseButton.SCROLL_UP)
         if (i < 0) this.mouseClicked(vec(x, y), MouseButton.SCROLL_DOWN)
+    }*/
+
+    override fun mouseClicked(mouseX: Double, mouseY: Double, mouseButton: Int): Boolean {
+        return this.mouseClicked(vec(mouseX, mouseY), MouseButton.fromInt(mouseButton))
     }
 
-    override fun mouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int) {
-        this.mouseClicked(vec(mouseX, mouseY), MouseButton.fromInt(mouseButton))
-    }
-
-    override fun mouseClicked(pos: Vector2d, mouseButton: MouseButton): Boolean {
+    override fun mouseClicked(pos: Vec2d, mouseButton: MouseButton): Boolean {
         return subGui?.mouseClicked(pos, mouseButton) ?: elements.fold(false) { acc, it ->
             it.mouseClicked(pos - this.pos, mouseButton) || acc
         }
     }
 
-    override fun mouseClickMove(mouseX: Int, mouseY: Int, clickedMouseButton: Int, timeSinceLastClick: Long) {
-        subGui?.mouseClickMove(mouseX, mouseY, clickedMouseButton, timeSinceLastClick)
+    override fun mouseDragged(
+        mouseX: Double,
+        mouseY: Double,
+        clickedMouseButton: Int,
+        dragX: Double,
+        dragY: Double
+    ): Boolean {
+        return subGui?.mouseDragged(mouseX, mouseY, clickedMouseButton, dragX, dragY) ?: false
     }
 
-    override fun mouseReleased(mouseX: Int, mouseY: Int, state: Int) {
-        subGui?.mouseReleased(mouseX, mouseY, state)
+    override fun mouseReleased(mouseX: Double, mouseY: Double, state: Int): Boolean {
+        return subGui?.mouseReleased(mouseX, mouseY, state) ?: false
     }
 
-    override fun doesGuiPauseGame() = OptionCore.GUI_PAUSE.isEnabled
+    /*override fun mouseScrolled(`$$0`: Double, `$$1`: Double, `$$2`: Double): Boolean {
+        return super.mouseScrolled(`$$0`, `$$1`, `$$2`)
+    }*/
+
+    override fun isPauseScreen() = OptionCore.GUI_PAUSE.isEnabled
 
     fun tlCategory(icon: IIcon, body: (CategoryButton.() -> Unit)? = null) {
         this.elements += CategoryButton(IconElement(icon, vec(0, 25 * elements.size)), this, body)
@@ -146,63 +161,70 @@ abstract class CoreGUI<T : Any>(final override var pos: Vector2d, override var d
         check(subGui == null) { "Already opened a sub gui of type ${subGui!!::class.qualifiedName}" }
         subGui = gui
         gui.parent = this
-        KeyBinding.unPressAllKeys()
 
-        while (Mouse.next());
-        while (Keyboard.next());
+        KeyMapping.releaseAll()
 
-        val sr = ScaledResolution(mc)
-        gui.setWorldAndResolution(mc, sr.scaledWidth, sr.scaledHeight)
+//        while (Mouse.next());
+//        while (InputConstants.next());
+
+        val sr = minecraft!!.window
+        gui.resize(minecraft!!, sr.guiScaledWidth, sr.guiScaledHeight)
 
         gui += { subGui = null }
 
         return gui
     }
 
-    override fun setWorldAndResolution(mc: Minecraft, width: Int, height: Int) {
-        super.setWorldAndResolution(mc, width, height)
-        subGui?.setWorldAndResolution(mc, width, height)
+    override fun resize(mc: Minecraft, width: Int, height: Int) {
+        super.resize(mc, width, height)
+        subGui?.resize(mc, width, height)
     }
 
-    override fun keyTyped(typedChar: Char, keyCode: Int) { // TODO: keyboard nav (should also support controller)
-        if (subGui == null) {
-            if (keyCode == Keyboard.KEY_ESCAPE) {
-                this.onGuiClosed()
+    override fun keyReleased(keyCode: Int, scanCode: Int, modifiers: Int): Boolean {
+        return if (subGui == null) {
+            if (keyCode == InputConstants.KEY_ESCAPE) {
+                this.onClose()
                 if (this.parent == null) {
-                    mc.setScreen(null)
-                    if (this.mc.currentScreen == null) this.mc.setIngameFocus()
+                    Client.mc.setScreen(null)
+//                    if (Client.mc.currentScreen == null) Client.mc.setIngameFocus()
                 }
+                true
             } else {
-                elements.firstOrNull { it.isOpen && it.selected }?.keyTyped(typedChar, keyCode) ?: let {
+                elements.firstOrNull { it.isOpen && it.selected }?.keyReleased(keyCode, scanCode, modifiers) ?: let {
                     // If no elements are open and focuseds
-                    if (keyCode == Client.mc.gameSettings.keyBindForward.keyCode || keyCode == Keyboard.KEY_UP) {
+                    if (Client.mc.options.keyUp.matches(keyCode, -1) || keyCode == InputConstants.KEY_UP) {
                         val selected = elements.firstOrNull { it.selected }
                         var index = elements.indexOf(selected)
                         if (index == -1) index = 0
                         else if (--index < 0) index = elements.size.minus(1)
                         selected?.selected = false
                         elements[index].selected = true
-                    } else if (keyCode == Client.mc.gameSettings.keyBindBack.keyCode || keyCode == Keyboard.KEY_DOWN) {
+                        true
+                    } else if (Client.mc.options.keyDown.matches(keyCode, -1) || keyCode == InputConstants.KEY_DOWN) {
                         val selected = elements.firstOrNull { it.selected }
                         var index = elements.indexOf(selected)
                         if (++index >= elements.size) index = 0
                         selected?.selected = false
                         elements[index].selected = true
-                    } else if (keyCode == Client.mc.gameSettings.keyBindRight.keyCode || keyCode == Keyboard.KEY_RIGHT || keyCode == Client.mc.gameSettings.keyBindJump.keyCode || keyCode == Keyboard.KEY_RETURN) {
-                        val selected = elements.firstOrNull { it.selected } ?: return
-                        if (selected is CategoryButton) {
+                        true
+                    } else if (Client.mc.options.keyRight.matches(keyCode, -1)
+                        || keyCode == InputConstants.KEY_RIGHT
+                        || Client.mc.options.keyJump.matches(keyCode, -1)
+                        || keyCode == InputConstants.KEY_RETURN
+                    ) {
+                        val selected = elements.firstOrNull { it.selected } ?: return false
+                        return if (selected is CategoryButton) {
                             selected.open()
-                        } else if (selected is IconElement) {
-                            selected.onClickBody(selected.pos, MouseButton.LEFT)
-                        }
-                    }
+                            true
+                        } else selected is IconElement && selected.onClickBody(selected.pos, MouseButton.LEFT)
+                    } else false
                 }
             }
-        } else subGui?.keyTyped(typedChar, keyCode)
+        } else subGui!!.keyReleased(keyCode, scanCode, modifiers)
     }
 
-    override fun onGuiClosed() {
-        super.onGuiClosed()
+    override fun onClose() {
+        super.onClose()
 
         this.elements.forEach {
             (it as? CategoryButton)?.close()

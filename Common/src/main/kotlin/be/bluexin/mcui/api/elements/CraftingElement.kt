@@ -1,12 +1,7 @@
 package be.bluexin.mcui.api.elements
 
-import be.bluexin.mcui.screens.CoreGUI
-import be.bluexin.mcui.screens.util.PopupCraft
-import be.bluexin.mcui.screens.util.toIcon
-import be.bluexin.mcui.util.CraftingUtil
 import be.bluexin.mcui.util.IconCore
-import net.minecraft.client.resources.I18n
-import net.minecraft.creativetab.CreativeTabs
+import net.minecraft.client.resources.language.I18n
 
 class CraftingElement : IconLabelElement(IconCore.CRAFTING, I18n.get("guiCrafting")) {
 
@@ -32,7 +27,7 @@ class CraftingElement : IconLabelElement(IconCore.CRAFTING, I18n.get("guiCraftin
 
     override fun update() {
         if (!init) {
-            CraftingUtil.updateItemHelper(true)
+//            CraftingUtil.updateItemHelper(true)
             initRecipes()
             init = true
             /*
@@ -42,9 +37,9 @@ class CraftingElement : IconLabelElement(IconCore.CRAFTING, I18n.get("guiCraftin
                 state.block.onBlockActivated(Minecraft().world, it, state, Minecraft().player, EnumHand.MAIN_HAND, EnumFacing.UP, 0f, 0f, 0f)
             }*/
         }
-        if (CraftingUtil.updateItemHelper()) {
+       /* if (CraftingUtil.updateItemHelper()) {
             initRecipes()
-        }
+        }*/
         super.update()
     }
 
@@ -54,7 +49,7 @@ class CraftingElement : IconLabelElement(IconCore.CRAFTING, I18n.get("guiCraftin
             (this.parent as CategoryButton).open(true)
         }
         elements.clear()
-        CraftingUtil.getCategories().forEach { tab ->
+        /*CraftingUtil.getCategories().forEach { tab ->
             if (CraftingUtil.anyValidRecipes(tab)) {
                 +CategoryButton(IconLabelElement(tab.iconItemStack.toIcon(), getTabName(tab))) {
                     CraftingUtil.getRecipes(tab).forEach { recipe ->
@@ -69,12 +64,12 @@ class CraftingElement : IconLabelElement(IconCore.CRAFTING, I18n.get("guiCraftin
                     }
                 }
             }
-        }
+        }*/
         if (validElementsSequence.none()) +EMPTY
         if (!this.highlighted) elementsSequence.forEach { it.hide() }
     }
 
-    fun getTabName(tab: CreativeTabs): String {
+    /*fun getTabName(tab: CreativeTabs): String {
         val name = tab.tabLabel.trim()
         if (name.isEmpty()) {
             return ""
@@ -88,5 +83,5 @@ class CraftingElement : IconLabelElement(IconCore.CRAFTING, I18n.get("guiCraftin
             newText.append(name[i])
         }
         return newText.toString().capitalize()
-    }
+    }*/
 }
