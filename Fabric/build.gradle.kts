@@ -48,20 +48,21 @@ loom {
     accessWidenerPath.set(project(":Common").file("src/main/resources/${property("mod_id")}.accesswidener"))
 }
 
+tasks {
+    named<ProcessResources>("processResources") {
+        from(project(":Common").sourceSets.main.get().resources)
+        inputs.property("version", version)
 
-tasks.named<ProcessResources>("processResources") {
-    from(project(":Common").sourceSets.main.get().resources)
-    inputs.property("version", version)
-
-    filesMatching("fabric.mod.json") {
-        expand(mapOf("version" to version))
+        filesMatching("fabric.mod.json") {
+            expand(mapOf("version" to version))
+        }
     }
-}
 
-tasks.withType<KotlinCompileTool>().configureEach {
-    source(project(":Common").sourceSets.main.get().allSource)
-}
+    withType<KotlinCompileTool>().all {
+        source(project(":Common").sourceSets.main.get().allSource)
+    }
 
-tasks.withType<JavaCompile>().configureEach {
-    source(project(":Common").sourceSets.main.get().allJava)
+    withType<JavaCompile>().all {
+        source(project(":Common").sourceSets.main.get().allJava)
+    }
 }

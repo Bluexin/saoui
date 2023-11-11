@@ -12,9 +12,12 @@ import be.bluexin.mcui.util.Client
 import be.bluexin.mcui.util.IconCore
 import li.cil.repack.com.naef.jnlua.LuaState
 import li.cil.repack.com.naef.jnlua.NamedJavaFunction
+import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.screens.Screen
 import net.minecraft.client.resources.language.I18n
 import net.minecraft.network.chat.Component
+import net.minecraft.resources.ResourceLocation
+import java.io.BufferedReader
 import java.io.File
 
 object JNLua {
@@ -30,6 +33,57 @@ object JNLua {
 
     private var state: LuaState? = null
 
+    private fun setupState(state: LuaState) {
+        state.register(TLCategoryF())
+        state.register(OpenGuiF())
+        state.pushGlobalObject("mc", Client.mc)
+        state.registerModule("i18n", 1, arrayOf(I18nFormatF()))
+//        state.pushEnum("OptionCore", OptionCore.values(), mapOf("tlOptions" to OptionCore.tlOptions))
+//        state.pushGlobalObject("ItemFilters", ItemFilterRegister.tlFilters)
+
+        state.pushGlobalFunction("SetWip") {
+            with(ElementRegistry) { it.checkJavaObject(-1, CategoryButton::class.java).setWip() }
+            1
+        }
+
+        state.pushGlobalFunction("AddItemCategories") {
+            val button = it.checkJavaObject(1, CategoryButton::class.java)
+            val filter = it.checkJavaObject(2, IItemFilter::class.java)
+            with(ElementRegistry) { button.addItemCategories(filter) }
+            1
+        }
+
+        state.pushGlobalFunction("OptionCategory") {
+            val parent = it.checkJavaObject(1, INeoParent::class.java)
+            val option = it.checkJavaObject(2, OptionCore::class.java)
+            it.pushJavaObject(parent.optionCategory(option))
+            1
+        }
+    }
+
+    fun loadFileWithBlankState(rl: ResourceLocation) {
+        this.state?.close()
+        // TODO : this is probs not the best long-term, look into getting JNLua to load the script directly
+        Minecraft.getInstance().resourceManager.getResource(rl).ifPresent {  scriptResource ->
+            val state = JNLuaStateFactory.Lua53.createState()
+            this.state = state
+            if (state != null) {
+                try {
+                    setupState(state)
+
+                    state.load(scriptResource.open(), "=$rl", "t")
+                    // Evaluate the chunk
+                    state.call(0, 0)
+                } catch (e: Exception) {
+                    Constants.LOG.warn("Something went wrong evaluating Lua script", e)
+                    Client.mc.player?.sendSystemMessage(Component.literal("Evaluating $rl failed : ${e.message}"))
+                } finally {
+                    state.close() // TODO : figure out proper state lifecycle. Closing it prevents lazy callbacks
+                }
+            } else Constants.LOG.error("Unable to create state")
+        }
+    }
+
     fun loadIngameMenu(): MutableList<CategoryButton> {
         this.state?.close()
         val tlCategories = mutableListOf<CategoryButton>()
@@ -40,31 +94,7 @@ object JNLua {
         this.state = state
         if (state != null) {
             try {
-                state.register(TLCategoryF())
-                state.register(OpenGuiF())
-                state.pushGlobalObject("mc", Client.mc)
-                state.registerModule("i18n", 1, arrayOf(I18nFormatF()))
-                state.pushEnum("OptionCore", OptionCore.values(), mapOf("tlOptions" to OptionCore.tlOptions))
-                state.pushGlobalObject("ItemFilters", ItemFilterRegister.tlFilters)
-
-                state.pushGlobalFunction("SetWip") {
-                    with(ElementRegistry) { it.checkJavaObject(-1, CategoryButton::class.java).setWip() }
-                    1
-                }
-
-                state.pushGlobalFunction("AddItemCategories") {
-                    val button = it.checkJavaObject(1, CategoryButton::class.java)
-                    val filter = it.checkJavaObject(2, IItemFilter::class.java)
-                    with(ElementRegistry) { button.addItemCategories(filter) }
-                    1
-                }
-
-                state.pushGlobalFunction("OptionCategory") {
-                    val parent = it.checkJavaObject(1, INeoParent::class.java)
-                    val option = it.checkJavaObject(2, OptionCore::class.java)
-                    it.pushJavaObject(parent.optionCategory(option))
-                    1
-                }
+                setupState(state)
 
                 state.load(script, "=igmenu")
                 // Evaluate the chunk, thus defining the tlCats
@@ -101,6 +131,10 @@ object JNLua {
         } else Constants.LOG.error("Unable to create state")
 
         return tlCategories
+    }
+
+    fun close() {
+        state?.close()
     }
 }
 

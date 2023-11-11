@@ -37,7 +37,7 @@ open class ElementGroup : CachingElementParent() {
     @field:SerializedName("children")
     @XmlElementWrapper(name = "children")
     @XmlElementRef(type = Element::class)
-    protected lateinit var elements: List<Element>
+    lateinit var elements: List<Element>
 
     @Transient
     protected var rl: ResourceLocation? = null

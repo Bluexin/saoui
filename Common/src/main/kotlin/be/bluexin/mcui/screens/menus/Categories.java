@@ -17,11 +17,8 @@
 
 package be.bluexin.mcui.screens.menus;
 
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-
 @SuppressWarnings("unused") // TODO: remove this enum. Used for future ref only.
-@SideOnly(Side.CLIENT)
+//@SideOnly(Side.CLIENT)
 public enum Categories {
 
     NONE(false, true),

@@ -1,27 +1,31 @@
 package be.bluexin.mcui.commands
 
+import be.bluexin.mcui.Constants
+import be.bluexin.mcui.screens.LuaTestScreen
 import be.bluexin.mcui.themes.AbstractThemeLoader
 import com.mojang.brigadier.builder.ArgumentBuilder
 import com.mojang.brigadier.builder.LiteralArgumentBuilder
 import com.mojang.brigadier.builder.LiteralArgumentBuilder.literal
 import com.mojang.brigadier.context.CommandContext
+import net.minecraft.client.Minecraft
 import net.minecraft.commands.CommandSourceStack
 import net.minecraft.network.chat.Component
+import net.minecraft.world.entity.player.Player
 
 @Suppress("unused") // automatic
-enum class GeneralCommands(
+enum class DebugCommands(
     override vararg val arguments: ArgumentBuilder<CommandSourceStack, *>
 ) : Command {
-    PRINT_ERRORS {
+    OPEN_TEST_GUI {
         override fun execute(c: CommandContext<CommandSourceStack>): Int {
-            AbstractThemeLoader.Reporter.errors.forEach {
-                c.source.sendSystemMessage(Component.literal(it))
+            Minecraft.getInstance().tell {
+                Minecraft.getInstance().setScreen(LuaTestScreen())
             }
-            return AbstractThemeLoader.Reporter.errors.size
+            return 1
         }
     };
 
-    override val id = "general.${name.lowercase()}"
+    override val id = "debug.${name.lowercase()}"
 
     /*fun getUsage(sender: ICommandSender): String {
         return "commands.general.${name.lowercase()}.usage"
@@ -29,6 +33,6 @@ enum class GeneralCommands(
 
     companion object : Command.Commands {
         override val values = values().asIterable()
-        val indexedValues = values.associateBy(GeneralCommands::id)
+        val indexedValues = values.associateBy(DebugCommands::id)
     }
 }

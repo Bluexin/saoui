@@ -190,8 +190,8 @@ abstract class JNLuaStateFactory {
         }
 
         if (currentLib.isEmpty()) {
-            val libraryUrl = javaClass.getResource("/assets/${Constants.MOD_ID}/lib/$libraryName")
-            if (libraryUrl == null) {
+            val libraryUrl = javaClass.getResource("/assets/opencomputers/lib/$libraryName")
+            if (libraryUrl === null) {
                 Constants.LOG.warn("Native library with name '$libraryName' not found.")
                 return
             }

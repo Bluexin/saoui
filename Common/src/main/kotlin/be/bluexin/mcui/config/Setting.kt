@@ -27,7 +27,7 @@ sealed class Setting<T : Any>(
 
     open val type get() = Property.Type.STRING
 
-    fun register() = this.also(Settings::register)
+    fun register() = this//.also(Settings::register)
 
     abstract fun read(serialized: String): T?
     abstract fun write(value: T): String

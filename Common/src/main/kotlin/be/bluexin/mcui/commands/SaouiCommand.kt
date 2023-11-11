@@ -8,10 +8,20 @@ object SaouiCommand {
 
     const val ROOT = "saoui"
 
-    fun setup(dispatcher: CommandDispatcher<CommandSourceStack>) {
-        dispatcher.register(
-            GeneralCommands.values.fold(literal(ROOT)) { builder, command -> builder.then(command.register()) }
+    private fun CommandDispatcher<CommandSourceStack>.register(
+        vararg commands: Command.Commands
+    ) {
+        register(
+            commands.asSequence()
+                .flatMap(Command.Commands::values)
+                .fold(literal(ROOT)) { builder, command ->
+                    builder.then(command.register())
+                }
         )
+    }
+
+    fun setup(dispatcher: CommandDispatcher<CommandSourceStack>) {
+        dispatcher.register(GeneralCommands, DebugCommands)
     }
 
     fun useCommand(command: GeneralCommands) = "/$ROOT ${command.id}"

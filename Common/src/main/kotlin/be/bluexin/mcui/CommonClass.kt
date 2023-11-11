@@ -28,5 +28,7 @@ object CommonClass {
         if (Services.PLATFORM.isModLoaded("examplemod")) {
             Constants.LOG.info("Hello to examplemod")
         }
+
+
     }
 }

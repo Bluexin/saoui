@@ -55,10 +55,10 @@ subprojects {
             name = "BlameJared Maven (CrT / Bookshelf)"
             url = uri("https://maven.blamejared.com")
         }
-        maven {
+        /*maven {
             name = "Tencao Maven"
             url = uri("https://maven.tencao.com/repository/releases/")
-        }
+        }*/
         maven {
             name = "Bluexin"
             url = uri("https://maven.bluexin.be/repository/releases/")
@@ -113,17 +113,19 @@ subprojects {
         shadow("org.classdump.luna:luna-all-shaded:0.4.1")
 
         shadow(group = "none", name = "OC-LuaJ", version = "20220907.1", ext = "jar")
-        shadow(group = "none", name = "OC-JNLua", version = "20220928.1", ext = "jar")
+        shadow(group = "none", name = "OC-JNLua", version = "20230530.0", ext = "jar")
         shadow(group = "none", name = "OC-JNLua-Natives", version = "20220928.1", ext = "jar")
     }
 
     tasks {
         val mod_name: String by project
 
-        named<Jar>("jar") {
+        jar.configure {
+            duplicatesStrategy = DuplicatesStrategy.INCLUDE
             from(rootProject.file("LICENSE")) {
                 rename { "${it}_${mod_name}" }
             }
+
             manifest {
                 val mod_author: String by project
                 val minecraft_version: String by project
@@ -142,12 +144,13 @@ subprojects {
                 )
             }
         }
+
         named<Jar>("sourcesJar") {
             from(rootProject.file("LICENSE")) {
                 rename { "${it}_${mod_name}" }
             }
         }
-        withType<KotlinCompilationTask<KotlinJvmCompilerOptions>>().configureEach {
+        withType<KotlinCompilationTask<KotlinJvmCompilerOptions>>().all {
             compilerOptions {
                 javaParameters.set(true)
                 jvmTarget.set(JvmTarget.JVM_17)
@@ -155,10 +158,10 @@ subprojects {
                 languageVersion.set(KotlinVersion.KOTLIN_1_8)
             }
         }
-        withType<GenerateModuleMetadata>().configureEach {
+        withType<GenerateModuleMetadata>().all {
             enabled = false
         }
-        withType<JavaCompile>().configureEach {
+        withType<JavaCompile>().all {
             options.encoding = "UTF-8"
             options.release.set(17)
         }
