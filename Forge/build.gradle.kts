@@ -95,6 +95,10 @@ tasks {
         source(project(":Common").sourceSets.main.get().allSource)
     }
 
+    withType<JavaCompile>().configureEach {
+        source(project(":Common").sourceSets.main.get().allJava)
+    }
+
     named<ProcessResources>("processResources") {
         from (project(":Common").sourceSets.main.get().resources)
     }

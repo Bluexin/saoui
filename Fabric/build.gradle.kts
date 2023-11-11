@@ -61,3 +61,7 @@ tasks.named<ProcessResources>("processResources") {
 tasks.withType<KotlinCompileTool>().configureEach {
     source(project(":Common").sourceSets.main.get().allSource)
 }
+
+tasks.withType<JavaCompile>().configureEach {
+    source(project(":Common").sourceSets.main.get().allJava)
+}
