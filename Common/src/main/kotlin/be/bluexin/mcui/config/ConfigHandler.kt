@@ -31,14 +31,14 @@ object ConfigHandler {
 
     private fun general(key: String) = ResourceLocation("general", key)
 
-    var lastVersion by StringSetting(NS_BUILTIN, general("lastUpdate"), "nothing").register()
-    var ignoreUpdate by BooleanSetting(NS_BUILTIN, general("ignoreUpdate"), true).register()
+    var lastVersion by StringSetting(NS_BUILTIN, general("last_update"), "nothing").register()
+    var ignoreUpdate by BooleanSetting(NS_BUILTIN, general("ignore_update"), true).register()
     var enableDebug by BooleanSetting(NS_BUILTIN, general("debug"), false).register()
     var debugFakePT by IntSetting(
-        NS_BUILTIN, general("debugFakePT"), 0, "Amount of fake party members, 0 to disable."
+        NS_BUILTIN, general("debug_fake_pt"), 0, "Amount of fake party members, 0 to disable."
     ) { it in 0..10 }.register()
     var currentTheme by ResourceLocationSetting(
-        NS_BUILTIN, general("currentTheme"), DEFAULT_THEME,
+        NS_BUILTIN, general("current_theme"), DEFAULT_THEME,
         "The currently selected theme. If invalid or unavailable, this will default to the builtin sao theme"
     ).register()
 
