@@ -1,0 +1,32 @@
+modLoader="kotlinforforge"
+loaderVersion="[1,)" #mandatory
+license="All rights reserved (TODO)"
+issueTrackerURL="https://github.com/Bluexin/saoui/issues"
+
+[[mods]]
+modId="saoui" #mandatory
+version="${file.jarVersion}"
+displayName="Modular Customizable User Interface (WIP Name)"
+# A URL to query for updates for this mod. See the JSON update specification https://mcforge.readthedocs.io/en/latest/gettingstarted/autoupdate/
+#updateJSONURL="https://change.me.example.invalid/updates.json"
+displayURL="https://github.com/Bluexin/saoui/wiki"
+logoFile="assets/saoui/textures/logo.png"
+credits="All theme maintainers for building content and TheJackiMonster for the original SAOUI mod"
+authors="Bluexin, Tencao"
+description='''
+Customize UI (both HUD and Screens) via resource packs !
+'''
+
+[[dependencies.saoui]]
+    modId="forge"
+    mandatory=true
+    versionRange="[36,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.saoui]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.16.5,)"
+    ordering="NONE"
+    side="BOTH"

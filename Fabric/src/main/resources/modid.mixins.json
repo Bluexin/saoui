@@ -1,0 +1,15 @@
+{
+    "required": true,
+    "minVersion": "0.8",
+    "package": "com.tencao.saoui.mixin",
+    "compatibilityLevel": "JAVA_17",
+    "mixins": [
+    ],
+    "client": [
+      "com.tencao.saoui.mixin.ExampleMixin"
+    ],
+    "injectors": {
+      "defaultRequire": 1
+    }
+  }
+  
