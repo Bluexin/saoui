@@ -19,44 +19,44 @@ minecraft {
     }
 
     runs {
-        val client by registering {
+        val client by creating {
             workingDirectory(file("run"))
             ideaModule = "${rootProject.name}.${name}.main"
             taskName = "AClient"
             property("mixin.env.remapRefMap", "true")
             property("mixin.env.refMapRemappingFile", "${projectDir}/build/createSrgToMcp/output.srg")
             mods {
-                register("modClientRun") {
+                create("modClientRun") {
                     source (sourceSets.main.get())
                     source (project(":Common").sourceSets.main.get())
                 }
             }
         }
         afterEvaluate {
-            // afterEvaluate so client2 doesn"t inherit from this
-            client.get().args += listOf("--username", "APlayer")
+            // afterEvaluate so client2 doesn't inherit from this
+            client.args += listOf("--username", "APlayer")
         }
-        register("client2") {
-            parent(client.get())
+        create("client2") {
+            parent(client)
             taskName = "BClient"
             args += listOf("--username", "BPlayer")
         }
 
-        register("server") {
+        create("server") {
             workingDirectory(file("run"))
             ideaModule = "${rootProject.name}.${name}.main"
             taskName = "Server"
             property("mixin.env.remapRefMap", "true")
             property("mixin.env.refMapRemappingFile", "${projectDir}/build/createSrgToMcp/output.srg")
             mods {
-                register("modServerRun") {
+                create("modServerRun") {
                     source (sourceSets.main.get())
                     source (project(":Common").sourceSets.main.get())
                 }
             }
         }
 
-        register("data") {
+        create("data") {
             workingDirectory(file("run"))
             ideaModule = "${rootProject.name}.${name}.main"
             args += listOf("--mod", property("mod_id") as String, "--all", "--output", "src/generated/resources/", "--existing", "src/main/resources/")
@@ -64,7 +64,7 @@ minecraft {
             property("mixin.env.remapRefMap", "true")
             property("mixin.env.refMapRemappingFile", "${projectDir}/build/createSrgToMcp/output.srg")
             mods {
-                register("modDataRun") {
+                create("modDataRun") {
                     source (sourceSets.main.get())
                     source (project(":Common").sourceSets.main.get())
                 }
