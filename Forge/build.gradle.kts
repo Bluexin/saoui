@@ -5,10 +5,13 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompileTool
 
 plugins {
     id("net.minecraftforge.gradle") version "5.1.+"
+    idea
 }
 
 val minecraft_version: String by project
 archivesName.set("${property("mod_name")}-forge-$minecraft_version")
+
+jarJar.enable()
 
 minecraft {
     mappings(/*channel = */"official", /*version = */minecraft_version)
@@ -26,7 +29,7 @@ minecraft {
             property("mixin.env.remapRefMap", "true")
             property("mixin.env.refMapRemappingFile", "${projectDir}/build/createSrgToMcp/output.srg")
             mods {
-                create("modClientRun") {
+                create("mcui") {
                     source (sourceSets.main.get())
                     source (project(":Common").sourceSets.main.get())
                 }
@@ -84,14 +87,33 @@ repositories {
     }
 }
 
+/*val shadowRuntime2 by configurations.creating {
+    isTransitive = false
+    configurations.minecraftLibrary {
+        extendsFrom(this@creating)
+    }
+}*/
+
+configurations {
+    minecraftLibrary {
+        extendsFrom(minecraftEmbed.get())
+    }
+}
+
 dependencies {
     minecraft("net.minecraftforge:forge:${minecraft_version}-${property("forge_version")}")
     compileOnly(project(":Common"))
     implementation("thedarkcolour:kotlinforforge:${property("forge_kotlin_version")}")
 
-    implementation(group = "none", name = "OC-LuaJ", version = "20220907.1", ext = "jar")
-    implementation(group = "none", name = "OC-JNLua", version = "20230530.0", ext = "jar")
-    implementation(group = "none", name = "OC-JNLua-Natives", version = "20220928.1", ext = "jar")
+//    implementation(group = "none", name = "OC-LuaJ", version = "20220907.1", ext = "jar")
+//    implementation(group = "none", name = "OC-JNLua", version = "20230530.0", ext = "jar")
+//    jarJar(group = "none", name = "OC-JNLua-Natives", version = "20220928.1", ext = "jar")
+    /*minecraftEmbed(group = "none", name = "OC-JNLua-Natives", version = "20220928.1"*//*, ext = "jar"*//*) {
+        jarJar.ranged(this, "[20220928.1,20240101.0)")
+    }*/
+    minecraftEmbed("com.github.wagyourtail.luaj:luaj-jse:05e2b7d76a") {
+        jarJar.ranged(this, "05e2b7d76a")
+    }
 }
 
 tasks {
@@ -113,11 +135,23 @@ tasks {
 
     afterEvaluate {
         jar.configure {
-            for (dep in configurations["shadow"]) {
+            for (dep in configurations.shadow.get()) {
                 from(project.zipTree(dep)) {
                     exclude("META-INF/MANIFEST.MF")
                 }
             }
+//            for (dep in shadowRuntime2) {
+//                from(project.zipTree(dep)) {
+//                    exclude("META-INF", "META-INF/**")
+//                }
+//            }
         }
     }
+
+    this.jarJar {
+        finalizedBy("reobfJarJar")
+        archiveClassifier.set("")
+    }
+
+    assemble { dependsOn("jarJar") }
 }

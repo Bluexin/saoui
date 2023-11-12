@@ -73,6 +73,10 @@ subprojects {
             artifactPattern("https://asie.pl/javadeps/[module]-[revision](-[classifier]).[ext]")
             metadataSources.artifact()
         }
+        maven {
+            name = "JitPack"
+            url = uri("https://jitpack.io")
+        }
     }
 
     val shadow by configurations.creating {
@@ -112,9 +116,11 @@ subprojects {
 
         shadow("org.classdump.luna:luna-all-shaded:0.4.1")
 
-        shadow(group = "none", name = "OC-LuaJ", version = "20220907.1", ext = "jar")
+//        shadow(group = "none", name = "OC-LuaJ", version = "20220907.1", ext = "jar")
         shadow(group = "none", name = "OC-JNLua", version = "20230530.0", ext = "jar")
-        shadow(group = "none", name = "OC-JNLua-Natives", version = "20220928.1", ext = "jar")
+//        shadow(group = "none", name = "OC-JNLua-Natives", version = "20220928.1", ext = "jar")
+
+        shadow("com.github.wagyourtail.luaj:luaj-jse:05e2b7d76a")
     }
 
     tasks {
