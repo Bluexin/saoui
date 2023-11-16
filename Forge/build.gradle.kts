@@ -114,6 +114,28 @@ dependencies {
     minecraftEmbed("com.github.wagyourtail.luaj:luaj-jse:05e2b7d76a") {
         jarJar.ranged(this, "05e2b7d76a")
     }
+
+    // TODO : take out what we don't actually need
+    minecraftEmbed("be.bluexin.gnu.jel:gnu-jel:2.1.3") {
+        jarJar.ranged(this, "[2.1,3)")
+    }
+    minecraftEmbed("com.helger:ph-css:6.5.0") {
+        exclude(group = "com.google.code.findbugs")
+        jarJar.ranged(this, "[6.5,7)")
+    }
+    minecraftEmbed("com.helger.commons:ph-commons:10.1.6") {
+        exclude(group = "com.google.code.findbugs")
+        jarJar.ranged(this, "[10.1,11)")
+    }
+    minecraftEmbed("org.slf4j:slf4j-api:1.7.36") { // is this one really necessary ?
+        jarJar.ranged(this, "[1.7,2)")
+    }
+    minecraftEmbed("jakarta.xml.bind:jakarta.xml.bind-api:3.0.1") {
+        jarJar.ranged(this, "[3.0,4)")
+    }
+    minecraftEmbed("com.sun.xml.bind:jaxb-impl:3.0.2") {
+        jarJar.ranged(this, "[3.0,4)")
+    }
 }
 
 tasks {
@@ -135,11 +157,11 @@ tasks {
 
     afterEvaluate {
         jar.configure {
-            for (dep in configurations.shadow.get()) {
+            /*for (dep in configurations.shadow.get()) {
                 from(project.zipTree(dep)) {
                     exclude("META-INF/MANIFEST.MF")
                 }
-            }
+            }*/
 //            for (dep in shadowRuntime2) {
 //                from(project.zipTree(dep)) {
 //                    exclude("META-INF", "META-INF/**")

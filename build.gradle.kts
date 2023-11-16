@@ -4,6 +4,8 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformJvmPlugin
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.archivesName
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlinx.serialization.gradle.SerializationGradleSubplugin
@@ -12,7 +14,7 @@ import java.time.Instant
 plugins {
     `java-library`
     `maven-publish`
-    kotlin("jvm") apply false
+    kotlin("jvm")
     kotlin("plugin.serialization") apply false
     id("com.matyrobbrt.mc.registrationutils")
 }
@@ -32,15 +34,25 @@ registrationUtils {
     }
 }
 
+kotlin {
+    jvmToolchain(17)
+    explicitApiWarning()
+}
+
 subprojects {
     apply<JavaPlugin>()
     apply<MavenPublishPlugin>()
-    apply<KotlinPlatformJvmPlugin>()
+    apply<KotlinPluginWrapper>()
     if (hasProperty("serialization_version")) apply<SerializationGradleSubplugin>()
 
     java {
         toolchain.languageVersion.set(JavaLanguageVersion.of(17))
         withSourcesJar()
+    }
+
+    kotlin {
+        jvmToolchain(17)
+        explicitApiWarning()
     }
 
     repositories {
@@ -77,6 +89,10 @@ subprojects {
             name = "JitPack"
             url = uri("https://jitpack.io")
         }
+        maven {
+            name = "https://github.com/pdvrieze/xmlutil"
+            url = uri("https://s01.oss.sonatype.org/content/repositories/releases/")
+        }
     }
 
     val shadow by configurations.creating {
@@ -102,6 +118,8 @@ subprojects {
             implementation(platform("org.jetbrains.kotlinx:kotlinx-serialization-bom:${property("serialization_version")}"))
             implementation("org.jetbrains.kotlinx:kotlinx-serialization-core-jvm")
             implementation("org.jetbrains.kotlinx:kotlinx-serialization-json-jvm")
+            implementation("io.github.pdvrieze.xmlutil:core-jvm:${property("serialization_xml_version")}")
+            implementation("io.github.pdvrieze.xmlutil:serialization-jvm:${property("serialization_xml_version")}")
         }
 
         shadow("be.bluexin.gnu.jel:gnu-jel:2.1.3")
@@ -186,8 +204,8 @@ subprojects {
 
         repositories {
             maven {
-                url = if (hasProperty("local_maven"))  uri("file://${property("local_maven")}")
-                    else uri("file://$buildDir/.m2")
+                url = if (hasProperty("local_maven")) uri("file://${property("local_maven")}")
+                else uri("file://$buildDir/.m2")
             }
         }
     }
