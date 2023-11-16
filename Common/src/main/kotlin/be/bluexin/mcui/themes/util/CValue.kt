@@ -24,12 +24,14 @@ import be.bluexin.mcui.themes.util.xml.*
 import be.bluexin.mcui.themes.util.json.*
 import be.bluexin.mcui.themes.util.xml.*
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter
+import kotlinx.serialization.Serializable
 
 /**
  * Wraps around custom types implementation for XML loading and value caching.
  *
  * @author Bluexin
  */
+//@Serializable
 sealed class CValue<out T: Any>(val value: CachedExpression<T>) : (IHudDrawContext) -> T {
     override fun invoke(ctx: IHudDrawContext) = value(ctx)
 }
@@ -46,6 +48,7 @@ class CInt(value: CachedExpression<Int>) : CValue<Int>(value)
  */
 @XmlJavaTypeAdapter(XmlDoubleExpressionAdapter::class)
 @JsonAdapter(JsonDoubleExpressionAdapter::class)
+//@Serializable
 class CDouble(value: CachedExpression<Double>) : CValue<Double>(value)
 
 /**
@@ -53,6 +56,7 @@ class CDouble(value: CachedExpression<Double>) : CValue<Double>(value)
  */
 @XmlJavaTypeAdapter(XmlStringExpressionAdapter::class)
 @JsonAdapter(JsonStringExpressionAdapter::class)
+//@Serializable
 class CString(value: CachedExpression<String>) : CValue<String>(value)
 
 /**

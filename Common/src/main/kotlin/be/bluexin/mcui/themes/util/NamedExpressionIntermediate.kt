@@ -4,7 +4,11 @@ import be.bluexin.mcui.Constants
 import be.bluexin.mcui.themes.util.typeadapters.JelType
 import jakarta.xml.bind.Unmarshaller
 import jakarta.xml.bind.annotation.XmlAttribute
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@SerialName("variable")
+@Serializable
 class NamedExpressionIntermediate : ExpressionIntermediate() {
     @get:XmlAttribute
     var key: String = ""

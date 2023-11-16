@@ -1,5 +1,8 @@
 package be.bluexin.mcui.themes.util.typeadapters
 
+import kotlinx.serialization.SerialName
+
+@SerialName("type")
 @Suppress("unused")
 enum class JelType(
     val typeName: String,

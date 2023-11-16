@@ -1,8 +1,14 @@
 package be.bluexin.mcui.themes
 
+import be.bluexin.mcui.themes.elements.Expect
+import be.bluexin.mcui.themes.elements.Fragment
+import be.bluexin.mcui.themes.util.NamedExpressionIntermediate
+import be.bluexin.mcui.themes.util.typeadapters.JelType
 import net.minecraft.resources.ResourceLocation
+import nl.adaptivity.xmlutil.serialization.XML
 import org.apache.logging.log4j.LogManager
 import java.io.File
+import javax.xml.namespace.QName
 import kotlin.io.path.isDirectory
 import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.name
@@ -34,7 +40,12 @@ object ThemeConverter {
                 val fragments = buildMap {
                     if (fragmentRoot.isDirectory()) {
                         fragmentRoot.listDirectoryEntries().forEach {
-                            put(ResourceLocation(ns, it.nameWithoutExtension)) { XmlThemeLoader.loadFragment(it.toFile()) }
+                            put(
+                                ResourceLocation(
+                                    ns,
+                                    it.nameWithoutExtension
+                                )
+                            ) { XmlThemeLoader.loadFragment(it.toFile()) }
                         }
                     }
                 }
@@ -75,7 +86,12 @@ object ThemeConverter {
                 val readFragments = buildMap {
                     if (fragmentRoot.isDirectory()) {
                         fragmentRoot.listDirectoryEntries().forEach {
-                            put(ResourceLocation(ns, it.nameWithoutExtension)) { JsonThemeLoader.loadFragment(it.toFile()) }
+                            put(
+                                ResourceLocation(
+                                    ns,
+                                    it.nameWithoutExtension
+                                )
+                            ) { JsonThemeLoader.loadFragment(it.toFile()) }
                         }
                     }
                 }
@@ -97,5 +113,33 @@ object ThemeConverter {
         }
 
         return r
+    }
+}
+
+object XmlTests {
+    @JvmStatic
+    fun main(args: Array<String>) {
+        val xml = XML.encodeToString(
+            Fragment(Expect(listOf(
+                NamedExpressionIntermediate().apply {
+                    key = "thisIsAKey"
+                    type = JelType.INT
+                },
+                NamedExpressionIntermediate().apply {
+                    key = "thisIsBKey"
+                    type = JelType.STRING
+                },
+            ))).apply {
+                name = "label fragment"
+                texture = "texture"
+            }, /*rootName = QName("http://www.bluexin.be/com/saomc/saoui/fragment-schema", "fragment", "bl")*/
+        )
+        println(xml)
+
+        val iss = javaClass.classLoader.getResourceAsStream("assets/saoui/themes/hex2/fragments/label.xml") ?: error("Couldn't load iss")
+        val frag = XML.decodeFromString<Fragment>(
+            iss.reader().readText()
+        )
+        println(frag)
     }
 }

@@ -2,12 +2,12 @@ package be.bluexin.mcui.config
 
 import be.bluexin.mcui.Constants
 import be.bluexin.mcui.platform.Services
-import be.bluexin.mcui.platform.services.PlatformHelper
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.onFailure
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.selects.onTimeout
 import kotlinx.coroutines.selects.select
 import net.minecraft.resources.ResourceLocation
 import org.apache.logging.log4j.LogManager

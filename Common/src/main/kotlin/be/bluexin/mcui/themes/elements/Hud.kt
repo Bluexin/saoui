@@ -21,6 +21,7 @@ import be.bluexin.mcui.api.themes.IHudDrawContext
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.resources.ResourceLocation
 import jakarta.xml.bind.annotation.XmlRootElement
+import jakarta.xml.bind.annotation.XmlType
 
 /**
  * Part of saoui by Bluexin.

@@ -33,11 +33,9 @@ import java.io.InputStream
  */
 object JsonThemeLoader : AbstractThemeLoader(ThemeFormat.JSON) {
 
-    private val gson by lazy {
-        GsonBuilder()
-            .registerTypeAdapterFactory(AfterUnmarshalAdapterFactory())
-            .create()
-    }
+    private val gson = GsonBuilder()
+        .registerTypeAdapterFactory(AfterUnmarshalAdapterFactory())
+        .create()
 
     override fun InputStream.loadHud(): Hud = use {
         gson.fromJson(it.reader(), Hud::class.java)

@@ -24,6 +24,8 @@ import com.google.gson.annotations.SerializedName
 import com.mojang.blaze3d.vertex.PoseStack
 import jakarta.xml.bind.annotation.*
 import net.minecraft.resources.ResourceLocation
+import nl.adaptivity.xmlutil.serialization.XmlElement
+import nl.adaptivity.xmlutil.serialization.XmlValue
 
 /**
  * Part of saoui by Bluexin.
@@ -37,12 +39,14 @@ open class ElementGroup : CachingElementParent() {
     @field:SerializedName("children")
     @XmlElementWrapper(name = "children")
     @XmlElementRef(type = Element::class)
+    @XmlElement
     lateinit var elements: List<Element>
 
     @Transient
     protected var rl: ResourceLocation? = null
 
-    private var texture: String? = null
+    @XmlValue
+    /*private */var texture: String? = null
 
     override fun draw(ctx: IHudDrawContext, poseStack: PoseStack) {
         GLCore.glBlend(true)

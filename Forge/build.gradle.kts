@@ -136,6 +136,14 @@ dependencies {
     minecraftEmbed("com.sun.xml.bind:jaxb-impl:3.0.2") {
         jarJar.ranged(this, "[3.0,4)")
     }
+    val serialization_xml_version: String by project
+    // TODO : maybe the next two can be changed to range
+    minecraftEmbed("io.github.pdvrieze.xmlutil:core-jvm:$serialization_xml_version") {
+        jarJar.pin(this, serialization_xml_version)
+    }
+    minecraftEmbed("io.github.pdvrieze.xmlutil:core-jvm:$serialization_xml_version") {
+        jarJar.pin(this, serialization_xml_version)
+    }
 }
 
 tasks {

@@ -52,7 +52,7 @@ subprojects {
 
     kotlin {
         jvmToolchain(17)
-        explicitApiWarning()
+//        explicitApiWarning() TODO :enable this later or for an API module
     }
 
     repositories {

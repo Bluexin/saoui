@@ -1,24 +1,13 @@
-local t, t2 = ...
+local modVersion, resourceLocation = ...
 
 print("Hello from " .. _VERSION .. " !")
-print("Received " .. t .. " :) " .. tostring(...) .. "/" .. t2)
---print("Received " .. t .. " :) " .. table.concat(..., ' '))
+print("Running on " .. modVersion .. " from " .. resourceLocation)
 
-local zs = table.pack(...)
-for k, v in pairs(zs) do
-    print("- Received : " .. k .. "=" .. v)
+for _, fragName in pairs({"label.xml", "json_label.json"}) do
+    local frag = fragment("saoui:themes/hex2/fragments/" .. fragName)
+    print("Loaded " .. fragName " : " .. frag:tostring())
 end
 
-print("test_global : " .. tostring(test_global))
-print("test_local : " .. tostring(test_local))
+--local frag = loadFragment("saoui:themes/hex2/fragments/" .. fragName)
+--print("Loaded " .. fragName " : " .. frag:tostring())
 
--- setting a global
-test_global = test_global or 1
-test_global = test_global + 1
-
--- setting a local
-local test_local = test_local or 1
-test_local = test_local + 1
-
-print("test_global: " .. test_global)
-print("test_local: " .. test_local)

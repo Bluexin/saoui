@@ -28,12 +28,15 @@ import java.lang.ref.WeakReference
 import javax.annotation.OverridingMethodsMustInvokeSuper
 import jakarta.xml.bind.annotation.XmlAttribute
 import jakarta.xml.bind.annotation.XmlSeeAlso
+import kotlinx.serialization.Serializable
+import nl.adaptivity.xmlutil.serialization.XmlOtherAttributes
 
 /**
  * Used to map a xml element with x, y, z coordinates and an "enabled" toggle.
  *
  * @author Bluexin
  */
+//@Serializable
 @JsonAdapter(JsonElementAdapterFactory::class)
 @XmlSeeAlso(GLRectangle::class, ElementGroup::class, RawElement::class, FragmentReference::class) // Instructs JAXB to also bind other classes when binding this class
 abstract class Element {

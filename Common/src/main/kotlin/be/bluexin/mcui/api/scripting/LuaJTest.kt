@@ -49,6 +49,7 @@ object LuaJTest {
             load(TableLib())
             load(JseStringLib())
             load(JseMathLib())
+            set("fragment", LoadFragment)
         }
         val setHook = globals.enableDebugSafely()
 
@@ -77,12 +78,12 @@ object LuaJTest {
                 val result = userThread.resume(
                     LuaValue.varargsOf(
                         arrayOf(
-                            LuaValue.valueOf("testvararg1"),
-                            LuaValue.valueOf("testvararg2"),
-                            LuaValue.valueOf("testvararg3"),
+                            LuaValue.valueOf("${Constants.MOD_ID}-0.0.1.INDEV"),
+                            LuaValue.valueOf(rl.toString()),
                         )
                     )
                 )
+                // TODO: currently this doesn't throw, but returns a Lua Vararg with (false, <errorMessage>) in case of failure
                 Constants.LOG.info("Read $rl : $result")
             }
     }

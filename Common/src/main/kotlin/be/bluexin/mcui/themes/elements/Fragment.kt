@@ -9,8 +9,17 @@ import com.google.gson.annotations.JsonAdapter
 import jakarta.xml.bind.Unmarshaller
 import jakarta.xml.bind.annotation.XmlElement
 import jakarta.xml.bind.annotation.XmlRootElement
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import nl.adaptivity.xmlutil.serialization.XmlSerialName
 
 @XmlRootElement(namespace = "http://www.bluexin.be/com/saomc/saoui/fragment-schema")
+@Serializable
+@XmlSerialName(
+    namespace = "http://www.bluexin.be/com/saomc/saoui/fragment-schema",
+    prefix = "bl",
+    value = "bl:fragment"
+)
 class Fragment @JvmOverloads constructor(
     val expect: Expect? = null
 ) : ElementGroup(), AfterUnmarshal {
@@ -22,6 +31,8 @@ class Fragment @JvmOverloads constructor(
 }
 
 @JsonAdapter(ExpectJsonAdapter::class)
+@Serializable
+@SerialName("expect")
 data class Expect @JvmOverloads constructor(
     @field:XmlElement(name = "variable")
     val variables: List<NamedExpressionIntermediate> = mutableListOf()

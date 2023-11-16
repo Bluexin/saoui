@@ -4,18 +4,30 @@ import be.bluexin.mcui.themes.elements.Fragment
 import be.bluexin.mcui.themes.elements.Hud
 import java.io.InputStream
 import jakarta.xml.bind.JAXBContext
+import nl.adaptivity.xmlutil.StAXReader
+import nl.adaptivity.xmlutil.serialization.XML
 
 object XmlThemeLoader : AbstractThemeLoader(ThemeFormat.XML) {
 
-    override fun InputStream.loadHud() = use {
+    private val hudReader by lazy {
         JAXBContext.newInstance(Hud::class.java)
-            .createUnmarshaller()
-            .unmarshal(it) as Hud
+        .createUnmarshaller()
+    }
+
+    override fun InputStream.loadHud() = use {
+        hudReader.unmarshal(it) as Hud
+    }
+
+    private val fragmentReader by lazy {
+        JAXBContext.newInstance(Fragment::class.java)
+        .createUnmarshaller()
     }
 
     override fun InputStream.loadFragment(): Fragment = use {
-        JAXBContext.newInstance(Fragment::class.java)
-            .createUnmarshaller()
-            .unmarshal(it) as Fragment
+        XML.decodeFromReader(StAXReader(it, "UTF-8"))
+    }
+
+    private fun InputStream.loadFragmentV2(): Fragment = use {
+        XML.decodeFromReader(StAXReader(it, "UTF-8"))
     }
 }
