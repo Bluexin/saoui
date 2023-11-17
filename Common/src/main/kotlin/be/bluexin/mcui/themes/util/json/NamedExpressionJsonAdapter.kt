@@ -60,7 +60,7 @@ class NamedExpressionJsonAdapter : TypeAdapter<Map<String, CValue<*>?>>() {
                                 val type = map["type"]?.let (JelType::valueOf) ?: JelType.ERROR
 
                                 reader.endObject()
-                                if (expression != null && type != JelType.ERROR) type.expressionAdapter.compile(NamedExpressionIntermediate().apply {
+                                /*if (expression != null && type != JelType.ERROR) type.expressionAdapter.compile(NamedExpressionIntermediate().apply {
                                     this.type = type
                                     this.cacheType = cacheType
                                     this.expression = expression
@@ -70,7 +70,8 @@ class NamedExpressionJsonAdapter : TypeAdapter<Map<String, CValue<*>?>>() {
                                     logger.warn(message)
                                     AbstractThemeLoader.Reporter += message
                                     null
-                                }
+                                }*/
+                                null
                             }
                             )
                     }

@@ -1,8 +1,11 @@
 package be.bluexin.mcui.themes.elements
 
 import be.bluexin.mcui.api.themes.IHudDrawContext
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 
-abstract class CachingElementParent : Element(), ElementParent {
+@Serializable
+sealed class CachingElementParent : Element(), ElementParent {
 
     @Transient
     protected var cachedX = 0.0

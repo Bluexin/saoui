@@ -23,8 +23,14 @@ import be.bluexin.mcui.api.themes.IHudDrawContext
 import com.google.gson.annotations.SerializedName
 import com.mojang.blaze3d.vertex.PoseStack
 import jakarta.xml.bind.annotation.*
+import kotlinx.serialization.Polymorphic
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import net.minecraft.resources.ResourceLocation
+import nl.adaptivity.xmlutil.serialization.XmlChildrenName
 import nl.adaptivity.xmlutil.serialization.XmlElement
+import nl.adaptivity.xmlutil.serialization.XmlSerialName
 import nl.adaptivity.xmlutil.serialization.XmlValue
 
 /**
@@ -34,18 +40,24 @@ import nl.adaptivity.xmlutil.serialization.XmlValue
  */
 @XmlRootElement
 @XmlSeeAlso(RepetitionGroup::class)
+@Serializable
+@Polymorphic
+@SerialName("elementGroup")
 open class ElementGroup : CachingElementParent() {
 
     @field:SerializedName("children")
     @XmlElementWrapper(name = "children")
     @XmlElementRef(type = Element::class)
-    @XmlElement
-    lateinit var elements: List<Element>
+//    @XmlSerialName("children")
+    @SerialName("children")
+    @XmlChildrenName("")
+//    @Xml
+    var elements: List<Element> = emptyList()
 
     @Transient
     protected var rl: ResourceLocation? = null
 
-    @XmlValue
+    @XmlElement
     /*private */var texture: String? = null
 
     override fun draw(ctx: IHudDrawContext, poseStack: PoseStack) {

@@ -1,30 +1,43 @@
+@file:OptIn(ExperimentalSerializationApi::class)
+
 package be.bluexin.mcui.themes.util
 
 import be.bluexin.mcui.Constants
 import be.bluexin.mcui.themes.util.typeadapters.JelType
 import jakarta.xml.bind.Unmarshaller
 import jakarta.xml.bind.annotation.XmlAttribute
+import kotlinx.serialization.EncodeDefault
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import nl.adaptivity.xmlutil.serialization.XmlOtherAttributes
+import nl.adaptivity.xmlutil.serialization.XmlValue
 
-@SerialName("variable")
+//@SerialName("variable")
 @Serializable
-class NamedExpressionIntermediate : ExpressionIntermediate() {
-    @get:XmlAttribute
-    var key: String = ""
-    @get:XmlAttribute
-    var type: JelType = JelType.ERROR
+data class NamedExpressionIntermediate(
+    @XmlAttribute
+    val key: String,
+    @XmlOtherAttributes
+    @EncodeDefault(EncodeDefault.Mode.ALWAYS)
+    val type: JelType = JelType.ERROR,
+    @XmlValue
+    @SerialName("expression")
+//    @EncodeDefault(EncodeDefault.Mode.NEVER)
+    override val serializedExpression: String = "",
+    @SerialName("cache")
+    @XmlOtherAttributes
+//    @EncodeDefault(EncodeDefault.Mode.NEVER)
+    override val cacheType: CacheType = CacheType.PER_FRAME
+) : ExpressionIntermediate() {
 
-    override fun toString(): String {
-        return "NamedExpressionIntermediate(key='$key', type='$type')"
-    }
-
-    fun hasDefault() = expression.isNotEmpty()
+    fun hasDefault() = serializedExpression.isNotEmpty()
 }
 
-class Variables {
-    var variable: MutableList<NamedExpressionIntermediate> = mutableListOf()
-
+@Serializable
+data class Variables(
+    val variable: List<NamedExpressionIntermediate>
+) {
     @Suppress("unused")
     fun afterUnmarshal(um: Unmarshaller? = null, parent: Any? = null) {
         Constants.LOG.info("afterUnmarshal in $this of $parent")

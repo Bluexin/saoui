@@ -17,13 +17,8 @@
 
 package be.bluexin.mcui.themes.util
 
-import com.google.gson.annotations.JsonAdapter
 import be.bluexin.mcui.api.themes.IHudDrawContext
-import be.bluexin.mcui.themes.util.json.*
-import be.bluexin.mcui.themes.util.xml.*
-import be.bluexin.mcui.themes.util.json.*
-import be.bluexin.mcui.themes.util.xml.*
-import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter
+import be.bluexin.mcui.themes.util.serialization.*
 import kotlinx.serialization.Serializable
 
 /**
@@ -31,44 +26,39 @@ import kotlinx.serialization.Serializable
  *
  * @author Bluexin
  */
-//@Serializable
-sealed class CValue<out T: Any>(val value: CachedExpression<T>) : (IHudDrawContext) -> T {
+sealed class CValue<out T : Any>(val value: (IHudDrawContext) -> T) : (IHudDrawContext) -> T {
     override fun invoke(ctx: IHudDrawContext) = value(ctx)
 }
 
 /**
  * Custom Int type.
  */
-@XmlJavaTypeAdapter(XmlIntExpressionAdapter::class)
-@JsonAdapter(JsonIntExpressionAdapter::class)
-class CInt(value: CachedExpression<Int>) : CValue<Int>(value)
+@Serializable(CIntSerializer::class)
+class CInt(value: (IHudDrawContext) -> Int) : CValue<Int>(value)
 
 /**
  * Custom Double type.
  */
-@XmlJavaTypeAdapter(XmlDoubleExpressionAdapter::class)
-@JsonAdapter(JsonDoubleExpressionAdapter::class)
-//@Serializable
-class CDouble(value: CachedExpression<Double>) : CValue<Double>(value)
+@Serializable(CDoubleSerializer::class)
+class CDouble(value: (IHudDrawContext) -> Double) : CValue<Double>(value)
 
 /**
  * Custom String type.
  */
-@XmlJavaTypeAdapter(XmlStringExpressionAdapter::class)
-@JsonAdapter(JsonStringExpressionAdapter::class)
-//@Serializable
-class CString(value: CachedExpression<String>) : CValue<String>(value)
+@Serializable(CStringSerializer::class)
+class CString(value: (IHudDrawContext) -> String) : CValue<String>(value)
 
 /**
  * Custom Boolean type.
  */
-@XmlJavaTypeAdapter(XmlBooleanExpressionAdapter::class)
-@JsonAdapter(JsonBooleanExpressionAdapter::class)
-class CBoolean(value: CachedExpression<Boolean>) : CValue<Boolean>(value)
+@Serializable(CBooleanSerializer::class)
+class CBoolean(value: (IHudDrawContext) -> Boolean) : CValue<Boolean>(value)
 
 /**
  * Custom Unit/Void type.
  */
-@XmlJavaTypeAdapter(XmlUnitExpressionAdapter::class)
-@JsonAdapter(JsonUnitExpressionAdapter::class)
-class CUnit(value: CachedExpression<Unit>) : CValue<Unit>(value)
+@Serializable(CUnitSerializer::class)
+class CUnit(value: (IHudDrawContext) -> Unit) : CValue<Unit>(value)
+
+val ((IHudDrawContext) -> Any).expressionIntermediate: ExpressionIntermediate? get() = (this as? CachedExpression<*>)?.expressionIntermediate
+val ((IHudDrawContext) -> Any).expression: String? get() = this.expressionIntermediate?.expression

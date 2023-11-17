@@ -28,7 +28,7 @@ import java.lang.ref.WeakReference
 import javax.annotation.OverridingMethodsMustInvokeSuper
 import jakarta.xml.bind.annotation.XmlAttribute
 import jakarta.xml.bind.annotation.XmlSeeAlso
-import kotlinx.serialization.Serializable
+import kotlinx.serialization.*
 import nl.adaptivity.xmlutil.serialization.XmlOtherAttributes
 
 /**
@@ -36,10 +36,11 @@ import nl.adaptivity.xmlutil.serialization.XmlOtherAttributes
  *
  * @author Bluexin
  */
-//@Serializable
-@JsonAdapter(JsonElementAdapterFactory::class)
-@XmlSeeAlso(GLRectangle::class, ElementGroup::class, RawElement::class, FragmentReference::class) // Instructs JAXB to also bind other classes when binding this class
-abstract class Element {
+@OptIn(ExperimentalSerializationApi::class)
+@Serializable
+//@JsonAdapter(JsonElementAdapterFactory::class)
+//@XmlSeeAlso(GLRectangle::class, ElementGroup::class, RawElement::class, FragmentReference::class) // Instructs JAXB to also bind other classes when binding this class
+sealed class Element {
 
     companion object {
         const val DEFAULT_NAME = "anonymous"
@@ -49,27 +50,33 @@ abstract class Element {
      * Friendly name for this element. Mostly used for debug purposes.
      */
     @XmlAttribute
+    @EncodeDefault(EncodeDefault.Mode.NEVER)
     var name: String = DEFAULT_NAME
 
     /**
      * X position.
      */
+    @EncodeDefault(EncodeDefault.Mode.NEVER)
     protected var x: CDouble? = null
 
     /**
      * Y position.
      */
+    @EncodeDefault(EncodeDefault.Mode.NEVER)
     protected var y: CDouble? = null
 
     /**
      * Z position.
      */
+    @EncodeDefault(EncodeDefault.Mode.NEVER)
     protected var z: CDouble? = null
 
     /**
      * Whether this element should be enabled.
      */
-    protected var enabled: CBoolean? = null
+    @EncodeDefault(EncodeDefault.Mode.NEVER)
+    var enabled: CBoolean? = null
+        private set
 
     /**
      * Parent element for this element.

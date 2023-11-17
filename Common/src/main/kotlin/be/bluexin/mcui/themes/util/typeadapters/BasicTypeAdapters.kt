@@ -1,6 +1,5 @@
 package be.bluexin.mcui.themes.util.typeadapters
 
-import be.bluexin.mcui.themes.util.*
 import be.bluexin.mcui.themes.AbstractThemeLoader
 import be.bluexin.mcui.themes.util.*
 import gnu.jel.CompilationException
@@ -9,10 +8,10 @@ import gnu.jel.Evaluator
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
-sealed class BasicExpressionAdapter<T: Any> {
+sealed class BasicExpressionAdapter<CValueType: CValue<T>, T : Any> {
     private val logger: Logger by lazy { LogManager.getLogger(javaClass) }
 
-    fun compile(v: ExpressionIntermediate) = try {
+    fun compile(v: ExpressionIntermediate): CValueType = try {
 //        Constants.LOG.debug("Compiling ${v.expression}")
         value(v.cacheType.cacheExpression(wrap(Evaluator.compile(v.expression, LibHelper.LIB, type)), v))
     } catch (ce: CompilationException) {
@@ -30,13 +29,14 @@ sealed class BasicExpressionAdapter<T: Any> {
         val message = sb.toString()
         logger.error(message)
         AbstractThemeLoader.Reporter += message.substringAfterLast("–––COMPILATION ERROR :\n")
-        null
+        default
     } catch (e: Exception) {
         val message = "An error occurred while compiling '${v.expression}'"
         logger.error(message, e)
         AbstractThemeLoader.Reporter += (e.message ?: "unknown error") + " in ${v.expression}"
-        null
+        default
     }
+
     /**
      * The targeted class for this adapter's expression.
 
@@ -44,7 +44,7 @@ sealed class BasicExpressionAdapter<T: Any> {
      */
     abstract val type: Class<*>?
 
-    abstract fun value(c: CachedExpression<T>): CValue<T>
+    abstract fun value(c: CachedExpression<T>): CValueType
 
     /**
      * Wrap the expression using the appropriate [CompiledExpressionWrapper].
@@ -56,12 +56,14 @@ sealed class BasicExpressionAdapter<T: Any> {
     abstract fun wrap(ce: CompiledExpression): CompiledExpressionWrapper<T>
 
     abstract val jelType: JelType
+
+    abstract val default: CValueType
 }
 
 /**
  * Adapts an expression that should return a int.
  */
-object IntExpressionAdapter : BasicExpressionAdapter<Int>() {
+object IntExpressionAdapter : BasicExpressionAdapter<CInt, Int>() {
     override fun value(c: CachedExpression<Int>) = CInt(c)
 
     override val type: Class<*> = Integer.TYPE
@@ -69,12 +71,14 @@ object IntExpressionAdapter : BasicExpressionAdapter<Int>() {
     override fun wrap(ce: CompiledExpression) = IntExpressionWrapper(ce)
 
     override val jelType: JelType by lazy { JelType.INT }
+
+    override val default = CInt { 0 }
 }
 
 /**
  * Adapts an expression that should return a double.
  */
-object DoubleExpressionAdapter : BasicExpressionAdapter<Double>() {
+object DoubleExpressionAdapter : BasicExpressionAdapter<CDouble, Double>() {
     override fun value(c: CachedExpression<Double>) = CDouble(c)
 
     override val type: Class<*> = java.lang.Double.TYPE
@@ -82,12 +86,14 @@ object DoubleExpressionAdapter : BasicExpressionAdapter<Double>() {
     override fun wrap(ce: CompiledExpression) = DoubleExpressionWrapper(ce)
 
     override val jelType: JelType by lazy { JelType.DOUBLE }
+
+    override val default = CDouble { 0.0 }
 }
 
 /**
  * Adapts an expression that should return a String.
  */
-object StringExpressionAdapter : BasicExpressionAdapter<String>() {
+object StringExpressionAdapter : BasicExpressionAdapter<CString, String>() {
     override fun value(c: CachedExpression<String>) = CString(c)
 
     override val type: Class<*> = String::class.java
@@ -95,12 +101,14 @@ object StringExpressionAdapter : BasicExpressionAdapter<String>() {
     override fun wrap(ce: CompiledExpression) = StringExpressionWrapper(ce)
 
     override val jelType: JelType by lazy { JelType.STRING }
+
+    override val default = CString { "" }
 }
 
 /**
  * Adapts an expression that should return a boolean.
  */
-object BooleanExpressionAdapter : BasicExpressionAdapter<Boolean>() {
+object BooleanExpressionAdapter : BasicExpressionAdapter<CBoolean, Boolean>() {
     override fun value(c: CachedExpression<Boolean>) = CBoolean(c)
 
     override val type: Class<*> = java.lang.Boolean.TYPE
@@ -108,12 +116,14 @@ object BooleanExpressionAdapter : BasicExpressionAdapter<Boolean>() {
     override fun wrap(ce: CompiledExpression) = BooleanExpressionWrapper(ce)
 
     override val jelType: JelType by lazy { JelType.BOOLEAN }
+
+    override val default = CBoolean { false }
 }
 
 /**
  * Adapts an expression that should return [Unit] (aka void).
  */
-object UnitExpressionAdapter : BasicExpressionAdapter<Unit>() {
+object UnitExpressionAdapter : BasicExpressionAdapter<CUnit, Unit>() {
     override val type: Class<*>? = null
 
     override fun value(c: CachedExpression<Unit>) = CUnit(c)
@@ -121,5 +131,7 @@ object UnitExpressionAdapter : BasicExpressionAdapter<Unit>() {
     override fun wrap(ce: CompiledExpression) = UnitExpressionWrapper(ce)
 
     override val jelType: JelType by lazy { JelType.UNIT }
+
+    override val default = CUnit { }
 }
 

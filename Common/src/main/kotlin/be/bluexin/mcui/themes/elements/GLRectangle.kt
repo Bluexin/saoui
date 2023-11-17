@@ -23,6 +23,10 @@ import be.bluexin.mcui.themes.util.CInt
 import com.mojang.blaze3d.vertex.PoseStack
 import jakarta.xml.bind.annotation.XmlRootElement
 import jakarta.xml.bind.annotation.XmlSeeAlso
+import kotlinx.serialization.Polymorphic
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import net.minecraft.resources.ResourceLocation
 
 /**
@@ -33,6 +37,9 @@ import net.minecraft.resources.ResourceLocation
 // Needed for XML loading
 @XmlSeeAlso(GLString::class, GLHotbarItem::class)
 @XmlRootElement
+@Serializable
+@Polymorphic
+@SerialName("glRectangle")
 open class GLRectangle : Element() {
     protected var rgba: CInt? = null
     protected var srcX: CDouble? = null

@@ -9,18 +9,26 @@ import com.google.gson.annotations.JsonAdapter
 import jakarta.xml.bind.Unmarshaller
 import jakarta.xml.bind.annotation.XmlElement
 import jakarta.xml.bind.annotation.XmlRootElement
+import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import nl.adaptivity.xmlutil.ExperimentalXmlUtilApi
+import nl.adaptivity.xmlutil.serialization.XmlBefore
+import nl.adaptivity.xmlutil.serialization.XmlChildrenName
+import nl.adaptivity.xmlutil.serialization.XmlNamespaceDeclSpec
 import nl.adaptivity.xmlutil.serialization.XmlSerialName
 
-@XmlRootElement(namespace = "http://www.bluexin.be/com/saomc/saoui/fragment-schema")
+@OptIn(ExperimentalXmlUtilApi::class)
 @Serializable
 @XmlSerialName(
-    namespace = "http://www.bluexin.be/com/saomc/saoui/fragment-schema",
-    prefix = "bl",
+//    namespace = "https://www.bluexin.be/com/saomc/saoui/fragment-schema",
+//    prefix = "bl",
     value = "bl:fragment"
 )
-class Fragment @JvmOverloads constructor(
+@XmlNamespaceDeclSpec("bl=https://www.bluexin.be/com/saomc/saoui/fragment-schema")
+class Fragment(
+    @XmlSerialName("expect")
+    @XmlBefore("children")
     val expect: Expect? = null
 ) : ElementGroup(), AfterUnmarshal {
 
@@ -32,9 +40,10 @@ class Fragment @JvmOverloads constructor(
 
 @JsonAdapter(ExpectJsonAdapter::class)
 @Serializable
-@SerialName("expect")
-data class Expect @JvmOverloads constructor(
+//@SerialName("expect")
+data class Expect(
     @field:XmlElement(name = "variable")
+    @XmlSerialName("variable")
     val variables: List<NamedExpressionIntermediate> = mutableListOf()
 ) : AfterUnmarshal {
     override fun toString(): String {

@@ -22,6 +22,8 @@ import be.bluexin.mcui.api.themes.IHudDrawContext
 import be.bluexin.mcui.themes.util.CInt
 import com.mojang.blaze3d.vertex.PoseStack
 import jakarta.xml.bind.annotation.XmlRootElement
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import net.minecraft.world.entity.HumanoidArm
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
@@ -32,6 +34,8 @@ import net.minecraft.world.item.ItemStack
  * @author Bluexin
  */
 @XmlRootElement
+@Serializable
+@SerialName("glHotbarItem")
 open class GLHotbarItem : GLRectangle() {
 
     protected lateinit var slot: CInt

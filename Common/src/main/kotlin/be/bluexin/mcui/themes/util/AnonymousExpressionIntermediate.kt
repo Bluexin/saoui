@@ -17,23 +17,22 @@
 
 package be.bluexin.mcui.themes.util
 
-import jakarta.xml.bind.annotation.XmlAttribute
-import jakarta.xml.bind.annotation.XmlValue
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
 /**
  * Part of saoui by Bluexin.
  *
  * @author Bluexin
  */
-open class ExpressionIntermediate {
+@Serializable
+sealed class ExpressionIntermediate {
+    abstract val serializedExpression: String
+    abstract val cacheType: CacheType
 
-    @get:XmlAttribute(name = "cache")
-    var cacheType = CacheType.PER_FRAME
-
-    @get:XmlValue
-    var expression = "" // Will get replaced by the loading
+    val expression: String
         get() {
-            var f = field
+            var f = serializedExpression
             // TODO : new obf ?
 //            if (LibHelper.obfuscated) f = f.replace("format(", "func_135052_a(")
             f = f.replace('\n', ' ')
@@ -41,3 +40,11 @@ open class ExpressionIntermediate {
             return f
         }
 }
+
+@Serializable
+data class AnonymousExpressionIntermediate(
+    @SerialName("expression")
+    override val serializedExpression: String,
+    @SerialName("cache")
+    override val cacheType: CacheType = CacheType.PER_FRAME
+) : ExpressionIntermediate()

@@ -44,7 +44,7 @@ class ExpectJsonAdapter : TypeAdapter<Expect>() {
             val e = Expect(
                 buildList {
                     while (reader.hasNext()) {
-                        add(NamedExpressionIntermediate().apply {
+                        /*add(NamedExpressionIntermediate().apply {
                             key = reader.nextName()
                             when (val nestedToken = reader.peek()) {
                                 JsonToken.BEGIN_OBJECT -> {
@@ -63,7 +63,7 @@ class ExpectJsonAdapter : TypeAdapter<Expect>() {
                                     AbstractThemeLoader.Reporter += message
                                 }
                             }
-                        })
+                        })*/
                     }
                 }
             )

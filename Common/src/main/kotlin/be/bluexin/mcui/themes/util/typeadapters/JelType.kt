@@ -6,7 +6,7 @@ import kotlinx.serialization.SerialName
 @Suppress("unused")
 enum class JelType(
     val typeName: String,
-    val expressionAdapter: BasicExpressionAdapter<*>,
+    val expressionAdapter: BasicExpressionAdapter<*, *>,
 ) {
     STRING("String", StringExpressionAdapter),
     DOUBLE("Double", DoubleExpressionAdapter),

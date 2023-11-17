@@ -22,6 +22,9 @@ import be.bluexin.mcui.api.themes.IHudDrawContext
 import be.bluexin.mcui.themes.util.CUnit
 import com.mojang.blaze3d.vertex.PoseStack
 import jakarta.xml.bind.annotation.XmlRootElement
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import net.minecraft.resources.ResourceLocation
 
 /**
@@ -30,12 +33,13 @@ import net.minecraft.resources.ResourceLocation
  * @author Bluexin
  */
 @XmlRootElement
-class RawElement : Element() {
+@Serializable
+@SerialName("rawElement")
+class RawElement(private var expression: CUnit) : Element() {
 
+    @Transient
     private var rl: ResourceLocation? = null
     private val texture: String? = null
-
-    private lateinit var expression: CUnit
 
     override fun setup(parent: ElementParent, fragments: Map<ResourceLocation, () -> Fragment>): Boolean {
         val anonymous = super.setup(parent, fragments)
