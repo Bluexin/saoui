@@ -57,8 +57,8 @@ dependencies {
     forge(libs.forge)
     // Remove the next line if you don't want to depend on the API
     modApi(libs.architectury.forge)
-    common(project(":common", configuration = "namedElements")) { isTransitive = false }
-    shadowCommon(project(":common", configuration = "transformProductionForge")) { isTransitive = false }
+    common(project(":commont", configuration = "namedElements")) { isTransitive = false }
+    shadowCommon(project(":commont", configuration = "transformProductionForge")) { isTransitive = false }
     implementation(libs.kotlinforforge)
     modApi("dev.ftb.mods:ftb-library-forge:${property("ftb_library_version")}") { isTransitive = false }
     modApi("dev.ftb.mods:ftb-teams-fabric:${property("ftb_teams_version")}") { isTransitive = false }
