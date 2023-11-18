@@ -35,8 +35,8 @@ dependencies {
     // Remove the next line if you don't want to depend on the API
     modApi(libs.architectury.fabric)
 
-    common(project(":commont", configuration = "namedElements")) { isTransitive = false }
-    shadowCommon(project(":commont", configuration = "transformProductionFabric")) { isTransitive = false }
+    common(project(":common", configuration = "namedElements")) { isTransitive = false }
+    shadowCommon(project(":common", configuration = "transformProductionFabric")) { isTransitive = false }
     modImplementation(libs.fabric.languageKotlin)
     modApi ("dev.ftb.mods:ftb-library-fabric:${property("ftb_library_version")}") { isTransitive = false }
     modApi ("dev.ftb.mods:ftb-teams-fabric:${property("ftb_teams_version")}") { isTransitive = false }
