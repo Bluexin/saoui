@@ -124,13 +124,7 @@ object ThemeConverter {
 object XmlTests {
     @JvmStatic
     fun main(args: Array<String>) {
-        val xml = XML{
-            defaultPolicy {
-                encodeDefault = XmlSerializationPolicy.XmlEncodeDefault.NEVER
-            }
-            indentString = "    "
-            autoPolymorphic = true
-        }
+        val xml = XmlThemeLoader.xml
         val fragmentString = xml.encodeToString(
             Fragment(
                 Expect(

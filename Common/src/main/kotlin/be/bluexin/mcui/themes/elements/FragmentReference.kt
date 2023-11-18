@@ -9,21 +9,17 @@ import be.bluexin.mcui.themes.util.Variables
 import be.bluexin.mcui.themes.util.expressionIntermediate
 import be.bluexin.mcui.themes.util.serialization.NamedExpressionSerializer
 import com.mojang.blaze3d.vertex.PoseStack
-import jakarta.xml.bind.annotation.XmlAttribute
-import jakarta.xml.bind.annotation.XmlRootElement
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import net.minecraft.resources.ResourceLocation
 import nl.adaptivity.xmlutil.serialization.XmlId
 
-@XmlRootElement
 @Serializable
 @SerialName("fragmentReference")
 class FragmentReference(
     @Suppress("CanBeParameter", "RedundantSuppression") // It can't be a param because of @Serializable
     private val serializedVariables: Variables,
-    @XmlAttribute
     @XmlId
     private var id: String = MISSING_ID
 ) : CachingElementParent() {

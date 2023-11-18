@@ -26,8 +26,6 @@ import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.resources.ResourceLocation
 import java.lang.ref.WeakReference
 import javax.annotation.OverridingMethodsMustInvokeSuper
-import jakarta.xml.bind.annotation.XmlAttribute
-import jakarta.xml.bind.annotation.XmlSeeAlso
 import kotlinx.serialization.*
 import nl.adaptivity.xmlutil.serialization.XmlElement
 import nl.adaptivity.xmlutil.serialization.XmlOtherAttributes
@@ -51,7 +49,6 @@ sealed class Element {
     /**
      * Friendly name for this element. Mostly used for debug purposes.
      */
-    @XmlAttribute
     var name: String = DEFAULT_NAME
 
     /**

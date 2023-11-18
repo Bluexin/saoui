@@ -21,8 +21,6 @@ import be.bluexin.mcui.Constants
 import be.bluexin.mcui.GLCore
 import be.bluexin.mcui.api.themes.IHudDrawContext
 import com.mojang.blaze3d.vertex.PoseStack
-import jakarta.xml.bind.annotation.XmlRootElement
-import jakarta.xml.bind.annotation.XmlSeeAlso
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -82,9 +80,6 @@ sealed class ElementGroupParent : CachingElementParent() {
     ) : List<Element> by elements
 }
 
-@XmlRootElement
-@XmlSeeAlso(RepetitionGroup::class)
 @Serializable
-//@Polymorphic
 @SerialName("elementGroup")
 class ElementGroup : ElementGroupParent()

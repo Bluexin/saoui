@@ -21,8 +21,6 @@ import be.bluexin.mcui.api.themes.IHudDrawContext
 import be.bluexin.mcui.themes.util.CDouble
 import be.bluexin.mcui.themes.util.CInt
 import com.mojang.blaze3d.vertex.PoseStack
-import jakarta.xml.bind.annotation.XmlRootElement
-import jakarta.xml.bind.annotation.XmlSeeAlso
 import kotlinx.serialization.Polymorphic
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -92,10 +90,6 @@ sealed class GLRectangleParent : Element() {
     }
 }
 
-// Needed for XML loading
-@XmlSeeAlso(GLString::class, GLHotbarItem::class)
-@XmlRootElement
 @Serializable
-//@Polymorphic
 @SerialName("glRectangle")
 class GLRectangle : GLRectangleParent()

@@ -19,18 +19,29 @@ package be.bluexin.mcui.themes.elements
 
 import be.bluexin.mcui.api.themes.IHudDrawContext
 import com.mojang.blaze3d.vertex.PoseStack
+import kotlinx.serialization.Serializable
 import net.minecraft.resources.ResourceLocation
-import jakarta.xml.bind.annotation.XmlRootElement
-import jakarta.xml.bind.annotation.XmlType
+import nl.adaptivity.xmlutil.ExperimentalXmlUtilApi
+import nl.adaptivity.xmlutil.serialization.XmlNamespaceDeclSpec
+import nl.adaptivity.xmlutil.serialization.XmlSerialName
 
 /**
  * Part of saoui by Bluexin.
 
  * @author Bluexin
  */
-@XmlRootElement(namespace = "http://www.bluexin.be/com/saomc/saoui/hud-schema")
-open class Hud protected constructor(override val name: String = "MenuDefs") : ElementParent {
-    val version = "1.0"
+@OptIn(ExperimentalXmlUtilApi::class)
+@Serializable
+@XmlSerialName(
+//    namespace = "https://www.bluexin.be/com/saomc/saoui/hud-schema",
+//    prefix = "bl",
+    value = "bl:hud"
+)
+@XmlNamespaceDeclSpec("bl=https://www.bluexin.be/com/saomc/saoui/hud-schema")
+class Hud private constructor(
+    override val name: String = "MenuDefs",
+    val version: String = "1.0"
+) : ElementParent {
 
     override fun getX(ctx: IHudDrawContext) = 0.0
 

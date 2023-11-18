@@ -21,7 +21,6 @@ import be.bluexin.mcui.GLCore
 import be.bluexin.mcui.api.themes.IHudDrawContext
 import be.bluexin.mcui.themes.util.CUnit
 import com.mojang.blaze3d.vertex.PoseStack
-import jakarta.xml.bind.annotation.XmlRootElement
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -32,7 +31,6 @@ import net.minecraft.resources.ResourceLocation
  *
  * @author Bluexin
  */
-@XmlRootElement
 @Serializable
 @SerialName("rawElement")
 class RawElement(private var expression: CUnit) : Element() {

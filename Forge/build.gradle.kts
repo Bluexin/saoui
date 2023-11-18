@@ -130,12 +130,6 @@ dependencies {
     minecraftEmbed("org.slf4j:slf4j-api:1.7.36") { // is this one really necessary ?
         jarJar.ranged(this, "[1.7,2)")
     }
-    minecraftEmbed("jakarta.xml.bind:jakarta.xml.bind-api:3.0.1") {
-        jarJar.ranged(this, "[3.0,4)")
-    }
-    minecraftEmbed("com.sun.xml.bind:jaxb-impl:3.0.2") {
-        jarJar.ranged(this, "[3.0,4)")
-    }
     val serialization_xml_version: String by project
     // TODO : maybe the next two can be changed to range
     minecraftEmbed("io.github.pdvrieze.xmlutil:core-jvm:$serialization_xml_version") {

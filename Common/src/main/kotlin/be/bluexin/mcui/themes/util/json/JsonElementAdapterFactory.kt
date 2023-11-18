@@ -8,7 +8,6 @@ import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonWriter
 import be.bluexin.mcui.themes.elements.Element
 import java.util.*
-import jakarta.xml.bind.annotation.XmlSeeAlso
 import kotlin.reflect.KClass
 import kotlin.reflect.full.findAnnotation
 
@@ -27,11 +26,11 @@ class JsonElementAdapter(private val gson: Gson) : TypeAdapter<Element>() {
         var head: KClass<out Element>? = Element::class
         while (head != null) {
             if (!head.isAbstract) put(head.java.simpleName, head.java)
-            val sa = head.findAnnotation<XmlSeeAlso>()
+            /*val sa = head.findAnnotation<XmlSeeAlso>()
             if (sa != null) {
                 @Suppress("UNCHECKED_CAST")
                 queue.addAll(sa.value.asList() as List<KClass<out Element>>)
-            }
+            }*/
             head = queue.poll()
         }
     }

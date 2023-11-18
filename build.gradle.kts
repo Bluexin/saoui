@@ -126,8 +126,6 @@ subprojects {
         shadow("com.helger:ph-css:6.5.0")
         shadow("com.helger.commons:ph-commons:10.1.6")
         shadow("org.slf4j:slf4j-api:1.7.36")
-        shadow("jakarta.xml.bind:jakarta.xml.bind-api:3.0.1")
-        shadowRuntime("com.sun.xml.bind:jaxb-impl:3.0.2")
 
         shadow("net.sandius.rembulan:rembulan-compiler:0.1-SNAPSHOT")
         shadow("net.sandius.rembulan:rembulan-stdlib:0.1-SNAPSHOT")
