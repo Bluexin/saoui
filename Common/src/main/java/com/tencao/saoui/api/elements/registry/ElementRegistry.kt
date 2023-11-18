@@ -1,77 +1,54 @@
 package com.tencao.saoui.api.elements.registry
 
-import com.tencao.saomclib.Client
-import com.tencao.saomclib.message
-import com.tencao.saomclib.utils.math.vec
+import com.tencao.saoui.SAOCore
 import com.tencao.saoui.api.elements.*
-import com.tencao.saoui.api.events.MenuBuildingEvent
 import com.tencao.saoui.api.items.IItemFilter
 import com.tencao.saoui.api.items.ItemFilterRegister
 import com.tencao.saoui.api.screens.IIcon
-import com.tencao.saoui.api.scripting.JNLua
 import com.tencao.saoui.config.OptionCategory
 import com.tencao.saoui.config.OptionCore
 import com.tencao.saoui.screens.menus.IngameMenu
 import com.tencao.saoui.screens.util.PopupYesNo
 import com.tencao.saoui.screens.util.itemList
-import com.tencao.saoui.util.IconCore
-import com.tencao.saoui.util.translate
-import net.minecraft.client.gui.screen.IngameMenuScreen
-import net.minecraft.client.gui.screen.OptionsScreen
-import net.minecraft.client.resources.I18n
-import net.minecraft.resources.IResourceManager
-import net.minecraftforge.resource.IResourceType
-import net.minecraftforge.resource.ISelectiveResourceReloadListener
-import java.util.function.Predicate
+import com.tencao.saoui.util.*
+import com.tencao.saoui.util.math.vec
+import net.minecraft.client.gui.screens.OptionsScreen
+import net.minecraft.client.gui.screens.PauseScreen
+import net.minecraft.client.gui.screens.Screen
 
-object ElementRegistry : ISelectiveResourceReloadListener {
+object ElementRegistry {
 
     /**
      * This is a fixed list of elements for the menu
      * that will be pulled everytime the menu is opened
      */
-    val registeredElements = hashMapOf<Type, List<NeoElement>>()
-
-    // TODO: this supports async stuff now
-    override fun onResourceManagerReload(resourceManager: IResourceManager) {
-        initRegistry()
-    }
-
-    override fun onResourceManagerReload(
-        resourceManager: IResourceManager,
-        resourcePredicate: Predicate<IResourceType>
-    ) {
-        initRegistry()
-    }
+    val registeredElements = hashMapOf<Type, ArrayList<NeoElement>>()
 
     fun initRegistry() {
         registeredElements.clear()
-        val event = MenuBuildingEvent(JNLua.loadIngameMenu())
-//        MinecraftForge.EVENT_BUS.post(event)
-        registeredElements[Type.INGAMEMENU] = event.elements
     }
 
-    fun getDefaultElements(): MutableList<NeoElement> {
+    fun getDefaultElements(): ArrayList<NeoElement> {
         var index = 0
         return arrayListOf(
-            tlCategory(IconCore.PROFILE, index++) {
+            IngameMenu.tlCategory(IconCore.PROFILE, index++) {
                 ItemFilterRegister.tlFilters.forEach { baseFilter ->
                     addItemCategories(baseFilter)
                 }
                 category(IconCore.SKILLS, "sao.element.skills".translate()) {
-                    setWip()
-                    category(IconCore.SKILLS, "Test 1".translate()) {
-                        category(IconCore.SKILLS, "1.1".translate()) {
-                            for (i in 1..3) category(IconCore.SKILLS, "1.1.$i".translate())
+                    addDescription("saoui.wip".localize())
+                    category(IconCore.SKILLS, "Test 1".toTextComponent()) {
+                        category(IconCore.SKILLS, "1.1".toTextComponent()) {
+                            for (i in 1..3) category(IconCore.SKILLS, "1.1.$i".toTextComponent())
                         }
-                        category(IconCore.SKILLS, "1.2".translate()) {
-                            for (i in 1..3) category(IconCore.SKILLS, "1.2.$i".translate())
+                        category(IconCore.SKILLS, "1.2".toTextComponent()) {
+                            for (i in 1..3) category(IconCore.SKILLS, "1.2.$i".toTextComponent())
                         }
-                        category(IconCore.SKILLS, "1.3".translate()) {
-                            for (i in 1..3) category(IconCore.SKILLS, "1.3.$i".translate())
+                        category(IconCore.SKILLS, "1.3".toTextComponent()) {
+                            for (i in 1..3) category(IconCore.SKILLS, "1.3.$i".toTextComponent())
                         }
                     }
-                    category(IconCore.SKILLS, "解散".translate()) {
+                    category(IconCore.SKILLS, "解散".toTextComponent()) {
                         onClick { _, _ ->
                             highlighted = true
                             controllingGUI?.openGui(
@@ -81,56 +58,61 @@ object ElementRegistry : ISelectiveResourceReloadListener {
                                     ""
                                 )
                             )?.plusAssign {
-                                Client.player?.message("Result: $it")
+                                IngameMenu.mc.player?.displayClientMessage("Result: $it".translate(), false)
                                 highlighted = false
                             }
                             true
                         }
                     }
-                    category(IconCore.SKILLS, "3".translate()) {
-                        category(IconCore.SKILLS, "3.1".translate()) {
-                            for (i in 1..6) category(IconCore.SKILLS, "3.1.$i".translate())
+                    category(IconCore.SKILLS, "3".toTextComponent()) {
+                        category(IconCore.SKILLS, "3.1".toTextComponent()) {
+                            for (i in 1..6) category(IconCore.SKILLS, "3.1.$i".toTextComponent())
                         }
-                        category(IconCore.SKILLS, "3.2".translate()) {
-                            for (i in 1..7) category(IconCore.SKILLS, "3.2.$i".translate())
+                        category(IconCore.SKILLS, "3.2".toTextComponent()) {
+                            for (i in 1..7) category(IconCore.SKILLS, "3.2.$i".toTextComponent())
                         }
-                        category(IconCore.SKILLS, "3.3".translate()) {
-                            for (i in 1..10) category(IconCore.SKILLS, "3.3.$i".translate())
+                        category(IconCore.SKILLS, "3.3".toTextComponent()) {
+                            for (i in 1..10) category(IconCore.SKILLS, "3.3.$i".toTextComponent())
                         }
                     }
+
+                    disabled = true
                 }
-                crafting()
-                Client.player?.let(::profile)
+                // crafting()
+                profile()
             },
-            tlCategory(IconCore.SOCIAL, index++) {
+            IngameMenu.tlCategory(IconCore.SOCIAL, index++) {
                 category(IconCore.GUILD, "sao.element.guild".translate()) {
-                    setWip()
-                    delegate.disabled = true //!SAOCore.isSAOMCLibServerSide
+                    addDescription("saoui.wip".localize())
+                    delegate.disabled = !SAOCore.isSAOMCLibServerSide
+                    disabled = true
                 }
                 partyMenu()
                 friendMenu()
             },
-            tlCategory(IconCore.MESSAGE, index++) {
-                setWip()
+            IngameMenu.tlCategory(IconCore.MESSAGE, index++) {
+                disabled = true
+                addDescription("saoui.wip".localize())
             },
-            tlCategory(IconCore.NAVIGATION, index++) {
-                setWip()
-                /*
+            IngameMenu.tlCategory(IconCore.NAVIGATION, index++) {
+                addDescription("saoui.wip".localize())
                 category(IconCore.QUEST, "sao.element.quest".translate()) {
+                    /*
                     AdvancementUtil.getCategories().forEach {
                         advancementCategory(it)
-                    }
-                    Client.player.connection.advancements
+                    }*/
                 }
-                recipes()*/
+                // recipes()
+                disabled = true
             },
-            tlCategory(IconCore.SETTINGS, index) {
+            IngameMenu.tlCategory(IconCore.SETTINGS, index) {
                 category(IconCore.OPTION, "sao.element.options".translate()) {
                     category(IconCore.OPTION, "guiOptions".translate()) {
                         onClick { _, _ ->
-                            Client.minecraft.setScreen(OptionsScreen(controllingGUI, Client.minecraft.options))
+                            val gui = OptionsScreen(controllingGUI as? Screen, Client.minecraft.options)
                             true
                         }
+                        disabled = true
                     }
                     OptionCategory.tlOptionCategory.forEach {
                         +optionCategory(it)
@@ -138,11 +120,11 @@ object ElementRegistry : ISelectiveResourceReloadListener {
                 }
                 category(IconCore.HELP, "sao.element.menu".translate()) {
                     onClick { _, _ ->
-                        Client.minecraft.setScreen(IngameMenuScreen(true))
+                        IngameMenu.mc.setScreen(PauseScreen(true))
                         true
                     }
                 }
-                category(IconCore.LOGOUT, if (OptionCore.LOGOUT()) "sao.element.logout".translate() else "".translate()) {
+                category(IconCore.LOGOUT, if (OptionCore.LOGOUT()) "sao.element.logout".translate() else "".toTextComponent()) {
                     onClick { _, _ ->
                         if (OptionCore.LOGOUT()) {
                             (controllingGUI as? IngameMenu)?.loggingOut = true
@@ -175,13 +157,14 @@ object ElementRegistry : ISelectiveResourceReloadListener {
         }
     }
 
+
     fun tlCategory(icon: IIcon, index: Int, body: (CategoryButton.() -> Unit)? = null): CategoryButton {
         return CategoryButton(IconElement(icon, vec(0, 25 * index)), null, body)
     }
 
     fun CategoryButton.setWip() {
         disabled = true
-        addDescription(I18n.get("saoui.wip"))
+        addDescription("saoui.wip".translate())
     }
 
     enum class Type {
@@ -189,4 +172,3 @@ object ElementRegistry : ISelectiveResourceReloadListener {
         INGAMEMENU;
     }
 }
-

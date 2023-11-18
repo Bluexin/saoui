@@ -19,6 +19,10 @@ pluginManagement {
             name = "ParchmentMC"
             url = uri("https://maven.parchmentmc.org/")
         }
+        maven {
+            name = "Architectury"
+            url = uri ("https://maven.architectury.dev/")
+        }
     }
     val kotlin_version: String by settings
     val registration_utils_version: String by settings
@@ -30,9 +34,9 @@ pluginManagement {
     }
 }
 
-rootProject.name = "SAOUI"
+rootProject.name = "saoui"
 include(
-    "Common",
-    "Fabric",
-    "Forge"
+    "common",
+    "fabric",
+    "forge"
 )
