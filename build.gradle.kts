@@ -7,6 +7,8 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformJvmPlugin
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.archivesName
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlinx.serialization.gradle.SerializationGradleSubplugin
+import net.fabricmc.loom.api.LoomGradleExtensionAPI
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.time.Instant
 
 plugins {
@@ -14,35 +16,47 @@ plugins {
     `maven-publish`
     kotlin("jvm") apply false
     kotlin("plugin.serialization") apply false
-    id("com.matyrobbrt.mc.registrationutils")
-    id("com.github.johnrengelman.shadow") version "7.1.2"
+    id("architectury-plugin") version "3.4-SNAPSHOT"
+    id("dev.architectury.loom") version "1.3-SNAPSHOT" apply false
 }
 
-registrationUtils {
-    group("$group.registration")
-    projects {
-        register("Common") {
-            type("common")
-        }
-        register("Fabric") {
-            type("fabric")
-        }
-        register("Forge") {
-            type("forge")
-        }
-    }
+architectury {
+    minecraft = rootProject.property("minecraft_version").toString()
 }
 
 subprojects {
+    apply(plugin = "dev.architectury.loom")
+    if (hasProperty("serialization_version")) apply<SerializationGradleSubplugin>()
+
+
+    val loom = project.extensions.getByName<LoomGradleExtensionAPI>("loom")
+    loom.silentMojangMappingsLicense()
+
+    dependencies {
+        "minecraft"("com.mojang:minecraft:${project.property("minecraft_version")}")
+        "mappings"(
+            loom.layered {
+                officialMojangMappings()
+                parchment("org.parchmentmc.data:parchment-${property("minecraft_version")}:${property("mappings_version")}")
+            }
+        )
+    }
+
+
+}
+
+allprojects {
     apply<JavaPlugin>()
     apply<MavenPublishPlugin>()
     apply<KotlinPlatformJvmPlugin>()
-    if (hasProperty("serialization_version")) apply<SerializationGradleSubplugin>()
+    apply(plugin = "architectury-plugin")
+    apply(plugin = "maven-publish")
+    apply(plugin = "org.jetbrains.kotlin.jvm")
 
-    java {
-        toolchain.languageVersion.set(JavaLanguageVersion.of(17))
-        withSourcesJar()
-    }
+    base.archivesName.set(rootProject.property("mod_id").toString())
+    //base.archivesBaseName = rootProject.property("archives_base_name").toString()
+    version = rootProject.property("version").toString()
+    group = rootProject.property("group").toString()
 
     repositories {
         mavenCentral()
@@ -70,23 +84,33 @@ subprojects {
             artifactPattern("https://asie.pl/javadeps/[module]-[revision](-[classifier]).[ext]")
             metadataSources.artifact()
         }
+        maven {
+            url = uri("https://maven.saps.dev/releases")
+            content {
+                includeGroup ("dev.latvian.mods")
+                includeGroup ("dev.ftb.mods")
+            }
+        }
+        maven {
+            url = uri("https://maven.saps.dev/snapshots")
+            content {
+                includeGroup ("dev.latvian.mods")
+                includeGroup ("dev.ftb.mods")
+            }
+        }
+        maven {
+            name = "Modrinth"
+            url  = uri("https://api.modrinth.com/maven")
+            content {
+                includeGroup ("maven.modrinth")
+            }
+        }
+
     }
 
-    val shadow by configurations.creating {
-        isTransitive = false
-        configurations.named("implementation") {
-            extendsFrom(this@creating)
-        }
-    }
-
-    val shadowRuntime by configurations.creating {
-        isTransitive = false
-        configurations.named("runtimeOnly") {
-            extendsFrom(this@creating)
-        }
-    }
 
     dependencies {
+        "compileClasspath"(rootProject.project.libs.kotlinGradlePlugin)
         implementation("org.jetbrains.kotlin:kotlin-reflect")
         implementation(platform("org.jetbrains.kotlinx:kotlinx-coroutines-bom:${property("coroutines_version")}"))
         implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm")
@@ -97,86 +121,41 @@ subprojects {
             implementation("org.jetbrains.kotlinx:kotlinx-serialization-json-jvm")
         }
 
-        shadow("be.bluexin.gnu.jel:gnu-jel:2.1.3")
-        shadow("com.helger:ph-css:6.5.0")
-        shadow("com.helger.commons:ph-commons:10.1.6")
-        shadow("org.slf4j:slf4j-api:1.7.36")
-        shadow("jakarta.xml.bind:jakarta.xml.bind-api:3.0.1")
-        shadowRuntime("com.sun.xml.bind:jaxb-impl:3.0.2")
+        implementation("org.joml:joml:${property("jomlVersion")}")
+        implementation("be.bluexin.gnu.jel:gnu-jel:2.1.3")
+        implementation("com.helger:ph-css:6.5.0")
+        implementation("com.helger.commons:ph-commons:10.1.6")
+        implementation("org.slf4j:slf4j-api:1.7.36")
+        implementation("jakarta.xml.bind:jakarta.xml.bind-api:3.0.1")
+        implementation("com.sun.xml.bind:jaxb-impl:3.0.2")
 
-        shadow("net.sandius.rembulan:rembulan-compiler:0.1-SNAPSHOT")
-        shadow("net.sandius.rembulan:rembulan-stdlib:0.1-SNAPSHOT")
+        implementation("net.sandius.rembulan:rembulan-compiler:0.1-SNAPSHOT")
+        implementation("net.sandius.rembulan:rembulan-stdlib:0.1-SNAPSHOT")
 
-        shadow("org.classdump.luna:luna-all-shaded:0.4.1")
+        implementation("org.classdump.luna:luna-all-shaded:0.4.1")
 
-        shadow(group = "none", name = "OC-LuaJ", version = "20220907.1", ext = "jar")
-        shadow(group = "none", name = "OC-JNLua", version = "20220928.1", ext = "jar")
-        shadow(group = "none", name = "OC-JNLua-Natives", version = "20220928.1", ext = "jar")
+        implementation(group = "none", name = "OC-LuaJ", version = "20220907.1", ext = "jar")
+        implementation(group = "none", name = "OC-JNLua", version = "20220928.1", ext = "jar")
+        implementation(group = "none", name = "OC-JNLua-Natives", version = "20220928.1", ext = "jar")
+
     }
 
-    tasks {
-        val mod_name: String by project
 
-        named<Jar>("jar") {
-            from(rootProject.file("LICENSE")) {
-                rename { "${it}_${mod_name}" }
-            }
-            manifest {
-                val mod_author: String by project
-                val minecraft_version: String by project
-
-                attributes(
-                    "Specification-Title" to mod_name,
-                    "Specification-Vendor" to mod_author,
-                    "Specification-Version" to archiveVersion,
-                    "Implementation-Title" to name,
-                    "Implementation-Version" to archiveVersion,
-                    "Implementation-Vendor" to mod_author,
-                    "Implementation-Timestamp" to Instant.now().toString(),
-                    "Timestamp" to System.currentTimeMillis(),
-                    "Built-On-Java" to "${System.getProperty("java.vm.version")} (${System.getProperty("java.vm.vendor")})",
-                    "Built-On-Minecraft" to minecraft_version
-                )
-            }
-        }
-        named<Jar>("sourcesJar") {
-            from(rootProject.file("LICENSE")) {
-                rename { "${it}_${mod_name}" }
-            }
-        }
-        withType<KotlinCompilationTask<KotlinJvmCompilerOptions>>().configureEach {
-            compilerOptions {
-                javaParameters.set(true)
-                jvmTarget.set(JvmTarget.JVM_17)
-                apiVersion.set(KotlinVersion.KOTLIN_1_8)
-                languageVersion.set(KotlinVersion.KOTLIN_1_8)
-            }
-        }
-        withType<GenerateModuleMetadata>().configureEach {
-            enabled = false
-        }
-        withType<JavaCompile>().configureEach {
-            options.encoding = "UTF-8"
-            options.release.set(17)
-        }
+    tasks.withType<JavaCompile> {
+        options.encoding = "UTF-8"
+        options.release.set(8)
     }
 
-    publishing {
-        publications {
-            register<MavenPublication>("mavenJava") {
-                groupId = group.toString()
-                artifactId = archivesName.get()
-                version = version as String
-                artifact(tasks.named("jar"))
-                from(components["java"])
-            }
-        }
+    java {
+        withSourcesJar()
+    }
 
-        repositories {
-            maven {
-                url = if (hasProperty("local_maven"))  uri("file://${property("local_maven")}")
-                    else uri("file://$buildDir/.m2")
-            }
-        }
+    val compileKotlin: KotlinCompile by tasks
+    compileKotlin.kotlinOptions {
+        jvmTarget = "1.8"
+    }
+    val compileTestKotlin: KotlinCompile by tasks
+    compileTestKotlin.kotlinOptions {
+        jvmTarget = "1.8"
     }
 }

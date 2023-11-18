@@ -1,0 +1,8 @@
+accessWidener   v1  named
+
+accessible field net/minecraft/client/Minecraft pausePartialTick F
+accessible field net/minecraft/client/Minecraft fps I
+accessible field net/minecraft/client/Minecraft fontManager Lnet/minecraft/client/gui/font/FontManager;
+accessible field net/minecraft/client/KeyMapping key Lcom/mojang/blaze3d/platform/InputConstants$Key;
+mutable field net/minecraft/client/Minecraft gui Lnet/minecraft/client/gui/Gui;
+accessible field net/minecraft/client/MouseHandler mouseGrabbed Z

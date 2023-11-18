@@ -1,0 +1,26 @@
+[versions]
+kotlin = "1.8.10"
+minecraft = "1.16.5"
+architectury = "1.32.68"
+forge = "1.16.5-36.2.39"
+kotlinforforge = "1.17.0"
+fabric_loader = "0.14.23"
+fabric_api = "0.42.0+1.16"
+fabric_language_kotlin = "1.9.3+kotlin.1.8.20"
+
+[libraries]
+minecraft = { module = "com.mojang:minecraft", version.ref = "minecraft" }
+architectury = { module = "me.shedaniel:architectury", version.ref = "architectury" }
+
+architectury_forge = { module = "me.shedaniel:architectury-forge", version.ref = "architectury" }
+forge = { module = "net.minecraftforge:forge", version.ref = "forge" }
+# https://github.com/thedarkcolour/KotlinForForge/blob/4.x/README.md
+kotlinforforge = { module = "thedarkcolour:kotlinforforge", version.ref = "kotlinforforge" }
+
+architectury_fabric = { module = "me.shedaniel:architectury-fabric", version.ref = "architectury" }
+fabric_loader = { module = "net.fabricmc:fabric-loader", version.ref = "fabric_loader" }
+fabric_api = { module = "net.fabricmc.fabric-api:fabric-api", version.ref = "fabric_api" }
+# https://github.com/FabricMC/fabric-language-kotlin
+fabric_languageKotlin = { module = "net.fabricmc:fabric-language-kotlin", version.ref = "fabric_language_kotlin" }
+
+kotlinGradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }

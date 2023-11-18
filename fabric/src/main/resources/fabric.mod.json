@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "saoui",
   "version": "${version}",
-  "name": "Modular Customizable User Interface (WIP Name)",
+  "name": "SAOUI",
   "description": "This is an example description! Tell everyone what your mod is about!",
   "authors": [
     "Bluexin",
@@ -21,7 +21,7 @@
   "entrypoints": {
     "main": [
       {
-        "value": "com.tencao.saoui.SAOCore",
+        "value": "com.tencao.saoui.FabricCore",
         "adapter": "kotlin"
       }
     ]
@@ -32,10 +32,9 @@
   "depends": {
     "fabricloader": ">=0.14",
     "fabric": ">=0.42",
-    "minecraft": ">=1.165 <1.17",
-    "java": ">=17",
+    "minecraft": ">=1.16.5 <1.17",
+    "java": ">=8",
     "fabric-language-kotlin": ">=1.9.3+kotlin.1.8.20"
-  },
-  "accessWidener": "saoui.accesswidener"
+  }
 }
   
