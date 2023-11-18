@@ -28,28 +28,40 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import net.minecraft.resources.ResourceLocation
+import nl.adaptivity.xmlutil.serialization.XmlElement
+import nl.adaptivity.xmlutil.serialization.XmlSerialName
 
 /**
  * Part of saoui by Bluexin.
 
  * @author Bluexin
  */
-// Needed for XML loading
-@XmlSeeAlso(GLString::class, GLHotbarItem::class)
-@XmlRootElement
 @Serializable
-@Polymorphic
-@SerialName("glRectangle")
-open class GLRectangle : Element() {
-    protected var rgba: CInt? = null
-    protected var srcX: CDouble? = null
-    protected var srcY: CDouble? = null
-    protected var w: CDouble? = null
-    protected var h: CDouble? = null
-    protected var srcW: CDouble? = null
-    protected var srcH: CDouble? = null
+sealed class GLRectangleParent : Element() {
+    @SerialName("rgba")
+    @XmlSerialName("rgba")
+    protected var rgba= CInt.ZERO
+    @SerialName("srcX")
+    @XmlSerialName("srcX")
+    protected var srcX= CDouble.ZERO
+    @SerialName("srcY")
+    @XmlSerialName("srcY")
+    protected var srcY= CDouble.ZERO
+    @SerialName("w")
+    @XmlSerialName("w")
+    protected var w= CDouble.ZERO
+    @SerialName("h")
+    @XmlSerialName("h")
+    protected var h= CDouble.ZERO
+    @SerialName("srcW")
+    @XmlSerialName("srcW")
+    protected var srcW= CDouble.ZERO
+    @SerialName("srcH")
+    @XmlSerialName("srcH")
+    protected var srcH= CDouble.ZERO
     @Transient
     protected var rl: ResourceLocation? = null
+    @XmlElement
     private val texture: String? = null
 
     override fun draw(ctx: IHudDrawContext, poseStack: PoseStack) {
@@ -79,3 +91,11 @@ open class GLRectangle : Element() {
         return anonymous
     }
 }
+
+// Needed for XML loading
+@XmlSeeAlso(GLString::class, GLHotbarItem::class)
+@XmlRootElement
+@Serializable
+//@Polymorphic
+@SerialName("glRectangle")
+class GLRectangle : GLRectangleParent()

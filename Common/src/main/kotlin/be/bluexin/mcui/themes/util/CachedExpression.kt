@@ -66,8 +66,8 @@ class StaticCachedExpression<out T: Any>(
         override fun inWater() = false
         override fun air() = 0
         override fun armor() = 1
-        override fun ptHealthStep(index: Int) = HealthStep.INVALID
-        override fun ptName(index: Int) = ""
+        override fun ptHealthStep(index: Int): HealthStep = HealthStep.INVALID
+        override fun ptName(index: Int): String = ""
         override fun ptHp(index: Int) = 0f
         override fun ptMaxHp(index: Int) = 0f
         override fun ptHpPct(index: Int) = 0f

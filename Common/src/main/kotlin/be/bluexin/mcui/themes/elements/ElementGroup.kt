@@ -20,45 +20,41 @@ package be.bluexin.mcui.themes.elements
 import be.bluexin.mcui.Constants
 import be.bluexin.mcui.GLCore
 import be.bluexin.mcui.api.themes.IHudDrawContext
-import com.google.gson.annotations.SerializedName
 import com.mojang.blaze3d.vertex.PoseStack
-import jakarta.xml.bind.annotation.*
-import kotlinx.serialization.Polymorphic
+import jakarta.xml.bind.annotation.XmlRootElement
+import jakarta.xml.bind.annotation.XmlSeeAlso
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import net.minecraft.resources.ResourceLocation
-import nl.adaptivity.xmlutil.serialization.XmlChildrenName
 import nl.adaptivity.xmlutil.serialization.XmlElement
 import nl.adaptivity.xmlutil.serialization.XmlSerialName
-import nl.adaptivity.xmlutil.serialization.XmlValue
 
 /**
  * Part of saoui by Bluexin.
  *
  * @author Bluexin
  */
-@XmlRootElement
-@XmlSeeAlso(RepetitionGroup::class)
 @Serializable
-@Polymorphic
-@SerialName("elementGroup")
-open class ElementGroup : CachingElementParent() {
+sealed class ElementGroupParent : CachingElementParent() {
 
-    @field:SerializedName("children")
-    @XmlElementWrapper(name = "children")
-    @XmlElementRef(type = Element::class)
 //    @XmlSerialName("children")
-    @SerialName("children")
-    @XmlChildrenName("")
+//    @SerialName("children")
+//    @XmlChildrenName("children")
 //    @Xml
-    var elements: List<Element> = emptyList()
+    protected var children: Children = Children(emptyList())
+
+    var elements: List<Element>
+        get() = children
+        internal set(value) {
+            children = Children(value)
+        }
 
     @Transient
     protected var rl: ResourceLocation? = null
 
     @XmlElement
-    /*private */var texture: String? = null
+            /*private */var texture: String? = null
 
     override fun draw(ctx: IHudDrawContext, poseStack: PoseStack) {
         GLCore.glBlend(true)
@@ -67,15 +63,28 @@ open class ElementGroup : CachingElementParent() {
         if (enabled?.invoke(ctx) == false) return
         if (this.rl != null) GLCore.glBindTexture(this.rl!!)
 
-        this.elements.forEach { it.draw(ctx, poseStack) }
+        this.children.forEach { it.draw(ctx, poseStack) }
     }
 
     override fun setup(parent: ElementParent, fragments: Map<ResourceLocation, () -> Fragment>): Boolean {
         val res = super.setup(parent, fragments)
         this.rl = this.texture?.let(::ResourceLocation)
         var anonymous = 0
-        this.elements.forEach { if (it.name == DEFAULT_NAME) ++anonymous; it.setup(this, fragments) }
+        this.children.forEach { if (it.name == DEFAULT_NAME) ++anonymous; it.setup(this, fragments) }
         if (anonymous > 0) Constants.LOG.info("Set up $anonymous anonymous elements in $name.")
         return res
     }
+
+    @Serializable
+    @SerialName("children")
+    protected class Children(
+        private val elements: List<Element> = emptyList()
+    ) : List<Element> by elements
 }
+
+@XmlRootElement
+@XmlSeeAlso(RepetitionGroup::class)
+@Serializable
+//@Polymorphic
+@SerialName("elementGroup")
+class ElementGroup : ElementGroupParent()

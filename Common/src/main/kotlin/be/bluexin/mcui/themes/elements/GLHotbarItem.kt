@@ -17,7 +17,6 @@
 
 package be.bluexin.mcui.themes.elements
 
-import be.bluexin.mcui.GLCore
 import be.bluexin.mcui.api.themes.IHudDrawContext
 import be.bluexin.mcui.themes.util.CInt
 import com.mojang.blaze3d.vertex.PoseStack
@@ -27,6 +26,7 @@ import kotlinx.serialization.Serializable
 import net.minecraft.world.entity.HumanoidArm
 import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
+import nl.adaptivity.xmlutil.serialization.XmlSerialName
 
 /**
  * Part of saoui by Bluexin.
@@ -36,12 +36,20 @@ import net.minecraft.world.item.ItemStack
 @XmlRootElement
 @Serializable
 @SerialName("glHotbarItem")
-open class GLHotbarItem : GLRectangle() {
-
-    protected lateinit var slot: CInt
-    protected lateinit var itemXoffset: CInt
-    protected lateinit var itemYoffset: CInt
-    protected var hand: HumanoidArm? = null
+class GLHotbarItem(
+    @SerialName("slot")
+    @XmlSerialName("slot")
+    private var slot: CInt,
+    @SerialName("itemXoffset")
+    @XmlSerialName("itemXoffset")
+    private var itemXoffset: CInt,
+    @SerialName("itemYoffset")
+    @XmlSerialName("itemYoffset")
+    private var itemYoffset: CInt,
+    @SerialName("hand")
+    @XmlSerialName("hand")
+    private var hand: HumanoidArm? = null
+) : GLRectangleParent() {
 
     /*
     From net.minecraft.client.gui.GuiIngame

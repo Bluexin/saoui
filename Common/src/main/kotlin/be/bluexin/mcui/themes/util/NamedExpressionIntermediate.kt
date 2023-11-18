@@ -6,7 +6,6 @@ import be.bluexin.mcui.Constants
 import be.bluexin.mcui.themes.util.typeadapters.JelType
 import jakarta.xml.bind.Unmarshaller
 import jakarta.xml.bind.annotation.XmlAttribute
-import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -19,15 +18,12 @@ data class NamedExpressionIntermediate(
     @XmlAttribute
     val key: String,
     @XmlOtherAttributes
-    @EncodeDefault(EncodeDefault.Mode.ALWAYS)
     val type: JelType = JelType.ERROR,
     @XmlValue
     @SerialName("expression")
-//    @EncodeDefault(EncodeDefault.Mode.NEVER)
     override val serializedExpression: String = "",
     @SerialName("cache")
     @XmlOtherAttributes
-//    @EncodeDefault(EncodeDefault.Mode.NEVER)
     override val cacheType: CacheType = CacheType.PER_FRAME
 ) : ExpressionIntermediate() {
 

@@ -72,7 +72,7 @@ object IntExpressionAdapter : BasicExpressionAdapter<CInt, Int>() {
 
     override val jelType: JelType by lazy { JelType.INT }
 
-    override val default = CInt { 0 }
+    override val default get() = CInt.ZERO
 }
 
 /**
@@ -87,7 +87,7 @@ object DoubleExpressionAdapter : BasicExpressionAdapter<CDouble, Double>() {
 
     override val jelType: JelType by lazy { JelType.DOUBLE }
 
-    override val default = CDouble { 0.0 }
+    override val default get() = CDouble.ZERO
 }
 
 /**
@@ -102,7 +102,7 @@ object StringExpressionAdapter : BasicExpressionAdapter<CString, String>() {
 
     override val jelType: JelType by lazy { JelType.STRING }
 
-    override val default = CString { "" }
+    override val default get() = CString.EMPTY
 }
 
 /**
@@ -117,7 +117,7 @@ object BooleanExpressionAdapter : BasicExpressionAdapter<CBoolean, Boolean>() {
 
     override val jelType: JelType by lazy { JelType.BOOLEAN }
 
-    override val default = CBoolean { false }
+    override val default get() = CBoolean.FALSE
 }
 
 /**
@@ -132,6 +132,6 @@ object UnitExpressionAdapter : BasicExpressionAdapter<CUnit, Unit>() {
 
     override val jelType: JelType by lazy { JelType.UNIT }
 
-    override val default = CUnit { }
+    override val default get() = CUnit.UNIT
 }
 

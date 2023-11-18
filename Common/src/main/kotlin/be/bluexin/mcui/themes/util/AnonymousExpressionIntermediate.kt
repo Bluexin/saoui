@@ -19,6 +19,8 @@ package be.bluexin.mcui.themes.util
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import nl.adaptivity.xmlutil.serialization.XmlOtherAttributes
+import nl.adaptivity.xmlutil.serialization.XmlValue
 
 /**
  * Part of saoui by Bluexin.
@@ -39,12 +41,17 @@ sealed class ExpressionIntermediate {
                 .replace("format(", "language.getOrDefault(")
             return f
         }
+
+    val asAnonymous: AnonymousExpressionIntermediate
+        get() = AnonymousExpressionIntermediate(serializedExpression, cacheType)
 }
 
 @Serializable
 data class AnonymousExpressionIntermediate(
     @SerialName("expression")
+    @XmlValue
     override val serializedExpression: String,
     @SerialName("cache")
+    @XmlOtherAttributes
     override val cacheType: CacheType = CacheType.PER_FRAME
 ) : ExpressionIntermediate()

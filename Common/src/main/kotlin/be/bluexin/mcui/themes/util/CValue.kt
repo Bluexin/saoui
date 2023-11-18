@@ -34,31 +34,52 @@ sealed class CValue<out T : Any>(val value: (IHudDrawContext) -> T) : (IHudDrawC
  * Custom Int type.
  */
 @Serializable(CIntSerializer::class)
-class CInt(value: (IHudDrawContext) -> Int) : CValue<Int>(value)
+class CInt(value: (IHudDrawContext) -> Int) : CValue<Int>(value) {
+    companion object {
+        val ZERO = CInt { 0 }
+    }
+}
 
 /**
  * Custom Double type.
  */
 @Serializable(CDoubleSerializer::class)
-class CDouble(value: (IHudDrawContext) -> Double) : CValue<Double>(value)
+class CDouble(value: (IHudDrawContext) -> Double) : CValue<Double>(value) {
+    companion object {
+        val ZERO = CDouble { 0.0 }
+    }
+}
 
 /**
  * Custom String type.
  */
 @Serializable(CStringSerializer::class)
-class CString(value: (IHudDrawContext) -> String) : CValue<String>(value)
+class CString(value: (IHudDrawContext) -> String) : CValue<String>(value) {
+    companion object {
+        val EMPTY = CString { "" }
+    }
+}
 
 /**
  * Custom Boolean type.
  */
 @Serializable(CBooleanSerializer::class)
-class CBoolean(value: (IHudDrawContext) -> Boolean) : CValue<Boolean>(value)
+class CBoolean(value: (IHudDrawContext) -> Boolean) : CValue<Boolean>(value) {
+    companion object {
+        val TRUE = CBoolean { true }
+        val FALSE = CBoolean { false }
+    }
+}
 
 /**
  * Custom Unit/Void type.
  */
 @Serializable(CUnitSerializer::class)
-class CUnit(value: (IHudDrawContext) -> Unit) : CValue<Unit>(value)
+class CUnit(value: (IHudDrawContext) -> Unit) : CValue<Unit>(value) {
+    companion object {
+        val UNIT = CUnit { }
+    }
+}
 
 val ((IHudDrawContext) -> Any).expressionIntermediate: ExpressionIntermediate? get() = (this as? CachedExpression<*>)?.expressionIntermediate
 val ((IHudDrawContext) -> Any).expression: String? get() = this.expressionIntermediate?.expression

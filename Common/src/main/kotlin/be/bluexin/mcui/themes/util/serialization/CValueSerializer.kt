@@ -34,18 +34,20 @@ import kotlinx.serialization.encoding.Encoder
 sealed class CValueSerializer<CValueType: CValue<T>, T: Any>(
     private val expressionAdapter: BasicExpressionAdapter<CValueType, T>
 ) : KSerializer<CValueType> {
+    private val delegate = AnonymousExpressionIntermediate.serializer()
+
     override fun deserialize(decoder: Decoder): CValueType {
-        return expressionAdapter.compile(decoder.decodeSerializableValue(ExpressionIntermediate.serializer()))
+        return expressionAdapter.compile(decoder.decodeSerializableValue(delegate))
     }
 
     override val descriptor by lazy {
-        SerialDescriptor(javaClass.canonicalName, ExpressionIntermediate.serializer().descriptor)
+        SerialDescriptor(javaClass.canonicalName, delegate.descriptor)
     }
 
     override fun serialize(encoder: Encoder, value: CValueType) =
         when (val intermediate = (value.value as? CachedExpression<*>)?.expressionIntermediate) {
             null -> encoder.encodeNull()
-            else -> encoder.encodeSerializableValue(ExpressionIntermediate.serializer(), intermediate)
+            else -> encoder.encodeSerializableValue(delegate, intermediate.asAnonymous)
         }
 }
 

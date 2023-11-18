@@ -4,14 +4,12 @@ import be.bluexin.mcui.themes.elements.ElementGroup
 import be.bluexin.mcui.themes.elements.Expect
 import be.bluexin.mcui.themes.elements.Fragment
 import be.bluexin.mcui.themes.elements.GLRectangle
-import be.bluexin.mcui.themes.util.CBoolean
 import be.bluexin.mcui.themes.util.CacheType
-import be.bluexin.mcui.themes.util.CachedExpression
 import be.bluexin.mcui.themes.util.NamedExpressionIntermediate
 import be.bluexin.mcui.themes.util.typeadapters.JelType
+import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import net.minecraft.resources.ResourceLocation
-import nl.adaptivity.xmlutil.QName
 import nl.adaptivity.xmlutil.serialization.XML
 import nl.adaptivity.xmlutil.serialization.XmlSerializationPolicy
 import org.apache.logging.log4j.LogManager
@@ -129,11 +127,11 @@ object XmlTests {
         val xml = XML{
             defaultPolicy {
                 encodeDefault = XmlSerializationPolicy.XmlEncodeDefault.NEVER
-//                typeDiscriminatorName = QName("testtt")
             }
             indentString = "    "
             autoPolymorphic = true
-        }.encodeToString(
+        }
+        val fragmentString = xml.encodeToString(
             Fragment(
                 Expect(
                     listOf(
@@ -171,11 +169,11 @@ object XmlTests {
             },
             /*rootName = QName("http://www.bluexin.be/com/saomc/saoui/fragment-schema", "fragment", "bl")*/
         )
-        println(xml)
+        println(fragmentString)
 
         val iss = javaClass.classLoader.getResourceAsStream("assets/saoui/themes/hex2/fragments/label.xml")
             ?: error("Couldn't load iss")
-        val frag = XML.decodeFromString<Fragment>(
+        val frag = xml.decodeFromString<Fragment>(
             iss.reader().readText()
         )
         println(frag)

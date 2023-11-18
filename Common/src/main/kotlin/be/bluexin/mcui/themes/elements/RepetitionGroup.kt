@@ -23,6 +23,7 @@ import com.mojang.blaze3d.vertex.PoseStack
 import jakarta.xml.bind.annotation.XmlRootElement
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import nl.adaptivity.xmlutil.serialization.XmlSerialName
 
 /**
  * Part of saoui by Bluexin.
@@ -32,14 +33,16 @@ import kotlinx.serialization.Serializable
 @XmlRootElement
 @Serializable
 @SerialName("repetitionGroup")
-open class RepetitionGroup : ElementGroup() {
-
-    protected var amount: CInt? = null
+class RepetitionGroup(
+    @SerialName("amount")
+    @XmlSerialName("amount")
+    private var amount: CInt
+) : ElementGroupParent() {
 
     override fun draw(ctx: IHudDrawContext, poseStack: PoseStack) {
         if (enabled?.invoke(ctx) == true) return
 
-        val m = amount?.invoke(ctx) ?: 0
+        val m = amount.invoke(ctx) ?: 0
         for (i in 0 until m) {
             ctx.setI(i)
             super.draw(ctx, poseStack)

@@ -8,13 +8,8 @@ import be.bluexin.mcui.themes.util.json.ExpectJsonAdapter
 import com.google.gson.annotations.JsonAdapter
 import jakarta.xml.bind.Unmarshaller
 import jakarta.xml.bind.annotation.XmlElement
-import jakarta.xml.bind.annotation.XmlRootElement
-import kotlinx.serialization.EncodeDefault
-import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import nl.adaptivity.xmlutil.ExperimentalXmlUtilApi
-import nl.adaptivity.xmlutil.serialization.XmlBefore
-import nl.adaptivity.xmlutil.serialization.XmlChildrenName
 import nl.adaptivity.xmlutil.serialization.XmlNamespaceDeclSpec
 import nl.adaptivity.xmlutil.serialization.XmlSerialName
 
@@ -28,9 +23,9 @@ import nl.adaptivity.xmlutil.serialization.XmlSerialName
 @XmlNamespaceDeclSpec("bl=https://www.bluexin.be/com/saomc/saoui/fragment-schema")
 class Fragment(
     @XmlSerialName("expect")
-    @XmlBefore("children")
+//    @XmlBefore("children")
     val expect: Expect? = null
-) : ElementGroup(), AfterUnmarshal {
+) : ElementGroupParent(), AfterUnmarshal {
 
     override fun afterUnmarshal(um: Unmarshaller?, parent: Any?) {
         Constants.LOG.info("afterUnmarshal in $name of $parent with $expect")

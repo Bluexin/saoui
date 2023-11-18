@@ -23,8 +23,8 @@ class NamedExpressionSerializer : KSerializer<Map<String, CValue<*>?>> {
 
     override fun serialize(encoder: Encoder, value: Map<String, CValue<*>?>) = encoder.encodeSerializableValue(
         delegate, Variables(
-            value.map { (key, value) ->val nei =
-                (value?.value as? CachedExpression<*>)?.expressionIntermediate as? NamedExpressionIntermediate
+            value.map { (key, value) ->
+                val nei = value?.value?.expressionIntermediate as? NamedExpressionIntermediate
                 NamedExpressionIntermediate(
                     key = key,
                     type = nei?.type ?: JelType.ERROR,

@@ -17,8 +17,15 @@
 
 package be.bluexin.mcui.screens.menus;
 
+import kotlin.Deprecated;
+import kotlin.DeprecationLevel;
+
 @SuppressWarnings("unused") // TODO: remove this enum. Used for future ref only.
 //@SideOnly(Side.CLIENT)
+@Deprecated(
+        message = "TODO: remove this enum. Used for future ref only.",
+        level = DeprecationLevel.ERROR
+)
 public enum Categories {
 
     NONE(false, true),

@@ -29,7 +29,9 @@ import javax.annotation.OverridingMethodsMustInvokeSuper
 import jakarta.xml.bind.annotation.XmlAttribute
 import jakarta.xml.bind.annotation.XmlSeeAlso
 import kotlinx.serialization.*
+import nl.adaptivity.xmlutil.serialization.XmlElement
 import nl.adaptivity.xmlutil.serialization.XmlOtherAttributes
+import nl.adaptivity.xmlutil.serialization.XmlSerialName
 
 /**
  * Used to map a xml element with x, y, z coordinates and an "enabled" toggle.
@@ -50,32 +52,35 @@ sealed class Element {
      * Friendly name for this element. Mostly used for debug purposes.
      */
     @XmlAttribute
-    @EncodeDefault(EncodeDefault.Mode.NEVER)
     var name: String = DEFAULT_NAME
 
     /**
      * X position.
      */
-    @EncodeDefault(EncodeDefault.Mode.NEVER)
-    protected var x: CDouble? = null
+    @SerialName("x")
+    @XmlSerialName("x")
+    protected var x: CDouble = CDouble.ZERO
 
     /**
      * Y position.
      */
-    @EncodeDefault(EncodeDefault.Mode.NEVER)
-    protected var y: CDouble? = null
+    @SerialName("y")
+    @XmlSerialName("y")
+    protected var y: CDouble = CDouble.ZERO
 
     /**
      * Z position.
      */
-    @EncodeDefault(EncodeDefault.Mode.NEVER)
-    protected var z: CDouble? = null
+    @SerialName("z")
+    @XmlSerialName("z")
+    protected var z: CDouble = CDouble.ZERO
 
     /**
      * Whether this element should be enabled.
      */
-    @EncodeDefault(EncodeDefault.Mode.NEVER)
-    var enabled: CBoolean? = null
+    @SerialName("enabled")
+    @XmlSerialName("enabled")
+    var enabled: CBoolean = CBoolean.TRUE
         private set
 
     /**

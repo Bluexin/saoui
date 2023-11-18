@@ -23,6 +23,7 @@ import com.mojang.blaze3d.vertex.PoseStack
 import jakarta.xml.bind.annotation.XmlRootElement
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import nl.adaptivity.xmlutil.serialization.XmlSerialName
 
 /**
  * Part of saoui by Bluexin.
@@ -32,10 +33,12 @@ import kotlinx.serialization.Serializable
 @XmlRootElement
 @Serializable
 @SerialName("glString")
-open class GLString : GLRectangle() {
-
-    protected lateinit var text: CString
-    private val shadow = true
+class GLString(
+    @SerialName("text")
+    @XmlSerialName("text")
+    private var text: CString,
+    private val shadow: Boolean = true
+) : GLRectangleParent() {
 
     override fun draw(ctx: IHudDrawContext, poseStack: PoseStack) {
         if (enabled?.invoke(ctx) == false) return
