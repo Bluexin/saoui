@@ -309,8 +309,6 @@ class HudDrawContext(player: Player = Client.mc.player!!, val mc: Minecraft = Cl
         this.context = emptyMap()
     }
 
-    override fun language(): Language = Language.getInstance()
-
     // TODO: error report ?
     /**
      * JEL dynamic context access

@@ -401,6 +401,4 @@ public interface IHudDrawContext {
     default void pushContext(Map<String, CValue<Object>> context) {}
 
     default void popContext() {}
-
-    Language language();
 }

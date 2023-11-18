@@ -30,6 +30,7 @@ import be.bluexin.mcui.util.HealthStep
 import gnu.jel.CompilationException
 import gnu.jel.DVMap
 import gnu.jel.Library
+import net.minecraft.client.resources.language.I18n
 import net.minecraft.locale.Language
 
 /**
@@ -38,10 +39,11 @@ import net.minecraft.locale.Language
  * @author Bluexin
  */
 object LibHelper {
-    private val contextResolver = ContextAwareDVMap()
+    private val emptyContext = mapOf("__empty_marker" to JelType.ERROR)
+    private val contextResolver = ContextAwareDVMap(emptyContext)
 
     val LIB: Library by lazy {
-        val staticLib = arrayOf(Math::class.java, HealthStep::class.java, StatusEffects::class.java, OptionCore::class.java, Settings.JelWrappers::class.java, ColorUtil::class.java)
+        val staticLib = arrayOf(Math::class.java, HealthStep::class.java, StatusEffects::class.java, OptionCore::class.java, Settings.JelWrappers::class.java, ColorUtil::class.java, I18n::class.java)
         val dynLib = arrayOf(IHudDrawContext::class.java)
         val dotClasses = arrayOf(String::class.java, IOption::class.java, List::class.java, StatusEffects::class.java, HealthStep::class.java, ColorUtil::class.java, Language::class.java)
         Library(staticLib, dynLib, dotClasses, contextResolver, null)
@@ -62,15 +64,18 @@ object LibHelper {
     }
 
     fun pushContext(context: Map<String, JelType>) {
+        check(emptyContext === contextResolver.context) { "Context already pushed !" }
         contextResolver.context = context
     }
 
     fun popContext() {
-        contextResolver.context = emptyMap()
+        check(emptyContext !== contextResolver.context) { "Context not pushed !" }
+        contextResolver.context = emptyContext
     }
 }
 
-private class ContextAwareDVMap : DVMap() {
-    var context: Map<String, JelType> = emptyMap()
+private class ContextAwareDVMap(
+    var context: Map<String, JelType>
+) : DVMap() {
     override fun getTypeName(name: String): String? = context[name]?.typeName
 }

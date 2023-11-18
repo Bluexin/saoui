@@ -116,7 +116,6 @@ class StaticCachedExpression<out T: Any>(
         override fun getIntProperty(name: String) = 0
         override fun getBooleanProperty(name: String) = false
         override fun getUnitProperty(name: String) = Unit
-        override fun language(): Language = Language.getInstance()
     }
 
     override fun invoke(ctx: IHudDrawContext) = cache

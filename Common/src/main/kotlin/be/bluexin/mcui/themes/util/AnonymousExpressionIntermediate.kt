@@ -19,6 +19,8 @@ package be.bluexin.mcui.themes.util
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
+import net.minecraft.client.resources.language.I18n
 import nl.adaptivity.xmlutil.serialization.XmlOtherAttributes
 import nl.adaptivity.xmlutil.serialization.XmlValue
 
@@ -32,13 +34,14 @@ sealed class ExpressionIntermediate {
     abstract val serializedExpression: String
     abstract val cacheType: CacheType
 
+    @Transient // TODO : check if this handles obf
+    private val translate = I18n::get.name
+
     val expression: String
         get() {
             var f = serializedExpression
-            // TODO : new obf ?
-//            if (LibHelper.obfuscated) f = f.replace("format(", "func_135052_a(")
             f = f.replace('\n', ' ')
-//                .replace("format(", "language.getOrDefault(")
+                .replace("format(", "$translate(")
             return f
         }
 

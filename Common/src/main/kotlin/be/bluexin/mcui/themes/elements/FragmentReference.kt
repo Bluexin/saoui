@@ -3,10 +3,7 @@ package be.bluexin.mcui.themes.elements
 import be.bluexin.mcui.Constants
 import be.bluexin.mcui.api.themes.IHudDrawContext
 import be.bluexin.mcui.themes.AbstractThemeLoader
-import be.bluexin.mcui.themes.util.CValue
-import be.bluexin.mcui.themes.util.NamedExpressionIntermediate
-import be.bluexin.mcui.themes.util.Variables
-import be.bluexin.mcui.themes.util.expressionIntermediate
+import be.bluexin.mcui.themes.util.*
 import be.bluexin.mcui.themes.util.serialization.NamedExpressionSerializer
 import com.mojang.blaze3d.vertex.PoseStack
 import kotlinx.serialization.SerialName
@@ -24,6 +21,10 @@ class FragmentReference(
     private val serializedVariables: Variables = Variables(emptyList()),
     private var id: String = MISSING_ID
 ) : CachingElementParent() {
+
+    init {
+        LibHelper.popContext()
+    }
 
     @Transient
     private var variables: MutableMap<String, CValue<*>?> = serializedVariables.variable.associateTo(mutableMapOf()) {
