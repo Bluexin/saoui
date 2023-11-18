@@ -23,10 +23,9 @@ class Fragment(
     @XmlSerialName("expect")
 //    @XmlBefore("children")
     val expect: Expect? = null
-) : ElementGroupParent(), AfterDeserialization {
+) : ElementGroupParent() {
 
-    override fun afterDeserialization(parent: Any?) {
-        Constants.LOG.info("afterUnmarshal in $name of $parent with $expect")
+    init {
         if (expect != null) LibHelper.popContext()
     }
 }
@@ -37,13 +36,9 @@ class Fragment(
 data class Expect(
     @XmlSerialName("variable")
     val variables: List<NamedExpressionIntermediate> = mutableListOf()
-) : AfterDeserialization {
-    override fun toString(): String {
-        return "Expect(variable=$variables)"
-    }
+) {
 
-    override fun afterDeserialization(parent: Any?) {
-        Constants.LOG.info("afterUnmarshal in $this of $parent")
+    init {
         LibHelper.pushContext(variables.associate { it.key to it.type })
     }
 }

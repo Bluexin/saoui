@@ -1,17 +1,9 @@
 package be.bluexin.mcui.themes
 
-import be.bluexin.mcui.themes.elements.ElementGroup
-import be.bluexin.mcui.themes.elements.Expect
-import be.bluexin.mcui.themes.elements.Fragment
-import be.bluexin.mcui.themes.elements.GLRectangle
-import be.bluexin.mcui.themes.util.CacheType
-import be.bluexin.mcui.themes.util.NamedExpressionIntermediate
-import be.bluexin.mcui.themes.util.typeadapters.JelType
+import be.bluexin.mcui.themes.elements.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import net.minecraft.resources.ResourceLocation
-import nl.adaptivity.xmlutil.serialization.XML
-import nl.adaptivity.xmlutil.serialization.XmlSerializationPolicy
 import org.apache.logging.log4j.LogManager
 import java.io.File
 import kotlin.io.path.isDirectory
@@ -125,51 +117,38 @@ object XmlTests {
     @JvmStatic
     fun main(args: Array<String>) {
         val xml = XmlThemeLoader.xml
-        val fragmentString = xml.encodeToString(
-            Fragment(
-                Expect(
-                    listOf(
-                        NamedExpressionIntermediate(
-                            key = "thisIsAKey",
-                            type = JelType.INT,
-                        ),
-                        NamedExpressionIntermediate(
-                            key = "thisIsBKey",
-                            type = JelType.STRING,
-                            serializedExpression = "username",
-                            cacheType = CacheType.SIZE_CHANGE
-                        ),
+        val serialized = xml.encodeToString(
+            Hud(Hud.Parts(listOf(
+                HudPartType.AIR to ElementGroup().apply {
+                    name = "centered"
+                    texture = "saoui:textures/hex2/hex_labels.png"
+                    elements = listOf(
+                        GLRectangle()
                     )
-                )
-            ).apply {
-                name = "label fragment"
-                texture = "texture"
-                elements = listOf(
-                    ElementGroup().apply {
-                        name = "centered"
-                        texture = "saoui:textures/hex2/hex_labels.png"
-                        elements = listOf(
-                            GLRectangle()
-                        )
-                    },
-                    ElementGroup().apply {
-                        name = "uncentered"
-                        texture = "saoui:textures/hex2/hex_labels.png"
-                        elements = listOf(
-                            GLRectangle()
-                        )
-                    },
-                )
-            },
-            /*rootName = QName("http://www.bluexin.be/com/saomc/saoui/fragment-schema", "fragment", "bl")*/
+                },
+                HudPartType.ARMOR to ElementGroup().apply {
+                    name = "uncentered"
+                    texture = "saoui:textures/hex2/hex_labels.png"
+                    elements = listOf(
+                        GLRectangle()
+                    )
+                }
+            ))),
         )
-        println(fragmentString)
+        println(serialized)
 
         val iss = javaClass.classLoader.getResourceAsStream("assets/saoui/themes/hex2/fragments/label.xml")
             ?: error("Couldn't load iss")
         val frag = xml.decodeFromString<Fragment>(
             iss.reader().readText()
         )
-        println(frag)
+
+        val iss2 = javaClass.classLoader.getResourceAsStream("assets/saoui/themes/hex2/hud.xml")
+            ?: error("Couldn't load iss")
+
+        val hud = xml.decodeFromString<Hud>(
+            iss2.reader().readText()
+        )
+        println(hud)
     }
 }

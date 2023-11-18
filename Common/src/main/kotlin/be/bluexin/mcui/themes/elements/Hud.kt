@@ -20,8 +20,10 @@ package be.bluexin.mcui.themes.elements
 import be.bluexin.mcui.api.themes.IHudDrawContext
 import com.mojang.blaze3d.vertex.PoseStack
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import net.minecraft.resources.ResourceLocation
 import nl.adaptivity.xmlutil.ExperimentalXmlUtilApi
+import nl.adaptivity.xmlutil.serialization.XmlElement
 import nl.adaptivity.xmlutil.serialization.XmlNamespaceDeclSpec
 import nl.adaptivity.xmlutil.serialization.XmlSerialName
 
@@ -38,10 +40,16 @@ import nl.adaptivity.xmlutil.serialization.XmlSerialName
     value = "bl:hud"
 )
 @XmlNamespaceDeclSpec("bl=https://www.bluexin.be/com/saomc/saoui/hud-schema")
-class Hud private constructor(
+class Hud(
+    @XmlSerialName("parts")
+    private val parts: Parts,
     override val name: String = "MenuDefs",
+    @XmlElement
     val version: String = "1.0"
 ) : ElementParent {
+
+    @Transient
+    private val indexedParts = parts.parts.associate { (k, v) -> k to v }
 
     override fun getX(ctx: IHudDrawContext) = 0.0
 
@@ -49,13 +57,33 @@ class Hud private constructor(
 
     override fun getZ(ctx: IHudDrawContext) = 0.0
 
-    private val parts = HashMap<HudPartType, ElementGroup>()
+    operator fun get(key: HudPartType) = indexedParts[key]
 
-    operator fun get(key: HudPartType) = parts[key]
-
-    fun setup(fragments: Map<ResourceLocation, () -> Fragment>) = this.parts.values.forEach { it.setup(this, fragments) }
+    fun setup(fragments: Map<ResourceLocation, () -> Fragment>) =
+        this.indexedParts.values.forEach { it.setup(this, fragments) }
 
     fun draw(key: HudPartType, ctx: IHudDrawContext, poseStack: PoseStack) {
         this[key]?.draw(ctx, poseStack)
+    }
+
+    @Serializable
+    class Parts(
+        @XmlSerialName("entry")
+        val parts: List<Entry<HudPartType, ElementGroup>>
+    ) {
+        companion object {
+            operator fun invoke(parts: List<Pair<HudPartType, ElementGroup>>) = Parts(
+                parts.map { (k, v) -> Entry(k, v) }
+            )
+        }
+
+        @Serializable
+        data class Entry<K, V>(
+            @XmlSerialName("key")
+            val key: K,
+            @XmlSerialName("value")
+            val value: V
+        )
+
     }
 }

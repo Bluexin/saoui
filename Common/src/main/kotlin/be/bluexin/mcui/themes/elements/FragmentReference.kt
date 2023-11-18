@@ -14,13 +14,14 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import net.minecraft.resources.ResourceLocation
 import nl.adaptivity.xmlutil.serialization.XmlId
+import nl.adaptivity.xmlutil.serialization.XmlSerialName
 
 @Serializable
 @SerialName("fragmentReference")
 class FragmentReference(
     @Suppress("CanBeParameter", "RedundantSuppression") // It can't be a param because of @Serializable
-    private val serializedVariables: Variables,
-    @XmlId
+    @XmlSerialName("variables")
+    private val serializedVariables: Variables = Variables(emptyList()),
     private var id: String = MISSING_ID
 ) : CachingElementParent() {
 

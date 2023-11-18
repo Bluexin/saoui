@@ -32,6 +32,7 @@ import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.Font
 import net.minecraft.client.player.LocalPlayer
 import net.minecraft.client.renderer.entity.ItemRenderer
+import net.minecraft.locale.Language
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.player.Player
 import java.lang.ref.WeakReference
@@ -307,6 +308,8 @@ class HudDrawContext(player: Player = Client.mc.player!!, val mc: Minecraft = Cl
     override fun popContext() {
         this.context = emptyMap()
     }
+
+    override fun language(): Language = Language.getInstance()
 
     // TODO: error report ?
     /**

@@ -23,6 +23,7 @@ import be.bluexin.mcui.themes.util.CValue;
 import be.bluexin.mcui.util.HealthStep;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.locale.Language;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 
@@ -400,4 +401,6 @@ public interface IHudDrawContext {
     default void pushContext(Map<String, CValue<Object>> context) {}
 
     default void popContext() {}
+
+    Language language();
 }

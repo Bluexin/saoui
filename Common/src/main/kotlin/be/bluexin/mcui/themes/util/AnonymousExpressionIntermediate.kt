@@ -38,7 +38,7 @@ sealed class ExpressionIntermediate {
             // TODO : new obf ?
 //            if (LibHelper.obfuscated) f = f.replace("format(", "func_135052_a(")
             f = f.replace('\n', ' ')
-                .replace("format(", "language.getOrDefault(")
+//                .replace("format(", "language.getOrDefault(")
             return f
         }
 
