@@ -26,7 +26,6 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import net.minecraft.resources.ResourceLocation
 import nl.adaptivity.xmlutil.serialization.XmlElement
-import nl.adaptivity.xmlutil.serialization.XmlSerialName
 
 /**
  * Part of saoui by Bluexin.
@@ -36,10 +35,6 @@ import nl.adaptivity.xmlutil.serialization.XmlSerialName
 @Serializable
 sealed class ElementGroupParent : CachingElementParent() {
 
-//    @XmlSerialName("children")
-//    @SerialName("children")
-//    @XmlChildrenName("children")
-//    @Xml
     protected var children: Children = Children(emptyList())
 
     var elements: List<Element>
@@ -52,13 +47,14 @@ sealed class ElementGroupParent : CachingElementParent() {
     protected var rl: ResourceLocation? = null
 
     @XmlElement
-            /*private */var texture: String? = null
+    private var texture: String? = null
 
     override fun draw(ctx: IHudDrawContext, poseStack: PoseStack) {
+        if (!enabled(ctx)) return
+
         GLCore.glBlend(true)
         GLCore.color(1f, 1f, 1f, 1f)
 
-        if (enabled?.invoke(ctx) == false) return
         if (this.rl != null) GLCore.glBindTexture(this.rl!!)
 
         this.children.forEach { it.draw(ctx, poseStack) }

@@ -23,11 +23,10 @@ import be.bluexin.mcui.util.ColorUtil
 import be.bluexin.mcui.util.append
 import be.bluexin.mcui.util.math.Vec2d
 import com.mojang.blaze3d.systems.RenderSystem
-import com.mojang.blaze3d.vertex.BufferBuilder
-import com.mojang.blaze3d.vertex.PoseStack
-import com.mojang.blaze3d.vertex.Tesselator
+import com.mojang.blaze3d.vertex.*
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.Font
+import net.minecraft.client.renderer.GameRenderer
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.phys.AABB
 import org.joml.Vector2i
@@ -55,20 +54,33 @@ object GLCore {
         color(color.rgba)
     }
 
-    fun color(rgba: Int) {
-        val red = (rgba shr 24 and 0xFF).toFloat() / 0xFF
-        val green = (rgba shr 16 and 0xFF).toFloat() / 0xFF
-        val blue = (rgba shr 8 and 0xFF).toFloat() / 0xFF
-        val alpha = (rgba and 0xFF).toFloat() / 0xFF
+    /**
+     * Red from RGBA
+     */
+    private operator fun Int.component1() = (this shr 24 and 0xFF).toFloat() / 0xFF
 
+    /**
+     * Green from RGBA
+     */
+    private operator fun Int.component2() = (this shr 16 and 0xFF).toFloat() / 0xFF
+
+    /**
+     * Blue from RGBA
+     */
+    private operator fun Int.component3() = (this shr 8 and 0xFF).toFloat() / 0xFF
+
+    /**
+     * Alpha from RGBA
+     */
+    private operator fun Int.component4() = (this and 0xFF).toFloat() / 0xFF
+
+    fun color(rgba: Int) {
+        val (red, green, blue, alpha) = rgba
         color(red, green, blue, alpha)
     }
 
     fun color(rgba: Int, lightLevel: Float) {
-        val red = (rgba shr 24 and 0xFF).toFloat() / 0xFF
-        val green = (rgba shr 16 and 0xFF).toFloat() / 0xFF
-        val blue = (rgba shr 8 and 0xFF).toFloat() / 0xFF
-        val alpha = (rgba and 0xFF).toFloat() / 0xFF
+        val (red, green, blue, alpha) = rgba
         val light = max(lightLevel, 0.15f)
 
         color(red * light, green * light, blue * light, alpha)
@@ -123,8 +135,9 @@ object GLCore {
     }
 
     @JvmOverloads
-    fun glString(string: String, pos: Vec2d, argb: Int, shadow: Boolean = false, centered: Boolean = false,
-                 poseStack: PoseStack
+    fun glString(
+        string: String, pos: Vec2d, argb: Int, shadow: Boolean = false, centered: Boolean = false,
+        poseStack: PoseStack
     ) {
         glString(string, pos.xi, pos.yi, argb, shadow, centered, poseStack)
     }
@@ -187,14 +200,15 @@ object GLCore {
         size: Vec2d,
         srcPos: Vec2d = Vec2d.ZERO,
         srcSize: Vec2d = size,
-        textureSize: Vector2i = Vector2i(256)
+        textureSize: Vector2i = Vector2i(256),
+        poseStack: PoseStack
     ) {
         glTexturedRectV2(
             x = pos.x(), y = pos.y(), z = pos.z(),
             width = size.x, height = size.y,
             srcX = srcPos.x, srcY = srcPos.y,
             srcWidth = srcSize.x, srcHeight = srcSize.y,
-            textureW = textureSize.x(), textureH = textureSize.y()
+            textureW = textureSize.x(), textureH = textureSize.y(), poseStack = poseStack
         )
     }
 
@@ -210,21 +224,28 @@ object GLCore {
         srcWidth: Double = width,
         srcHeight: Double = height,
         textureW: Int = 256,
-        textureH: Int = 256
+        textureH: Int = 256,
+        poseStack: PoseStack
     ) {
         val f = 1f / textureW
         val f1 = 1f / textureH
-        /*begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX)
-        bufferBuilder.pos(x, y + height, z)
-            .tex((srcX.toFloat() * f).toDouble(), ((srcY + srcHeight).toFloat() * f1).toDouble()).endVertex()
-        bufferBuilder.pos(x + width, y + height, z)
-            .tex(((srcX + srcWidth).toFloat() * f).toDouble(), ((srcY + srcHeight).toFloat() * f1).toDouble())
+        val matrix = poseStack.last().pose()
+        RenderSystem.setShader(GameRenderer::getPositionTexShader)
+        val builder = bufferBuilder
+        builder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX)
+        builder.vertex(matrix, x.toFloat(), (y + height).toFloat(), z.toFloat())
+            .uv((srcX.toFloat() * f), ((srcY + srcHeight).toFloat() * f1))
             .endVertex()
-        bufferBuilder.pos(x + width, y, z)
-            .tex(((srcX + srcWidth).toFloat() * f).toDouble(), (srcY.toFloat() * f1).toDouble()).endVertex()
-        bufferBuilder.pos(x, y, z).tex((srcX.toFloat() * f).toDouble(), (srcY.toFloat() * f1).toDouble()).endVertex()
-        draw()*/
-        // TODO: replace with blit
+        builder.vertex(matrix, (x + width).toFloat(), (y + height).toFloat(), z.toFloat())
+            .uv(((srcX + srcWidth).toFloat() * f), ((srcY + srcHeight).toFloat() * f1))
+            .endVertex()
+        builder.vertex(matrix, (x + width).toFloat(), y.toFloat(), z.toFloat())
+            .uv(((srcX + srcWidth).toFloat() * f), (srcY.toFloat() * f1))
+            .endVertex()
+        builder.vertex(matrix, x.toFloat(), y.toFloat(), z.toFloat())
+            .uv((srcX.toFloat() * f), (srcY.toFloat() * f1))
+            .endVertex()
+        BufferUploader.drawWithShader(builder.end())
     }
 
     fun glAlphaTest(flag: Boolean) {

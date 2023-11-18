@@ -17,9 +17,6 @@
 
 package be.bluexin.mcui.api.elements
 
-import be.bluexin.mcui.util.math.BoundingBox2D
-import be.bluexin.mcui.util.math.Vec2d
-import be.bluexin.mcui.util.math.vec
 import be.bluexin.mcui.GLCore
 import be.bluexin.mcui.api.elements.registry.DrawType
 import be.bluexin.mcui.api.screens.IIcon
@@ -27,6 +24,9 @@ import be.bluexin.mcui.config.OptionCore
 import be.bluexin.mcui.resources.StringNames
 import be.bluexin.mcui.screens.unaryPlus
 import be.bluexin.mcui.util.ColorUtil
+import be.bluexin.mcui.util.math.BoundingBox2D
+import be.bluexin.mcui.util.math.Vec2d
+import be.bluexin.mcui.util.math.vec
 import com.mojang.blaze3d.vertex.PoseStack
 import kotlin.math.max
 
@@ -66,7 +66,7 @@ open class IconLabelElement(icon: IIcon, open var label: String = "", pos: Vec2d
     override fun drawBackground(poseStack: PoseStack, mouse: Vec2d, partialTicks: Float) {
         if (!canDraw) return
         poseStack.pushPose()
-        if (scale != Vec2d.ONE) poseStack.scale(scale.xf, scale.yf, 1f)
+        if (scale.x != 1.0 || scale.y != 1.0) poseStack.scale(scale.x.toFloat(), scale.y.toFloat(), 1f)
         val mouseCheck = mouse in this || selected
         GLCore.glBlend(true)
         GLCore.depth(true)
@@ -80,7 +80,8 @@ open class IconLabelElement(icon: IIcon, open var label: String = "", pos: Vec2d
             srcX = 0.0,
             srcY = 40.0,
             srcWidth = 84.0,
-            srcHeight = 18.0
+            srcHeight = 18.0,
+            poseStack = poseStack
         )
         if (mouseCheck && OptionCore.MOUSE_OVER_EFFECT.isEnabled && !disabled) {
             mouseOverEffect(poseStack)

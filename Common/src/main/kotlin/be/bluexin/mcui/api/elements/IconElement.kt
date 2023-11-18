@@ -29,14 +29,15 @@ import be.bluexin.mcui.util.Client
 import be.bluexin.mcui.util.ColorIntent
 import be.bluexin.mcui.util.ColorUtil
 import be.bluexin.mcui.util.math.BoundingBox2D
-import be.bluexin.mcui.util.math.vec
-import net.minecraft.resources.ResourceLocation
 import be.bluexin.mcui.util.math.Vec2d
+import be.bluexin.mcui.util.math.vec
 import com.mojang.blaze3d.platform.GlStateManager
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.gui.GuiComponent
 import net.minecraft.network.chat.Style
+import net.minecraft.resources.ResourceLocation
 import net.minecraft.util.FormattedCharSequence
+import org.joml.Vector2d
 import java.util.*
 import kotlin.collections.set
 import kotlin.math.max
@@ -103,7 +104,7 @@ open class IconElement(
         set(value) {
             field = value.coerceIn(0f, 1f)
         }
-    override var scale = Vec2d.ONE
+    override var scale = Vector2d(1.0)
     override fun init() {
         +basicAnimation(this, "pos") {
             duration = 20f
@@ -136,7 +137,7 @@ open class IconElement(
     override fun drawBackground(poseStack: PoseStack, mouse: Vec2d, partialTicks: Float) {
         if (!canDraw) return
         poseStack.pushPose()
-        if (scale != Vec2d.getPooled(1.0)) poseStack.scale(scale.xf, scale.yf, 1f)
+        if (scale.x != 1.0 || scale.y != 1.0) poseStack.scale(scale.x.toFloat(), scale.y.toFloat(), 1f)
         val mouseCheck = mouse in this || selected
         GLCore.glBlend(true)
         GLCore.color(ColorUtil.multiplyAlpha(getColor(mouse), transparency))
@@ -145,14 +146,15 @@ open class IconElement(
             poseStack, pos.xi, pos.yi,
             1, 26, width, height,
         )
-        /*GLCore.glTexturedRectV2(
+        GLCore.glTexturedRectV2(
             pos.x,
             pos.y,
             width = width.toDouble(),
             height = height.toDouble(),
             srcX = 1.0,
-            srcY = 26.0
-        )*/
+            srcY = 26.0,
+            poseStack = poseStack
+        )
         if (mouseCheck && OptionCore.MOUSE_OVER_EFFECT.isEnabled && !disabled) {
             mouseOverEffect(poseStack)
         }
@@ -202,14 +204,26 @@ open class IconElement(
         val f = (System.currentTimeMillis() % 3000L).toFloat() / 3000.0f / 8.0f
         poseStack.translate(f, 0.0f, 0.0f)
 //        poseStack.rotateAround(-50.0f, 0.0f, 0.0f, 1.0f)
-        GLCore.glTexturedRectV2(pos.x, pos.y, width = width.toDouble(), height = height.toDouble())
+        GLCore.glTexturedRectV2(
+            pos.x,
+            pos.y,
+            width = width.toDouble(),
+            height = height.toDouble(),
+            poseStack = poseStack
+        )
         poseStack.popPose()
         poseStack.pushPose()
         poseStack.scale(8.0f, 8.0f, 8.0f)
         val f1 = (System.currentTimeMillis() % 4873L).toFloat() / 4873.0f / 8.0f
         poseStack.translate(-f1, 0.0f, 0.0f)
 //        poseStack.rotateAround(10.0f, 0.0f, 0.0f, 1.0f)
-        GLCore.glTexturedRectV2(pos.x, pos.y, width = width.toDouble(), height = height.toDouble())
+        GLCore.glTexturedRectV2(
+            pos.x,
+            pos.y,
+            width = width.toDouble(),
+            height = height.toDouble(),
+            poseStack = poseStack
+        )
         poseStack.popPose()
 //        GlStateManager.matrixMode(5888)
         GLCore.blendFunc(

@@ -32,4 +32,13 @@ interface ElementParent {
     fun getZ(ctx: IHudDrawContext): Double
 
     val name: String
+
+    companion object {
+        val ZERO = object : ElementParent {
+            override fun getX(ctx: IHudDrawContext) = 0.0
+            override fun getY(ctx: IHudDrawContext) = 0.0
+            override fun getZ(ctx: IHudDrawContext) = 0.0
+            override val name = "__ZERO"
+        }
+    }
 }

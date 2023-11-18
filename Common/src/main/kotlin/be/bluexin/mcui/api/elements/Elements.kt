@@ -25,6 +25,7 @@ import be.bluexin.mcui.screens.unaryPlus
 import be.bluexin.mcui.util.math.BoundingBox2D
 import be.bluexin.mcui.util.math.Vec2d
 import com.mojang.blaze3d.vertex.PoseStack
+import org.joml.Vector2d
 
 /**
  * Part of saoui by Bluexin, released under GNU GPLv3.
@@ -108,9 +109,9 @@ interface NeoElement : INeoParent {
         get() = 1f
         set(_) = Unit
     val scale
-        get() = Vec2d(1.0)
+        get() = Vector2d(1.0)
     val canDraw: Boolean
-        get() = opacity >= 0.03 || scale != Vec2d.ZERO
+        get() = opacity >= 0.03 || scale.x.toInt() == 0 || scale.y.toInt() == 0
 
     fun drawBackground(poseStack: PoseStack, mouse: Vec2d, partialTicks: Float)
     fun draw(poseStack: PoseStack, mouse: Vec2d, partialTicks: Float)

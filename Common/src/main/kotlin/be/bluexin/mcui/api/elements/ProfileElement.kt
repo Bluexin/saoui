@@ -60,10 +60,20 @@ class ProfileElement(var player: Player, override var listed: Boolean) : IconEle
             GLCore.glBindTexture(rl)
 
             val shadowY = size / 2 + max(min((mouse.y - pos.y), 0.0), -size / 2 + 2.0)
-            GLCore.glTexturedRectV2(pos.x, pos.y, width = w.toDouble(), height = h.toDouble())
+            GLCore.glTexturedRectV2(pos.x, pos.y, width = w.toDouble(), height = h.toDouble(), poseStack = poseStack)
 
             GLCore.glBindTexture(StringNames.gui)
-            GLCore.glTexturedRectV2(left - size / 2, top - shadowY / 2, width = size.toDouble(), height = shadowY, srcX = 200.0, srcY = 85.0, srcWidth = 56.0, srcHeight = 30.0)
+            GLCore.glTexturedRectV2(
+                left - size / 2,
+                top - shadowY / 2,
+                width = size.toDouble(),
+                height = shadowY,
+                srcX = 200.0,
+                srcY = 85.0,
+                srcWidth = 56.0,
+                srcHeight = 30.0,
+                poseStack = poseStack
+            )
 
             GLCore.glString(
                 player.displayName.string,

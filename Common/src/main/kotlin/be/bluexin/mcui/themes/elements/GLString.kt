@@ -17,6 +17,7 @@
 
 package be.bluexin.mcui.themes.elements
 
+import be.bluexin.mcui.GLCore
 import be.bluexin.mcui.api.themes.IHudDrawContext
 import be.bluexin.mcui.themes.util.CString
 import com.mojang.blaze3d.vertex.PoseStack
@@ -35,15 +36,24 @@ class GLString(
     @SerialName("text")
     @XmlSerialName("text")
     private var text: CString,
-    private val shadow: Boolean = true
+    private val shadow: Boolean = true,
+    private val centered: Boolean = true
 ) : GLRectangleParent() {
 
     override fun draw(ctx: IHudDrawContext, poseStack: PoseStack) {
-        if (enabled?.invoke(ctx) == false) return
-        val p = this.parent.get()
-        val x = (this.x?.invoke(ctx) ?: 0.0) + (p?.getX(ctx) ?: 0.0)
-        val y = (this.y?.invoke(ctx) ?: 0.0) + (p?.getY(ctx) ?: 0.0) + ((this.h?.invoke(ctx) ?: 0.0) - ctx.fontRenderer.lineHeight) / 2.0
+        if (!enabled(ctx)) return
+        val p = parentOrZero
+        val x = this.x(ctx) + p.getX(ctx)
+        val y = this.y(ctx) + p.getY(ctx) + (this.h(ctx) - ctx.fontRenderer.lineHeight) / 2.0
 
-//        GLCore.glString(ctx.fontRenderer, this.text(ctx), x.toInt(), y.toInt(), rgba?.invoke(ctx) ?: 0xFFFFFFFF.toInt(), shadow)
+        GLCore.glString(
+            string = this.text(ctx),
+            x = x.toInt(),
+            y = y.toInt(),
+            argb = rgba.invoke(ctx),
+            shadow = shadow,
+            centered = centered,
+            poseStack = poseStack
+        )
     }
 }

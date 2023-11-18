@@ -1,9 +1,8 @@
 package be.bluexin.mcui.screens.util
 
 import be.bluexin.mcui.GLCore
-import be.bluexin.mcui.util.Client
 import be.bluexin.mcui.api.screens.IIcon
-import com.mojang.blaze3d.platform.GlStateManager
+import be.bluexin.mcui.util.Client
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.multiplayer.PlayerInfo
 import net.minecraft.resources.ResourceLocation
@@ -27,7 +26,17 @@ class PlayerIcon(val player: PlayerInfo) : IIcon {
         GLCore.depth(true)
 //        GlStateManager.enableBlendProfile(GlStateManager.Profile.PLAYER_SKIN)
         GLCore.glBindTexture(texture)
-        GLCore.glTexturedRectV2(x.toDouble(), y.toDouble(), width = 16.0, height = 16.0, srcWidth = 32.0, srcHeight = 32.0, srcX = 32.0, srcY = 31.0)
+        GLCore.glTexturedRectV2(
+            x.toDouble(),
+            y.toDouble(),
+            width = 16.0,
+            height = 16.0,
+            srcX = 32.0,
+            srcY = 31.0,
+            srcWidth = 32.0,
+            srcHeight = 32.0,
+            poseStack = poseStack
+        )
 //        GlStateManager.disableBlendProfile(GlStateManager.Profile.PLAYER_SKIN)
         GLCore.glBlend(false)
     }

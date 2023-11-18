@@ -4,13 +4,11 @@ import be.bluexin.mcui.Constants
 import be.bluexin.mcui.api.themes.IHudDrawContext
 import be.bluexin.mcui.themes.AbstractThemeLoader
 import be.bluexin.mcui.themes.util.*
-import be.bluexin.mcui.themes.util.serialization.NamedExpressionSerializer
 import com.mojang.blaze3d.vertex.PoseStack
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import net.minecraft.resources.ResourceLocation
-import nl.adaptivity.xmlutil.serialization.XmlId
 import nl.adaptivity.xmlutil.serialization.XmlSerialName
 
 @Serializable
@@ -69,7 +67,7 @@ class FragmentReference(
     }
 
     override fun draw(ctx: IHudDrawContext, poseStack: PoseStack) {
-        if (enabled?.invoke(ctx) == false) return
+        if (!enabled(ctx)) return
         fragment?.let {
             ctx.pushContext(variables)
             it.draw(ctx, poseStack)

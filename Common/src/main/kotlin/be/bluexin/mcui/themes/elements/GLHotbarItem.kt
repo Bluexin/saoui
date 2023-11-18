@@ -23,7 +23,6 @@ import com.mojang.blaze3d.vertex.PoseStack
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import net.minecraft.world.entity.HumanoidArm
-import net.minecraft.world.entity.player.Player
 import net.minecraft.world.item.ItemStack
 import nl.adaptivity.xmlutil.serialization.XmlSerialName
 
@@ -56,7 +55,6 @@ class GLHotbarItem(
         x: Int,
         y: Int,
         partialTicks: Float,
-        player: Player,
         stack: ItemStack,
         ctx: IHudDrawContext,
         poseStack: PoseStack
@@ -80,10 +78,10 @@ class GLHotbarItem(
     }
 
     override fun draw(ctx: IHudDrawContext, poseStack: PoseStack) {
-        if (enabled?.invoke(ctx) == false || hand == ctx.player.mainArm) return
+        if (!enabled(ctx) || hand == ctx.player.mainArm) return
         super.draw(ctx, poseStack)
 
-        val p: ElementParent? = this.parent.get()
+        val p = parentOrZero
         val it: ItemStack = if (hand == null) ctx.player.inventory.items[slot(ctx)]
         else ctx.player.inventory.offhand[slot(ctx)]
 
@@ -94,13 +92,10 @@ class GLHotbarItem(
 //        RenderHelper.enableGUIStandardItemLighting()
 
         renderHotbarItem(
-            (x?.invoke(ctx)?.toInt() ?: 0) + itemXoffset(ctx) + (p?.getX(ctx)?.toInt() ?: 0),
-            (y?.invoke(ctx)?.toInt() ?: 0) + itemYoffset(ctx) + (p?.getY(ctx)?.toInt() ?: 0),
+            (x(ctx) + itemXoffset(ctx) + p.getX(ctx)).toInt(),
+            (y(ctx) + itemYoffset(ctx) + p.getY(ctx)).toInt(),
             ctx.partialTicks,
-            ctx.player,
-            it,
-            ctx,
-            poseStack
+            it, ctx, poseStack
         )
 
 //        GLCore.glRescaleNormal(false)

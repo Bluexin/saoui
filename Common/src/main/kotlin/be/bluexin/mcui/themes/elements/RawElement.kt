@@ -17,7 +17,6 @@
 
 package be.bluexin.mcui.themes.elements
 
-import be.bluexin.mcui.GLCore
 import be.bluexin.mcui.api.themes.IHudDrawContext
 import be.bluexin.mcui.themes.util.CUnit
 import com.mojang.blaze3d.vertex.PoseStack
@@ -47,10 +46,10 @@ class RawElement(private var expression: CUnit) : Element() {
 
     override fun draw(ctx: IHudDrawContext, poseStack: PoseStack) {
         poseStack.pushPose()
-        val p: ElementParent? = this.parent.get()
-        val x = (this.x?.invoke(ctx) ?: 0.0) + (p?.getX(ctx) ?: 0.0)
-        val y = (this.y?.invoke(ctx) ?: 0.0) + (p?.getY(ctx) ?: 0.0)
-        val z = (this.z?.invoke(ctx) ?: 0.0) + (p?.getZ(ctx) ?: 0.0) + ctx.z
+        val p = parentOrZero
+        val x = this.x(ctx) + p.getX(ctx)
+        val y = this.y(ctx) + p.getY(ctx)
+        val z = this.z(ctx) + p.getZ(ctx) + ctx.z
         poseStack.translate(x, y, z)
         expression(ctx)
         poseStack.popPose()

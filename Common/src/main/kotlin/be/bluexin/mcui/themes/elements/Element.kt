@@ -17,29 +17,25 @@
 
 package be.bluexin.mcui.themes.elements
 
-import com.google.gson.annotations.JsonAdapter
+import be.bluexin.mcui.Constants
 import be.bluexin.mcui.api.themes.IHudDrawContext
 import be.bluexin.mcui.themes.util.CBoolean
 import be.bluexin.mcui.themes.util.CDouble
-import be.bluexin.mcui.themes.util.json.JsonElementAdapterFactory
 import com.mojang.blaze3d.vertex.PoseStack
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import net.minecraft.resources.ResourceLocation
+import nl.adaptivity.xmlutil.serialization.XmlSerialName
 import java.lang.ref.WeakReference
 import javax.annotation.OverridingMethodsMustInvokeSuper
-import kotlinx.serialization.*
-import nl.adaptivity.xmlutil.serialization.XmlElement
-import nl.adaptivity.xmlutil.serialization.XmlOtherAttributes
-import nl.adaptivity.xmlutil.serialization.XmlSerialName
 
 /**
  * Used to map a xml element with x, y, z coordinates and an "enabled" toggle.
  *
  * @author Bluexin
  */
-@OptIn(ExperimentalSerializationApi::class)
 @Serializable
-//@JsonAdapter(JsonElementAdapterFactory::class)
-//@XmlSeeAlso(GLRectangle::class, ElementGroup::class, RawElement::class, FragmentReference::class) // Instructs JAXB to also bind other classes when binding this class
 sealed class Element {
 
     companion object {
@@ -86,6 +82,8 @@ sealed class Element {
     @Transient
     protected lateinit var parent: WeakReference<ElementParent>
 
+    protected val parentOrZero get() = parent.get() ?: ElementParent.ZERO
+
     val hasParent: Boolean get() = ::parent.isInitialized && parent.get().let { it != null && it !is Hud }
 
     /**
@@ -107,7 +105,7 @@ sealed class Element {
     open fun setup(parent: ElementParent, fragments: Map<ResourceLocation, () -> Fragment>): Boolean {
         this.parent = WeakReference(parent)
         return if (name != DEFAULT_NAME) {
-//            Constants.LOG.debug("Set up {} in {}", this, parent.name)
+            Constants.LOG.debug("Set up {} in {}", this, parent.name)
             false
         } else true
     }

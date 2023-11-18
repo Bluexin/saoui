@@ -38,9 +38,9 @@ class RepetitionGroup(
 ) : ElementGroupParent() {
 
     override fun draw(ctx: IHudDrawContext, poseStack: PoseStack) {
-        if (enabled?.invoke(ctx) == true) return
+        if (!enabled(ctx)) return
 
-        val m = amount.invoke(ctx) ?: 0
+        val m = amount(ctx)
         for (i in 0 until m) {
             ctx.setI(i)
             super.draw(ctx, poseStack)

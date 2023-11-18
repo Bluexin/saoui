@@ -35,8 +35,6 @@ import nl.adaptivity.xmlutil.serialization.XmlSerialName
 @OptIn(ExperimentalXmlUtilApi::class)
 @Serializable
 @XmlSerialName(
-//    namespace = "https://www.bluexin.be/com/saomc/saoui/hud-schema",
-//    prefix = "bl",
     value = "bl:hud"
 )
 @XmlNamespaceDeclSpec("bl=https://www.bluexin.be/com/saomc/saoui/hud-schema")

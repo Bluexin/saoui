@@ -1,8 +1,8 @@
 package be.bluexin.mcui.themes
 
-import be.bluexin.mcui.themes.elements.*
+import be.bluexin.mcui.themes.elements.Fragment
+import be.bluexin.mcui.themes.elements.Hud
 import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.encodeToString
 import net.minecraft.resources.ResourceLocation
 import org.apache.logging.log4j.LogManager
 import java.io.File
@@ -117,31 +117,13 @@ object XmlTests {
     @JvmStatic
     fun main(args: Array<String>) {
         val xml = XmlThemeLoader.xml
-        val serialized = xml.encodeToString(
-            Hud(Hud.Parts(listOf(
-                HudPartType.AIR to ElementGroup().apply {
-                    name = "centered"
-                    texture = "saoui:textures/hex2/hex_labels.png"
-                    elements = listOf(
-                        GLRectangle()
-                    )
-                },
-                HudPartType.ARMOR to ElementGroup().apply {
-                    name = "uncentered"
-                    texture = "saoui:textures/hex2/hex_labels.png"
-                    elements = listOf(
-                        GLRectangle()
-                    )
-                }
-            ))),
-        )
-        println(serialized)
 
         val iss = javaClass.classLoader.getResourceAsStream("assets/saoui/themes/hex2/fragments/label.xml")
             ?: error("Couldn't load iss")
         val frag = xml.decodeFromString<Fragment>(
             iss.reader().readText()
         )
+        println(frag)
 
         val iss2 = javaClass.classLoader.getResourceAsStream("assets/saoui/themes/hex2/hud.xml")
             ?: error("Couldn't load iss")

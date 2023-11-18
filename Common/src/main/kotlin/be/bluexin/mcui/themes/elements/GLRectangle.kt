@@ -17,11 +17,11 @@
 
 package be.bluexin.mcui.themes.elements
 
+import be.bluexin.mcui.GLCore
 import be.bluexin.mcui.api.themes.IHudDrawContext
 import be.bluexin.mcui.themes.util.CDouble
 import be.bluexin.mcui.themes.util.CInt
 import com.mojang.blaze3d.vertex.PoseStack
-import kotlinx.serialization.Polymorphic
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -38,7 +38,7 @@ import nl.adaptivity.xmlutil.serialization.XmlSerialName
 sealed class GLRectangleParent : Element() {
     @SerialName("rgba")
     @XmlSerialName("rgba")
-    protected var rgba= CInt.ZERO
+    protected var rgba = CInt { 0xFFFFFFFF.toInt() }
     @SerialName("srcX")
     @XmlSerialName("srcX")
     protected var srcX= CDouble.ZERO
@@ -63,24 +63,23 @@ sealed class GLRectangleParent : Element() {
     private val texture: String? = null
 
     override fun draw(ctx: IHudDrawContext, poseStack: PoseStack) {
-        if (enabled?.invoke(ctx) == false) return
+        if (!enabled(ctx)) return
 
-        val p: ElementParent? = this.parent.get()
-        val x = (this.x?.invoke(ctx) ?: 0.0) + (p?.getX(ctx) ?: 0.0)
-        val y = (this.y?.invoke(ctx) ?: 0.0) + (p?.getY(ctx) ?: 0.0)
-        val z = (this.z?.invoke(ctx) ?: 0.0) + (p?.getZ(ctx) ?: 0.0) + ctx.z
+        val p = parentOrZero
+        val x = this.x(ctx) + p.getX(ctx)
+        val y = this.y(ctx) + p.getY(ctx)
+        val z = this.z(ctx) + p.getZ(ctx) + ctx.z
 
-//        GLCore.glBlend(true)
-//        GLCore.color(this.rgba?.invoke(ctx) ?: 0xFFFFFFFF.toInt())
-//        if (this.rl != null) GLCore.glBindTexture(this.rl!!)
-        /*GLCore.glTexturedRectV2(
-            x, y, z, w?.invoke(ctx) ?: 0.0, h?.invoke(ctx) ?: 0.0,
-            srcX?.invoke(ctx)
-                ?: 0.0,
-            srcY?.invoke(ctx) ?: 0.0, srcW?.invoke(ctx) ?: w?.invoke(ctx) ?: 0.0,
-            srcH?.invoke(ctx)
-                ?: h?.invoke(ctx) ?: 0.0
-        )*/
+        GLCore.glBlend(true)
+        GLCore.color(this.rgba(ctx))
+        if (this.rl != null) GLCore.glBindTexture(this.rl!!)
+        GLCore.glTexturedRectV2(
+            x, y, z,
+            w(ctx), h(ctx),
+            srcX(ctx), srcY(ctx),
+            srcW(ctx), srcH(ctx),
+            poseStack = poseStack
+        )
     }
 
     override fun setup(parent: ElementParent, fragments: Map<ResourceLocation, () -> Fragment>): Boolean {

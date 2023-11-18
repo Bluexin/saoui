@@ -17,11 +17,11 @@
 
 package be.bluexin.mcui.themes
 
-import com.google.gson.GsonBuilder
 import be.bluexin.mcui.themes.elements.ElementParent
 import be.bluexin.mcui.themes.elements.Fragment
 import be.bluexin.mcui.themes.elements.Hud
 import be.bluexin.mcui.themes.util.json.AfterUnmarshalAdapterFactory
+import com.google.gson.GsonBuilder
 import java.io.File
 import java.io.FileWriter
 import java.io.InputStream
@@ -31,6 +31,7 @@ import java.io.InputStream
  *
  * @author Bluexin
  */
+// TODO : convert to kotlinx.serialization
 object JsonThemeLoader : AbstractThemeLoader(ThemeFormat.JSON) {
 
     private val gson = GsonBuilder()

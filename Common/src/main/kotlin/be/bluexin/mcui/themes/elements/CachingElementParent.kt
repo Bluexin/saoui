@@ -34,18 +34,18 @@ sealed class CachingElementParent : Element(), ElementParent {
         return cachedZ
     }
 
-    protected fun updateCache(ctx: IHudDrawContext) {
+    private fun updateCache(ctx: IHudDrawContext) {
         if (checkUpdate(ctx)) {
-            cachedX = (parent.get()?.getX(ctx) ?: 0.0) + (this.x?.invoke(ctx) ?: 0.0)
-            cachedY = (parent.get()?.getY(ctx) ?: 0.0) + (this.y?.invoke(ctx) ?: 0.0)
-            cachedZ = (parent.get()?.getZ(ctx) ?: 0.0) + (this.z?.invoke(ctx) ?: 0.0)
+            cachedX = parentOrZero.getX(ctx) + this.x(ctx)
+            cachedY = parentOrZero.getY(ctx) + this.y(ctx)
+            cachedZ = parentOrZero.getZ(ctx) + this.z(ctx)
         }
     }
 
     /**
      * Returns true if the element should update it's position. Can be extremely useful in huge groups
      */
-    protected fun checkUpdate(ctx: IHudDrawContext) = if (latestTicks == ctx.partialTicks) false else {
+    private fun checkUpdate(ctx: IHudDrawContext) = if (latestTicks == ctx.partialTicks) false else {
         latestTicks = ctx.partialTicks; true
     }
 }

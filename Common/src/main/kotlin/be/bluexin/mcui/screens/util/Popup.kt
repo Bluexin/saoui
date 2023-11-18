@@ -27,7 +27,9 @@ import be.bluexin.mcui.api.elements.basicAnimation
 import be.bluexin.mcui.api.elements.getRequirementDesc
 import be.bluexin.mcui.screens.CoreGUI
 import be.bluexin.mcui.screens.unaryPlus
-import be.bluexin.mcui.util.*
+import be.bluexin.mcui.util.ColorIntent
+import be.bluexin.mcui.util.ColorUtil
+import be.bluexin.mcui.util.IconCore
 import be.bluexin.mcui.util.math.Vec2d
 import be.bluexin.mcui.util.math.vec
 import com.mojang.blaze3d.vertex.PoseStack
@@ -35,6 +37,20 @@ import net.minecraft.advancements.Advancement
 import net.minecraft.client.Minecraft
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.inventory.Slot
+import kotlin.collections.List
+import kotlin.collections.Map
+import kotlin.collections.Set
+import kotlin.collections.asSequence
+import kotlin.collections.buildMap
+import kotlin.collections.component1
+import kotlin.collections.component2
+import kotlin.collections.forEach
+import kotlin.collections.indices
+import kotlin.collections.linkedMapOf
+import kotlin.collections.listOf
+import kotlin.collections.mapOf
+import kotlin.collections.mutableListOf
+import kotlin.collections.set
 import kotlin.math.max
 
 open class Popup<T : Any>(
@@ -153,7 +169,8 @@ open class Popup<T : Any>(
             srcX = 0.0,
             srcY = 0.0,
             srcWidth = 256.0,
-            srcHeight = 64.0
+            srcHeight = 64.0,
+            poseStack = poseStack
         ) // Title bar
         glTexturedRectV2(
             posX,
@@ -163,7 +180,8 @@ open class Popup<T : Any>(
             srcX = 0.0,
             srcY = 64.0,
             srcWidth = 256.0,
-            srcHeight = 32.0
+            srcHeight = 32.0,
+            poseStack = poseStack
         ) // Top shadow
         glTexturedRectV2(
             posX,
@@ -173,7 +191,8 @@ open class Popup<T : Any>(
             srcX = 0.0,
             srcY = 96.0,
             srcWidth = 256.0,
-            srcHeight = 32.0
+            srcHeight = 32.0,
+            poseStack = poseStack
         ) // Text lines
         glTexturedRectV2(
             posX,
@@ -183,7 +202,8 @@ open class Popup<T : Any>(
             srcX = 0.0,
             srcY = 128.0,
             srcWidth = 256.0,
-            srcHeight = 32.0
+            srcHeight = 32.0,
+            poseStack = poseStack
         ) // Bottom shadow
         glTexturedRectV2(
             posX,
@@ -193,7 +213,8 @@ open class Popup<T : Any>(
             srcX = 0.0,
             srcY = 160.0,
             srcWidth = 256.0,
-            srcHeight = 96.0
+            srcHeight = 96.0,
+            poseStack = poseStack
         ) // Button bar
 
         if (alpha > 0.03f) GLCore.glString(
