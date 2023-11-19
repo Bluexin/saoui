@@ -1,0 +1,114 @@
+[versions]
+kotlin = { require = "1.9.20" }
+coroutines = "1.7.3"
+serialization = "1.6.1"
+serialization_xml = "0.86.2"
+minecraft = "1.19.4"
+parchment = "2023.06.26"
+architectury = "8.2.89"
+forge = "1.19.4-45.2.6"
+kotlinforforge = "4.6.1"
+fabric_loader = "0.14.23"
+fabric_api = "0.78.0+1.19.4"
+fabric_language_kotlin = "1.10.14+kotlin.1.9.20"
+ftb_lib = "1902.4.1-build.236"
+ftb_teams = "1902.2.14-build.123"
+architectury_plugin = "3.4.151"
+architectury_loom = "1.4.367"
+night_config = "3.6.3"
+jsr305 = "3.0.1"
+forge_config = "p2C10JUL"
+shadow = "7.1.2"
+
+jel = "2.1.3"
+ph_css = "6.5.0"
+ph_commons = "10.1.6"
+slf4j = "1.7.36"
+luna = "0.4.1"
+luaj = "05e2b7d76a"
+bcel = { require = "6.7.0" }
+
+[libraries]
+minecraft = { module = "com.mojang:minecraft", version.ref = "minecraft" }
+architectury = { module = "dev.architectury:architectury", version.ref = "architectury" }
+
+architectury_forge = { module = "dev.architectury:architectury-forge", version.ref = "architectury" }
+forge = { module = "net.minecraftforge:forge", version.ref = "forge" }
+# https://github.com/thedarkcolour/KotlinForForge/blob/4.x/README.md
+kotlinforforge = { module = "thedarkcolour:kotlinforforge", version.ref = "kotlinforforge" }
+
+architectury_fabric = { module = "dev.architectury:architectury-fabric", version.ref = "architectury" }
+fabric_loader = { module = "net.fabricmc:fabric-loader", version.ref = "fabric_loader" }
+fabric_api = { module = "net.fabricmc.fabric-api:fabric-api", version.ref = "fabric_api" }
+# https://github.com/FabricMC/fabric-language-kotlin
+fabric_languageKotlin = { module = "net.fabricmc:fabric-language-kotlin", version.ref = "fabric_language_kotlin" }
+
+kotlinGradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+
+kotlin_reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
+coroutines_core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm", version.ref = "coroutines" }
+coroutines_jdk8 = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8", version.ref = "coroutines" }
+
+serialization_core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core-jvm", version.ref = "serialization" }
+serialization_json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json-jvm", version.ref = "serialization" }
+serialization_xml_core = { module = "io.github.pdvrieze.xmlutil:core-jvm", version.ref = "serialization_xml" }
+serialization_xml_ser = { module = "io.github.pdvrieze.xmlutil:serialization-jvm", version.ref = "serialization_xml" }
+
+jel = { module = "be.bluexin.gnu.jel:gnu-jel", version.ref = "jel" }
+ph_css = { module = "com.helger:ph-css", version.ref = "ph_css" }
+ph_common = { module = "com.helger.commons:ph-commons", version.ref = "ph_commons" }
+slf4j = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
+luna = { module = "org.classdump.luna:luna-all-shaded", version.ref = "luna" }
+luaj = { module = "com.github.wagyourtail.luaj:luaj-jse", version.ref = "luaj" }
+bcel = { module = "org.apache.bcel:bcel", version.ref = "bcel" }
+
+ftbteams_fabric = { module = "dev.ftb.mods:ftb-teams-fabric", version.ref = "ftb_teams" }
+ftblib_fabric = { module = "dev.ftb.mods:ftb-library-fabric", version.ref = "ftb_lib" }
+ftbteams_forge = { module = "dev.ftb.mods:ftb-teams-forge", version.ref = "ftb_teams" }
+ftblib_forge = { module = "dev.ftb.mods:ftb-library-forge", version.ref = "ftb_lib" }
+
+forge_config = { module = "maven.modrinth:forge-config-api-port", version.ref = "forge_config" }
+nc_core = { module = "com.electronwill.night-config:core", version.ref = "night_config" }
+nc_toml = { module = "com.electronwill.night-config:toml", version.ref = "night_config" }
+jsr305 = { module = "com.google.code.findbugs:jsr305", version.ref = "jsr305" }
+
+[bundles]
+coroutines = [
+    "coroutines_core",
+    "coroutines_jdk8",
+]
+serialization = [
+    "serialization_core",
+    "serialization_json",
+]
+serialization_xml = [
+    "serialization_xml_core",
+    "serialization_xml_ser",
+]
+phcss = [
+    "ph_css",
+    "ph_common",
+]
+luaj = [
+    "luaj",
+    "bcel",
+]
+ftb_fabric = [
+    "ftblib_fabric",
+    "ftbteams_fabric",
+]
+ftb_forge = [
+    "ftblib_forge",
+    "ftbteams_forge",
+]
+nightconfig = [
+    "nc_core",
+    "nc_toml",
+]
+
+[plugins]
+kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin_serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+architectury = { id = "architectury-plugin", version.ref = "architectury_plugin" }
+architectury_loom = { id = "dev.architectury.loom", version.ref = "architectury_loom" }
+shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow" }

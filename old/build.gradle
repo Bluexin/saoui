@@ -137,9 +137,6 @@ dependencies {
     shadow 'com.helger.commons:ph-commons:10.1.6'
     shadow 'org.slf4j:slf4j-api:1.7.36'
 
-    shadow 'net.sandius.rembulan:rembulan-compiler:0.1-SNAPSHOT'
-    shadow 'net.sandius.rembulan:rembulan-stdlib:0.1-SNAPSHOT'
-
     shadow 'org.classdump.luna:luna-all-shaded:0.4.1'
 
     shadow group: 'none', name: 'OC-LuaJ', version: '20220907.1', ext: 'jar'
