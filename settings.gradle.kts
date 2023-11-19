@@ -20,10 +20,6 @@ pluginManagement {
             url = uri("https://maven.architectury.dev/")
         }
     }
-    val kotlin_version: String by settings
-    resolutionStrategy.eachPlugin {
-        if (requested.id.namespace?.startsWith("org.jetbrains.kotlin") == true) useVersion(kotlin_version)
-    }
 }
 
 rootProject.name = "mcui"
