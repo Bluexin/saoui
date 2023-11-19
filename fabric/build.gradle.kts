@@ -1,6 +1,6 @@
 
 plugins {
-    id("com.github.johnrengelman.shadow") version "7.1.2"
+    alias(libs.plugins.shadow)
 }
 
 architectury {
@@ -38,29 +38,20 @@ dependencies {
     common(project(":common", configuration = "namedElements")) { isTransitive = false }
     shadowCommon(project(":common", configuration = "transformProductionFabric")) { isTransitive = false }
     modImplementation(libs.fabric.languageKotlin)
-    modApi ("dev.ftb.mods:ftb-library-fabric:${property("ftb_library_version")}") { isTransitive = false }
-    modApi ("dev.ftb.mods:ftb-teams-fabric:${property("ftb_teams_version")}") { isTransitive = false }
 
-    shadow("org.joml:joml:${property("jomlVersion")}")
-    shadow("be.bluexin.gnu.jel:gnu-jel:2.1.3")
-    shadow("com.helger:ph-css:6.5.0")
-    shadow("com.helger.commons:ph-commons:10.1.6")
-    shadow("org.slf4j:slf4j-api:1.7.36")
-    shadow("jakarta.xml.bind:jakarta.xml.bind-api:3.0.1")
-    modApi("com.sun.xml.bind:jaxb-impl:3.0.2")
+    shadow(libs.jel)
+    shadow(libs.bundles.phcss)
+    shadow(libs.slf4j)
 
-    shadow("net.sandius.rembulan:rembulan-compiler:0.1-SNAPSHOT")
-    shadow("net.sandius.rembulan:rembulan-stdlib:0.1-SNAPSHOT")
+    shadow(group = "none", name = "OC-JNLua", version = "20230530.0", ext = "jar")
 
-    shadow("org.classdump.luna:luna-all-shaded:0.4.1")
+    shadow(libs.bundles.luaj)
 
-    shadow(group = "none", name = "OC-LuaJ", version = "20220907.1", ext = "jar")
-    shadow(group = "none", name = "OC-JNLua", version = "20220928.1", ext = "jar")
-    shadow(group = "none", name = "OC-JNLua-Natives", version = "20220928.1", ext = "jar")
-
-    modApi ("maven.modrinth:forge-config-api-port:p2C10JUL")
-    implementation   ("com.electronwill.night-config:core:3.6.3")
-    implementation   ("com.electronwill.night-config:toml:3.6.3")
+    modApi(libs.bundles.ftb.fabric) {
+        isTransitive = false
+    }
+    modApi(libs.forge.config)
+    implementation(libs.bundles.nightconfig)
 }
 
 val javaComponent = components.getByName<AdhocComponentWithVariants>("java")

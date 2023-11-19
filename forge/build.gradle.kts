@@ -1,6 +1,6 @@
 
 plugins {
-    id("com.github.johnrengelman.shadow") version "7.1.2"
+    alias(libs.plugins.shadow)
 }
 
 architectury {
@@ -60,40 +60,34 @@ dependencies {
     common(project(":common", configuration = "namedElements")) { isTransitive = false }
     shadowCommon(project(":common", configuration = "transformProductionForge")) { isTransitive = false }
     implementation(libs.kotlinforforge)
-    modApi("dev.ftb.mods:ftb-library-forge:${property("ftb_library_version")}") { isTransitive = false }
-    modApi("dev.ftb.mods:ftb-teams-fabric:${property("ftb_teams_version")}") { isTransitive = false }
-    shadow("org.joml:joml:${property("jomlVersion")}")
-    shadow("be.bluexin.gnu.jel:gnu-jel:2.1.3")
-    shadow("com.helger:ph-css:6.5.0")
-    shadow("com.helger.commons:ph-commons:10.1.6")
-    shadow("org.slf4j:slf4j-api:1.7.36")
-    shadow("jakarta.xml.bind:jakarta.xml.bind-api:3.0.1")
-    modApi("com.sun.xml.bind:jaxb-impl:3.0.2")
 
-    shadow("net.sandius.rembulan:rembulan-compiler:0.1-SNAPSHOT")
-    shadow("net.sandius.rembulan:rembulan-stdlib:0.1-SNAPSHOT")
+    shadow(libs.jel)
+    shadow(libs.bundles.phcss)
+    shadow(libs.slf4j)
 
-    shadow("org.classdump.luna:luna-all-shaded:0.4.1")
+    shadow(group = "none", name = "OC-JNLua", version = "20230530.0", ext = "jar")
 
-    shadow(group = "none", name = "OC-LuaJ", version = "20220907.1", ext = "jar")
-    shadow(group = "none", name = "OC-JNLua", version = "20220928.1", ext = "jar")
-    shadow(group = "none", name = "OC-JNLua-Natives", version = "20220928.1", ext = "jar")
+    shadow(libs.bundles.luaj)
+
+    modApi(libs.bundles.ftb.forge) {
+        isTransitive = false
+    }
 }
 
-val javaComponent = components.getByName<AdhocComponentWithVariants>("java")
-javaComponent.withVariantsFromConfiguration(configurations["shadowRuntimeElements"]) {
-    skip()
-}
-
-tasks.runClient {
-    classpath += project.files(File(projectDir, "build/classes/kotlin/main"))
-}
-
-tasks.runServer {
-    classpath += project.files(File(projectDir, "build/classes/kotlin/main"))
+components.named<AdhocComponentWithVariants>("java") {
+    withVariantsFromConfiguration(configurations["shadowRuntimeElements"]) {
+        skip()
+    }
 }
 
 tasks {
+    runClient {
+        classpath += project.files(File(projectDir, "build/classes/kotlin/main"))
+    }
+    runServer {
+        classpath += project.files(File(projectDir, "build/classes/kotlin/main"))
+    }
+
     processResources {
         inputs.property("version", project.version)
         duplicatesStrategy = DuplicatesStrategy.INCLUDE
@@ -128,13 +122,11 @@ tasks {
         duplicatesStrategy = DuplicatesStrategy.INCLUDE
     }
 
-
-
     publishing {
         publications {
             create<MavenPublication>("mavenForge") {
                 artifactId = "${rootProject.property("group")}-${project.name}"
-                from(javaComponent)
+//                from(javaComponent)
             }
         }
 
