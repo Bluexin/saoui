@@ -35,11 +35,20 @@ sourceSets {
  * */
 val common: Configuration by configurations.creating
 val shadowCommon: Configuration by configurations.creating // Don't use shadow from the shadow plugin because we don't want IDEA to index this.
-val developmentForge: Configuration = configurations.getByName("developmentForge")
+
 configurations {
-    compileClasspath.get().extendsFrom(configurations["common"])
-    runtimeClasspath.get().extendsFrom(configurations["common"])
-    developmentForge.extendsFrom(configurations["common"])
+    compileClasspath {
+        extendsFrom(common)
+    }
+    runtimeClasspath {
+        extendsFrom(common)
+    }
+    named("developmentForge") {
+        extendsFrom(common)
+    }
+    forgeRuntimeLibrary {
+        extendsFrom(shadow.get())
+    }
 }
 
 repositories {
@@ -54,7 +63,7 @@ dependencies {
     modApi(libs.architectury.forge)
     common(project(":common", configuration = "namedElements")) { isTransitive = false }
     shadowCommon(project(":common", configuration = "transformProductionForge")) { isTransitive = false }
-    implementation(libs.kotlinforforge)
+    modImplementation(libs.kotlinforforge)
 
     shadow(libs.jel)
     shadow(libs.bundles.phcss)
@@ -127,7 +136,6 @@ tasks {
     processResources {
         inputs.property("version", project.version)
         duplicatesStrategy = DuplicatesStrategy.INCLUDE
-
 
         filesMatching("META-INF/mods.toml") {
             expand("version" to project.version)

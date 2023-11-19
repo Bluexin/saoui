@@ -31,7 +31,6 @@ architectury {
 
 subprojects {
     apply(plugin = "dev.architectury.loom")
-    apply<SerializationGradleSubplugin>()
 
     val loom = extensions.getByName<LoomGradleExtensionAPI>("loom")
     loom.silentMojangMappingsLicense()
@@ -45,8 +44,6 @@ subprojects {
             }
         )
     }
-
-
 }
 
 allprojects {
@@ -68,10 +65,9 @@ allprojects {
 //        explicitApiWarning() TODO :enable this later or for an API module
     }
 
-    base.archivesName.set(rootProject.property("mod_id").toString())
-    //base.archivesBaseName = rootProject.property("archives_base_name").toString()
-    version = rootProject.property("version").toString()
-    group = rootProject.property("group").toString()
+    base.archivesName.set(property("mod_id").toString())
+    version = property("version").toString()
+    group = property("group").toString()
 
     repositories {
         mavenCentral()
@@ -129,7 +125,6 @@ allprojects {
 
     dependencies {
         val libs = rootProject.libs
-//        compileOnly(rootProject.project.libs.kotlinGradlePlugin)
         implementation(libs.kotlin.reflect)
         implementation(libs.bundles.coroutines) {
             exclude("org.jetbrains.kotlin")
