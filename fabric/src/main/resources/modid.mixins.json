@@ -6,7 +6,7 @@
     "mixins": [
     ],
     "client": [
-      "ExampleMixin"
+      "be.bluexin.fabric.mixin.ExampleMixin"
     ],
     "injectors": {
       "defaultRequire": 1

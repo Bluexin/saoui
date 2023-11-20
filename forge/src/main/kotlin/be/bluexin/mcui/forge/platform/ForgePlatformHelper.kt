@@ -1,4 +1,4 @@
-package be.bluexin.mcui.platform
+package be.bluexin.mcui.forge.platform
 
 import be.bluexin.mcui.platform.services.PlatformHelper
 import net.minecraft.resources.ResourceLocation

@@ -1,4 +1,4 @@
-package be.bluexin.mcui.api.events
+package be.bluexin.mcui.forge.api.events
 
 import net.minecraft.world.entity.LivingEntity
 import net.minecraftforge.eventbus.api.Event

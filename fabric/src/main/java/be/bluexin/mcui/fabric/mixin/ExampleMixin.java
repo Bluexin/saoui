@@ -1,4 +1,4 @@
-package be.bluexin.mcui.mixin;
+package be.bluexin.mcui.fabric.mixin;
 
 import be.bluexin.mcui.Constants;
 import net.minecraft.client.Minecraft;

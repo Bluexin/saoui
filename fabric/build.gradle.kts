@@ -13,12 +13,17 @@ loom {
 
 val common: Configuration by configurations.creating
 val shadowCommon: Configuration by configurations.creating // Don't use shadow from the shadow plugin because we don't want IDEA to index this.
-val developmentFabric: Configuration = configurations.getByName("developmentFabric")
 
 configurations {
-    compileClasspath.get().extendsFrom(configurations["common"])
-    runtimeClasspath.get().extendsFrom(configurations["common"])
-    developmentFabric.extendsFrom(configurations["common"])
+    compileClasspath {
+        extendsFrom(common)
+    }
+    runtimeClasspath {
+        extendsFrom(common)
+    }
+    named("developmentFabric") {
+        extendsFrom(common)
+    }
 }
 
 // DO NOT REMOVE

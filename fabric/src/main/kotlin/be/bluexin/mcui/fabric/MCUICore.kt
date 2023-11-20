@@ -1,5 +1,7 @@
-package be.bluexin.mcui
+package be.bluexin.mcui.fabric
 
+import be.bluexin.mcui.CommonClass
+import be.bluexin.mcui.Constants
 import net.fabricmc.api.ModInitializer
 
 @Suppress("unused")

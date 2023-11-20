@@ -1,4 +1,4 @@
-package be.bluexin.mcui.api.events
+package be.bluexin.mcui.forge.api.events
 
 import be.bluexin.mcui.api.elements.NeoElement
 import net.minecraftforge.eventbus.api.Event

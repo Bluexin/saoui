@@ -1,5 +1,7 @@
-package be.bluexin.mcui
+package be.bluexin.mcui.forge
 
+import be.bluexin.mcui.CommonClass
+import be.bluexin.mcui.Constants
 import be.bluexin.mcui.commands.SaouiCommand
 import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.event.RegisterCommandsEvent
@@ -17,7 +19,7 @@ object MCUICore {
         Constants.LOG.info("Hello Kotlin Forge world!")
         CommonClass.init()
 
-        MinecraftForge.EVENT_BUS.addListener(::registerCommands)
+        MinecraftForge.EVENT_BUS.addListener(MCUICore::registerCommands)
     }
 
     private fun registerCommands(event: RegisterCommandsEvent) {

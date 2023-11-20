@@ -1,4 +1,4 @@
-package be.bluexin.mcui.platform
+package be.bluexin.mcui.forge.platform
 
 import be.bluexin.mcui.config.Configuration
 import be.bluexin.mcui.config.Property

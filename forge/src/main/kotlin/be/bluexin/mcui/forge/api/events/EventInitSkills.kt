@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-package be.bluexin.mcui.api.events
+package be.bluexin.mcui.forge.api.events
 /*
 
 import com.tencao.saoui.api.entity.ISkill

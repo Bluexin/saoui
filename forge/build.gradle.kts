@@ -16,9 +16,6 @@ loom {
     forge {
         convertAccessWideners.set(true)
         extraAccessWideners.add(loom.accessWidenerPath.get().asFile.name)
-        dataGen {
-            mod(modId)
-        }
     }
 }
 
@@ -63,7 +60,7 @@ dependencies {
     modApi(libs.architectury.forge)
     common(project(":common", configuration = "namedElements")) { isTransitive = false }
     shadowCommon(project(":common", configuration = "transformProductionForge")) { isTransitive = false }
-    modImplementation(libs.kotlinforforge)
+    implementation(libs.kotlinforforge)
 
     shadow(libs.jel)
     shadow(libs.bundles.phcss)

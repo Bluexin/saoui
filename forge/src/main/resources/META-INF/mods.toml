@@ -1,5 +1,5 @@
 modLoader="kotlinforforge"
-loaderVersion="[4.6.1,)"
+loaderVersion = "[4.6,)"
 license="All rights reserved (TODO)"
 issueTrackerURL="https://github.com/Bluexin/saoui/issues"
 
@@ -30,3 +30,10 @@ Customize UI (both HUD and Screens) via resource packs !
     versionRange="[1.19.4,1.20)"
     ordering="NONE"
     side="BOTH"
+
+[[dependencies.mcui]]
+modId = "architectury"
+mandatory = true
+versionRange = "[8.2.89,)"
+ordering = "AFTER"
+side = "BOTH"
