@@ -57,7 +57,7 @@ repositories {
 
 dependencies {
     forge(libs.forge)
-    modApi(libs.architectury.forge)
+//    modApi(libs.architectury.forge)
     common(project(":common", configuration = "namedElements")) { isTransitive = false }
     shadowCommon(project(":common", configuration = "transformProductionForge")) { isTransitive = false }
     implementation(libs.kotlinforforge)
@@ -74,9 +74,20 @@ dependencies {
 
     shadow(libs.bundles.luaj)
 
-    modApi(libs.bundles.ftb.forge) {
+    shadow(libs.bundles.serialization) {
         isTransitive = false
     }
+    forgeRuntimeLibrary(libs.bundles.serialization) { // should be provided by kff, but oh well
+//        isTransitive = false
+    }
+    forgeRuntimeLibrary(libs.kotlin.reflect)
+    shadow(libs.bundles.serialization.xml) {
+        isTransitive = false
+    }
+
+    /*modApi(libs.bundles.ftb.forge) {
+        isTransitive = false
+    }*/
 
 //    implementation(group = "none", name = "OC-LuaJ", version = "20220907.1", ext = "jar")
 //    implementation(group = "none", name = "OC-JNLua", version = "20230530.0", ext = "jar")

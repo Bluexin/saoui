@@ -40,7 +40,7 @@ class LuaTestScreen : Screen(Component.literal("Lua Test Screen")) {
                 try {
                     JsonThemeLoader.loadFragment(ResourceLocation("saoui", "themes/hex2/fragments/label.xml"))
                 } catch (e: Throwable) {
-                    Minecraft.getInstance().player?.sendSystemMessage(Component.literal("Something went wrong : ${e.message}. See console for more info."))
+                    Minecraft.getInstance().player?.sendSystemMessage(Component.literal("Something went wrong : $e. See console for more info."))
                     Constants.LOG.error("Couldn't load fragment", e)
                 }
             }.pos(100, 120).build()

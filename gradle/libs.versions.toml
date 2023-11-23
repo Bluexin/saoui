@@ -35,7 +35,8 @@ architectury = { module = "dev.architectury:architectury", version.ref = "archit
 architectury_forge = { module = "dev.architectury:architectury-forge", version.ref = "architectury" }
 forge = { module = "net.minecraftforge:forge", version.ref = "forge" }
 # https://github.com/thedarkcolour/KotlinForForge/blob/4.x/README.md
-kotlinforforge = { module = "thedarkcolour:kotlinforforge", version.ref = "kotlinforforge" }
+#kotlinforforge = { module = "thedarkcolour:kotlinforforge", version.ref = "kotlinforforge" }
+kotlinforforge = { module = "thedarkcolour:kfflang", version.ref = "kotlinforforge" }
 
 architectury_fabric = { module = "dev.architectury:architectury-fabric", version.ref = "architectury" }
 fabric_loader = { module = "net.fabricmc:fabric-loader", version.ref = "fabric_loader" }
@@ -46,7 +47,8 @@ fabric_languageKotlin = { module = "net.fabricmc:fabric-language-kotlin", versio
 kotlinGradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
 
 kotlin_reflect = { module = "org.jetbrains.kotlin:kotlin-reflect", version.ref = "kotlin" }
-coroutines_core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm", version.ref = "coroutines" }
+coroutines_core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
+coroutines_core_jvm = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm", version.ref = "coroutines" }
 coroutines_jdk8 = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8", version.ref = "coroutines" }
 
 serialization_core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core-jvm", version.ref = "serialization" }
@@ -75,6 +77,7 @@ jsr305 = { module = "com.google.code.findbugs:jsr305", version.ref = "jsr305" }
 [bundles]
 coroutines = [
     "coroutines_core",
+    "coroutines_core_jvm",
     "coroutines_jdk8",
 ]
 serialization = [

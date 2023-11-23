@@ -131,8 +131,7 @@ allprojects {
         }
         implementation(libs.bundles.serialization)
         implementation(libs.bundles.serialization.xml) {
-            exclude("org.jetbrains.kotlin")
-            exclude("org.jetbrains.kotlinx")
+            isTransitive = false
         }
 
         implementation(libs.jel)

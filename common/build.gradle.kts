@@ -16,10 +16,10 @@ dependencies {
     // Do NOT use other classes from fabric loader
     modImplementation(libs.fabric.loader)
     // Remove the next line if you don't want to depend on the API
-    modApi(libs.architectury)
+//    modApi(libs.architectury)
     compileOnly(kotlin("stdlib-jdk8"))
     implementation(libs.jsr305)
-    modApi(libs.bundles.ftb.fabric)
+//    modApi(libs.bundles.ftb.fabric)
     modApi(libs.forge.config)
     implementation(libs.bundles.nightconfig)
 }
