@@ -1,12 +1,12 @@
 {
     "required": true,
     "minVersion": "0.8",
-    "package": "be.bluexin.mcui.mixin",
+  "package": "be.bluexin.mcui.fabric.mixin",
     "compatibilityLevel": "JAVA_17",
     "mixins": [
     ],
     "client": [
-      "be.bluexin.fabric.mixin.ExampleMixin"
+      "ExampleMixin"
     ],
     "injectors": {
       "defaultRequire": 1

@@ -5,7 +5,7 @@ print("Running on " .. modVersion .. " from " .. resourceLocation)
 
 for _, fragName in pairs({"label.xml", "json_label.json"}) do
     local frag = fragment("saoui:themes/hex2/fragments/" .. fragName)
-    print("Loaded " .. fragName " : " .. frag:tostring())
+    print("Loaded " .. fragName " : " .. frag:toString())
 end
 
 --local frag = loadFragment("saoui:themes/hex2/fragments/" .. fragName)

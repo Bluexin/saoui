@@ -57,7 +57,7 @@ repositories {
 
 dependencies {
     forge(libs.forge)
-//    modApi(libs.architectury.forge)
+//    modImplementation(libs.architectury.forge)
     common(project(":common", configuration = "namedElements")) { isTransitive = false }
     shadowCommon(project(":common", configuration = "transformProductionForge")) { isTransitive = false }
     implementation(libs.kotlinforforge)

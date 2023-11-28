@@ -19,9 +19,9 @@
   "icon": "assets/saoui/textures/logo.png",
   "environment": "*",
   "entrypoints": {
-    "main": [
+    "client": [
       {
-        "value": "be.bluexin.mcui.MCUICore",
+        "value": "be.bluexin.mcui.fabric.MCUIFabricCore",
         "adapter": "kotlin"
       }
     ]
@@ -35,7 +35,6 @@
     "minecraft": ">=1.19.4 <1.20",
     "java": ">=17",
     "fabric-language-kotlin": ">=1.10.14+kotlin.1.9.20"
-  },
-  "accessWidener": "mcui.accesswidener"
+  }
 }
   

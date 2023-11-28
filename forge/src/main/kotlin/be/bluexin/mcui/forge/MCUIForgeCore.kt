@@ -8,7 +8,7 @@ import net.minecraftforge.event.RegisterCommandsEvent
 import net.minecraftforge.fml.common.Mod
 
 @Mod(Constants.MOD_ID)
-object MCUICore {
+object MCUIForgeCore {
     init {
 
         // This method is invoked by the Forge mod loader when it is ready
@@ -19,7 +19,7 @@ object MCUICore {
         Constants.LOG.info("Hello Kotlin Forge world!")
         CommonClass.init()
 
-        MinecraftForge.EVENT_BUS.addListener(MCUICore::registerCommands)
+        MinecraftForge.EVENT_BUS.addListener(MCUIForgeCore::registerCommands)
     }
 
     private fun registerCommands(event: RegisterCommandsEvent) {

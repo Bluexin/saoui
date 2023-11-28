@@ -37,7 +37,7 @@ dependencies {
     modImplementation(libs.fabric.loader)
     modApi(libs.fabric.api)
     // Remove the next line if you don't want to depend on the API
-//    modApi(libs.architectury.fabric)
+//    modImplementation(libs.architectury.fabric)
 
     common(project(":common", configuration = "namedElements")) { isTransitive = false }
     shadowCommon(project(":common", configuration = "transformProductionFabric")) { isTransitive = false }
