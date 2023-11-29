@@ -44,7 +44,7 @@ class GLString(
         if (!enabled(ctx)) return
         val p = parentOrZero
         val x = this.x(ctx) + p.getX(ctx)
-        val y = this.y(ctx) + p.getY(ctx) + (this.h(ctx) - ctx.fontRenderer.lineHeight) / 2.0
+        val y = this.y(ctx) + p.getY(ctx) //+ (this.h(ctx) - ctx.fontRenderer.lineHeight) / 2.0
 
         GLCore.glString(
             string = this.text(ctx),

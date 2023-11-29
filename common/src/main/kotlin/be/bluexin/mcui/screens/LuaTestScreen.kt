@@ -4,6 +4,7 @@ import be.bluexin.mcui.Constants
 import be.bluexin.mcui.api.scripting.JNLua
 import be.bluexin.mcui.api.scripting.LuaJTest
 import be.bluexin.mcui.themes.JsonThemeLoader
+import be.bluexin.mcui.themes.elements.ElementParent
 import be.bluexin.mcui.themes.elements.Fragment
 import be.bluexin.mcui.themes.util.StaticCachedExpression
 import com.mojang.blaze3d.vertex.PoseStack
@@ -15,9 +16,7 @@ import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 
 class LuaTestScreen : Screen(Component.literal("Lua Test Screen")) {
-    private val fragment = Fragment().apply {
-        elements = emptyList()
-    }
+    private val fragment = Fragment()
 
     override fun init() {
         super.init()
@@ -26,7 +25,7 @@ class LuaTestScreen : Screen(Component.literal("Lua Test Screen")) {
                 Component.literal("Load script")
             ) {
                 try {
-                    LuaJTest.runScript(ResourceLocation("saoui", "test.lua"))
+                    LuaJTest.runScript(ResourceLocation("mcui", "test.lua"))
                 } catch (e: Throwable) {
                     Minecraft.getInstance().player?.sendSystemMessage(Component.literal("Something went wrong : ${e.message}. See console for more info."))
                     Constants.LOG.error("Couldn't evaluate test.lua", e)
@@ -38,7 +37,9 @@ class LuaTestScreen : Screen(Component.literal("Lua Test Screen")) {
                 Component.literal("Load fragment")
             ) {
                 try {
-                    JsonThemeLoader.loadFragment(ResourceLocation("saoui", "themes/hex2/fragments/label.xml"))
+                    val frag = JsonThemeLoader.loadFragment(ResourceLocation("saoui", "themes/hex2/fragments/label.xml"))
+                    frag.setup(ElementParent.ZERO, emptyMap())
+                    fragment.elements = listOf(frag)
                 } catch (e: Throwable) {
                     Minecraft.getInstance().player?.sendSystemMessage(Component.literal("Something went wrong : $e. See console for more info."))
                     Constants.LOG.error("Couldn't load fragment", e)

@@ -20,6 +20,8 @@ package be.bluexin.mcui.themes.elements
 import be.bluexin.mcui.Constants
 import be.bluexin.mcui.GLCore
 import be.bluexin.mcui.api.themes.IHudDrawContext
+import be.bluexin.mcui.platform.Services
+import be.bluexin.mcui.util.Client
 import com.mojang.blaze3d.vertex.PoseStack
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -57,7 +59,19 @@ sealed class ElementGroupParent : CachingElementParent() {
 
         if (this.rl != null) GLCore.glBindTexture(this.rl!!)
 
-        this.children.forEach { it.draw(ctx, poseStack) }
+        return if (Services.PLATFORM.isDevelopmentEnvironment) {
+            this.children = this.children.filter {
+                try {
+                    it.draw(ctx, poseStack)
+                    true
+                } catch (e: Exception) {
+                    Client.showError("Error rendering child ${it.hierarchyName()}, removing from group", e)
+                    false
+                }
+            }.let(::Children)
+        } else {
+            this.children.forEach { it.draw(ctx, poseStack) }
+        }
     }
 
     override fun setup(parent: ElementParent, fragments: Map<ResourceLocation, () -> Fragment>): Boolean {
