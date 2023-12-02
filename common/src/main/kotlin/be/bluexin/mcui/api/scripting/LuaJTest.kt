@@ -48,7 +48,8 @@ object LuaJTest {
             load(TableLib())
             load(JseStringLib())
             load(JseMathLib())
-            set("fragment", LoadFragment)
+            set("readFragment", ReadFragment)
+            set("loadFragment", LoadFragment)
         }
         val setHook = globals.enableDebugSafely()
 

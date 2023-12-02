@@ -34,7 +34,7 @@ sealed class ExpressionIntermediate {
     abstract val serializedExpression: String
     abstract val cacheType: CacheType
 
-    @Transient // TODO : check if this handles obf
+    @Transient // TODO : check if this handles obf, otherwise could just static expose in own code
     private val translate = I18n::get.name
 
     val expression: String

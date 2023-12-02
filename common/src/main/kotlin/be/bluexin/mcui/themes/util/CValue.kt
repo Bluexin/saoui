@@ -37,6 +37,7 @@ sealed class CValue<out T : Any>(val value: (IHudDrawContext) -> T) : (IHudDrawC
 class CInt(value: (IHudDrawContext) -> Int) : CValue<Int>(value) {
     companion object {
         val ZERO = CInt { 0 }
+        val WHITE = CInt { 0xFFFFFFFF.toInt() }
     }
 }
 

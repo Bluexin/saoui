@@ -38,7 +38,7 @@ import nl.adaptivity.xmlutil.serialization.XmlSerialName
 sealed class GLRectangleParent : Element() {
     @SerialName("rgba")
     @XmlSerialName("rgba")
-    protected var rgba = CInt { 0xFFFFFFFF.toInt() }
+    protected var rgba = CInt.WHITE
     @SerialName("srcX")
     @XmlSerialName("srcX")
     protected var srcX= CDouble.ZERO

@@ -2,6 +2,8 @@ package be.bluexin.mcui.themes
 
 import be.bluexin.mcui.themes.elements.Fragment
 import be.bluexin.mcui.themes.elements.Hud
+import be.bluexin.mcui.util.AbstractLuaDecoder
+import be.bluexin.mcui.util.AbstractLuaEncoder
 import kotlinx.serialization.decodeFromString
 import net.minecraft.resources.ResourceLocation
 import org.apache.logging.log4j.LogManager
@@ -124,6 +126,14 @@ object XmlTests {
             iss.reader().readText()
         )
         println(frag)
+
+        val lua = AbstractLuaEncoder.LuaEncoder().apply {
+            encodeSerializableValue(Fragment.serializer(), frag)
+        }.data
+
+        val luaFrag = AbstractLuaDecoder.LuaDecoder(lua).run {
+            decodeSerializableValue(Fragment.serializer())
+        }
 
         val iss2 = javaClass.classLoader.getResourceAsStream("assets/saoui/themes/hex2/hud.xml")
             ?: error("Couldn't load iss")

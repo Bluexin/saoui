@@ -3,6 +3,7 @@ package be.bluexin.mcui.themes.elements
 import be.bluexin.mcui.themes.util.LibHelper
 import be.bluexin.mcui.themes.util.NamedExpressionIntermediate
 import be.bluexin.mcui.themes.util.json.ExpectJsonAdapter
+import be.bluexin.mcui.util.DeserializationOrder
 import com.google.gson.annotations.JsonAdapter
 import kotlinx.serialization.Serializable
 import nl.adaptivity.xmlutil.ExperimentalXmlUtilApi
@@ -19,6 +20,7 @@ import nl.adaptivity.xmlutil.serialization.XmlSerialName
 class Fragment(
     @XmlSerialName("expect")
     @XmlBefore("x")
+    @DeserializationOrder(0)
     val expect: Expect? = null
 ) : ElementGroupParent() {
 

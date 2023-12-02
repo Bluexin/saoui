@@ -4,6 +4,7 @@ import be.bluexin.mcui.Constants
 import be.bluexin.mcui.api.themes.IHudDrawContext
 import be.bluexin.mcui.themes.AbstractThemeLoader
 import be.bluexin.mcui.themes.util.*
+import be.bluexin.mcui.util.DeserializationOrder
 import com.mojang.blaze3d.vertex.PoseStack
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -16,6 +17,7 @@ import nl.adaptivity.xmlutil.serialization.XmlSerialName
 class FragmentReference(
     @Suppress("CanBeParameter", "RedundantSuppression") // It can't be a param because of @Serializable
     @XmlSerialName("variables")
+    @DeserializationOrder(0)
     private val serializedVariables: Variables = Variables(emptyList()),
     private var id: String = MISSING_ID
 ) : CachingElementParent() {

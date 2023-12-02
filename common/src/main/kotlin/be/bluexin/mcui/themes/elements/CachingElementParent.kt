@@ -45,7 +45,10 @@ sealed class CachingElementParent : Element(), ElementParent {
     /**
      * Returns true if the element should update it's position. Can be extremely useful in huge groups
      */
-    private fun checkUpdate(ctx: IHudDrawContext) = if (latestTicks == ctx.partialTicks) false else {
-        latestTicks = ctx.partialTicks; true
-    }
+    private fun checkUpdate(ctx: IHudDrawContext) =
+        if (latestTicks == ctx.partialTicks) false
+        else {
+            latestTicks = ctx.partialTicks
+            true
+        }
 }
