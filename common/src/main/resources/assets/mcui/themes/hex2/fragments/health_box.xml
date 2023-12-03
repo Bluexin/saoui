@@ -58,7 +58,7 @@
                     <srcW cache="STATIC">249.6</srcW>
                     <srcH cache="STATIC">25.6</srcH>
                     <w cache="STATIC">160.0</w>
-                    <x>17.0 + usernamewidth -3.0</x>
+                    <x>17.0 + usernamewidth</x>
                 </glRectangle>
             </children>
         </elementGroup>
@@ -79,7 +79,7 @@
             <srcY cache="STATIC">76.8</srcY>
             <h cache="STATIC">16.0</h>
             <w>3.25 + (153.5 * hpPct)</w>
-            <x>22.0 + usernamewidth -3.0</x>
+            <x>17.0 + usernamewidth</x>
         </glRectangle>
         <!-->
         <glRectangle name="absorption bar">
@@ -109,7 +109,7 @@
             <srcY cache="STATIC">102.4</srcY>
             <h cache="STATIC">16.0</h>
             <w>3.25 + (153.5 * foodPct)</w>
-            <x>22.0 + usernamewidth -3.0</x>
+            <x>17.0 + usernamewidth</x>
         </glRectangle>
 
         <elementGroup name="hp bg and text"> <!-- display hp text in middle of health bar -->
