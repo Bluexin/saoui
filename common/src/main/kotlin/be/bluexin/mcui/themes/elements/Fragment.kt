@@ -19,7 +19,7 @@ import nl.adaptivity.xmlutil.serialization.XmlSerialName
 @XmlNamespaceDeclSpec("bl=https://www.bluexin.be/com/saomc/saoui/fragment-schema")
 class Fragment(
     @XmlSerialName("expect")
-    @XmlBefore("x")
+    @XmlBefore("x", "children")
     @DeserializationOrder(0)
     val expect: Expect? = null
 ) : ElementGroupParent() {
@@ -32,10 +32,9 @@ class Fragment(
 @JsonAdapter(ExpectJsonAdapter::class)
 @Serializable
 data class Expect(
-    @XmlSerialName("variable")
-    val variables: List<NamedExpressionIntermediate> = mutableListOf()
+    val variables: Map<String, NamedExpressionIntermediate> = emptyMap()
 ) {
     init {
-        LibHelper.pushContext(variables.associate { it.key to it.type })
+        LibHelper.pushContext(variables.mapValues { (_, value) -> value.type })
     }
 }

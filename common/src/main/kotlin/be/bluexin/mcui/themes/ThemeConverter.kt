@@ -5,6 +5,7 @@ import be.bluexin.mcui.themes.elements.Hud
 import be.bluexin.mcui.util.AbstractLuaDecoder
 import be.bluexin.mcui.util.AbstractLuaEncoder
 import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 import net.minecraft.resources.ResourceLocation
 import org.apache.logging.log4j.LogManager
 import java.io.File
@@ -125,7 +126,19 @@ object XmlTests {
         val frag = xml.decodeFromString<Fragment>(
             iss.reader().readText()
         )
-        println(frag)
+
+        /*println(*/xml.encodeToString(frag)/*)*/
+//        println(frag)
+
+        val iss2 = javaClass.classLoader.getResourceAsStream("assets/saoui/themes/hex2/hud.xml")
+            ?: error("Couldn't load iss")
+
+        val hud = xml.decodeFromString<Hud>(
+            iss2.reader().readText()
+        )
+//        println(hud)
+
+        /*println(*/xml.encodeToString(hud)/*)*/
 
         val lua = AbstractLuaEncoder.LuaEncoder().apply {
             encodeSerializableValue(Fragment.serializer(), frag)
@@ -135,12 +148,16 @@ object XmlTests {
             decodeSerializableValue(Fragment.serializer())
         }
 
-        val iss2 = javaClass.classLoader.getResourceAsStream("assets/saoui/themes/hex2/hud.xml")
-            ?: error("Couldn't load iss")
+        println()
 
-        val hud = xml.decodeFromString<Hud>(
-            iss2.reader().readText()
-        )
-        println(hud)
+        /*val luaVars = AbstractLuaEncoder.LuaEncoder().apply {
+            encodeSerializableValue(Variables.serializer(), Variables(
+                listOf(
+                    NamedExpressionIntermediate(key = "text", serializedExpression = "hello world", type = JelType.STRING),
+                    NamedExpressionIntermediate(key = "text with diff cache", serializedExpression = "hello world", cacheType = CacheType.STATIC, type = JelType.STRING),
+                )
+            )
+            )
+        }.data*/
     }
 }

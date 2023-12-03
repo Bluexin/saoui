@@ -1,12 +1,19 @@
 package be.bluexin.mcui.api.scripting
 
+import be.bluexin.mcui.Constants
 import be.bluexin.mcui.themes.JsonThemeLoader
 import be.bluexin.mcui.themes.elements.Fragment
+import be.bluexin.mcui.themes.elements.FragmentReference
+import be.bluexin.mcui.themes.util.LibHelper
+import be.bluexin.mcui.themes.util.Variables
+import be.bluexin.mcui.util.AbstractLuaDecoder
 import be.bluexin.mcui.util.AbstractLuaEncoder
+import kotlinx.serialization.ExperimentalSerializationApi
 import net.minecraft.resources.ResourceLocation
 import org.luaj.vm2.LuaFunction
 import org.luaj.vm2.LuaValue
 import java.lang.ref.WeakReference
+import java.util.*
 
 object ReadFragment : LuaFunction() {
 
@@ -37,11 +44,47 @@ object ReadFragment : LuaFunction() {
 
 object LoadFragment : LuaFunction() {
 
+    private fun generateId() = "generated:${UUID.randomUUID()}"
+
     override fun call(arg1: LuaValue, arg2: LuaValue): LuaValue {
-        val targetId = arg1.checkjstring()
-        val fragmentData = arg2.checkuserdata(Map::class.java)
+        val (target, fragment) = internalLoad(arg1, arg2)
+        val id = generateId()
+        target.add(FragmentReference(id = id).also {
+            it.setup(target, mapOf(ResourceLocation(id) to { fragment }))
+        })
 
         return LuaValue.TRUE
+    }
+
+    override fun call(arg1: LuaValue, arg2: LuaValue, arg3: LuaValue): LuaValue {
+        val (target, fragment) = internalLoad(arg1, arg2)
+        val variables = try {
+            val serializer = Variables.serializer()
+            @OptIn(ExperimentalSerializationApi::class) // TODO : move this special handling to the decoder
+            AbstractLuaDecoder.LuaMapDecoder(arg3.checktable(), null, serializer.descriptor.getElementDescriptor(0))
+                .decodeSerializableValue(serializer)
+//                .let(::Variables)
+        } catch (e: Throwable) {
+            Constants.LOG.error("Could not parse variables", e)
+            Variables.EMPTY
+        } finally {
+            try {
+                LibHelper.popContext()
+            } catch (_: Throwable) {
+            }
+        }
+        val id = generateId()
+        target.add(FragmentReference(id = id, serializedVariables = variables))
+        target.setup(target, mapOf(ResourceLocation(id) to { fragment }))
+
+        return LuaValue.TRUE
+    }
+
+    private fun internalLoad(arg1: LuaValue, arg2: LuaValue): Pair<Fragment, Fragment> {
+        val target = find(arg1.checkjstring())
+        requireNotNull(target) { "Couldn't find fragment $arg1" }
+        return target to AbstractLuaDecoder.LuaDecoder(arg2.checktable())
+            .decodeSerializableValue(Fragment.serializer())
     }
 
     private val roots = mutableMapOf<String, WeakReference<Fragment>>()

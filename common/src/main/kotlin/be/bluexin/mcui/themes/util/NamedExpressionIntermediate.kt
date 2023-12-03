@@ -10,12 +10,11 @@ import nl.adaptivity.xmlutil.serialization.XmlOtherAttributes
 import nl.adaptivity.xmlutil.serialization.XmlSerialName
 import nl.adaptivity.xmlutil.serialization.XmlValue
 
-//@SerialName("variable")
+@SerialName("variable")
 @Serializable
 data class NamedExpressionIntermediate(
-    val key: String,
     @XmlOtherAttributes
-    val type: JelType = JelType.ERROR,
+    val type: JelType,
     @XmlValue
     @SerialName("expression")
     override val serializedExpression: String = "",
@@ -27,12 +26,17 @@ data class NamedExpressionIntermediate(
     fun hasDefault() = serializedExpression.isNotEmpty()
 }
 
+@SerialName("variables")
 @Serializable
 data class Variables(
     @XmlSerialName("variable")
-    val variable: List<NamedExpressionIntermediate>
+    val variable: Map<String, NamedExpressionIntermediate>
 ) {
     init {
-        LibHelper.pushContext(variable.associate { it.key to it.type })
+        LibHelper.pushContext(variable.mapValues { (_, value) -> value.type })
+    }
+
+    companion object {
+        val EMPTY = Variables(emptyMap()).also { LibHelper.popContext() }
     }
 }

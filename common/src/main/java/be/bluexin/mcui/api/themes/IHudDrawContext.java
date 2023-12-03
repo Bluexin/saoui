@@ -397,7 +397,8 @@ public interface IHudDrawContext {
     boolean getBooleanProperty(@Nonnull final String name);
     void getUnitProperty(@Nonnull final String name);
 
-    default void pushContext(Map<String, CValue<Object>> context) {}
+    default void pushContext(@Nonnull Map<String, CValue<Object>> context) {
+    }
 
     default void popContext() {}
 }

@@ -2,6 +2,7 @@ package be.bluexin.mcui.screens
 
 import be.bluexin.mcui.Constants
 import be.bluexin.mcui.api.scripting.JNLua
+import be.bluexin.mcui.api.scripting.LoadFragment
 import be.bluexin.mcui.api.scripting.LuaJTest
 import be.bluexin.mcui.themes.JsonThemeLoader
 import be.bluexin.mcui.themes.elements.ElementParent
@@ -16,7 +17,9 @@ import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 
 class LuaTestScreen : Screen(Component.literal("Lua Test Screen")) {
-    private val fragment = Fragment()
+    private val fragment = Fragment().apply {
+        this@LuaTestScreen::class.simpleName?.let { name = it }
+    }
 
     override fun init() {
         super.init()
@@ -51,8 +54,14 @@ class LuaTestScreen : Screen(Component.literal("Lua Test Screen")) {
         })
     }
 
+    override fun added() {
+        super.added()
+        LoadFragment[fragment.name] = fragment
+    }
+
     override fun removed() {
         super.removed()
+        LoadFragment.clear(fragment.name)
         JNLua.close()
     }
 }

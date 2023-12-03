@@ -63,19 +63,32 @@ object LibHelper {
         obf
     }
 
+    // TODO : would be nice to have a cleaner way to do this with less side effects in init {}, maybe move compiling to setup ?
     fun pushContext(context: Map<String, JelType>) {
         check(emptyContext === contextResolver.context) { "Context already pushed !" }
         contextResolver.context = context
+        Constants.LOG.info("Context pushed $context from $stack")
     }
 
     fun popContext() {
         check(emptyContext !== contextResolver.context) { "Context not pushed !" }
         contextResolver.context = emptyContext
+        Constants.LOG.info("Context popped from $stack")
+    }
+
+    private val stack
+        get() = StackWalker.getInstance().walk {
+            it.skip(3).limit(6).toList()
     }
 }
 
 private class ContextAwareDVMap(
     var context: Map<String, JelType>
 ) : DVMap() {
-    override fun getTypeName(name: String): String? = context[name]?.typeName
+    override fun getTypeName(name: String): String? = context[name]?.let {
+        if (it == JelType.ERROR) {
+            Constants.LOG.error("Variable $name was not read properly !")
+            null
+        } else it
+    }?.typeName
 }

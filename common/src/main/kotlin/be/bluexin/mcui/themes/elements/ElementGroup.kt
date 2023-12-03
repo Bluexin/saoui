@@ -49,7 +49,7 @@ sealed class ElementGroupParent : CachingElementParent() {
     protected var rl: ResourceLocation? = null
 
     @XmlElement
-    private var texture: String? = null
+            /*private*/ var texture: String? = null
 
     override fun draw(ctx: IHudDrawContext, poseStack: PoseStack) {
         if (!enabled(ctx)) return
@@ -81,6 +81,10 @@ sealed class ElementGroupParent : CachingElementParent() {
         this.children.forEach { if (it.name == DEFAULT_NAME) ++anonymous; it.setup(this, fragments) }
         if (anonymous > 0) Constants.LOG.info("Set up $anonymous anonymous elements in $name.")
         return res
+    }
+
+    fun add(element: Element) {
+        this.elements += element
     }
 
     @Serializable

@@ -5,90 +5,94 @@
         <variable key="centered" type="BOOLEAN" cache="STATIC">false</variable>
     </expect>
     <children>
-        <elementGroup name="centered">
-            <enabled>centered</enabled>
-            <texture>saoui:textures/hex2/hex_labels.png</texture>
+        <elementGroup name="root">
             <children>
-                <glRectangle> <!-- left part of label -->
-                    <rgba cache="STATIC">0x424242FF</rgba>
-                    <srcX cache="STATIC">0.0</srcX>
-                    <srcY cache="STATIC">0.0</srcY>
-                    <srcW cache="STATIC">24.0</srcW>
-                    <srcH cache="STATIC">64.0</srcH>
-                    <x>-6 - strWidth(text)/2.0</x>
-                    <w cache="STATIC">6</w>
-                    <h cache="STATIC">16</h>
-                </glRectangle>
+                <elementGroup name="centered">
+                    <enabled>centered</enabled>
+                    <texture>saoui:textures/hex2/hex_labels.png</texture>
+                    <children>
+                        <glRectangle> <!-- left part of label -->
+                            <rgba cache="STATIC">0x424242FF</rgba>
+                            <srcX cache="STATIC">0.0</srcX>
+                            <srcY cache="STATIC">0.0</srcY>
+                            <srcW cache="STATIC">24.0</srcW>
+                            <srcH cache="STATIC">64.0</srcH>
+                            <x>-6 - strWidth(text)/2.0</x>
+                            <w cache="STATIC">6</w>
+                            <h cache="STATIC">16</h>
+                        </glRectangle>
 
-                <glRectangle> <!-- middle part of label -->
-                    <rgba cache="STATIC">0x424242FF</rgba>
-                    <x>- strWidth(text)/2.0</x>
-                    <srcX cache="STATIC">24.0</srcX>
-                    <srcY cache="STATIC">0.0</srcY>
-                    <srcW cache="STATIC">26.0</srcW>
-                    <srcH cache="STATIC">64.0</srcH>
-                    <w>strWidth(text)</w>
-                    <h cache="STATIC">16</h>
-                </glRectangle>
+                        <glRectangle> <!-- middle part of label -->
+                            <rgba cache="STATIC">0x424242FF</rgba>
+                            <x>- strWidth(text)/2.0</x>
+                            <srcX cache="STATIC">24.0</srcX>
+                            <srcY cache="STATIC">0.0</srcY>
+                            <srcW cache="STATIC">26.0</srcW>
+                            <srcH cache="STATIC">64.0</srcH>
+                            <w>strWidth(text)</w>
+                            <h cache="STATIC">16</h>
+                        </glRectangle>
 
-                <glRectangle> <!-- right part of label -->
-                    <rgba cache="STATIC">0x424242FF</rgba>
-                    <x>strWidth(text) / 2.0</x>
-                    <srcX cache="STATIC">50.0</srcX>
-                    <srcY cache="STATIC">0.0</srcY>
-                    <srcW cache="STATIC">24.0</srcW>
-                    <srcH cache="STATIC">64.0</srcH>
-                    <w cache="STATIC">6</w>
-                    <h cache="STATIC">16</h>
-                </glRectangle>
-                <glString name="centered-label">
-                    <x>-strWidth(text) / 2.0 +0.7</x>
-                    <y cache="STATIC">9.5</y>
-                    <text>text</text>
-                </glString>
-            </children>
-        </elementGroup>
+                        <glRectangle> <!-- right part of label -->
+                            <rgba cache="STATIC">0x424242FF</rgba>
+                            <x>strWidth(text) / 2.0</x>
+                            <srcX cache="STATIC">50.0</srcX>
+                            <srcY cache="STATIC">0.0</srcY>
+                            <srcW cache="STATIC">24.0</srcW>
+                            <srcH cache="STATIC">64.0</srcH>
+                            <w cache="STATIC">6</w>
+                            <h cache="STATIC">16</h>
+                        </glRectangle>
+                        <glString name="centered-label">
+                            <x>-strWidth(text) / 2.0 +0.7</x>
+                            <y cache="STATIC">9.5</y>
+                            <text>text</text>
+                        </glString>
+                    </children>
+                </elementGroup>
 
-        <elementGroup name="uncentered">
-            <enabled>!centered</enabled>
-            <texture>saoui:textures/hex2/hex_labels.png</texture>
-            <children>
-                <glRectangle> <!-- left part of label -->
-                    <rgba cache="STATIC">0x424242FF</rgba>
-                    <srcX cache="STATIC">0.0</srcX>
-                    <srcY cache="STATIC">0.0</srcY>
-                    <srcW cache="STATIC">24.0</srcW>
-                    <srcH cache="STATIC">64.0</srcH>
-                    <w cache="STATIC">6</w>
-                    <h cache="STATIC">16</h>
-                </glRectangle>
+                <elementGroup name="uncentered">
+                    <enabled>!centered</enabled>
+                    <texture>saoui:textures/hex2/hex_labels.png</texture>
+                    <children>
+                        <glRectangle> <!-- left part of label -->
+                            <rgba cache="STATIC">0x424242FF</rgba>
+                            <srcX cache="STATIC">0.0</srcX>
+                            <srcY cache="STATIC">0.0</srcY>
+                            <srcW cache="STATIC">24.0</srcW>
+                            <srcH cache="STATIC">64.0</srcH>
+                            <w cache="STATIC">6</w>
+                            <h cache="STATIC">16</h>
+                        </glRectangle>
 
-                <glRectangle> <!-- middle part of label -->
-                    <rgba cache="STATIC">0x424242FF</rgba>
-                    <x cache="STATIC">6</x>
-                    <srcX cache="STATIC">24.0</srcX>
-                    <srcY cache="STATIC">0.0</srcY>
-                    <srcW cache="STATIC">26.0</srcW>
-                    <srcH cache="STATIC">64.0</srcH>
-                    <w>strWidth(text)</w>
-                    <h cache="STATIC">16</h>
-                </glRectangle>
+                        <glRectangle> <!-- middle part of label -->
+                            <rgba cache="STATIC">0x424242FF</rgba>
+                            <x cache="STATIC">6</x>
+                            <srcX cache="STATIC">24.0</srcX>
+                            <srcY cache="STATIC">0.0</srcY>
+                            <srcW cache="STATIC">26.0</srcW>
+                            <srcH cache="STATIC">64.0</srcH>
+                            <w>strWidth(text)</w>
+                            <h cache="STATIC">16</h>
+                        </glRectangle>
 
-                <glRectangle> <!-- right part of label -->
-                    <rgba cache="STATIC">0x424242FF</rgba>
-                    <x>strWidth(text) + 6</x>
-                    <srcX cache="STATIC">50.0</srcX>
-                    <srcY cache="STATIC">0.0</srcY>
-                    <srcW cache="STATIC">24.0</srcW>
-                    <srcH cache="STATIC">64.0</srcH>
-                    <w cache="STATIC">6</w>
-                    <h cache="STATIC">16</h>
-                </glRectangle>
-                <glString name="label">
-                    <x cache="STATIC">6.7</x>
-                    <y cache="STATIC">9.5</y>
-                    <text>text</text>
-                </glString>
+                        <glRectangle> <!-- right part of label -->
+                            <rgba cache="STATIC">0x424242FF</rgba>
+                            <x>strWidth(text) + 6</x>
+                            <srcX cache="STATIC">50.0</srcX>
+                            <srcY cache="STATIC">0.0</srcY>
+                            <srcW cache="STATIC">24.0</srcW>
+                            <srcH cache="STATIC">64.0</srcH>
+                            <w cache="STATIC">6</w>
+                            <h cache="STATIC">16</h>
+                        </glRectangle>
+                        <glString name="label">
+                            <x cache="STATIC">6.7</x>
+                            <y cache="STATIC">9.5</y>
+                            <text>text</text>
+                        </glString>
+                    </children>
+                </elementGroup>
             </children>
         </elementGroup>
     </children>

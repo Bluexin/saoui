@@ -17,8 +17,8 @@ class ExpectJsonAdapter : TypeAdapter<Expect>() {
         if (value == null || value.variables.isEmpty()) out.nullValue()
         else {
             out.beginObject()
-            value.variables.forEach {
-                out.name(it.key)
+            value.variables.forEach { (key, it) ->
+                out.name(key)
                 if (it.hasDefault()) {
                     out.beginObject()
                         .name("type")
@@ -40,9 +40,9 @@ class ExpectJsonAdapter : TypeAdapter<Expect>() {
         JsonToken.BEGIN_OBJECT -> {
             reader.beginObject()
             val e = Expect(
-                buildList {
+                emptyMap() /*buildList {
                     while (reader.hasNext()) {
-                        /*add(NamedExpressionIntermediate().apply {
+                        add(NamedExpressionIntermediate().apply {
                             key = reader.nextName()
                             when (val nestedToken = reader.peek()) {
                                 JsonToken.BEGIN_OBJECT -> {
@@ -61,9 +61,9 @@ class ExpectJsonAdapter : TypeAdapter<Expect>() {
                                     AbstractThemeLoader.Reporter += message
                                 }
                             }
-                        })*/
+                        })
                     }
-                }
+                }*/
             )
             reader.endObject()
             e
