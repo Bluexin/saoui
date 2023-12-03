@@ -65,20 +65,20 @@ object LibHelper {
 
     // TODO : would be nice to have a cleaner way to do this with less side effects in init {}, maybe move compiling to setup ?
     fun pushContext(context: Map<String, JelType>) {
+        Constants.LOG.info("Context pushed $context from $stack")
         check(emptyContext === contextResolver.context) { "Context already pushed !" }
         contextResolver.context = context
-        Constants.LOG.info("Context pushed $context from $stack")
     }
 
     fun popContext() {
+        Constants.LOG.info("Context popped from $stack")
         check(emptyContext !== contextResolver.context) { "Context not pushed !" }
         contextResolver.context = emptyContext
-        Constants.LOG.info("Context popped from $stack")
     }
 
     private val stack
         get() = StackWalker.getInstance().walk {
-            it.skip(3).limit(6).toList()
+            it.skip(2).limit(6).toList()
     }
 }
 

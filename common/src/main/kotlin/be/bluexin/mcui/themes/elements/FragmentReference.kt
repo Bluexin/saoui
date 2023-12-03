@@ -53,10 +53,10 @@ class FragmentReference(
                 }
                 val defaults = missing.onEach { (key, it) ->
                     if (it.hasDefault()) variables[key] = it.type.expressionAdapter.compile(it)
-                }
+                }.keys
                 val realMissing = missing - defaults
                 if (realMissing.isNotEmpty()) {
-                    val present = variables.map { (_, value) -> value?.value?.expressionIntermediate }
+                    val present = variables.mapValues { (_, value) -> value?.value?.expressionIntermediate }
                     val message = "Missing variables $realMissing for $id (present : $present) in "
                     Constants.LOG.warn(message + hierarchyName())
                     AbstractThemeLoader.Reporter += message + nameOrParent()

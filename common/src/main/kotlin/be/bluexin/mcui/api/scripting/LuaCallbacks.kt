@@ -4,11 +4,11 @@ import be.bluexin.mcui.Constants
 import be.bluexin.mcui.themes.JsonThemeLoader
 import be.bluexin.mcui.themes.elements.Fragment
 import be.bluexin.mcui.themes.elements.FragmentReference
-import be.bluexin.mcui.themes.util.LibHelper
 import be.bluexin.mcui.themes.util.Variables
 import be.bluexin.mcui.util.AbstractLuaDecoder
 import be.bluexin.mcui.util.AbstractLuaEncoder
 import kotlinx.serialization.ExperimentalSerializationApi
+import net.minecraft.client.Minecraft
 import net.minecraft.resources.ResourceLocation
 import org.luaj.vm2.LuaFunction
 import org.luaj.vm2.LuaValue
@@ -58,24 +58,24 @@ object LoadFragment : LuaFunction() {
 
     override fun call(arg1: LuaValue, arg2: LuaValue, arg3: LuaValue): LuaValue {
         val (target, fragment) = internalLoad(arg1, arg2)
-        val variables = try {
+        val fragmentReference = try {
+            val id = generateId()
             val serializer = Variables.serializer()
             @OptIn(ExperimentalSerializationApi::class) // TODO : move this special handling to the decoder
             AbstractLuaDecoder.LuaMapDecoder(arg3.checktable(), null, serializer.descriptor.getElementDescriptor(0))
-                .decodeSerializableValue(serializer)
-//                .let(::Variables)
+                .decodeSerializableValue(serializer).let { variables ->
+                    FragmentReference(id = id, serializedVariables = variables).also {
+                        it.setup(target, mapOf(ResourceLocation(id) to { fragment }))
+                    }
+                }
         } catch (e: Throwable) {
             Constants.LOG.error("Could not parse variables", e)
-            Variables.EMPTY
-        } finally {
-            try {
-                LibHelper.popContext()
-            } catch (_: Throwable) {
-            }
+            FragmentReference()
         }
-        val id = generateId()
-        target.add(FragmentReference(id = id, serializedVariables = variables))
-        target.setup(target, mapOf(ResourceLocation(id) to { fragment }))
+
+        Minecraft.getInstance().tell {
+            target.add(fragmentReference)
+        }
 
         return LuaValue.TRUE
     }

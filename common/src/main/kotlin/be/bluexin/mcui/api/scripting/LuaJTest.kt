@@ -14,7 +14,7 @@ import org.luaj.vm2.lib.jse.JseStringLib
 
 // TODO : check BCEL for lua-to-(jvm bytecode) compilation -- see LuaJC::install
 object LuaJTest {
-    private val scriptInstructionsLimit = LuaValue.valueOf(50_000) // TODO: evaluate proper limit
+    private val scriptInstructionsLimit = LuaValue.valueOf(50_000_0) // TODO: evaluate proper limit
 
     private val serverGlobals = Globals().apply {
         load(JseBaseLib())

@@ -2,7 +2,7 @@ package be.bluexin.mcui.forge
 
 import be.bluexin.mcui.CommonClass
 import be.bluexin.mcui.Constants
-import be.bluexin.mcui.commands.SaouiCommand
+import be.bluexin.mcui.commands.McuiCommand
 import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.event.RegisterCommandsEvent
 import net.minecraftforge.fml.common.Mod
@@ -23,6 +23,6 @@ object MCUIForgeCore {
     }
 
     private fun registerCommands(event: RegisterCommandsEvent) {
-        SaouiCommand.setup(event.dispatcher)
+        McuiCommand.setup(event.dispatcher)
     }
 }

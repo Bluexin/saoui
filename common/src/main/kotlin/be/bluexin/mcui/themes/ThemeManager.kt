@@ -18,7 +18,7 @@
 package be.bluexin.mcui.themes
 
 import be.bluexin.mcui.commands.GeneralCommands
-import be.bluexin.mcui.commands.SaouiCommand
+import be.bluexin.mcui.commands.McuiCommand
 import be.bluexin.mcui.config.ConfigHandler
 import be.bluexin.mcui.config.Settings
 import be.bluexin.mcui.themes.elements.Hud
@@ -74,7 +74,12 @@ object ThemeManager : ResourceManagerReloadListener {
     private fun reportLoading() {
         Client.mc.chatListener.let {
             val style = Style.EMPTY
-                .withClickEvent(ClickEvent(ClickEvent.Action.RUN_COMMAND, SaouiCommand.useCommand(GeneralCommands.PRINT_ERRORS)))
+                .withClickEvent(
+                    ClickEvent(
+                        ClickEvent.Action.RUN_COMMAND,
+                        McuiCommand.useCommand(GeneralCommands.PRINT_ERRORS)
+                    )
+                )
 
             Component.translatable(
                 "saoui.menu.errors",

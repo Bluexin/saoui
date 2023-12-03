@@ -4,7 +4,9 @@ import be.bluexin.mcui.Constants
 import be.bluexin.mcui.api.scripting.JNLua
 import be.bluexin.mcui.api.scripting.LoadFragment
 import be.bluexin.mcui.api.scripting.LuaJTest
+import be.bluexin.mcui.api.themes.IHudDrawContext
 import be.bluexin.mcui.themes.JsonThemeLoader
+import be.bluexin.mcui.themes.elements.Element
 import be.bluexin.mcui.themes.elements.ElementParent
 import be.bluexin.mcui.themes.elements.Fragment
 import be.bluexin.mcui.themes.util.StaticCachedExpression
@@ -16,9 +18,16 @@ import net.minecraft.client.gui.screens.Screen
 import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 
-class LuaTestScreen : Screen(Component.literal("Lua Test Screen")) {
+class LuaTestScreen : Screen(Component.literal("Lua Test Screen")), ElementParent {
+    override fun getX(ctx: IHudDrawContext) = 0.0
+    override fun getY(ctx: IHudDrawContext) = 0.0
+    override fun getZ(ctx: IHudDrawContext) = 0.0
+
+    override val name = this::class.simpleName ?: Element.DEFAULT_NAME
+
     private val fragment = Fragment().apply {
-        this@LuaTestScreen::class.simpleName?.let { name = it }
+        name = "${this@LuaTestScreen.name}.root"
+        setup(this@LuaTestScreen, emptyMap())
     }
 
     override fun init() {

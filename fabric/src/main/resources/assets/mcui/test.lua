@@ -34,20 +34,27 @@ end
 
 local frag = readFragment("saoui:themes/hex2/fragments/label.xml")
 print("Loaded " .. frag.name .. " : ")
-print("\t" .. tprint(frag))
+--print("\t" .. tprint(frag))
 
-for i = 1, 10 do
+for i = 1, 5 do
+    print("Loading " .. i .. " to " .. offset * (i - 1))
     frag.name = frag.name .. " edited from Lua"
     --print("\t" .. )
-    frag.children[1].value.x = {
+    frag.y = {
         cache = "STATIC",
-        expression = tostring(offset * i)
+        expression = tostring(offset * (i - 1))
     }
-    loadFragment("LuaTestScreen", frag, {
+    frag.x = {
+        cache = "STATIC",
+        expression = tostring(20)
+    }
+    print("Loading ...")
+    local r = loadFragment("LuaTestScreen.root", frag, {
         text = {
             type = "STRING",
             expression = "\"Label from Lua " .. i .. "\""
         }
     })
+    print("Loaded : " .. tostring(r))
 end
 

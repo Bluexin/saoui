@@ -1,12 +1,13 @@
 package be.bluexin.mcui.commands
 
+import be.bluexin.mcui.Constants
 import com.mojang.brigadier.CommandDispatcher
 import com.mojang.brigadier.builder.LiteralArgumentBuilder.literal
 import net.minecraft.commands.CommandSourceStack
 
-object SaouiCommand {
+object McuiCommand {
 
-    const val ROOT = "saoui"
+    private const val ROOT = Constants.MOD_ID
 
     private fun CommandDispatcher<CommandSourceStack>.register(
         vararg commands: Command.Commands
