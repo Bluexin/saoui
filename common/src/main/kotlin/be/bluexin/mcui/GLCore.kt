@@ -47,7 +47,7 @@ object GLCore {
 
     @JvmOverloads
     fun color(red: Float, green: Float, blue: Float, alpha: Float = 1f) {
-        RenderSystem.clearColor(red, green, blue, alpha)
+        RenderSystem.setShaderColor(red, green, blue, alpha)
     }
 
     fun color(color: ColorUtil) {

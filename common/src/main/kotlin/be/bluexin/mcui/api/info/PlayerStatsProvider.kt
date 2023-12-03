@@ -52,5 +52,5 @@ interface PlayerStatsProvider {
      * @param player the player to get the info about
      * @return the stats of given player
      */
-    fun getStatsString(player: Player?): List<String?>?
+    fun getStatsString(player: Player): List<String>
 }

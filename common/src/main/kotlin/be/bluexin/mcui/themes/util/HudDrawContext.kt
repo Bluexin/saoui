@@ -26,7 +26,6 @@ import be.bluexin.mcui.themes.util.*
 import be.bluexin.mcui.util.Client
 import be.bluexin.mcui.util.HealthStep
 import be.bluexin.mcui.util.HealthStep.Companion.getStep
-import be.bluexin.mcui.util.PlayerStats.Companion.instance
 import com.mojang.blaze3d.platform.Window
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.Font
@@ -51,13 +50,15 @@ class HudDrawContext(player: Player = Client.mc.player!!, val mc: Minecraft = Cl
     private val username: String = player.displayName.string
     private val itemRenderer: ItemRenderer
     private val usernameWidth: Double = (1 + (mc.font.width(username) + 4) / 5.0) * 5
-    private val stats: PlayerStatsProvider = instance().stats
+    private val stats: PlayerStatsProvider = object : PlayerStatsProvider {
+        override fun getStatsString(player: Player): List<String> = emptyList()
+    }
     private var player: Player
     private var healthStep: HealthStep? = null
     private var z = 0f
     private var hp = 0f
     private var maxHp = 0f
-    private lateinit var scaledResolution: Window
+    private var scaledResolution: Window = mc.window
     private var partialTicks = 0f
     private var i = 0
 //    private var pt: List<PlayerInfo> = listOf()

@@ -9,7 +9,7 @@ import be.bluexin.mcui.themes.JsonThemeLoader
 import be.bluexin.mcui.themes.elements.Element
 import be.bluexin.mcui.themes.elements.ElementParent
 import be.bluexin.mcui.themes.elements.Fragment
-import be.bluexin.mcui.themes.util.StaticCachedExpression
+import be.bluexin.mcui.themes.util.HudDrawContext
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.components.Button
@@ -30,8 +30,11 @@ class LuaTestScreen : Screen(Component.literal("Lua Test Screen")), ElementParen
         setup(this@LuaTestScreen, emptyMap())
     }
 
+    private lateinit var context: HudDrawContext
+
     override fun init() {
         super.init()
+        context = HudDrawContext()
         addRenderableWidget(
             Button.builder(
                 Component.literal("Load script")
@@ -59,8 +62,13 @@ class LuaTestScreen : Screen(Component.literal("Lua Test Screen")), ElementParen
             }.pos(100, 120).build()
         )
         addRenderableOnly(Renderable { poseStack: PoseStack, mouseX: Int, mouseY: Int, partialTick: Float ->
-            fragment.draw(StaticCachedExpression.StubContext, poseStack)
+            fragment.draw(context, poseStack)
         })
+    }
+
+    override fun render(poseStack: PoseStack, mouseX: Int, mouseY: Int, partialTick: Float) {
+        context.setTime(partialTick)
+        super.render(poseStack, mouseX, mouseY, partialTick)
     }
 
     override fun added() {

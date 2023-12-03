@@ -20,7 +20,6 @@ package be.bluexin.mcui.themes.elements
 import be.bluexin.mcui.GLCore
 import be.bluexin.mcui.api.themes.IHudDrawContext
 import be.bluexin.mcui.themes.util.CString
-import be.bluexin.mcui.util.Client
 import com.mojang.blaze3d.vertex.PoseStack
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -45,13 +44,14 @@ class GLString(
         if (!enabled(ctx)) return
         val p = parentOrZero
         val x = this.x(ctx) + p.getX(ctx)
-        val y = this.y(ctx) + p.getY(ctx) + (this.h(ctx) - (Client.mc.font?.lineHeight ?: 7)) / 2.0
+        val y = this.y(ctx) + p.getY(ctx)
+        GLCore.color(rgba(ctx))
 
         GLCore.glString(
             string = this.text(ctx),
             x = x.toInt(),
             y = y.toInt(),
-            argb = rgba.invoke(ctx),
+            argb = rgba(ctx),
             shadow = shadow,
             centered = centered,
             poseStack = poseStack

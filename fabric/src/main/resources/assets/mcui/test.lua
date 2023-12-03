@@ -32,29 +32,81 @@ local function tprint (tbl, indent)
     return toprint
 end
 
-local frag = readFragment("saoui:themes/hex2/fragments/label.xml")
-print("Loaded " .. frag.name .. " : ")
+local labelFragment = readFragment("saoui:themes/hex2/fragments/label.xml")
+print("Loaded " .. labelFragment.name .. " : ")
 --print("\t" .. tprint(frag))
+
+local function static(value)
+    if (type(value) == "string") then
+        value = "\"" .. value .. "\""
+    else
+        value = tostring(value)
+    end
+    return {
+        expression = value,
+        cache = "STATIC"
+    }
+end
+
+local function tstatic(value, jtype)
+    if (not jtype or type(jtype) ~= "string") then
+        local vtype = type(value)
+        if (vtype == "string") then
+            jtype = "STRING"
+        elseif (vtype == "boolean") then
+            jtype = "BOOLEAN"
+        elseif (vtype == "number") then
+            jtype = "DOUBLE"
+        end
+    end
+    if (type(value) == "string") then
+        value = "\"" .. value .. "\""
+    else
+        value = tostring(value)
+    end
+    return {
+        type = jtype,
+        expression = value,
+        cache = "STATIC"
+    }
+end
 
 for i = 1, 5 do
     print("Loading " .. i .. " to " .. offset * (i - 1))
-    frag.name = frag.name .. " edited from Lua"
+    labelFragment.name = labelFragment.name .. " edited from Lua"
     --print("\t" .. )
-    frag.y = {
-        cache = "STATIC",
-        expression = tostring(offset * (i - 1))
-    }
-    frag.x = {
-        cache = "STATIC",
-        expression = tostring(20)
-    }
+    labelFragment.y = static(offset * (i - 1))
+    labelFragment.x = static(150)
     print("Loading ...")
-    local r = loadFragment("LuaTestScreen.root", frag, {
-        text = {
-            type = "STRING",
-            expression = "\"Label from Lua " .. i .. "\""
-        }
+    local centered = i % 2 == 0
+    local r = loadFragment("LuaTestScreen.root", labelFragment, {
+        text = tstatic("Label from Lua " .. i .. " centered: " .. tostring(centered)),
+        centered = tstatic(centered)
     })
     print("Loaded : " .. tostring(r))
 end
 
+labelFragment.y = "scaledheight - 64"
+labelFragment.x = static(16)
+
+loadFragment("LuaTestScreen.root", labelFragment, {
+    text = {
+        expression = "\"Dear \" + username",
+        type = "STRING"
+    },
+})
+
+labelFragment.y = "scaledheight - 32"
+
+for _, child in ipairs(labelFragment.children[2].value.children) do
+    if (child.type == "glRectangle") then
+        child.value.rgba = static(tonumber("0x076ac0FF"))
+    end
+end
+
+loadFragment("LuaTestScreen.root", labelFragment, {
+    text = {
+        expression = "\"Dear \" + username",
+        type = "STRING"
+    },
+})

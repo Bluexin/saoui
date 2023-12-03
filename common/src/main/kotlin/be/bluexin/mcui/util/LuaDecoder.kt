@@ -75,13 +75,14 @@ sealed class AbstractLuaDecoder(
             else -> {
                 queue.sortedBy { (key, _) ->
                     val index = descriptor.getElementIndex(key.asJava as String)
-                    require(index >= 0) { "Unknown key $key" }
-                    descriptor.getElementAnnotations(index)
+                    if (index < 0) Int.MAX_VALUE
+                    else descriptor.getElementAnnotations(index)
                         .firstNotNullOfOrNull { (it as? DeserializationOrder)?.order }
                         ?: Int.MAX_VALUE
                 }.let(::LinkedList)
             }
         }
+
 
         private val peekKey get() = queue.peek()?.key as? String
         override val popValue get() = queue.pop().value

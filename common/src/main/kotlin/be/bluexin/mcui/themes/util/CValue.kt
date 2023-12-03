@@ -20,13 +20,14 @@ package be.bluexin.mcui.themes.util
 import be.bluexin.mcui.api.themes.IHudDrawContext
 import be.bluexin.mcui.themes.util.serialization.*
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 
 /**
  * Wraps around custom types implementation for XML loading and value caching.
  *
  * @author Bluexin
  */
-sealed class CValue<out T : Any>(val value: (IHudDrawContext) -> T) : (IHudDrawContext) -> T {
+sealed class CValue<out T : Any>(@Transient val value: (IHudDrawContext) -> T) : (IHudDrawContext) -> T {
     override fun invoke(ctx: IHudDrawContext) = value(ctx)
 }
 

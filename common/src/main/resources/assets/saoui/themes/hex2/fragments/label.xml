@@ -27,13 +27,13 @@
                     <srcY cache="STATIC">0.0</srcY>
                     <srcW cache="STATIC">26.0</srcW>
                     <srcH cache="STATIC">64.0</srcH>
-                    <w>strWidth(text)</w>
+                    <w>strWidth(text) + 4</w>
                     <h cache="STATIC">16</h>
                 </glRectangle>
 
                 <glRectangle> <!-- right part of label -->
                     <rgba cache="STATIC">0x424242FF</rgba>
-                    <x>strWidth(text) / 2.0</x>
+                    <x>strWidth(text) / 2.0 + 4</x>
                     <srcX cache="STATIC">50.0</srcX>
                     <srcY cache="STATIC">0.0</srcY>
                     <srcW cache="STATIC">24.0</srcW>
@@ -42,7 +42,7 @@
                     <h cache="STATIC">16</h>
                 </glRectangle>
                 <glString name="centered-label">
-                    <x>-strWidth(text) / 2.0 +0.7</x>
+                    <x>-strWidth(text) / 2.0 + 2.7</x>
                     <y cache="STATIC">9.5</y>
                     <text>text</text>
                 </glString>
@@ -70,13 +70,13 @@
                     <srcY cache="STATIC">0.0</srcY>
                     <srcW cache="STATIC">26.0</srcW>
                     <srcH cache="STATIC">64.0</srcH>
-                    <w>strWidth(text)</w>
+                    <w>strWidth(text) + 4</w>
                     <h cache="STATIC">16</h>
                 </glRectangle>
 
                 <glRectangle> <!-- right part of label -->
                     <rgba cache="STATIC">0x424242FF</rgba>
-                    <x>strWidth(text) + 6</x>
+                    <x>strWidth(text) + 10</x>
                     <srcX cache="STATIC">50.0</srcX>
                     <srcY cache="STATIC">0.0</srcY>
                     <srcW cache="STATIC">24.0</srcW>
@@ -85,7 +85,7 @@
                     <h cache="STATIC">16</h>
                 </glRectangle>
                 <glString name="label">
-                    <x cache="STATIC">6.7</x>
+                    <x cache="STATIC">8.7</x>
                     <y cache="STATIC">9.5</y>
                     <text>text</text>
                 </glString>

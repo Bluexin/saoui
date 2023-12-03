@@ -1,6 +1,7 @@
 package be.bluexin.mcui.api.scripting
 
 import be.bluexin.mcui.Constants
+import be.bluexin.mcui.themes.util.LibHelper
 import net.minecraft.client.Minecraft
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.packs.resources.Resource
@@ -14,7 +15,7 @@ import org.luaj.vm2.lib.jse.JseStringLib
 
 // TODO : check BCEL for lua-to-(jvm bytecode) compilation -- see LuaJC::install
 object LuaJTest {
-    private val scriptInstructionsLimit = LuaValue.valueOf(50_000_0) // TODO: evaluate proper limit
+    private val scriptInstructionsLimit = LuaValue.valueOf(50_000) // TODO: evaluate proper limit
 
     private val serverGlobals = Globals().apply {
         load(JseBaseLib())
@@ -83,6 +84,13 @@ object LuaJTest {
                         )
                     )
                 )
+
+                try {
+                    // ew
+                    LibHelper.popContext()
+                } catch (_: Throwable) {
+                }
+
                 // TODO: currently this doesn't throw, but returns a Lua Vararg with (false, <errorMessage>) in case of failure
                 Constants.LOG.info("Read $rl : $result")
             }
