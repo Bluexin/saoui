@@ -1,20 +1,20 @@
 package be.bluexin.mcui.fabric.mixin;
 
-import be.bluexin.mcui.Constants;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.TitleScreen;
+import net.minecraft.client.gui.Gui;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(TitleScreen.class)
+@Mixin(Minecraft.class)
 public class ExampleMixin {
+    @Shadow
+    public Gui gui;
 
-    @Inject(at = @At("HEAD"), method = "init()V")
+    @Inject(at = @At("TAIL"), method = "<init>(Lnet/minecraft/client/main/GameConfig;)V")
     private void init(CallbackInfo info) {
-        Constants.LOG.info("This line is printed by an example mod mixin from Fabric!");
-        Constants.LOG.info("MC Version: {}", Minecraft.getInstance().getVersionType());
-        Constants.LOG.info("Classloader: {}", this.getClass().getClassLoader());
+//        this.gui = new McuiGui((Minecraft) this);
     }
 }

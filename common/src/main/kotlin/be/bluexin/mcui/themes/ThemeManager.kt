@@ -30,14 +30,13 @@ import net.minecraft.network.chat.HoverEvent
 import net.minecraft.network.chat.Style
 import net.minecraft.resources.ResourceLocation
 import net.minecraft.server.packs.resources.ResourceManager
-import net.minecraft.server.packs.resources.ResourceManagerReloadListener
 
 /**
  * Part of saoui by Bluexin.
  *
  * @author Bluexin
  */
-object ThemeManager : ResourceManagerReloadListener {
+object ThemeManager {
 
     // TODO: tests
     // TODO: theme versions
@@ -50,26 +49,28 @@ object ThemeManager : ResourceManagerReloadListener {
         private set
     private var isReloading = false
 
-    fun load(theme: ResourceLocation = ConfigHandler.currentTheme) {
+    fun load(resourceManager: ResourceManager, theme: ResourceLocation = ConfigHandler.currentTheme) {
         val oldTheme = ConfigHandler.currentTheme
         currentTheme = themeList[theme] ?: themeList[oldTheme] ?: themeList[ConfigHandler.DEFAULT_THEME]!!
 
         Settings.unregister(oldTheme)
         ConfigHandler.currentTheme = currentTheme.id
 
-        currentTheme.type.loader().load(currentTheme)
+        currentTheme.type.loader().load(resourceManager, currentTheme)
         reportLoading()
 
 //        if (!isReloading) GLCore.setFont(Client.mc, OptionCore.CUSTOM_FONT.isEnabled)
     }
 
-    // TODO: this supports async stuff now
-    override fun onResourceManagerReload(resourceManager: ResourceManager) {
-        themeList = ThemeDetector.listThemes()
+    fun applyData(data: Map<ResourceLocation, ThemeMetadata>, resourceManager: ResourceManager) {
+        themeList = data
         isReloading = true
-        load()
+        load(resourceManager)
         isReloading = false
     }
+
+    fun loadData(resourceManager: ResourceManager): Map<ResourceLocation, ThemeMetadata> =
+        ThemeDetector.listThemes(resourceManager)
 
     private fun reportLoading() {
         Client.mc.chatListener.let {

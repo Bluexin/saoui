@@ -1,3 +1,4 @@
 accessWidener   v1  named
 
 accessible field net/minecraft/client/Minecraft pausePartialTick F
+mutable field net/minecraft/client/Minecraft gui Lnet/minecraft/client/gui/Gui;

@@ -5,25 +5,27 @@
         <entry>
             <key>HEALTH_BOX</key>
             <value name="health box">
-                <x>doubleSetting("hud:health_offset_x")</x>
-                <y>doubleSetting("hud:health_offset_y")</y>
+                <x cache="STATIC">4.0</x>
+                <y cache="STATIC">4.0</y>
+                <!--                <x>doubleSetting("hud:health_offset_x")</x>-->
+                <!--                <y>doubleSetting("hud:health_offset_y")</y>-->
                 <children>
-                    <fragmentReference id="hex2:health_box"/>
-                    <fragmentReference id="hex2:label">
+                    <fragmentReference id="mcui.hex2:health_box"/>
+                    <fragmentReference id="mcui.hex2:label">
                         <variables>
                             <variable key="text" type="STRING" cache="STATIC">"Hello World !"</variable>
                         </variables>
                         <x cache="STATIC">60</x>
                         <y cache="STATIC">100</y>
                     </fragmentReference>
-                    <fragmentReference id="hex2:label">
+                    <fragmentReference id="mcui.hex2:label">
                         <variables>
                             <variable key="text" type="STRING">"How are you " + username + " ?"</variable>
                         </variables>
                         <x cache="STATIC">60</x>
                         <y cache="STATIC">120</y>
                     </fragmentReference>
-                    <fragmentReference id="hex2:json_label">
+                    <fragmentReference id="mcui.hex2:label">
                         <enabled>hasTargetEntity</enabled>
                         <variables>
                             <variable key="text" type="STRING">targetName + " (" + format("%.0f", targetHp) + "/" + format("%.0f", targetMaxHp) + ")"</variable>
@@ -41,7 +43,7 @@
                 <x cache="SIZE_CHANGE">scaledwidth / 2.0</x>
                 <y cache="SIZE_CHANGE">scaledheight - 64</y>
                 <children>
-                    <fragmentReference id="hex2:label">
+                    <fragmentReference id="mcui.hex2:label">
                         <variables>
                             <variable type="STRING" key="text">format("%d", level)</variable>
                             <variable type="BOOLEAN" key="centered" cache="STATIC">true</variable>
@@ -54,7 +56,7 @@
             <key>HOTBAR</key>
             <value name="hotbar">
                 <children>
-                    <fragmentReference id="hex2:hotbar"/>
+                    <fragmentReference id="mcui.hex2:hotbar"/>
                 </children>
             </value>
         </entry>
@@ -64,7 +66,7 @@
                 <x cache="SIZE_CHANGE">scaledwidth / 2 - 91</x>
                 <y cache="SIZE_CHANGE">scaledheight - 29</y>
                 <children>
-                    <fragmentReference id="hex2:jump_bar"/>
+                    <fragmentReference id="mcui.hex2:jump_bar"/>
                 </children>
             </value>
         </entry>
@@ -74,7 +76,7 @@
                 <x cache="SIZE_CHANGE">scaledwidth / 2.0</x>
                 <y cache="SIZE_CHANGE">scaledheight / 2.0</y>
                 <children>
-                    <fragmentReference id="hex2:crosshair"/>
+                    <fragmentReference id="mcui.hex2:crosshair"/>
                 </children>
             </value>
         </entry>
@@ -82,7 +84,7 @@
             <key>PARTY</key>
             <value name="party">
                 <children>
-                    <fragmentReference id="hex2:party"/>
+                    <fragmentReference id="mcui.hex2:party"/>
                 </children>
             </value>
         </entry>
@@ -90,7 +92,7 @@
             <key>EFFECTS</key>
             <value name="effects">
                 <children>
-                    <fragmentReference id="hex2:effects"/>
+                    <fragmentReference id="mcui.hex2:effects"/>
                 </children>
             </value>
         </entry>

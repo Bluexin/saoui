@@ -44,7 +44,7 @@ class GLString(
         if (!enabled(ctx)) return
         val p = parentOrZero
         val x = this.x(ctx) + p.getX(ctx)
-        val y = this.y(ctx) + p.getY(ctx)
+        val y = this.y(ctx) + p.getY(ctx) + h(ctx) / 2.0
         GLCore.color(rgba(ctx))
 
         GLCore.glString(

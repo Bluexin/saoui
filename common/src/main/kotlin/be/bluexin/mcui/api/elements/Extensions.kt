@@ -454,7 +454,7 @@ fun INeoParent.themeButton(theme: ThemeMetadata): IconLabelElement {
             set(_) = (Unit)
     }
     but.onClick { _, _ ->
-        ThemeManager.load(theme.id)
+        ThemeManager.load(Client.mc.resourceManager, theme.id)
         OptionCore.VANILLA_UI.disable()
         Client.mc.setScreen(null)
         Client.mc.setScreen(IngameMenu())

@@ -65,6 +65,9 @@ enum class StatusEffects : IIcon {
 //        GLCore.glTexturedRectV2(x.toDouble(), y.toDouble(), z.toDouble(), 16.0, 16.0, srcWidth = 16.0, srcHeight = 16.0, textureW = 16, textureH = 16)
     }
 
+    @Deprecated("For old themes compile compatibility for now", level = DeprecationLevel.ERROR)
+    fun glDraw(x: Int, y: Int, z: Float) = Unit
+
     companion object {
         fun getEffects(entity: LivingEntity): List<StatusEffects> {
             val effects = LinkedList<StatusEffects>()

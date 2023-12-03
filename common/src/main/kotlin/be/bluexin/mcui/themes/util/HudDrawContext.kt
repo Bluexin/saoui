@@ -42,18 +42,19 @@ import kotlin.math.min
  *
  * @author Bluexin
  */
-class HudDrawContext(player: Player = Client.mc.player!!, val mc: Minecraft = Client.mc, itemRenderer: ItemRenderer = Client.mc.itemRenderer) :
+class HudDrawContext(
+    val mc: Minecraft = Client.mc,
+    private val itemRenderer: ItemRenderer = mc.itemRenderer
+) :
     IHudDrawContext {
     /*
     Feel free to add anything you'd need here.
      */
-    private val username: String = player.displayName.string
-    private val itemRenderer: ItemRenderer
-    private val usernameWidth: Double = (1 + (mc.font.width(username) + 4) / 5.0) * 5
+    private val username: String get() = player.displayName.string
+    private val usernameWidth: Double get() = mc.font.width(username).toDouble()
     private val stats: PlayerStatsProvider = object : PlayerStatsProvider {
         override fun getStatsString(player: Player): List<String> = emptyList()
     }
-    private var player: Player
     private var healthStep: HealthStep? = null
     private var z = 0f
     private var hp = 0f
@@ -127,13 +128,7 @@ class HudDrawContext(player: Player = Client.mc.player!!, val mc: Minecraft = Cl
         effects = getEffects(player)
     }
 
-    override fun getPlayer(): Player {
-        return player
-    }
-
-    fun setPlayer(player: Player) {
-        this.player = player
-    }
+    override fun getPlayer(): Player = mc.player!!
 
     override fun getItemRenderer(): ItemRenderer {
         return itemRenderer
@@ -341,10 +336,5 @@ class HudDrawContext(player: Player = Client.mc.player!!, val mc: Minecraft = Cl
         null -> Unit
         is CUnit -> prop.invoke(this)
         else -> Unit
-    }
-
-    init {
-        this.player = player
-        this.itemRenderer = itemRenderer
     }
 }

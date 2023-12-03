@@ -49,8 +49,9 @@ sealed class ElementGroupParent : CachingElementParent() {
     protected var rl: ResourceLocation? = null
 
     @XmlElement
-            /*private*/ var texture: String? = null
+    private var texture: String? = null
 
+    // FIXME : an error in enabled will still crash
     override fun draw(ctx: IHudDrawContext, poseStack: PoseStack) {
         if (!enabled(ctx)) return
 
@@ -64,7 +65,7 @@ sealed class ElementGroupParent : CachingElementParent() {
                 try {
                     it.draw(ctx, poseStack)
                     true
-                } catch (e: Exception) {
+                } catch (e: Throwable) {
                     Client.showError("Error rendering child ${it.hierarchyName()}, removing from group", e)
                     false
                 }

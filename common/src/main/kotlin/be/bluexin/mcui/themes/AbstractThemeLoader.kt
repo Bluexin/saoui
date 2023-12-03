@@ -18,6 +18,7 @@ import com.helger.css.decl.visit.CSSVisitor
 import com.helger.css.decl.visit.DefaultCSSVisitor
 import com.helger.css.reader.CSSReader
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.server.packs.resources.ResourceManager
 import java.io.File
 import java.io.FileInputStream
 import java.io.InputStream
@@ -34,7 +35,7 @@ abstract class AbstractThemeLoader(protected val type: ThemeFormat) {
         }
     }
 
-    fun load(theme: ThemeMetadata) {
+    fun load(resourceManager: ResourceManager, theme: ThemeMetadata) {
 //        if (OptionCore.CUSTOM_FONT.isEnabled) GLCore.setFont(Minecraft.getMinecraft(), OptionCore.CUSTOM_FONT.isEnabled)
         Reporter.errors.clear()
 
@@ -42,7 +43,7 @@ abstract class AbstractThemeLoader(protected val type: ThemeFormat) {
 
         runCatching {
             SettingsLoader.loadSettings(theme)?.forEach(Setting<*>::register)
-            val hud = loadHud(theme.themeRoot.append("/${type.hudFileSuffix}"))
+            val hud = loadHud(resourceManager, theme.themeRoot.append("/${type.hudFileSuffix}"))
             val fragments = theme.fragments.mapValues { (_, path) -> { this.loadFragment(path) } }
 
             hud to fragments
@@ -73,8 +74,8 @@ abstract class AbstractThemeLoader(protected val type: ThemeFormat) {
     /**
      * Load [Hud] from ResourceLocation reference (using mc ResourceManager)
      */
-    fun loadHud(location: ResourceLocation): Hud =
-        Client.resourceManager.getResourceOrThrow(location).open().loadHud()
+    fun loadHud(resourceManager: ResourceManager, location: ResourceLocation): Hud =
+        resourceManager.getResourceOrThrow(location).open().loadHud()
 
     /**
      * Load [ElementGroup] from File reference

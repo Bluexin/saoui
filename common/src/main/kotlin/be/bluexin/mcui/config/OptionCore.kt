@@ -127,7 +127,7 @@ enum class OptionCore(
     val description: List<String> by lazy { listOf(I18n.get("$unformattedName.desc")) }
 
     private val setting = if (isCategory) null else BooleanSetting(
-        Settings.NS_BUILTIN, ResourceLocation(category?.name ?: "general", name),
+        Settings.NS_BUILTIN, ResourceLocation(category?.name?.lowercase() ?: "general", name.lowercase()),
         defaultValue, description.singleOrNull()
     ).register()
 

@@ -49,7 +49,7 @@ class LuaTestScreen : Screen(Component.literal("Lua Test Screen")), ElementParen
         )
         addRenderableWidget(
             Button.builder(
-                Component.literal("Load fragment")
+                Component.translatable("format_health", 10.0, 20.0)
             ) {
                 try {
                     val frag = JsonThemeLoader.loadFragment(ResourceLocation("saoui", "themes/hex2/fragments/label.xml"))

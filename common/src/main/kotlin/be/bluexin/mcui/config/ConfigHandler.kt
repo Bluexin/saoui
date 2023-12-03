@@ -27,7 +27,7 @@ import net.minecraft.resources.ResourceLocation
  * @author Bluexin
  */
 object ConfigHandler {
-    val DEFAULT_THEME = ResourceLocation(Constants.MOD_ID, "sao")
+    val DEFAULT_THEME = ResourceLocation(Constants.MOD_ID, "hex2")
 
     private fun general(key: String) = ResourceLocation("general", key)
 

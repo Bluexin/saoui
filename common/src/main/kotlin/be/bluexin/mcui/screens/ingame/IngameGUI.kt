@@ -57,7 +57,6 @@ class IngameGUI(private val mc: Minecraft) : Gui(mc, mc.itemRenderer) {
         context.setTime(partialTicks)
         context.setScaledResolution(mc.window)
         context.z = 0f//zLevel
-        context.player = mc.player!!
         GLCore.glBlend(true)
         mc.profiler.pop()
 

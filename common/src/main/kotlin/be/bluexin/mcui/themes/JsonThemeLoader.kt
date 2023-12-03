@@ -43,7 +43,12 @@ object JsonThemeLoader : AbstractThemeLoader(ThemeFormat.JSON) {
     }
 
     override fun InputStream.loadFragment(): Fragment = use {
-        gson.fromJson(it.reader(), Fragment::class.java)
+        try {
+            gson.fromJson(it.reader(), Fragment::class.java)
+        } catch (e: Throwable) {
+            Reporter += e.message.orEmpty()
+            Fragment()
+        }
     }
 
     fun export(what: ElementParent, toFile: File) {

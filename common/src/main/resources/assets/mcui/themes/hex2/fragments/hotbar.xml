@@ -2,7 +2,8 @@
              name="hotbar fragment">
     <children>
         <elementGroup name="vertical">
-            <enabled>booleanSetting("hud:vertical_hotbar")</enabled>
+            <!--            <enabled>booleanSetting("hud:vertical_hotbar")</enabled>-->
+            <enabled>true</enabled>
             <x cache="SIZE_CHANGE">scaledwidth - 24</x>
             <y cache="SIZE_CHANGE">scaledheight / 2.0</y>
             <children>
@@ -60,7 +61,8 @@
             </children>
         </elementGroup>
         <elementGroup name="horizontal">
-            <enabled>!(booleanSetting("hud:vertical_hotbar"))</enabled>
+            <!--            <enabled>!(booleanSetting("hud:vertical_hotbar"))</enabled>-->
+            <enabled>false</enabled>
             <x cache="SIZE_CHANGE">scaledwidth / 2.0</x>
             <y cache="SIZE_CHANGE">scaledheight - 24</y>
             <children>

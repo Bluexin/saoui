@@ -11,12 +11,11 @@ import kotlinx.coroutines.selects.onTimeout
 import kotlinx.coroutines.selects.select
 import net.minecraft.resources.ResourceLocation
 import org.apache.logging.log4j.LogManager
-import java.io.File
 
 object Settings {
     val NS_BUILTIN = ResourceLocation(Constants.MOD_ID, "builtin")
 
-    private val logger = LogManager.getLogger(this)
+    private val logger = LogManager.getLogger("${Constants.MOD_ID}.${javaClass.simpleName}")
 
     private val configurations: MutableMap<ResourceLocation, Configuration> = mutableMapOf()
     private val registry: MutableMap<Pair<ResourceLocation, ResourceLocation>, Setting<Any>> = mutableMapOf()
@@ -92,8 +91,8 @@ object Settings {
         if (namespace !in configurations) {
             logger.info("Registering namespace $namespace")
             val isBuiltIn = namespace == NS_BUILTIN
-            val dir = if (isBuiltIn) Constants.configDirectory else File(Constants.configDirectory, namespace.namespace)
-            dir.mkdirs()
+//            val dir = if (isBuiltIn) Constants.configDirectory else File(Constants.configDirectory, namespace.namespace)
+//            dir.mkdirs()
             // TODO
             configurations[namespace] = Services.PLATFORM.config(namespace)
             /*configurations[namespace] = Configuration(

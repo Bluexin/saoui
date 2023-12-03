@@ -22,6 +22,7 @@ import com.mojang.blaze3d.vertex.PoseStack
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.util.profiling.ProfilerFiller
 import nl.adaptivity.xmlutil.ExperimentalXmlUtilApi
 import nl.adaptivity.xmlutil.serialization.XmlElement
 import nl.adaptivity.xmlutil.serialization.XmlNamespaceDeclSpec
@@ -62,6 +63,16 @@ class Hud(
 
     fun draw(key: HudPartType, ctx: IHudDrawContext, poseStack: PoseStack) {
         this[key]?.draw(ctx, poseStack)
+    }
+
+    fun drawAll(ctx: IHudDrawContext, poseStack: PoseStack, profiler: ProfilerFiller) {
+        profiler.push(javaClass.simpleName)
+        parts.parts.forEach { (key, part) ->
+            profiler.push(key.name)
+            part.draw(ctx, poseStack)
+            profiler.pop()
+        }
+        profiler.pop()
     }
 
     @Serializable

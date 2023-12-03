@@ -1,11 +1,11 @@
 package be.bluexin.mcui.themes
 
 import be.bluexin.mcui.Constants
-import be.bluexin.mcui.util.Client
 import be.bluexin.mcui.util.append
 import net.minecraft.resources.ResourceLocation
+import net.minecraft.server.packs.resources.Resource
+import net.minecraft.server.packs.resources.ResourceManager
 import java.io.File
-import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -19,30 +19,24 @@ object ThemeDetector {
     /**
      * Returns a map of path to display name for themes
      */
-    fun listThemes(): Map<ResourceLocation, ThemeMetadata> {
-        val candidates = mutableMapOf<ResourceLocation, ThemeMetadata>()
-
-        // Built-in
-//        candidates += SAOCore.modFile.findThemePaths().extractThemesMetadata(Constants.MOD_ID)
-
-        // Loaded resource packs
-        Client.mc.resourcePackRepository.selectedPacks.map {
-            it.id to File("") // TODO : it.open()
-        }.forEach { (name, location) ->
-            candidates += location.findThemePaths().extractThemesMetadata(name)
-        }
-
-        return candidates.filterValues {
+    fun listThemes(resourceManager: ResourceManager): Map<ResourceLocation, ThemeMetadata> {
+        // TODO : variant returning the whole stack to check for overriding of critical scripts ?
+        // TODO : legacy themes
+        return resourceManager.listResources("themes") { rl ->
+            ThemeFormat.entries.any { rl.path.endsWith(it.hudFileSuffix) }
+        }.map { (key, value) ->
+            (key to value).extractThemesMetadataV2(resourceManager)
+        }.filter { (_, it) ->
             try {
                 it.type.loader()
-                    .loadHud(it.themeRoot.append("/${it.type.hudFileSuffix}"))
+                    .loadHud(resourceManager, it.themeRoot.append("/${it.type.hudFileSuffix}"))
                     .setup(emptyMap())
                 true
-            } catch (e: IOException) {
+            } catch (e: Throwable) {
                 Constants.LOG.warn("Could not load HUD for $it !", e)
                 false
             }
-        }
+        }.toMap()
     }
 
     /**
@@ -51,6 +45,7 @@ object ThemeDetector {
      * This returns a List and not a lazy Sequence to be able to close opened resources (see usages of [use]) within
      * the scope of this method.
      */
+    @Deprecated("Should not need this anymore")
     private fun File.findThemePaths(): Map<Path, List<Path>> {
         Constants.LOG.debug("Analyzing {}", this)
         return when {
@@ -116,4 +111,41 @@ object ThemeDetector {
                 }
             )
         }
+
+    /**
+     *
+     */
+    private fun Pair<ResourceLocation, Resource>.extractThemesMetadataV2(
+        resourceManager: ResourceManager
+    ): Pair<ResourceLocation, ThemeMetadata> {
+        val (hudRl, hud) = this
+        val themeRoot = hudRl.parent
+        val themeName = themeRoot.path.substringAfterLast('/').let {
+            if (it != "themes") it else {
+                val packName = hud.sourcePackId()
+                Constants.LOG.warn("Theme pack {} is using the old theme structure !", packName)
+                packName.removeSuffix(".zip")
+            }
+        }
+        val themeId = ResourceLocation(themeRoot.namespace, themeName)
+        Constants.LOG.debug("Found candidate theme {} from {}", themeId, themeRoot)
+        val fragments = resourceManager.listResources(themeRoot.path + "/fragments") {
+            it.namespace == themeRoot.namespace && ThemeFormat.fromFileExtension(it.path) != null
+        }.map { (rl, _) ->
+            ResourceLocation(
+                themeId.toString().replace(':', '.'),
+                rl.path.substringAfter("/fragments/").substringBeforeLast('.')
+            ) to rl
+        }.toMap()
+        return themeId to ThemeMetadata(
+            id = themeId,
+            themeRoot = themeRoot,
+            name = themeName,
+            type = ThemeFormat.fromFileExtension(hudRl.path)!!,
+            fragments = fragments
+        )
+    }
+
+    private val String.parent get() = substringBeforeLast('/')
+    private val ResourceLocation.parent get() = ResourceLocation(namespace, path.parent)
 }

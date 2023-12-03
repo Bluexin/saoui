@@ -17,6 +17,7 @@
 
 package be.bluexin.mcui.themes.elements
 
+import be.bluexin.mcui.GLCore
 import be.bluexin.mcui.api.themes.IHudDrawContext
 import be.bluexin.mcui.themes.util.CInt
 import com.mojang.blaze3d.vertex.PoseStack
@@ -70,6 +71,7 @@ class GLHotbarItem(
             poseStack.translate((-(x + 8)).toFloat(), (-(y + 12)).toFloat(), 0.0f)
         }
 
+        GLCore.color(0xFFFFFFFFu.toInt())
         ctx.itemRenderer.renderGuiItem(poseStack, stack, x, y)
 
         if (f > 0.0f) poseStack.popPose()

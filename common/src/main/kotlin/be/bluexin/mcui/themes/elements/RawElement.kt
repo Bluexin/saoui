@@ -24,6 +24,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import net.minecraft.resources.ResourceLocation
+import nl.adaptivity.xmlutil.serialization.XmlSerialName
 
 /**
  * Part of saoui by Bluexin, released under GNU GPLv3.
@@ -32,7 +33,10 @@ import net.minecraft.resources.ResourceLocation
  */
 @Serializable
 @SerialName("rawElement")
-class RawElement(private var expression: CUnit) : Element() {
+class RawElement(
+    @XmlSerialName("expression")
+    private var expression: CUnit
+) : Element() {
 
     @Transient
     private var rl: ResourceLocation? = null
