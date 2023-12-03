@@ -27,6 +27,8 @@ import be.bluexin.mcui.platform.Services
 import be.bluexin.mcui.themes.util.typeadapters.JelType
 import be.bluexin.mcui.util.ColorUtil
 import be.bluexin.mcui.util.HealthStep
+import be.bluexin.mcui.util.math.ceilInt
+import be.bluexin.mcui.util.math.floorInt
 import gnu.jel.CompilationException
 import gnu.jel.DVMap
 import gnu.jel.Library
@@ -43,9 +45,26 @@ object LibHelper {
     private val contextResolver = ContextAwareDVMap(emptyContext)
 
     val LIB: Library by lazy {
-        val staticLib = arrayOf(Math::class.java, HealthStep::class.java, StatusEffects::class.java, OptionCore::class.java, Settings.JelWrappers::class.java, ColorUtil::class.java, I18n::class.java)
+        val staticLib = arrayOf(
+            Math::class.java,
+            HealthStep::class.java,
+            StatusEffects::class.java,
+            OptionCore::class.java,
+            Settings.JelWrappers::class.java,
+            ColorUtil::class.java,
+            I18n::class.java,
+            McuiStaticLib::class.java
+        )
         val dynLib = arrayOf(IHudDrawContext::class.java)
-        val dotClasses = arrayOf(String::class.java, IOption::class.java, List::class.java, StatusEffects::class.java, HealthStep::class.java, ColorUtil::class.java, Language::class.java)
+        val dotClasses = arrayOf(
+            String::class.java,
+            IOption::class.java,
+            List::class.java,
+            StatusEffects::class.java,
+            HealthStep::class.java,
+            ColorUtil::class.java,
+            Language::class.java
+        )
         Library(staticLib, dynLib, dotClasses, contextResolver, null)
     }
 
@@ -80,6 +99,21 @@ object LibHelper {
         get() = StackWalker.getInstance().walk {
             it.skip(2).limit(6).toList()
     }
+}
+
+@Suppress("unused") // exposed via JEL
+object McuiStaticLib {
+    @JvmStatic
+    fun iceil(n: Double) = ceilInt(n)
+
+    @JvmStatic
+    fun iceil(n: Float) = ceilInt(n)
+
+    @JvmStatic
+    fun ifloor(n: Double) = floorInt(n)
+
+    @JvmStatic
+    fun ifloor(n: Float) = floorInt(n)
 }
 
 private class ContextAwareDVMap(

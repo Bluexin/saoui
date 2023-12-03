@@ -1,20 +1,26 @@
 package be.bluexin.mcui.fabric.mixin;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
+import net.minecraft.locale.Language;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Mutable;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(Minecraft.class)
-public class ExampleMixin {
-    @Shadow
-    public Gui gui;
+import java.util.regex.Pattern;
 
-    @Inject(at = @At("TAIL"), method = "<init>(Lnet/minecraft/client/main/GameConfig;)V")
-    private void init(CallbackInfo info) {
-//        this.gui = new McuiGui((Minecraft) this);
+@Mixin(Language.class)
+public class ExampleMixin {
+
+    @Mutable
+    @Final
+    @Shadow
+    private static Pattern UNSUPPORTED_FORMAT_PATTERN;
+
+    @Inject(at = @At("TAIL"), method = "<clinit>")
+    private static void init(CallbackInfo info) {
+//        UNSUPPORTED_FORMAT_PATTERN = Pattern.compile("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
     }
 }
