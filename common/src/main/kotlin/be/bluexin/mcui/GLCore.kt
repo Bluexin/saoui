@@ -54,6 +54,15 @@ object GLCore {
         color(color.rgba)
     }
 
+    fun getShaderColor() = RenderSystem.getShaderColor()
+
+    inline fun withShaderColor(red: Float, green: Float, blue: Float, alpha: Float = 1f, block: () -> Unit) {
+        val (r, g, b, a) = getShaderColor()
+        color(red, green, blue, alpha)
+        block()
+        color(r, g, b, a)
+    }
+
     /**
      * Red from RGBA
      */
@@ -79,6 +88,16 @@ object GLCore {
         color(red, green, blue, alpha)
     }
 
+    inline fun withColor(rgba: Int?, block: () -> Unit) {
+        if (rgba == null) block()
+        else {
+            val (r, g, b, a) = getShaderColor()
+            color(rgba)
+            block()
+            color(r, g, b, a)
+        }
+    }
+
     fun color(rgba: Int, lightLevel: Float) {
         val (red, green, blue, alpha) = rgba
         val light = max(lightLevel, 0.15f)
@@ -101,7 +120,7 @@ object GLCore {
         string: String,
         x: Int,
         y: Int,
-        argb: Int,
+        rgba: Int,
         shadow: Boolean = false,
         centered: Boolean = false,
         poseStack: PoseStack
@@ -111,13 +130,13 @@ object GLCore {
             string,
             x.toFloat(),
             y.toFloat() - if (centered) font.lineHeight / 2f else 0f,
-            glFontColor(argb)
+            glFontColor(rgba)
         ) else font?.draw(
             poseStack,
             string,
             x.toFloat(),
             y.toFloat() - if (centered) font.lineHeight / 2f else 0f,
-            glFontColor(argb)
+            glFontColor(rgba)
         )
     }
 
@@ -126,20 +145,20 @@ object GLCore {
         string: String,
         x: Int,
         y: Int,
-        argb: Int,
+        rgba: Int,
         shadow: Boolean = false,
         centered: Boolean = false,
         poseStack: PoseStack
     ) {
-        glString(glFont, string, x, y, argb, shadow, centered, poseStack)
+        glString(glFont, string, x, y, rgba, shadow, centered, poseStack)
     }
 
     @JvmOverloads
     fun glString(
-        string: String, pos: Vec2d, argb: Int, shadow: Boolean = false, centered: Boolean = false,
+        string: String, pos: Vec2d, rgba: Int, shadow: Boolean = false, centered: Boolean = false,
         poseStack: PoseStack
     ) {
-        glString(string, pos.xi, pos.yi, argb, shadow, centered, poseStack)
+        glString(string, pos.xi, pos.yi, rgba, shadow, centered, poseStack)
     }
 
     fun setFont(mc: Minecraft, custom: Boolean) {

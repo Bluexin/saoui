@@ -38,7 +38,7 @@ import nl.adaptivity.xmlutil.serialization.XmlSerialName
 sealed class GLRectangleParent : Element() {
     @SerialName("rgba")
     @XmlSerialName("rgba")
-    protected var rgba = CInt.WHITE
+    protected var rgba: CInt? = null
     @SerialName("srcX")
     @XmlSerialName("srcX")
     protected var srcX= CDouble.ZERO
@@ -71,15 +71,16 @@ sealed class GLRectangleParent : Element() {
         val z = this.z(ctx) + p.getZ(ctx) + ctx.z
 
         GLCore.glBlend(true)
-        GLCore.color(this.rgba(ctx))
-        if (this.rl != null) GLCore.glBindTexture(this.rl!!)
-        GLCore.glTexturedRectV2(
-            x, y, z,
-            w(ctx), h(ctx),
-            srcX(ctx), srcY(ctx),
-            srcW(ctx), srcH(ctx),
-            poseStack = poseStack
-        )
+        GLCore.withColor(rgba?.let { it(ctx) }) {
+            if (this.rl != null) GLCore.glBindTexture(this.rl!!)
+            GLCore.glTexturedRectV2(
+                x, y, z,
+                w(ctx), h(ctx),
+                srcX(ctx), srcY(ctx),
+                srcW(ctx), srcH(ctx),
+                poseStack = poseStack
+            )
+        }
     }
 
     override fun setup(parent: ElementParent, fragments: Map<ResourceLocation, () -> Fragment>): Boolean {

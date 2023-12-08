@@ -19,6 +19,7 @@ package be.bluexin.mcui.themes.elements
 
 import be.bluexin.mcui.GLCore
 import be.bluexin.mcui.api.themes.IHudDrawContext
+import be.bluexin.mcui.themes.util.CInt
 import be.bluexin.mcui.themes.util.CString
 import com.mojang.blaze3d.vertex.PoseStack
 import kotlinx.serialization.SerialName
@@ -33,7 +34,6 @@ import nl.adaptivity.xmlutil.serialization.XmlSerialName
 @Serializable
 @SerialName("glString")
 class GLString(
-    @SerialName("text")
     @XmlSerialName("text")
     private var text: CString,
     private val shadow: Boolean = true,
@@ -45,13 +45,14 @@ class GLString(
         val p = parentOrZero
         val x = this.x(ctx) + p.getX(ctx)
         val y = this.y(ctx) + p.getY(ctx) + h(ctx) / 2.0
-        GLCore.color(rgba(ctx))
+        val rgba = (rgba ?: CInt.WHITE)(ctx)
+//        rgba?.let { GLCore.color(it(ctx)) }
 
         GLCore.glString(
             string = this.text(ctx),
             x = x.toInt(),
             y = y.toInt(),
-            argb = rgba(ctx),
+            rgba = rgba,
             shadow = shadow,
             centered = centered,
             poseStack = poseStack
