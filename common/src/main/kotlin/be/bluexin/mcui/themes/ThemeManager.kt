@@ -20,7 +20,6 @@ package be.bluexin.mcui.themes
 import be.bluexin.mcui.commands.GeneralCommands
 import be.bluexin.mcui.commands.McuiCommand
 import be.bluexin.mcui.config.ConfigHandler
-import be.bluexin.mcui.config.Settings
 import be.bluexin.mcui.themes.elements.Hud
 import be.bluexin.mcui.util.Client
 import net.minecraft.ChatFormatting
@@ -53,7 +52,6 @@ object ThemeManager {
         val oldTheme = ConfigHandler.currentTheme
         currentTheme = themeList[theme] ?: themeList[oldTheme] ?: themeList[ConfigHandler.DEFAULT_THEME]!!
 
-        Settings.unregister(oldTheme)
         ConfigHandler.currentTheme = currentTheme.id
 
         currentTheme.type.loader().load(resourceManager, currentTheme)

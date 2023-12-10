@@ -1,14 +1,18 @@
 package be.bluexin.mcui.config
 
 import be.bluexin.mcui.Constants
+import be.bluexin.mcui.mixin.ModConfigMixin
 import net.minecraft.resources.ResourceLocation
 import net.minecraftforge.common.ForgeConfigSpec
+import net.minecraftforge.fml.config.ModConfig
+import java.nio.file.Path
 
 interface Configuration {
     fun register(key: ResourceLocation, default: String, comment: String?, type: Property.Type): Property
     fun get(key: ResourceLocation): Property?
     fun save()
-    fun build()
+    fun build(old: Configuration?)
+    fun clear()
 }
 
 interface Property {
@@ -29,6 +33,7 @@ abstract class ConfigSpecBasedConfig(
     private val specBuilder = ForgeConfigSpec.Builder()
     protected val spec: ForgeConfigSpec by lazy(specBuilder::build) // Might be fine, we'll see :)
     private val props = mutableMapOf<ResourceLocation, Property>()
+    protected lateinit var modConfig: ModConfig
 
     override fun register(
         key: ResourceLocation, default: String, comment: String?, type: Property.Type
@@ -46,6 +51,29 @@ abstract class ConfigSpecBasedConfig(
     override fun get(key: ResourceLocation) = props[key]
 
     override fun save() = spec.save()
+
+    override fun build(old: Configuration?) {
+        when (val oldConfig = (old as ConfigSpecBasedConfig?)?.modConfig) {
+            null -> doRegister()
+            is ModConfigMixin -> {
+                oldConfig.`mcui$setSpec`(spec)
+                val configData = oldConfig.handler.reader(basePath).apply(oldConfig)
+                oldConfig.`mcui$setConfigData`(configData)
+                oldConfig.save()
+                modConfig = oldConfig
+            }
+
+            else -> Constants.LOG.error("Unknown $oldConfig - expected to implement ModConfigMixin")
+        }
+    }
+
+    override fun clear() {
+        modConfig.handler.unload(basePath, modConfig)
+        modConfig.save()
+    }
+
+    protected abstract fun doRegister()
+    protected abstract val basePath: Path
 
     protected val fileName: String by lazy {
         buildString {

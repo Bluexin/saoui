@@ -21,6 +21,6 @@ object CommonClass {
         )
         OptionCore.Initializer.registerSettings()
         ConfigHandler.registerSettings()
-        Settings.build(Settings.NS_BUILTIN)
+        Settings.build(Settings.NS_BUILTIN, null)
     }
 }

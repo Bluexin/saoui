@@ -67,8 +67,13 @@ object Settings {
         }
     }
 
-    fun build(namespace: ResourceLocation) {
-        configurations[namespace]?.build()
+    fun build(namespace: ResourceLocation, old: Configuration?) {
+        configurations[namespace]?.build(old)
+    }
+
+    fun clear(namespace: ResourceLocation): Configuration? = configurations.remove(namespace)?.also {
+        it.clear()
+        logger.info("Clearing $namespace")
     }
 
     private fun notifyUpdate(namespace: ResourceLocation) {
@@ -144,11 +149,6 @@ object Settings {
     ): Setting<Any>? = registry[namespace to key] ?: run {
         logger.warn("Trying to $operation value from unregistered setting : $key in $namespace")
         null
-    }
-
-    fun unregister(oldTheme: ResourceLocation) {
-        logger.info("Unregistering $oldTheme")
-        configurations -= oldTheme
     }
 
     @Suppress("unused", "MemberVisibilityCanBePrivate") // Exposed to JEL
