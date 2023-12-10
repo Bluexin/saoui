@@ -15,6 +15,6 @@ class McuiGui(private val mc: Minecraft) : Gui(mc, mc.itemRenderer) {
 
     override fun render(poseStack: PoseStack, partialTick: Float) {
         context.setTime(partialTick)
-        ThemeManager.HUD.drawAll(context, poseStack, mc.profiler)
+        ThemeManager.HUD.drawAll(context, poseStack)
     }
 }

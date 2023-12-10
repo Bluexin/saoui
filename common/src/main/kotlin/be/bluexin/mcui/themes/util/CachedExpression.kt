@@ -20,6 +20,8 @@ package be.bluexin.mcui.themes.util
 import be.bluexin.mcui.api.themes.IHudDrawContext
 import be.bluexin.mcui.effects.StatusEffects
 import be.bluexin.mcui.util.HealthStep
+import net.minecraft.util.profiling.InactiveProfiler
+import net.minecraft.util.profiling.ProfilerFiller
 import net.minecraft.world.entity.LivingEntity
 
 /**
@@ -115,6 +117,7 @@ class StaticCachedExpression<out T: Any>(
         override fun getIntProperty(name: String) = 0
         override fun getBooleanProperty(name: String) = false
         override fun getUnitProperty(name: String) = Unit
+        override fun getProfiler(): ProfilerFiller = InactiveProfiler.INSTANCE
     }
 
     override fun invoke(ctx: IHudDrawContext) = cache

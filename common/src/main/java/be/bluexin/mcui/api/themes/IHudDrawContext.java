@@ -23,6 +23,7 @@ import be.bluexin.mcui.themes.util.CValue;
 import be.bluexin.mcui.util.HealthStep;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 
@@ -387,6 +388,8 @@ public interface IHudDrawContext {
      * @return health step of the target
      */
     HealthStep targetHealthStep();
+
+    ProfilerFiller getProfiler();
 
     /**
      * JEL access

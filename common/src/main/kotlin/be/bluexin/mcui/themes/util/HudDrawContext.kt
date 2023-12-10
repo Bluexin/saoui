@@ -31,6 +31,7 @@ import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.Font
 import net.minecraft.client.player.LocalPlayer
 import net.minecraft.client.renderer.entity.ItemRenderer
+import net.minecraft.util.profiling.ProfilerFiller
 import net.minecraft.world.entity.LivingEntity
 import net.minecraft.world.entity.player.Player
 import java.lang.ref.WeakReference
@@ -45,8 +46,7 @@ import kotlin.math.min
 class HudDrawContext(
     val mc: Minecraft = Client.mc,
     private val itemRenderer: ItemRenderer = mc.itemRenderer
-) :
-    IHudDrawContext {
+) : IHudDrawContext {
     /*
     Feel free to add anything you'd need here.
      */
@@ -337,4 +337,13 @@ class HudDrawContext(
         is CUnit -> prop.invoke(this)
         else -> Unit
     }
+
+    override fun getProfiler(): ProfilerFiller = mc.profiler
+}
+
+inline fun <T> IHudDrawContext.profile(key: String, body: () -> T): T {
+    profiler.push(key)
+    val ret = body()
+    profiler.pop()
+    return ret
 }

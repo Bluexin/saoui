@@ -18,11 +18,11 @@
 package be.bluexin.mcui.themes.elements
 
 import be.bluexin.mcui.api.themes.IHudDrawContext
+import be.bluexin.mcui.themes.util.profile
 import com.mojang.blaze3d.vertex.PoseStack
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import net.minecraft.resources.ResourceLocation
-import net.minecraft.util.profiling.ProfilerFiller
 import nl.adaptivity.xmlutil.ExperimentalXmlUtilApi
 import nl.adaptivity.xmlutil.serialization.XmlElement
 import nl.adaptivity.xmlutil.serialization.XmlNamespaceDeclSpec
@@ -65,14 +65,14 @@ class Hud(
         this[key]?.draw(ctx, poseStack)
     }
 
-    fun drawAll(ctx: IHudDrawContext, poseStack: PoseStack, profiler: ProfilerFiller) {
-        profiler.push(javaClass.simpleName)
-        parts.parts.forEach { (key, part) ->
-            profiler.push(key.name)
-            part.draw(ctx, poseStack)
-            profiler.pop()
+    fun drawAll(ctx: IHudDrawContext, poseStack: PoseStack) {
+        ctx.profile(javaClass.simpleName) {
+            parts.parts.forEach { (key, part) ->
+                ctx.profile(key.name) {
+                    part.draw(ctx, poseStack)
+                }
+            }
         }
-        profiler.pop()
     }
 
     @Serializable

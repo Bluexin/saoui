@@ -19,6 +19,7 @@ package be.bluexin.mcui.themes.elements
 
 import be.bluexin.mcui.api.themes.IHudDrawContext
 import be.bluexin.mcui.themes.util.CInt
+import be.bluexin.mcui.themes.util.profile
 import com.mojang.blaze3d.vertex.PoseStack
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -42,8 +43,10 @@ class RepetitionGroup(
 
         val m = amount(ctx)
         for (i in 0 until m) {
-            ctx.setI(i)
-            super.draw(ctx, poseStack)
+            ctx.profile(i.toString()) {
+                ctx.setI(i)
+                super.draw(ctx, poseStack)
+            }
         }
     }
 }

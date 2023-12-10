@@ -21,6 +21,7 @@ import be.bluexin.mcui.Constants
 import be.bluexin.mcui.GLCore
 import be.bluexin.mcui.api.themes.IHudDrawContext
 import be.bluexin.mcui.platform.Services
+import be.bluexin.mcui.themes.util.profile
 import be.bluexin.mcui.util.Client
 import com.mojang.blaze3d.vertex.PoseStack
 import kotlinx.serialization.SerialName
@@ -60,18 +61,24 @@ sealed class ElementGroupParent : CachingElementParent() {
 
         if (this.rl != null) GLCore.glBindTexture(this.rl!!)
 
-        return if (Services.PLATFORM.isDevelopmentEnvironment) {
+        if (Services.PLATFORM.isDevelopmentEnvironment) {
             this.children = this.children.filter {
-                try {
-                    it.draw(ctx, poseStack)
-                    true
-                } catch (e: Throwable) {
-                    Client.showError("Error rendering child ${it.hierarchyName()}, removing from group", e)
-                    false
+                ctx.profile(it.name) {
+                    try {
+                        it.draw(ctx, poseStack)
+                        true
+                    } catch (e: Throwable) {
+                        Client.showError("Error rendering child ${it.hierarchyName()}, removing from group", e)
+                        false
+                    }
                 }
             }.let(::Children)
         } else {
-            this.children.forEach { it.draw(ctx, poseStack) }
+            this.children.forEach {
+                ctx.profile(it.name) {
+                    it.draw(ctx, poseStack)
+                }
+            }
         }
     }
 
