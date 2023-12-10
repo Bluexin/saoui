@@ -24,42 +24,28 @@ object Settings {
         logger.warn("Undelivered $it")
     }
 
-    operator fun get(namespace: ResourceLocation, key: ResourceLocation): Any? {
-        val (config, setting) = getConfigAndSetting(namespace, key, "get") ?: return null
-        val (_, _, default, comment, read, write, validate, type) = setting
+    operator fun get(namespace: ResourceLocation, key: ResourceLocation): Any? =
+        getSetting(namespace, key, "get")
+            ?.let(this::get)
 
-        val property = config.get(key, write(default), comment, type)
-        return read(property.string)?.takeIf(validate) ?: default
-    }
-
-    operator fun <T : Any> get(setting: Setting<T>): T {
-        val (_, key, default, comment, read, write, validate, type) = setting
-        val config = getConfig(setting.namespace, "get") ?: return default
-
-        val property = try {
-            config.get(key, write(default), comment, type)
-        } catch (e: Exception) {
-            throw e
-        }
-        return read(property.string)?.takeIf(validate) ?: default
-    }
+    operator fun <T : Any> get(setting: Setting<T>): T =
+        setting.read(setting.property.string)
+            ?.takeIf(setting::validate)
+            ?: setting.defaultValue
 
     operator fun set(namespace: ResourceLocation, key: ResourceLocation, value: String) {
-        val (config, setting) = getConfigAndSetting(namespace, key, "set") ?: return
-        val (_, _, default, comment, read, write, validate, type) = setting
+        val setting = getSetting(namespace, key, "set") ?: return
 
-        val property = config.get(key, write(default), comment, type)
-        read(value)?.takeIf(validate)?.let { property.set(value) }
-        notifyUpdate(namespace)
+        setting.read(value)?.takeIf(setting::validate)?.let {
+            set(setting, it)
+        }
     }
 
     operator fun <T : Any> set(setting: Setting<T>, value: T) {
-        val (namespace, key, default, comment, _, write, validate, type) = setting
-        val config = getConfig(namespace, "set") ?: return
-
-        val property = config.get(key, write(default), comment, type)
-        value.takeIf(validate)?.let { property.set(write(value)) }
-        notifyUpdate(namespace)
+        value.takeIf(setting::validate)?.let {
+            setting.property.set(setting.write(value))
+            notifyUpdate(setting.namespace)
+        }
     }
 
     fun isValid(namespace: ResourceLocation, key: ResourceLocation, value: String): Boolean {
@@ -71,14 +57,18 @@ object Settings {
         return read(value)?.takeIf(validate) != null
     }
 
-    fun register(setting: Setting<*>) {
-        registerNamespace(setting.namespace)
+    fun register(setting: Setting<*>): Property {
+        val config = registerNamespace(setting.namespace)
         logger.info("Registering Setting ${setting.namespace}/${setting.key}")
         @Suppress("UNCHECKED_CAST")
         registry[setting.namespace to setting.key] = setting as Setting<Any>
-        val read = this[setting]
-        logger.info("Read value $read")
-        notifyUpdate(setting.namespace)
+        return config.register(setting.key, setting.write(setting.defaultValue), setting.comment, setting.type).also {
+            notifyUpdate(setting.namespace)
+        }
+    }
+
+    fun build(namespace: ResourceLocation) {
+        configurations[namespace]?.build()
     }
 
     private fun notifyUpdate(namespace: ResourceLocation) {
@@ -87,19 +77,10 @@ object Settings {
         }
     }
 
-    private fun registerNamespace(namespace: ResourceLocation) {
-        if (namespace !in configurations) {
+    private fun registerNamespace(namespace: ResourceLocation): Configuration {
+        return configurations.getOrPut(namespace) {
             logger.info("Registering namespace $namespace")
-            val isBuiltIn = namespace == NS_BUILTIN
-//            val dir = if (isBuiltIn) Constants.configDirectory else File(Constants.configDirectory, namespace.namespace)
-//            dir.mkdirs()
-            // TODO
-            configurations[namespace] = Services.PLATFORM.config(namespace)
-            /*configurations[namespace] = Configuration(
-                File(dir, if (isBuiltIn) "main.cfg" else "${namespace.path}.cfg")
-            ).also {
-                logger.info("Loaded namespace $namespace from ${it.configFile}")
-            }*/
+            Services.PLATFORM.config(namespace)
         }
     }
 
@@ -158,11 +139,19 @@ object Settings {
         return config to setting
     }
 
+    private fun getSetting(
+        namespace: ResourceLocation, key: ResourceLocation, operation: String
+    ): Setting<Any>? = registry[namespace to key] ?: run {
+        logger.warn("Trying to $operation value from unregistered setting : $key in $namespace")
+        null
+    }
+
     fun unregister(oldTheme: ResourceLocation) {
         logger.info("Unregistering $oldTheme")
         configurations -= oldTheme
     }
 
+    @Suppress("unused") // Exposed to JEL
     object JelWrappers {
         /**
          * Easy getters to use with JEL.
@@ -172,14 +161,19 @@ object Settings {
          */
         @JvmStatic
         fun setting(key: String): Any? = Settings[ConfigHandler.currentTheme, ResourceLocation(key)]
+
         @JvmStatic
         fun stringSetting(key: String): String = setting(key) as String
+
         @JvmStatic
         fun booleanSetting(key: String): Boolean = setting(key) as Boolean
+
         @JvmStatic
         fun intSetting(key: String): Int = setting(key) as Int
+
         @JvmStatic
         fun doubleSetting(key: String): Double = setting(key) as Double
+
         @JvmStatic
         fun resourceLocationSetting(key: String): ResourceLocation = setting(key) as ResourceLocation
     }

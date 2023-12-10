@@ -12,16 +12,19 @@ import net.minecraft.resources.ResourceLocation
 import kotlin.jvm.optionals.getOrNull
 
 object SettingsLoader {
+    private val rlType = object : TypeToken<ResourceLocation>() {}.type
+    private val listType = object : TypeToken<List<Setting<*>>>() {}.type
+
     fun loadSettings(theme: ThemeMetadata): List<Setting<*>>? {
         return Client.resourceManager.getResource(theme.themeRoot.append("/settings.json"))
             .map<List<Setting<*>>> { resource ->
                 try {
                     JsonSettingAdapterFactory.currentNamespace.set(theme.id)
                     resource.open().use {
-                        GsonBuilder().registerTypeAdapter(
-                            object : TypeToken<ResourceLocation>() {}.type,
-                            JsonResourceLocationTypeAdapter()
-                        ).create().fromJson(it.reader(), object : TypeToken<List<Setting<*>>>() {}.type)
+                        GsonBuilder()
+                            .registerTypeAdapter(rlType, JsonResourceLocationTypeAdapter())
+                            .create()
+                            .fromJson(it.reader(), listType)
                     }
                 } finally {
                     JsonSettingAdapterFactory.currentNamespace.remove()

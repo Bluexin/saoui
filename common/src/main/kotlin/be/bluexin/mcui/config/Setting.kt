@@ -12,6 +12,9 @@ sealed class Setting<T : Any>(
     val defaultValue: T,
     val comment: String?
 ) {
+    lateinit var property: Property
+        private set
+
     operator fun component1() = namespace
     operator fun component2() = key
     operator fun component3() = defaultValue
@@ -27,7 +30,9 @@ sealed class Setting<T : Any>(
 
     open val type get() = Property.Type.STRING
 
-    fun register() = this.also(Settings::register)
+    fun register() {
+        property = Settings.register(this)
+    }
 
     abstract fun read(serialized: String): T?
     abstract fun write(value: T): String

@@ -1,6 +1,8 @@
 package be.bluexin.mcui
 
+import be.bluexin.mcui.config.ConfigHandler
 import be.bluexin.mcui.config.OptionCore
+import be.bluexin.mcui.config.Settings
 import be.bluexin.mcui.platform.Services
 
 // This class is part of the common project meaning it is shared between all supported loaders. Code written here can only
@@ -17,6 +19,8 @@ object CommonClass {
             Services.PLATFORM.platformName,
             Services.PLATFORM.environmentName
         )
-        OptionCore.entries
+        OptionCore.Initializer.registerSettings()
+        ConfigHandler.registerSettings()
+        Settings.build(Settings.NS_BUILTIN)
     }
 }

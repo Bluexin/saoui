@@ -6,6 +6,7 @@ import be.bluexin.mcui.commands.McuiCommand
 import be.bluexin.mcui.screens.ingame.McuiGui
 import be.bluexin.mcui.themes.ThemeManager
 import be.bluexin.mcui.themes.ThemeMetadata
+import fuzs.forgeconfigapiport.api.config.v2.ModConfigEvents
 import net.fabricmc.api.ClientModInitializer
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper
@@ -21,6 +22,13 @@ import java.util.concurrent.Executor
 @Suppress("unused")
 object MCUIFabricCore : ClientModInitializer {
     override fun onInitializeClient() {
+        ModConfigEvents.loading(Constants.MOD_ID).register {
+            Constants.LOG.info("Loading config ${it.fullPath}")
+        }
+        ModConfigEvents.reloading(Constants.MOD_ID).register {
+            Constants.LOG.info("Reloading config ${it.fullPath}")
+        }
+
         CommonClass.init()
         CommandRegistrationCallback.EVENT.register { commandDispatcher, _, _ ->
             McuiCommand.setup(commandDispatcher)

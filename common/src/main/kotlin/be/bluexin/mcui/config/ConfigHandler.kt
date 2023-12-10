@@ -20,6 +20,7 @@ package be.bluexin.mcui.config
 import be.bluexin.mcui.Constants
 import be.bluexin.mcui.config.Settings.NS_BUILTIN
 import net.minecraft.resources.ResourceLocation
+import java.util.*
 
 /**
  * Part of SAOUI
@@ -31,16 +32,25 @@ object ConfigHandler {
 
     private fun general(key: String) = ResourceLocation("general", key)
 
-    var lastVersion by StringSetting(NS_BUILTIN, general("last_update"), "nothing").register()
-    var ignoreUpdate by BooleanSetting(NS_BUILTIN, general("ignore_update"), true).register()
-    var enableDebug by BooleanSetting(NS_BUILTIN, general("debug"), false).register()
-    var debugFakePT by IntSetting(
+    private val allSettings = LinkedList<Setting<*>>()
+    private fun <T : Setting<*>> wrap(setting: T) = setting.also(allSettings::add)
+
+    var lastVersion by wrap(StringSetting(NS_BUILTIN, general("last_update"), "nothing"))
+    var ignoreUpdate by wrap(BooleanSetting(NS_BUILTIN, general("ignore_update"), true))
+    var enableDebug by wrap(BooleanSetting(NS_BUILTIN, general("debug"), false))
+    var debugFakePT by wrap(IntSetting(
         NS_BUILTIN, general("debug_fake_pt"), 0, "Amount of fake party members, 0 to disable."
-    ) { it in 0..10 }.register()
-    var currentTheme by ResourceLocationSetting(
+    ) { it in 0..10 })
+    var currentTheme by wrap(
+        ResourceLocationSetting(
         NS_BUILTIN, general("current_theme"), DEFAULT_THEME,
         "The currently selected theme. If invalid or unavailable, this will default to the builtin sao theme"
-    ).register()
+        )
+    )
+
+    fun registerSettings() {
+        allSettings.forEach(Setting<*>::register)
+    }
 
     // Added for JNLua
     var forceNativeLibPlatform = ""

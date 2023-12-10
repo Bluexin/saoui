@@ -129,7 +129,7 @@ enum class OptionCore(
     private val setting = if (isCategory) null else BooleanSetting(
         Settings.NS_BUILTIN, ResourceLocation(category?.name?.lowercase() ?: "general", name.lowercase()),
         defaultValue, description.singleOrNull()
-    ).register()
+    )
 
     private var value: Boolean = defaultValue
         get() = setting?.let(Settings::get) ?: field
@@ -180,6 +180,12 @@ enum class OptionCore(
         get() = entries.filter { it.category == this }
 
     operator fun invoke() = isEnabled
+
+    object Initializer {
+        fun registerSettings() = entries.forEach {
+            it.setting?.register()
+        }
+    }
 
     companion object {
 
