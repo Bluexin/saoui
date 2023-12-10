@@ -50,12 +50,14 @@ object LibHelper {
             HealthStep::class.java,
             StatusEffects::class.java,
             OptionCore::class.java,
-            Settings.JelWrappers::class.java,
             ColorUtil::class.java,
             I18n::class.java,
             McuiStaticLib::class.java
         )
-        val dynLib = arrayOf(IHudDrawContext::class.java)
+        val dynLib = arrayOf(
+            IHudDrawContext::class.java,
+            Settings.JelWrappers::class.java
+        )
         val dotClasses = arrayOf(
             String::class.java,
             IOption::class.java,

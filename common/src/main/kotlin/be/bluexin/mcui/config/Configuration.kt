@@ -34,14 +34,14 @@ abstract class ConfigSpecBasedConfig(
         key: ResourceLocation, default: String, comment: String?, type: Property.Type
     ) = props.getOrPut(key) {
         specBuilder.push(key.namespace)
-            comment?.let(specBuilder::comment)
+        comment?.let(specBuilder::comment)
 
-            val prop = specBuilder
-                .translation("$namespace.$key".replace(':', '.'))
-                .define(key.path, default)
-            specBuilder.pop()
-            ConfigSpecProperty(prop)
-        }
+        val prop = specBuilder
+            .translation("$namespace.$key".replace(':', '.'))
+            .define(key.path, default)
+        specBuilder.pop()
+        ConfigSpecProperty(prop)
+    }
 
     override fun get(key: ResourceLocation) = props[key]
 

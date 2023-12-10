@@ -19,6 +19,7 @@ package be.bluexin.mcui.themes.util
 
 import be.bluexin.mcui.Constants
 import be.bluexin.mcui.api.themes.IHudDrawContext
+import be.bluexin.mcui.config.Settings
 import gnu.jel.CompiledExpression
 
 /**
@@ -38,7 +39,7 @@ sealed class CompiledExpressionWrapper<out T: Any>(val compiledExpression: Compi
 
 class IntExpressionWrapper(compiledExpression: CompiledExpression) : CompiledExpressionWrapper<Int>(compiledExpression) {
     override fun invoke(ctx: IHudDrawContext): Int = try {
-        compiledExpression.evaluate_int(arrayOf(ctx))
+        compiledExpression.evaluate_int(arrayOf(ctx, Settings.JelWrappers))
     } catch (e: Throwable) {
         warn(e)
         0
@@ -47,7 +48,7 @@ class IntExpressionWrapper(compiledExpression: CompiledExpression) : CompiledExp
 
 class DoubleExpressionWrapper(compiledExpression: CompiledExpression) : CompiledExpressionWrapper<Double>(compiledExpression) {
     override fun invoke(ctx: IHudDrawContext): Double = try {
-        compiledExpression.evaluate_double(arrayOf(ctx))
+        compiledExpression.evaluate_double(arrayOf(ctx, Settings.JelWrappers))
     } catch (e: Throwable) {
         warn(e)
         0.0
@@ -56,7 +57,7 @@ class DoubleExpressionWrapper(compiledExpression: CompiledExpression) : Compiled
 
 class StringExpressionWrapper(compiledExpression: CompiledExpression) : CompiledExpressionWrapper<String>(compiledExpression) {
     override fun invoke(ctx: IHudDrawContext): String = try {
-        compiledExpression.evaluate(arrayOf(ctx)).toString()
+        compiledExpression.evaluate(arrayOf(ctx, Settings.JelWrappers)).toString()
     } catch (e: Throwable) {
         warn(e)
         "--Error!"
@@ -65,7 +66,7 @@ class StringExpressionWrapper(compiledExpression: CompiledExpression) : Compiled
 
 class BooleanExpressionWrapper(compiledExpression: CompiledExpression) : CompiledExpressionWrapper<Boolean>(compiledExpression) {
     override fun invoke(ctx: IHudDrawContext): Boolean = try {
-        compiledExpression.evaluate_boolean(arrayOf(ctx))
+        compiledExpression.evaluate_boolean(arrayOf(ctx, Settings.JelWrappers))
     } catch (e: Throwable) {
         warn(e)
         false
@@ -74,7 +75,7 @@ class BooleanExpressionWrapper(compiledExpression: CompiledExpression) : Compile
 
 class UnitExpressionWrapper(compiledExpression: CompiledExpression) : CompiledExpressionWrapper<Unit>(compiledExpression) {
     override fun invoke(ctx: IHudDrawContext) = try {
-        compiledExpression.evaluate_void(arrayOf(ctx))
+        compiledExpression.evaluate_void(arrayOf(ctx, Settings.JelWrappers))
     } catch (e: Throwable) {
         warn(e)
     }
