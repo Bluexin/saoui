@@ -30,9 +30,10 @@ abstract class ConfigSpecBasedConfig(
     protected val spec: ForgeConfigSpec by lazy(specBuilder::build) // Might be fine, we'll see :)
     private val props = mutableMapOf<ResourceLocation, Property>()
 
-    override fun register(key: ResourceLocation, default: String, comment: String?, type: Property.Type) =
-        props.getOrPut(key) {
-            specBuilder.push(key.path)
+    override fun register(
+        key: ResourceLocation, default: String, comment: String?, type: Property.Type
+    ) = props.getOrPut(key) {
+        specBuilder.push(key.namespace)
             comment?.let(specBuilder::comment)
 
             val prop = specBuilder
