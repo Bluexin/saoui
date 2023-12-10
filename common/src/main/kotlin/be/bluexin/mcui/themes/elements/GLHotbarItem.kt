@@ -51,6 +51,7 @@ class GLHotbarItem(
 
     /*
     From net.minecraft.client.gui.GuiIngame
+    1.19.4 : net.minecraft.client.gui.Gui.renderSlot
      */
     private fun renderHotbarItem(
         x: Int,
@@ -61,7 +62,7 @@ class GLHotbarItem(
         poseStack: PoseStack
     ) {
         if (stack.isEmpty) return
-        val f = stack.useDuration - partialTicks
+        val f = stack.popTime - partialTicks
 
         if (f > 0.0f) {
             poseStack.pushPose()
