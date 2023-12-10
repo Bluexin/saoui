@@ -18,7 +18,7 @@ class FragmentReference(
     @DeserializationOrder(0)
     private val serializedVariables: Variables = Variables.EMPTY,
     private var id: String = MISSING_ID
-) : CachingElementParent() {
+) : Element(), ElementParent {
 
     init {
         if (serializedVariables !== Variables.EMPTY) LibHelper.popContext()
@@ -70,9 +70,12 @@ class FragmentReference(
     override fun draw(ctx: IHudDrawContext, poseStack: PoseStack) {
         if (!enabled(ctx)) return
         fragment?.let {
+            poseStack.pushPose()
+            poseStack.translate(x(ctx), y(ctx), z(ctx))
             ctx.pushContext(variables)
             it.draw(ctx, poseStack)
             ctx.popContext()
+            poseStack.popPose()
         }
     }
 

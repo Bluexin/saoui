@@ -17,27 +17,17 @@
 
 package be.bluexin.mcui.themes.elements
 
-import be.bluexin.mcui.api.themes.IHudDrawContext
-
 /**
  * Part of saoui by Bluexin.
 
  * @author Bluexin
  */
 interface ElementParent {
-    fun getX(ctx: IHudDrawContext): Double
-
-    fun getY(ctx: IHudDrawContext): Double
-
-    fun getZ(ctx: IHudDrawContext): Double
 
     val name: String
 
     companion object {
         val ZERO = object : ElementParent {
-            override fun getX(ctx: IHudDrawContext) = 0.0
-            override fun getY(ctx: IHudDrawContext) = 0.0
-            override fun getZ(ctx: IHudDrawContext) = 0.0
             override val name = "__ZERO"
         }
     }

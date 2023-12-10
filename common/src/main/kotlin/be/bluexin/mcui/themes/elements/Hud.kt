@@ -50,12 +50,6 @@ class Hud(
     @Transient
     private val indexedParts = parts.parts.associate { (k, v) -> k to v }
 
-    override fun getX(ctx: IHudDrawContext) = 0.0
-
-    override fun getY(ctx: IHudDrawContext) = 0.0
-
-    override fun getZ(ctx: IHudDrawContext) = 0.0
-
     operator fun get(key: HudPartType) = indexedParts[key]
 
     fun setup(fragments: Map<ResourceLocation, () -> Fragment>) =

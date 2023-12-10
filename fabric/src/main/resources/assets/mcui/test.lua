@@ -32,7 +32,7 @@ local function tprint (tbl, indent)
     return toprint
 end
 
-local labelFragment = readFragment("saoui:themes/hex2/fragments/label.xml")
+local labelFragment = readFragment("mcui:themes/hex2/fragments/label.xml")
 print("Loaded " .. labelFragment.name .. " : ")
 --print("\t" .. tprint(frag))
 

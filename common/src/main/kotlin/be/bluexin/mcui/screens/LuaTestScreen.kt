@@ -4,7 +4,6 @@ import be.bluexin.mcui.Constants
 import be.bluexin.mcui.api.scripting.JNLua
 import be.bluexin.mcui.api.scripting.LoadFragment
 import be.bluexin.mcui.api.scripting.LuaJTest
-import be.bluexin.mcui.api.themes.IHudDrawContext
 import be.bluexin.mcui.themes.JsonThemeLoader
 import be.bluexin.mcui.themes.elements.Element
 import be.bluexin.mcui.themes.elements.ElementParent
@@ -19,9 +18,6 @@ import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceLocation
 
 class LuaTestScreen : Screen(Component.literal("Lua Test Screen")), ElementParent {
-    override fun getX(ctx: IHudDrawContext) = 0.0
-    override fun getY(ctx: IHudDrawContext) = 0.0
-    override fun getZ(ctx: IHudDrawContext) = 0.0
 
     override val name = this::class.simpleName ?: Element.DEFAULT_NAME
 
@@ -52,8 +48,13 @@ class LuaTestScreen : Screen(Component.literal("Lua Test Screen")), ElementParen
                 Component.translatable("format_health", 10.0, 20.0)
             ) {
                 try {
-                    val frag = JsonThemeLoader.loadFragment(ResourceLocation("saoui", "themes/hex2/fragments/label.xml"))
-                    frag.setup(ElementParent.ZERO, emptyMap())
+                    val frag = JsonThemeLoader.loadFragment(
+                        ResourceLocation(
+                            Constants.MOD_ID,
+                            "themes/hex2/fragments/label.xml"
+                        )
+                    )
+                    frag.setup(fragment, emptyMap())
                     fragment.elements = listOf(frag)
                 } catch (e: Throwable) {
                     Minecraft.getInstance().player?.sendSystemMessage(Component.literal("Something went wrong : $e. See console for more info."))

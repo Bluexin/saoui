@@ -50,10 +50,9 @@ class RawElement(
 
     override fun draw(ctx: IHudDrawContext, poseStack: PoseStack) {
         poseStack.pushPose()
-        val p = parentOrZero
-        val x = this.x(ctx) + p.getX(ctx)
-        val y = this.y(ctx) + p.getY(ctx)
-        val z = this.z(ctx) + p.getZ(ctx) + ctx.z
+        val x = this.x(ctx)
+        val y = this.y(ctx)
+        val z = this.z(ctx) + ctx.z
         poseStack.translate(x, y, z)
         expression(ctx)
         poseStack.popPose()

@@ -65,14 +65,13 @@ sealed class GLRectangleParent : Element() {
     override fun draw(ctx: IHudDrawContext, poseStack: PoseStack) {
         if (!enabled(ctx)) return
 
-        val p = parentOrZero
-        val x = this.x(ctx) + p.getX(ctx)
-        val y = this.y(ctx) + p.getY(ctx)
-        val z = this.z(ctx) + p.getZ(ctx) + ctx.z
+        val x = this.x(ctx)
+        val y = this.y(ctx)
+        val z = this.z(ctx) + ctx.z
 
         GLCore.glBlend(true)
         GLCore.withColor(rgba?.let { it(ctx) }) {
-            if (this.rl != null) GLCore.glBindTexture(this.rl!!)
+            this.rl?.let(GLCore::glBindTexture)
             GLCore.glTexturedRectV2(
                 x, y, z,
                 w(ctx), h(ctx),

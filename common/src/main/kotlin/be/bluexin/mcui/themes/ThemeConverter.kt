@@ -121,7 +121,7 @@ object XmlTests {
     fun main(args: Array<String>) {
         val xml = XmlThemeLoader.xml
 
-        val iss = javaClass.classLoader.getResourceAsStream("assets/saoui/themes/hex2/fragments/label.xml")
+        val iss = javaClass.classLoader.getResourceAsStream("assets/mcui/themes/hex2/fragments/label.xml")
             ?: error("Couldn't load iss")
         val frag = xml.decodeFromString<Fragment>(
             iss.reader().readText()

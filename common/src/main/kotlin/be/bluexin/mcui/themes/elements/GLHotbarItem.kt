@@ -83,7 +83,6 @@ class GLHotbarItem(
         if (!enabled(ctx) || hand == ctx.player.mainArm) return
         super.draw(ctx, poseStack)
 
-        val p = parentOrZero
         val it: ItemStack = if (hand == null) ctx.player.inventory.items[slot(ctx)]
         else ctx.player.inventory.offhand[slot(ctx)]
 
@@ -94,8 +93,8 @@ class GLHotbarItem(
 //        RenderHelper.enableGUIStandardItemLighting()
 
         renderHotbarItem(
-            (x(ctx) + itemXoffset(ctx) + p.getX(ctx)).toInt(),
-            (y(ctx) + itemYoffset(ctx) + p.getY(ctx)).toInt(),
+            (x(ctx) + itemXoffset(ctx)).toInt(),
+            (y(ctx) + itemYoffset(ctx)).toInt(),
             ctx.partialTicks,
             it, ctx, poseStack
         )

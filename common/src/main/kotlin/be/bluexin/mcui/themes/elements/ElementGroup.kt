@@ -36,7 +36,7 @@ import nl.adaptivity.xmlutil.serialization.XmlElement
  * @author Bluexin
  */
 @Serializable
-sealed class ElementGroupParent : CachingElementParent() {
+sealed class ElementGroupParent : Element(), ElementParent {
 
     protected var children: Children = Children(emptyList())
 
@@ -56,11 +56,26 @@ sealed class ElementGroupParent : CachingElementParent() {
     override fun draw(ctx: IHudDrawContext, poseStack: PoseStack) {
         if (!enabled(ctx)) return
 
+        prepareDraw(ctx, poseStack)
+        drawChildren(ctx, poseStack)
+        finishDraw(ctx, poseStack)
+    }
+
+    protected fun prepareDraw(ctx: IHudDrawContext, poseStack: PoseStack) {
         GLCore.glBlend(true)
         GLCore.color(1f, 1f, 1f, 1f)
 
         if (this.rl != null) GLCore.glBindTexture(this.rl!!)
 
+        poseStack.pushPose()
+        poseStack.translate(x(ctx), y(ctx), z(ctx))
+    }
+
+    protected fun finishDraw(ctx: IHudDrawContext, poseStack: PoseStack) {
+        poseStack.popPose()
+    }
+
+    protected fun drawChildren(ctx: IHudDrawContext, poseStack: PoseStack) {
         if (Services.PLATFORM.isDevelopmentEnvironment) {
             this.children = this.children.filter {
                 ctx.profile(it.name) {

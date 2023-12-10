@@ -42,11 +42,9 @@ class GLString(
 
     override fun draw(ctx: IHudDrawContext, poseStack: PoseStack) {
         if (!enabled(ctx)) return
-        val p = parentOrZero
-        val x = this.x(ctx) + p.getX(ctx)
-        val y = this.y(ctx) + p.getY(ctx) + h(ctx) / 2.0
+        val x = this.x(ctx)
+        val y = this.y(ctx) + h(ctx) / 2.0
         val rgba = (rgba ?: CInt.WHITE)(ctx)
-//        rgba?.let { GLCore.color(it(ctx)) }
 
         GLCore.glString(
             string = this.text(ctx),

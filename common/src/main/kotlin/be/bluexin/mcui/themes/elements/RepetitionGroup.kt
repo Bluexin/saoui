@@ -41,12 +41,16 @@ class RepetitionGroup(
     override fun draw(ctx: IHudDrawContext, poseStack: PoseStack) {
         if (!enabled(ctx)) return
 
+        prepareDraw(ctx, poseStack)
+
         val m = amount(ctx)
         for (i in 0 until m) {
             ctx.profile(i.toString()) {
                 ctx.setI(i)
-                super.draw(ctx, poseStack)
+                super.drawChildren(ctx, poseStack)
             }
         }
+
+        finishDraw(ctx, poseStack)
     }
 }
