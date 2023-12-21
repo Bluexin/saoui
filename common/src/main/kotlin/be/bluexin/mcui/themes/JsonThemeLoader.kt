@@ -20,6 +20,8 @@ package be.bluexin.mcui.themes
 import be.bluexin.mcui.themes.elements.ElementParent
 import be.bluexin.mcui.themes.elements.Fragment
 import be.bluexin.mcui.themes.elements.Hud
+import be.bluexin.mcui.themes.elements.Widget
+import be.bluexin.mcui.themes.util.CInt
 import be.bluexin.mcui.themes.util.json.AfterUnmarshalAdapterFactory
 import com.google.gson.GsonBuilder
 import java.io.File
@@ -48,6 +50,15 @@ object JsonThemeLoader : AbstractThemeLoader(ThemeFormat.JSON) {
         } catch (e: Throwable) {
             Reporter += e.message.orEmpty()
             Fragment()
+        }
+    }
+
+    override fun InputStream.loadWidget(): Widget = use {
+        try {
+            gson.fromJson(it.reader(), Widget::class.java)
+        } catch (e: Throwable) {
+            Reporter += e.message.orEmpty()
+            Widget(contentHeight = CInt.ZERO, contentWidth = CInt.ZERO)
         }
     }
 

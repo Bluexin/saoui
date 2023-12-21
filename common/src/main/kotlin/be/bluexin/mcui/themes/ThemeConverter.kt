@@ -1,9 +1,6 @@
 package be.bluexin.mcui.themes
 
-import be.bluexin.mcui.themes.elements.Fragment
-import be.bluexin.mcui.themes.elements.Hud
-import be.bluexin.mcui.util.AbstractLuaDecoder
-import be.bluexin.mcui.util.AbstractLuaEncoder
+import be.bluexin.mcui.themes.elements.Widget
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import net.minecraft.resources.ResourceLocation
@@ -121,43 +118,12 @@ object XmlTests {
     fun main(args: Array<String>) {
         val xml = XmlThemeLoader.xml
 
-        val iss = javaClass.classLoader.getResourceAsStream("assets/mcui/themes/hex2/fragments/label.xml")
+        val iss = javaClass.classLoader.getResourceAsStream("assets/mcui/themes/hex2/widgets/button.xml")
             ?: error("Couldn't load iss")
-        val frag = xml.decodeFromString<Fragment>(
+        val widget = xml.decodeFromString<Widget>(
             iss.reader().readText()
         )
 
-        /*println(*/xml.encodeToString(frag)/*)*/
-//        println(frag)
-
-        val iss2 = javaClass.classLoader.getResourceAsStream("assets/saoui/themes/hex2/hud.xml")
-            ?: error("Couldn't load iss")
-
-        val hud = xml.decodeFromString<Hud>(
-            iss2.reader().readText()
-        )
-//        println(hud)
-
-        /*println(*/xml.encodeToString(hud)/*)*/
-
-        val lua = AbstractLuaEncoder.LuaEncoder().apply {
-            encodeSerializableValue(Fragment.serializer(), frag)
-        }.data
-
-        val luaFrag = AbstractLuaDecoder.LuaDecoder(lua).run {
-            decodeSerializableValue(Fragment.serializer())
-        }
-
-        println()
-
-        /*val luaVars = AbstractLuaEncoder.LuaEncoder().apply {
-            encodeSerializableValue(Variables.serializer(), Variables(
-                listOf(
-                    NamedExpressionIntermediate(key = "text", serializedExpression = "hello world", type = JelType.STRING),
-                    NamedExpressionIntermediate(key = "text with diff cache", serializedExpression = "hello world", cacheType = CacheType.STATIC, type = JelType.STRING),
-                )
-            )
-            )
-        }.data*/
+        println(xml.encodeToString(widget))
     }
 }

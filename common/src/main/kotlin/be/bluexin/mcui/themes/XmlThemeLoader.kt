@@ -2,6 +2,7 @@ package be.bluexin.mcui.themes
 
 import be.bluexin.mcui.themes.elements.Fragment
 import be.bluexin.mcui.themes.elements.Hud
+import be.bluexin.mcui.themes.elements.Widget
 import nl.adaptivity.xmlutil.StAXReader
 import nl.adaptivity.xmlutil.serialization.XML
 import nl.adaptivity.xmlutil.serialization.XmlSerializationPolicy
@@ -24,6 +25,10 @@ object XmlThemeLoader : AbstractThemeLoader(ThemeFormat.XML) {
     }
 
     override fun InputStream.loadFragment(): Fragment = use {
+        xml.decodeFromReader(StAXReader(it, "UTF-8"))
+    }
+
+    override fun InputStream.loadWidget(): Widget = use {
         xml.decodeFromReader(StAXReader(it, "UTF-8"))
     }
 }

@@ -14,7 +14,6 @@ import net.minecraft.resources.ResourceLocation
 @Serializable
 @SerialName("fragmentReference")
 class FragmentReference(
-    @Suppress("CanBeParameter", "RedundantSuppression") // It can't be a param because of @Serializable
     @DeserializationOrder(0)
     private val serializedVariables: Variables = Variables.EMPTY,
     private var id: String = MISSING_ID

@@ -1,0 +1,60 @@
+<widget name="button">
+    <expect>
+        <variable key="text" type="STRING"/>
+        <variable key="x" type="DOUBLE"/>
+        <variable key="y" type="DOUBLE"/>
+        <variable key="totalWidth" type="INT" cache="STATIC">150</variable>
+        <variable key="totalHeight" type="INT" cache="STATIC">20</variable>
+        <variable key="active" type="BOOLEAN" cache="STATIC">true</variable>
+    </expect>
+    <contentWidth>totalWidth</contentWidth>
+    <contentHeight>totalHeight</contentHeight>
+    <active>active</active>
+    <texture>saoui:textures/hex2/hex_labels.png</texture>
+    <x>x</x>
+    <y>y</y>
+    <children>
+        <glRectangle> <!-- left part of label -->
+            <rgba cache="STATIC">0x424242FF</rgba>
+            <srcX cache="STATIC">0.0</srcX>
+            <srcY cache="STATIC">0.0</srcY>
+            <srcW cache="STATIC">24.0</srcW>
+            <srcH cache="STATIC">64.0</srcH>
+            <w cache="STATIC">6</w>
+            <h >totalHeight</h>
+        </glRectangle>
+
+        <glRectangle> <!-- middle part of label -->
+            <rgba cache="STATIC">0x424242FF</rgba>
+            <x cache="STATIC">6</x>
+            <srcX cache="STATIC">24.0</srcX>
+            <srcY cache="STATIC">0.0</srcY>
+            <srcW cache="STATIC">26.0</srcW>
+            <srcH cache="STATIC">64.0</srcH>
+            <w>totalWidth - 12</w>
+            <h>totalHeight</h>
+        </glRectangle>
+
+        <glRectangle> <!-- right part of label -->
+            <rgba cache="STATIC">0x424242FF</rgba>
+            <x>totalWidth - 6</x>
+            <srcX cache="STATIC">50.0</srcX>
+            <srcY cache="STATIC">0.0</srcY>
+            <srcW cache="STATIC">24.0</srcW>
+            <srcH cache="STATIC">64.0</srcH>
+            <w cache="STATIC">6</w>
+            <h>totalHeight</h>
+        </glRectangle>
+
+        <glString name="label">
+            <x>totalWidth / 2 - strWidth(text) / 2</x>
+            <y cache="STATIC">9.5</y>
+            <text>text</text>
+        </glString>
+    </children>
+
+    <onClick>
+        local mouseX, mouseY, button = ...
+        print("onClick with " .. button .. " from Lua script !")
+    </onClick>
+</widget>

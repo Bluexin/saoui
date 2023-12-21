@@ -96,6 +96,25 @@ object LuaJTest {
             }
     }
 
+    fun compileSnippet(key: String, snippet: String, themeId: ResourceLocation): LuaValue {
+        val (userGlobals, _) = getEnvFor(themeId)
+        val chunk = serverGlobals.load(snippet, "=${themeId.withPath { "$it/$key" }}", userGlobals)
+
+        return chunk
+    }
+
+    fun runCallback(themeId: ResourceLocation, closure: LuaValue, args: Varargs) {
+        require(closure is LuaClosure)
+        val (userGlobals, setHook) = getEnvFor(themeId)
+        val userThread = LuaThread(userGlobals, closure)
+        setHook(
+            LuaValue.varargsOf(
+                arrayOf(userThread, hookFunc, LuaValue.EMPTYSTRING, scriptInstructionsLimit)
+            )
+        )
+        userThread.resume(args)
+    }
+
     private data class ScriptEnvironment(
         val globals: Globals,
         val setHook: LuaValue

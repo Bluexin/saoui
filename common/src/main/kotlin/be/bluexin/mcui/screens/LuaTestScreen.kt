@@ -4,11 +4,9 @@ import be.bluexin.mcui.Constants
 import be.bluexin.mcui.api.scripting.JNLua
 import be.bluexin.mcui.api.scripting.LoadFragment
 import be.bluexin.mcui.api.scripting.LuaJTest
-import be.bluexin.mcui.themes.JsonThemeLoader
-import be.bluexin.mcui.themes.elements.Element
-import be.bluexin.mcui.themes.elements.ElementParent
-import be.bluexin.mcui.themes.elements.Fragment
-import be.bluexin.mcui.themes.util.HudDrawContext
+import be.bluexin.mcui.themes.XmlThemeLoader
+import be.bluexin.mcui.themes.elements.*
+import be.bluexin.mcui.themes.util.*
 import com.mojang.blaze3d.vertex.PoseStack
 import net.minecraft.client.Minecraft
 import net.minecraft.client.gui.components.Button
@@ -28,6 +26,8 @@ class LuaTestScreen : Screen(Component.literal("Lua Test Screen")), ElementParen
 
     private lateinit var context: HudDrawContext
 
+    private var loadedWidgets = 0
+
     override fun init() {
         super.init()
         context = HudDrawContext()
@@ -45,17 +45,23 @@ class LuaTestScreen : Screen(Component.literal("Lua Test Screen")), ElementParen
         )
         addRenderableWidget(
             Button.builder(
-                Component.translatable("format_health", 10.0, 20.0)
+                Component.translatable("Load Widget")
             ) {
                 try {
-                    val frag = JsonThemeLoader.loadFragment(
+                    val widget = XmlThemeLoader.loadWidget(
                         ResourceLocation(
                             Constants.MOD_ID,
-                            "themes/hex2/fragments/label.xml"
+                            "themes/hex2/widgets/button.xml"
                         )
                     )
-                    frag.setup(fragment, emptyMap())
-                    fragment.elements = listOf(frag)
+                    val name = "Awesome Widget $loadedWidgets"
+                    widget.setVariable("text", CString { name })
+                    widget.setVariable("x", CDouble { 200.0 })
+                    val y = loadedWidgets++ * 25.0
+                    widget.setVariable("y", CDouble { y })
+                    widget.setup(fragment, emptyMap())
+                    widget.TMP_CTX = context
+                    addRenderableWidget(widget)
                 } catch (e: Throwable) {
                     Minecraft.getInstance().player?.sendSystemMessage(Component.literal("Something went wrong : $e. See console for more info."))
                     Constants.LOG.error("Couldn't load fragment", e)

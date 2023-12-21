@@ -63,7 +63,7 @@ abstract class ConfigSpecBasedConfig(
                 modConfig = oldConfig
             }
 
-            else -> Constants.LOG.error("Unknown $oldConfig - expected to implement ModConfigMixin")
+            else -> Constants.LOG.error("Unknown $oldConfig - expected to implement ${ModConfigMixin::class.simpleName}")
         }
     }
 

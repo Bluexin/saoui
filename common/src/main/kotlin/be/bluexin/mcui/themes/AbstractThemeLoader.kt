@@ -7,6 +7,7 @@ import be.bluexin.mcui.config.Settings
 import be.bluexin.mcui.themes.elements.ElementGroup
 import be.bluexin.mcui.themes.elements.Fragment
 import be.bluexin.mcui.themes.elements.Hud
+import be.bluexin.mcui.themes.elements.Widget
 import be.bluexin.mcui.themes.settings.SettingsLoader
 import be.bluexin.mcui.util.Client
 import be.bluexin.mcui.util.ColorUtil
@@ -101,16 +102,32 @@ abstract class AbstractThemeLoader(protected val type: ThemeFormat) {
         }
 
     /**
+     * Load [ElementGroup] from ResourceLocation reference (using mc ResourceManager)
+     */
+    fun loadWidget(location: ResourceLocation): Widget =
+        when (val loader = ThemeFormat.fromFileExtension(location.path)?.loader?.invoke()) {
+            this -> Client.resourceManager.getResourceOrThrow(location).open().loadWidget()
+            null -> error("Unknown fragment format for $location")
+            else -> loader.loadWidget(location)
+        }
+
+    /**
      * Load [Hud] from [InputStream].
      * Implementations should throw on errors.
      */
     protected abstract fun InputStream.loadHud(): Hud
 
     /**
-     * Load [ElementGroup] from [InputStream].
+     * Load [Fragment] from [InputStream].
      * Implementations should throw on errors.
      */
     protected abstract fun InputStream.loadFragment(): Fragment
+
+    /**
+     * Load [Widget] from [InputStream].
+     * Implementations should throw on errors.
+     */
+    protected abstract fun InputStream.loadWidget(): Widget
 
     private fun loadCss(location: ResourceLocation) {
         val start = System.currentTimeMillis()

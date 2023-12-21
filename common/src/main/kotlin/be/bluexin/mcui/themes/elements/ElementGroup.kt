@@ -61,7 +61,7 @@ sealed class ElementGroupParent : Element(), ElementParent {
         finishDraw(ctx, poseStack)
     }
 
-    protected fun prepareDraw(ctx: IHudDrawContext, poseStack: PoseStack) {
+    protected open fun prepareDraw(ctx: IHudDrawContext, poseStack: PoseStack) {
         GLCore.glBlend(true)
         GLCore.color(1f, 1f, 1f, 1f)
 
@@ -71,11 +71,11 @@ sealed class ElementGroupParent : Element(), ElementParent {
         poseStack.translate(x(ctx), y(ctx), z(ctx))
     }
 
-    protected fun finishDraw(ctx: IHudDrawContext, poseStack: PoseStack) {
+    protected open fun finishDraw(ctx: IHudDrawContext, poseStack: PoseStack) {
         poseStack.popPose()
     }
 
-    protected fun drawChildren(ctx: IHudDrawContext, poseStack: PoseStack) {
+    protected open fun drawChildren(ctx: IHudDrawContext, poseStack: PoseStack) {
         if (Services.PLATFORM.isDevelopmentEnvironment) {
             this.children = this.children.filter {
                 ctx.profile(it.name) {

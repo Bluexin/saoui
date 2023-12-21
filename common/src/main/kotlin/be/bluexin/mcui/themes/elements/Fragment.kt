@@ -19,7 +19,7 @@ import nl.adaptivity.xmlutil.serialization.XmlSerialName
 @XmlNamespaceDeclSpec("bl=https://www.bluexin.be/com/saomc/saoui/fragment-schema")
 class Fragment(
     @XmlSerialName("expect")
-    @XmlBefore("x", "children")
+    @XmlBefore("x", "children", "texture")
     @DeserializationOrder(0)
     val expect: Expect? = null
 ) : ElementGroupParent() {

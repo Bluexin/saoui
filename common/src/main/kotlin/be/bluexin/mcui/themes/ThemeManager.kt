@@ -17,6 +17,7 @@
 
 package be.bluexin.mcui.themes
 
+import be.bluexin.mcui.Constants
 import be.bluexin.mcui.commands.GeneralCommands
 import be.bluexin.mcui.commands.McuiCommand
 import be.bluexin.mcui.config.ConfigHandler
@@ -44,7 +45,13 @@ object ThemeManager {
     lateinit var HUD: Hud
     lateinit var themeList: Map<ResourceLocation, ThemeMetadata>
         private set
-    lateinit var currentTheme: ThemeMetadata
+    var currentTheme: ThemeMetadata = ThemeMetadata(
+        id = ResourceLocation(Constants.MOD_ID, "debug"),
+        themeRoot = ResourceLocation(Constants.MOD_ID, "debug"),
+        name = "mcui.debug",
+        type = ThemeFormat.XML,
+        fragments = emptyMap()
+    )
         private set
     private var isReloading = false
 
@@ -83,7 +90,7 @@ object ThemeManager {
             Component.translatable(
                 "saoui.menu.errors",
                 AbstractThemeLoader.Reporter.errors.size,
-                    Component.translatableWithFallback(
+                Component.translatableWithFallback(
                     currentTheme.nameTranslationKey,
                     currentTheme.name
                 ).apply {
