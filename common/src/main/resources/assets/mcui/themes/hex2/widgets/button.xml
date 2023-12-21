@@ -21,7 +21,7 @@
             <srcW cache="STATIC">24.0</srcW>
             <srcH cache="STATIC">64.0</srcH>
             <w cache="STATIC">6</w>
-            <h >totalHeight</h>
+            <h>totalHeight</h>
         </glRectangle>
 
         <glRectangle> <!-- middle part of label -->

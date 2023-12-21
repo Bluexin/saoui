@@ -32,7 +32,7 @@ local function tprint (tbl, indent)
     return toprint
 end
 
-local labelFragment = readFragment("mcui:themes/hex2/fragments/label.xml")
+local labelFragment = theme.readFragment("mcui:themes/hex2/fragments/label.xml")
 print("Loaded " .. labelFragment.name .. " : ")
 --print("\t" .. tprint(frag))
 
@@ -59,10 +59,11 @@ local function tstatic(value, jtype)
             jtype = "DOUBLE"
         end
     end
-    if (type(value) == "string") then
-        value = "\"" .. value .. "\""
-    else
+    if (type(value) ~= "string") then
         value = tostring(value)
+    end
+    if (jtype == "STRING") then
+        value = "\"" .. value .. "\""
     end
     return {
         type = jtype,
@@ -79,7 +80,7 @@ for i = 1, 5 do
     labelFragment.x = static(150)
     print("Loading ...")
     local centered = i % 2 == 0
-    local r = loadFragment("LuaTestScreen.root", labelFragment, {
+    local r = theme.loadFragment("LuaTestScreen.root", labelFragment, {
         text = tstatic("Label from Lua " .. i .. " centered: " .. tostring(centered)),
         centered = tstatic(centered)
     })
@@ -89,7 +90,7 @@ end
 labelFragment.y = "scaledheight - 64"
 labelFragment.x = static(16)
 
-loadFragment("LuaTestScreen.root", labelFragment, {
+theme.loadFragment("LuaTestScreen.root", labelFragment, {
     text = {
         expression = "\"Dear \" + username",
         type = "STRING"
@@ -104,7 +105,7 @@ for _, child in ipairs(labelFragment.children[2].value.children) do
     end
 end
 
-loadFragment("LuaTestScreen.root", labelFragment, {
+theme.loadFragment("LuaTestScreen.root", labelFragment, {
     text = {
         expression = "\"Dear \" + username",
         type = "STRING"

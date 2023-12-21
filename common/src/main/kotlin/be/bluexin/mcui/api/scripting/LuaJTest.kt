@@ -12,7 +12,6 @@ import org.luaj.vm2.lib.jse.JseBaseLib
 import org.luaj.vm2.lib.jse.JseMathLib
 import org.luaj.vm2.lib.jse.JseStringLib
 
-
 // TODO : check BCEL for lua-to-(jvm bytecode) compilation -- see LuaJC::install
 object LuaJTest {
     private val scriptInstructionsLimit = LuaValue.valueOf(50_000) // TODO: evaluate proper limit
@@ -49,8 +48,7 @@ object LuaJTest {
             load(TableLib())
             load(JseStringLib())
             load(JseMathLib())
-            set("readFragment", ReadFragment)
-            set("loadFragment", LoadFragment)
+            load(ThemeLib)
         }
         val setHook = globals.enableDebugSafely()
 

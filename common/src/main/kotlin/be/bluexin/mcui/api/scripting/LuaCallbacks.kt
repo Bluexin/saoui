@@ -4,6 +4,7 @@ import be.bluexin.mcui.Constants
 import be.bluexin.mcui.themes.JsonThemeLoader
 import be.bluexin.mcui.themes.elements.Fragment
 import be.bluexin.mcui.themes.elements.FragmentReference
+import be.bluexin.mcui.themes.elements.Widget
 import be.bluexin.mcui.themes.util.Variables
 import be.bluexin.mcui.util.AbstractLuaDecoder
 import be.bluexin.mcui.util.AbstractLuaEncoder
@@ -42,6 +43,33 @@ object ReadFragment : LuaFunction() {
     ) = loadFragment(ResourceLocation(rl))
 }
 
+object ReadWidget : LuaFunction() {
+
+    override fun call(arg: LuaValue) = call(arg.checkjstring())
+
+    override fun call(arg: String): LuaValue {
+        return wrap(loadWidget(arg))
+    }
+
+    override fun call(arg1: LuaValue, arg2: LuaValue): LuaValue {
+        return wrap(loadWidget(ResourceLocation(arg1.checkjstring(), arg2.checkjstring())))
+    }
+
+    private fun wrap(widget: Widget) = AbstractLuaEncoder.LuaEncoder().apply {
+        encodeSerializableValue(Widget.serializer(), widget)
+    }.data
+
+    private fun loadWidget(
+        rl: ResourceLocation
+    ): Widget {
+        return JsonThemeLoader.loadWidget(rl)
+    }
+
+    private fun loadWidget(
+        rl: String
+    ) = loadWidget(ResourceLocation(rl))
+}
+
 object LoadFragment : LuaFunction() {
 
     private fun generateId() = "generated:${UUID.randomUUID()}"
@@ -49,9 +77,12 @@ object LoadFragment : LuaFunction() {
     override fun call(arg1: LuaValue, arg2: LuaValue): LuaValue {
         val (target, fragment) = internalLoad(arg1, arg2)
         val id = generateId()
-        target.add(FragmentReference(id = id).also {
+        val fragmentRef = FragmentReference(id = id).also {
             it.setup(target, mapOf(ResourceLocation(id) to { fragment }))
-        })
+        }
+        Minecraft.getInstance().tell {
+            target.add(fragmentRef)
+        }
 
         return LuaValue.TRUE
     }
